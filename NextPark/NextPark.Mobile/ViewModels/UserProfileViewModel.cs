@@ -241,11 +241,10 @@ namespace NextPark.Mobile.ViewModels
                 var orderList = await _orderDataService.GetAllOrdersAsync();
                 if (orderList != null)
                 {
+                    OrderModel nextOrder = null;
+
                     if (orderList.Count > 0)
-                    {
-
-                        OrderModel nextOrder = null;
-
+                    {                    
                         foreach (OrderModel order in orderList) 
                         {
                             if (order.UserId == int.Parse(AuthSettings.UserId))
@@ -261,22 +260,27 @@ namespace NextPark.Mobile.ViewModels
                                 }
                             }
                         }
-
-                        if (nextOrder != null) {
-                            NextBooking = nextOrder.StartDate.ToShortTimeString();
-                        } else {
-                            NextBooking = "nessuna prenotazione";
-                        }
-                        base.OnPropertyChanged("NextBooking");
-                        return true;
                     }
+                    if (nextOrder != null)
+                    {
+                        NextBooking = nextOrder.StartDate.ToShortTimeString();
+                    }
+                    else
+                    {
+                        NextBooking = "nessuna prenotazione";
+                    }
+                    base.OnPropertyChanged("NextBooking");
+                    return true;
+                } else {
+                    NextBooking = "nessuna prenotazione";
+                    base.OnPropertyChanged("NextBooking");
+                    return false;
                 }
             } catch (Exception e)
             {
                 // TODO: manage exception
                 return false;
             }
-            return false;
         }
 
         public void OnCommandClickMethod(string url)
