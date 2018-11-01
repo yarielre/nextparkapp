@@ -1,0 +1,222 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Inside.Xamarin.Views.ParkingRent.ParkingRentPage"
+             xmlns:lang="clr-namespace:Inside.Xamarin.Helpers"
+             Title="Parking Info"
+             BindingContext="{Binding Main, Source={StaticResource Locator}}">
+    <ContentPage.Content>
+        <ScrollView
+            BindingContext="{Binding ParkingRent}">
+            <StackLayout 
+                HorizontalOptions="Center" 
+                VerticalOptions="Center">
+                <Label
+                    VerticalOptions="StartAndExpand"
+                    Text="{Binding RentTitle}"
+                    FontAttributes="Bold"
+                    FontSize="Large" />
+
+                <StackLayout>
+                    <!--Padding="10,20,10,5"-->
+
+                    <Image
+                        Aspect="AspectFit"
+                        VerticalOptions="Center"
+                        HorizontalOptions="Center"
+                        Source="{Binding ParkingPhoto}"
+                        HeightRequest="200"
+                        WidthRequest="200" />
+                    <ActivityIndicator
+                        HeightRequest="40"
+                        WidthRequest="40"
+                        VerticalOptions="Center"
+                        HorizontalOptions="Center"
+                        IsRunning="{Binding IsRunning, Mode=TwoWay}" />
+                </StackLayout>
+                <Grid
+                    RowSpacing="0"
+                    HorizontalOptions="Center"
+                    VerticalOptions="Center">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="50" />
+                        <RowDefinition Height="50" />
+                        <RowDefinition Height="50" />
+                        <RowDefinition Height="50" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <!--{Binding Category, Mode=OneWay}-->
+                    <Image
+                        Grid.Row="0"
+                        Grid.Column="0"
+                        Source="{Binding IconNameBasedOnCategory}"
+                        VerticalOptions="Center"
+                        HorizontalOptions="End" />
+
+                    <Label
+                        VerticalOptions="Center"
+                        HorizontalOptions="Start"
+                        Text="{Binding Parking.ParkingCategory.Category }"
+                        TextColor="Black"
+                        Grid.Row="0"
+                        Grid.Column="1" />
+
+                    <Image
+                        Grid.Row="1"
+                        Grid.Column="0"
+                        Source="ic_money"
+                        VerticalOptions="Center"
+                        HorizontalOptions="End" />
+
+                    <Label
+                        HorizontalOptions="Start"
+                        VerticalOptions="Center"
+                        IsVisible="{Binding IsByHours}"
+                        TextColor="Black"
+                        Text="{Binding ParkingPrice, StringFormat='{0} Coin/h'}"
+                        Grid.Row="1"
+                        Grid.Column="1" />
+                    <Label
+                        HorizontalOptions="Start"
+                        VerticalOptions="Center"
+                        IsVisible="{Binding IsByMonth}"
+                        TextColor="Black"
+                        Text="{Binding ParkingPrice, StringFormat='{0} Coin/d'}"
+                        Grid.Row="1"
+                        Grid.Column="1" />
+                    <Image
+                        Grid.Row="2"
+                        Grid.Column="0"
+                        Source="ic_clock"
+                        VerticalOptions="Center"
+                        HorizontalOptions="End" />
+
+                    <Label
+                        HorizontalOptions="Start"
+                        VerticalOptions="Center"
+                        TextColor="Black"
+                        Text="{Binding Aviability, StringFormat='Aviability: {0}' }"
+                        Grid.Row="2"
+                        Grid.Column="1" />
+                    <Label 
+                        Grid.Row="3"
+                        Grid.Column="0"
+                        IsVisible="{Binding IsByHours}"
+                        Text="Rent From"
+                        VerticalOptions="Start"
+                        HorizontalOptions="CenterAndExpand"/> 
+                    <TimePicker
+                        HorizontalOptions="CenterAndExpand"
+                        VerticalOptions="End"
+                        IsVisible="{Binding IsByHours}"
+                        Format="t"
+                        Time="{Binding RentFrom, Mode=TwoWay}"
+                        Grid.Row="3"
+                        Grid.Column="0"/>
+                    <Label 
+                        Grid.Row="3"
+                        Grid.Column="1"
+                        Text="Rent To"
+                        IsVisible="{Binding IsByHours}"
+                        VerticalOptions="Start"
+                        HorizontalOptions="CenterAndExpand"/>
+                    <TimePicker
+                        HorizontalOptions="CenterAndExpand"
+                        VerticalOptions="End"
+                        IsVisible="{Binding IsByHours}"
+                        Format="t"
+                        Time="{Binding RentTo, Mode=TwoWay}"
+                        Grid.Row="3"
+                        Grid.Column="1"/>
+                    
+                    
+                    
+                    <Label 
+                        Grid.Row="3"
+                        Grid.Column="0"
+                        IsVisible="{Binding IsByMonth}"
+                        Text="Rent From"
+                        VerticalOptions="Start"
+                        HorizontalOptions="CenterAndExpand"/>
+                    <DatePicker
+                        HorizontalOptions="CenterAndExpand"
+                        VerticalOptions="End"
+                        IsVisible="{Binding IsByMonth}"
+                        Date="{Binding StartDate, Mode=TwoWay}"
+                        Grid.Row="3"
+                        Grid.Column="0"/>
+                    <Label 
+                        Grid.Row="3"
+                        Grid.Column="1"
+                        Text="Rent To"
+                        IsVisible="{Binding IsByMonth}"
+                        VerticalOptions="Start"
+                        HorizontalOptions="CenterAndExpand"/>
+                    <DatePicker
+                        HorizontalOptions="CenterAndExpand"
+                        VerticalOptions="End"
+                        IsVisible="{Binding IsByMonth}"
+                        Date="{Binding EndDate, Mode=TwoWay}"
+                        Grid.Row="3"
+                        Grid.Column="1"/>
+                    <!--<Label
+                    HorizontalOptions="Start"
+                    VerticalOptions="Center"
+                    Text="{lang:Translate XamlParkingInfoRentDateLabel}"
+                    TextColor="{StaticResource TextFormColor}"
+                    Grid.Row="2"
+                    Grid.Column="0"/>
+                <DatePicker
+                    HorizontalOptions="Start"
+                    VerticalOptions="Center"
+                    Date="{Binding RentDate, Mode=TwoWay}"
+                    Grid.Row="2"
+                    Grid.Column="1"/>               
+
+                <Label
+                    HorizontalOptions="Start"
+                    VerticalOptions="Center"
+                    Text="{lang:Translate XamlParkingInfoRentFromLabel}"
+                    TextColor="{StaticResource TextFormColor}"
+                    Grid.Row="3"
+                    Grid.Column="0"/>
+                <TimePicker
+                    HorizontalOptions="Start"
+                    VerticalOptions="Center"
+                    Format="t"
+                    Time="{Binding RentFrom, Mode=TwoWay}"
+                    Grid.Row="3"
+                    Grid.Column="1"/>             
+
+                <Label
+                    HorizontalOptions="Start"
+                    VerticalOptions="Center"
+                    Text="{lang:Translate XamlParkingInfoRentToLabel}"
+                    TextColor="{StaticResource TextFormColor}"
+                    Grid.Row="4"
+                    Grid.Column="0"/>
+                <TimePicker
+                    HorizontalOptions="Start"
+                    VerticalOptions="Center"
+                    Time="{Binding RentTo, Mode=OneWay}"
+                    Grid.Row="4"
+                    Grid.Column="1"/>-->
+                </Grid>
+                <StackLayout>
+                    <Button
+                        BackgroundColor="{StaticResource AcceptColor}"
+                        Command="{Binding RentCommand}"
+                        HeightRequest="40"
+                        IsEnabled="{Binding IsEnable, Mode=TwoWay}"
+                        Text="Rent"
+                        TextColor="White" />
+                </StackLayout>
+            </StackLayout>
+        </ScrollView>
+    </ContentPage.Content>
+</ContentPage>

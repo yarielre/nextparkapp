@@ -1,0 +1,77 @@
+﻿@model Inside.Web.Models.ApplicationUser
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>User Details</title>
+</head>
+<body>
+
+    <div>
+        <h4>User:</h4>
+        <hr />
+        <dl class="dl-horizontal">
+            <dt>
+                @Html.DisplayNameFor(model => model.Name)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.Name)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.Lastname)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.Lastname)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.Address)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.Address)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.State)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.State)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.CarPlate)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.CarPlate)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.Coins)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.Coins)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.UserName)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.UserName)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.Email)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.Email)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.PhoneNumber)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.PhoneNumber)
+            </dd>
+        </dl>
+    </div>
+    <div>
+        <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
+        <a asp-action="Index">Back to List</a>
+    </div>
+</body>
+</html>

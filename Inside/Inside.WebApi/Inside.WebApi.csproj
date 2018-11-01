@@ -1,0 +1,59 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Pages\**" />
+    <Compile Remove="Views\NewFolder\**" />
+    <Content Remove="Pages\**" />
+    <Content Remove="Views\NewFolder\**" />
+    <EmbeddedResource Remove="Pages\**" />
+    <EmbeddedResource Remove="Views\NewFolder\**" />
+    <None Remove="Pages\**" />
+    <None Remove="Views\NewFolder\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="wwwroot\Images\darien.jpg" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="6.2.2" />
+    <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.5" />
+    <PackageReference Include="Microsoft.AspNetCore.Cors" Version="2.0.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Routing" Version="2.0.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="2.0.2" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.0.2" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="2.3.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="2.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <DotNetCliToolReference Include="Microsoft.EntityFrameworkCore.Tools.DotNet" Version="2.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Inside.Domain\Inside.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="ViewModels\LoginViewModel.ts">
+      <CustomToolNamespace>ViewModels\LoginViewModel.cs</CustomToolNamespace>
+    </None>
+    <None Update="ViewModels\ParkingViewModel.ts">
+      <CustomToolNamespace>ViewModels\ParkingViewModel.cs</CustomToolNamespace>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\Images\darien.jpg" />
+  </ItemGroup>
+
+</Project>

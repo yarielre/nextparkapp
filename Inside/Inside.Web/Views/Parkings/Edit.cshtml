@@ -1,0 +1,71 @@
+﻿@model Inside.Domain.Entities.Parking
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h2>Edit</h2>
+
+<h4>Parking</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group">
+                <label asp-for="ParkingCategoryId" class="control-label"></label>
+                <select asp-for="ParkingCategoryId" class="form-control" asp-items="ViewBag.ParkingCategoryId"></select>
+                <span asp-validation-for="ParkingCategoryId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ParkingEventId" class="control-label"></label>
+                <select asp-for="ParkingEventId" class="form-control" asp-items="ViewBag.ParkingEventId"></select>
+                <span asp-validation-for="ParkingEventId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ParkingTypeId" class="control-label"></label>
+                <select asp-for="ParkingTypeId" class="form-control" asp-items="ViewBag.ParkingTypeId"></select>
+                <span asp-validation-for="ParkingTypeId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ImageUrl" class="control-label"></label>
+                <input asp-for="ImageUrl" class="form-control" />
+                <span asp-validation-for="ImageUrl" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <div class="checkbox">
+                    <label>
+                        <input asp-for="IsRented" /> @Html.DisplayNameFor(model => model.IsRented)
+                    </label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label asp-for="Latitude" class="control-label"></label>
+                <input asp-for="Latitude" class="form-control" />
+                <span asp-validation-for="Latitude" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Longitude" class="control-label"></label>
+                <input asp-for="Longitude" class="form-control" />
+                <span asp-validation-for="Longitude" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="UserId" class="control-label"></label>
+                <input asp-for="UserId" class="form-control" />
+                <span asp-validation-for="UserId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-default" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

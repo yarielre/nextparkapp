@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Application xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:infra="clr-namespace:Inside.Xamarin.Infrastructure" x:Class="Inside.Xamarin.App">
+    <Application.Resources>
+        <ResourceDictionary>
+            <!--Locator-->
+            <infra:InstanceLocator x:Key="Locator" />
+            <Color x:Key="MainColor">#3fa535</Color>
+            <Color x:Key="FontColor">#DCCBC0</Color>
+            <Color x:Key="AccentColor">#3fa535</Color>
+            <Color x:Key="BackgroundColor">#E3F7F5</Color>
+            <!--Remove-->
+            <Color x:Key="AcceptColor">#3fa535</Color>
+            <Color x:Key="DangerColor">#f53d3d</Color>
+            <Color x:Key="TextFormColor">#3fa535</Color>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

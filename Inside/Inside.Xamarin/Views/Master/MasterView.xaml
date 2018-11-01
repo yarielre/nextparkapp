@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MasterDetailPage 
+    xmlns="http://xamarin.com/schemas/2014/forms" 
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:menu="clr-namespace:Inside.Xamarin.Views.Menu"
+    xmlns:tabs="clr-namespace:Inside.Xamarin.Views.Tabs"
+    x:Class="Inside.Xamarin.Views.Master.MasterView"
+    BindingContext="{Binding Main, Source={StaticResource Locator}}">
+    <MasterDetailPage.Master>
+        <menu:MenuPage></menu:MenuPage>
+    </MasterDetailPage.Master>
+    <MasterDetailPage.Detail>
+        <NavigationPage
+            BarTextColor="{ StaticResource FontColor }"
+            BarBackgroundColor="{StaticResource AccentColor}"
+            x:Name="Navigator"
+            BindingContext="{Binding Menu}">
+            <NavigationPage.ToolbarItems>
+                <ToolbarItem Text="{Binding UserName}"
+                             Order="Primary" 
+                             Priority="1"/>
+                <ToolbarItem Icon="coin.png"
+                             Order="Primary" 
+                             Command="{Binding OnCoinActionCommand}"
+                             Priority="1"/>
+                <ToolbarItem Text="{Binding Coins}"
+                             Command="{Binding OnCoinActionCommand}"
+                             Order="Primary" 
+                             Priority="1">
+                </ToolbarItem>
+            </NavigationPage.ToolbarItems>
+            <x:Arguments>
+                <tabs:TabsPage/>
+            </x:Arguments>
+        </NavigationPage>
+    </MasterDetailPage.Detail>
+</MasterDetailPage>

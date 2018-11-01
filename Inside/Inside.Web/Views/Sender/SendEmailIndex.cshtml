@@ -1,0 +1,71 @@
+﻿
+@{
+    ViewData["Title"] = "SendBroadcastEmail";
+}
+@model Inside.Web.Models.ApplicationUser
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Send Email</title>
+    <meta name="viewport" content="width=device-width" />
+
+</head>
+<body>
+    <h2>Send Email</h2>
+    <br />
+    <div class="row">
+        <div class="col-md-4">
+
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="IsBroadcast" onchange="valueChanged()">
+                <label class="form-check-label" for="IsBroadcast">To Broadcast?</label>
+            </div>
+
+            <form method="post" asp-action="SendBroadcastEmail" id="formBroadcast" hidden="hidden">
+                <div class="form-group">
+                    <input class="form-control" name="subject" id="subject" placeholder="Subject" />
+                    <br />
+                    <textarea class="form-control" name="message" id="message" rows="3" placeholder="Your message goes here"></textarea>
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Send" class="btn btn-default" />
+                </div>
+            </form>
+
+            <form method="post" asp-action="SendSingleEmail" id="formSingle">
+                <div class="form-group">
+                    @if (Model != null)
+                    {
+                        <input class="form-control" name="email" id="email" placeholder="To" value=@Model.Email />}
+                    else
+                    {
+                        <input class="form-control" name="email" id="email" placeholder="To" />
+                    }
+                    <br />
+
+                    <input class="form-control" name="subject" id="subject" placeholder="Subject" />
+                    <br />
+                    <textarea class="form-control" name="message" id="message" rows="3" placeholder="Your message goes here"></textarea>
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Send" class="btn btn-default" />
+                </div>
+            </form>
+        </div>
+    </div>
+    <script type="text/javascript">
+        function valueChanged() {
+            if ($('#IsBroadcast').is(":checked")) {
+                $("#formBroadcast").show();
+                $("#formSingle").hide();
+            }
+            else {
+                $("#formSingle").show();
+                $("#formBroadcast").hide();
+            }
+        }
+    </script>
+</body>
+</html>
+

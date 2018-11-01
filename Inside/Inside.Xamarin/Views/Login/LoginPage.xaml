@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Inside.Xamarin.Views.Login.LoginPage"
+             xmlns:lang="clr-namespace:Inside.Xamarin.Helpers"
+             Title="Login"
+             BindingContext="{Binding Main, Source={StaticResource Locator}}">
+    <ContentPage.Content>
+        <StackLayout x:Name="mainContent"
+            Orientation="Vertical"
+            Padding="10,20,10,5"
+            BindingContext="{Binding Login}"
+            SizeChanged="MainPageSizeChanged">
+            <Grid 
+                VerticalOptions="CenterAndExpand"
+                HorizontalOptions="CenterAndExpand">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"></RowDefinition>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Image  
+                    Aspect="AspectFill"
+                    Source="inside" 
+                    HeightRequest="150"
+                    WidthRequest="150"
+                    Grid.Row="0" Grid.Column="0"
+                    VerticalOptions="CenterAndExpand"
+                    HorizontalOptions="CenterAndExpand"/>
+            </Grid>
+            <StackLayout 
+                x:Name="formContent"
+                Margin="40,20,40,20">
+                <StackLayout 
+                    x:Name="UsernameFormContent"
+                    Spacing="10">
+                   <!-- <Label
+                        HorizontalOptions="Start"
+                        VerticalOptions="Start"
+                        Text="{lang:Translate XamlLoginUsernameLabel}"
+                        TextColor="{StaticResource TextFormColor}"/>-->
+                    <Entry
+                        FontSize="Medium"
+                        Placeholder="{lang:Translate XamlLoginUsernameLabel}"
+                        Text="{Binding UserName, Mode=TwoWay}" />
+                </StackLayout>
+
+                <StackLayout 
+                    x:Name="entryPasswordContent"
+                    Spacing="10">
+                  <!--  <Label
+                        HorizontalOptions="Start"
+                        VerticalOptions="Start"
+                        Text="{lang:Translate XamlLoginPasswordLabel}"
+                        TextColor="{StaticResource TextFormColor}"/>-->
+                    <Entry
+                        FontSize="Medium"
+                        IsPassword="True"
+                        Placeholder="{lang:Translate XamlLoginPasswordLabel}"
+                        Text="{Binding Password, Mode=TwoWay}" />
+                </StackLayout>
+
+<!--                <StackLayout
+                    x:Name="toggleContent"
+                    Margin="0,10,0,0"
+                    Orientation="Horizontal"
+                    HorizontalOptions="Center">
+                    <Label
+                        Text="{lang:Translate XamlLoginRemeberMeText}"
+                        VerticalOptions="Center" />
+                    <Switch
+                        IsToggled="{Binding IsRemembered, Mode=TwoWay}">
+                    </Switch>
+                </StackLayout>-->
+
+                <ActivityIndicator
+                    x:Name="activityContent"
+                    IsRunning="{Binding IsRunning, Mode=TwoWay}"                    
+                    VerticalOptions="Center">
+                </ActivityIndicator>
+
+                <StackLayout
+                    x:Name="buttonContent"
+                    Spacing="5"
+                    Orientation="Vertical"
+                    VerticalOptions="Center"
+                    HorizontalOptions="Fill">
+                    <Button BackgroundColor="{StaticResource AcceptColor}"
+                            Command="{Binding LoginCommand}"
+                            HeightRequest="60"
+                            IsEnabled="{Binding IsEnable, Mode=TwoWay}"
+                            Text="{lang:Translate GeneralLogin}"
+                            TextColor="Black" />
+                    <Button BackgroundColor= "{StaticResource AcceptColor}"
+                            Command="{Binding GoToRegisterPageCommand}"
+                            HeightRequest="60"
+                            IsEnabled="{Binding IsEnable, Mode=TwoWay}"
+                            Text="{lang:Translate GeneralRegister}"
+                            TextColor="Black" />
+                </StackLayout>
+            </StackLayout>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

@@ -1,0 +1,66 @@
+﻿@model Inside.Domain.Entities.Order
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Order</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Price)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Price)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.StartDate)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.StartDate)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.EndDate)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.EndDate)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.OrderStatus)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.OrderStatus)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.StartTime)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.StartTime)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.EndTime)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.EndTime)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.UserId)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.UserId)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Parking)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Parking.Id)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>

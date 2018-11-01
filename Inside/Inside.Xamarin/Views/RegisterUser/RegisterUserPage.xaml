@@ -1,0 +1,63 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Inside.Xamarin.Views.RegisterUser.RegisterUserPage"
+             xmlns:lang="clr-namespace:Inside.Xamarin.Helpers"
+             Title="Register"
+             BindingContext="{Binding Main, Source={StaticResource Locator}}">
+    <ContentPage.Content>
+        <ScrollView BindingContext="{Binding RegisterUser}">
+            <StackLayout
+                VerticalOptions="CenterAndExpand"
+                Padding="40">
+                <Entry
+                    Placeholder="{lang:Translate XamlLoginUsernamePlaceholder}"
+                    Text="{Binding UserName, Mode=TwoWay}" />
+                <Entry
+                    Keyboard="Email"
+                    Placeholder="{lang:Translate XamlRegisterEmailPlaceholder}"
+                    Text="{Binding Email, Mode=TwoWay}" />
+                <Entry
+                    IsPassword="True"
+                    Placeholder="{lang:Translate XamlLoginPasswordPlaceholder}"
+                    Text="{Binding Password, Mode=TwoWay}" />
+                <Entry
+                    IsPassword="True"
+                    Placeholder="{lang:Translate XamlRegisterConfimPasswordPlaceholder}"
+                    Text="{Binding PasswordConfirm, Mode=TwoWay}" />
+                <Entry
+                    Placeholder="{lang:Translate XamlEditNamePlaceholder}"
+                    Text="{Binding Name, Mode=TwoWay}" />
+                <Entry
+                    Placeholder="Lastname"
+                    Text="{Binding Lastname, Mode=TwoWay}" />
+                <Entry
+                    Placeholder="Address"
+                    Text="{Binding Address, Mode=TwoWay}" />
+                
+                <StackLayout Orientation="Horizontal" HorizontalOptions="Fill">
+                    <Entry
+                        Placeholder="State"
+                        Text="{Binding State, Mode=TwoWay}" />
+                    <Entry
+                        Placeholder="CarPlate"
+                        Text="{Binding CarPlate, Mode=TwoWay}" />
+                </StackLayout>
+                
+                <ActivityIndicator
+                    VerticalOptions="Center"
+                    HorizontalOptions="Center"
+                    IsRunning="{Binding IsRunning, Mode=TwoWay}" />
+                
+                <Button
+                    BackgroundColor="{StaticResource AcceptColor}"
+                    Command="{Binding RegisterCommand}"
+                    HeightRequest="60"
+                    IsEnabled="{Binding IsEnabled}"
+                    Text="{lang:Translate GeneralRegister}"
+                    TextColor="Black" />
+            </StackLayout>
+        </ScrollView>
+    </ContentPage.Content>
+</ContentPage>
