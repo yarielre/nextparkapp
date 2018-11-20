@@ -12,4 +12,7 @@
     <ProjectReference Include="..\NextPark.Enums\NextPark.Enums.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Auth\" />
+  </ItemGroup>
 </Project>

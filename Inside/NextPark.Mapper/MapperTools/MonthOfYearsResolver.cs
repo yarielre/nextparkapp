@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using AutoMapper;
-using Inside.Domain.Entities;
-using Inside.Domain.Enum;
-using Inside.Domain.Models;
-
-namespace Inside.Web.MapperTools
+﻿namespace Inside.Web.MapperTools
 {
     //public class MonthOfYearsResolver:IValueResolver<Event,EventModel,List<MyMonthOfYear>>
     ////{
@@ -13,7 +6,7 @@ namespace Inside.Web.MapperTools
     ////    {
     ////        List<MyMonthOfYear> list = new List<MyMonthOfYear>();
     ////        string[] monthRepeat = source.MonthRepeat.Split('-');
-            
+
     ////        foreach (var month in monthRepeat)
     ////        {
     ////            MyMonthOfYear monthAsEnum = (MyMonthOfYear) Enum.Parse(typeof(MyMonthOfYear), month);

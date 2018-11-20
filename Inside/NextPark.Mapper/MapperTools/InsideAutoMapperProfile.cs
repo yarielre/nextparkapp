@@ -7,13 +7,13 @@ namespace NextPark.MapperTools
 {
     public class InsideAutoMapperProfile : Profile
     {
-        public InsideAutoMapperProfile(string hostname)
-            : this("MyProfile", hostname)
+        public InsideAutoMapperProfile()
+            : this("MyProfile")
         {
             
         }
 
-        protected InsideAutoMapperProfile(string profileName, string hostname)
+        protected InsideAutoMapperProfile(string profileName)
             : base(profileName)
         {
 

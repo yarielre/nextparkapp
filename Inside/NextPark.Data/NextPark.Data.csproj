@@ -19,4 +19,9 @@
     <ProjectReference Include="..\NextPark.Models\NextPark.Models.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="..\NextPark.Api\appsettings.json">
+      <Link>appsettings.json</Link>
+    </None>
+  </ItemGroup>
 </Project>

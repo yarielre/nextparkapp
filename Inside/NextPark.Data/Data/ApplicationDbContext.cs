@@ -1,8 +1,7 @@
-﻿using Inside.Web.Models;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using NextPark.Domain.Auth;
 using NextPark.Domain.Entities;
-using NextPark.Models;
 using System.Threading;
 
 namespace NextPark.Data

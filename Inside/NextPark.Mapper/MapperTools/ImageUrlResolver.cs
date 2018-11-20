@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using Inside.Domain.Entities;
-using Inside.Domain.Models;
+using NextPark.Domain.Entities;
+using NextPark.Models;
 
 namespace NextPark.MapperTools
 {

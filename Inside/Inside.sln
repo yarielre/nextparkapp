@@ -3,23 +3,23 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27130.2036
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Inside.Xamarin", "Inside.Xamarin\Inside.Xamarin.csproj", "{BAFF9D47-D9D2-45F1-98E1-D4FF7A8BFDA7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Inside.Xamarin", "Inside.Xamarin\Inside.Xamarin.csproj", "{BAFF9D47-D9D2-45F1-98E1-D4FF7A8BFDA7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Inside.Xamarin.Android", "Inside.Xamarin.Android\Inside.Xamarin.Android.csproj", "{10300BE0-936C-4FF2-A564-BD203355D360}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Inside.Xamarin.iOS", "Inside.Xamarin.iOS\Inside.Xamarin.iOS.csproj", "{47C15A89-2019-4C5B-A075-84F9CF98403A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Inside.Domain", "Inside.Domain\Inside.Domain.csproj", "{B8841A94-37BA-4F21-ACE3-B93D37C07C63}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Inside.Domain", "Inside.Domain\Inside.Domain.csproj", "{B8841A94-37BA-4F21-ACE3-B93D37C07C63}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Inside.Web", "Inside.Web\Inside.Web.csproj", "{83E4778C-3951-47D8-92F9-1D8BD918AD9E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Inside.Web", "Inside.Web\Inside.Web.csproj", "{83E4778C-3951-47D8-92F9-1D8BD918AD9E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Inside.Notifications.Tester", "Inside.Notifications.Tester\Inside.Notifications.Tester.csproj", "{C072C14B-4DA5-46EB-AAE6-49446098DB87}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Inside.Notifications.Tester", "Inside.Notifications.Tester\Inside.Notifications.Tester.csproj", "{C072C14B-4DA5-46EB-AAE6-49446098DB87}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NextPark.Models", "NextPark.Models\NextPark.Models.csproj", "{86D6B856-CCBC-492D-8D53-EB5D77F31BA2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NextPark.Models", "NextPark.Models\NextPark.Models.csproj", "{86D6B856-CCBC-492D-8D53-EB5D77F31BA2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NextPark.Domain", "NextPark.Domain\NextPark.Domain.csproj", "{E8937624-2DB0-4731-AA76-CB15AFB9D28A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NextPark.Domain", "NextPark.Domain\NextPark.Domain.csproj", "{E8937624-2DB0-4731-AA76-CB15AFB9D28A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NextPark.Enums", "NextPark.Enums\NextPark.Enums.csproj", "{17996BED-3436-429E-89E3-CAEB16CC3952}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NextPark.Enums", "NextPark.Enums\NextPark.Enums.csproj", "{17996BED-3436-429E-89E3-CAEB16CC3952}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NextPark.Data", "NextPark.Data\NextPark.Data.csproj", "{63E5CC37-F5DA-4974-993E-77DEB58EDAFA}"
 EndProject
