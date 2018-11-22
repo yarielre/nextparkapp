@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace Inside.Web.Helpers
+namespace NextPark.Helpers
 {
     public class FilesHelper
     {
