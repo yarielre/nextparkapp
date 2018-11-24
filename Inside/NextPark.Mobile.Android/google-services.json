@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "160480912857",
+    "firebase_url": "https://inside-parking-1526649411302.firebaseio.com",
+    "project_id": "inside-parking-1526649411302",
+    "storage_bucket": "inside-parking-1526649411302.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:160480912857:android:0085f01650efc84b",
+        "android_client_info": {
+          "package_name": "com.wisegar.inside"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "160480912857-4thgnq70qjdtautfh8tg0ms6kqgktnj8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDqvXMAFKl9G0c_Azzh2qZrj3z6HZf8MbI"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

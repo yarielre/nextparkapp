@@ -5,9 +5,10 @@ using NextPark.Domain.Entities;
 using NextPark.Models;
 using System;
 using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Diagnostics.Contracts;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace NextPark.Services
 {
@@ -26,6 +27,7 @@ namespace NextPark.Services
 
         public TokenResponse GenerateJwtTokenAsync(string email, ApplicationUser user)
         {
+            Contract.Ensures(Contract.Result<TokenResponse>() != null);
             var claims = new List<Claim>
             {
                 new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
@@ -45,6 +47,9 @@ namespace NextPark.Services
                 expires: expires,
                 signingCredentials: creds
             );
+
+
+
             var tokenResponse = new TokenResponse
             {
                 UserId = user.Id,

@@ -1,0 +1,63 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Inside.Xamarin.Views.Coin.CoinPage"
+             Title="Coins"
+             BindingContext="{Binding Main, Source={StaticResource Locator}}">
+
+    <StackLayout BindingContext="{Binding Coins}"
+                 Orientation="Vertical"
+                 VerticalOptions="CenterAndExpand"
+                 HorizontalOptions="CenterAndExpand">
+        <ListView 
+            HasUnevenRows="false" 
+            SeparatorVisibility="None" 
+            HorizontalOptions="Center"
+            ItemsSource="{Binding CoinsList}">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <ViewCell.View>
+                            <Grid HorizontalOptions="Center">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>                                   
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="50"/>
+                                    <ColumnDefinition Width="40"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <Image 
+                                    Grid.Row="0" 
+                                    Grid.Column="0" 
+                                    HorizontalOptions="End"
+                                    Source="{Binding CoinIcon}">
+                                </Image>
+                                <Label 
+                                    Grid.Row="0" 
+                                    Grid.Column="1" 
+                                    HorizontalTextAlignment="Center" 
+                                    VerticalTextAlignment="Center"
+                                    HorizontalOptions="StartAndExpand"
+                                    Text="{Binding CoinsQuantity}">
+                                </Label>
+                                <Button 
+                                    Grid.Row="0" 
+                                    Grid.Column="2" 
+                                                                        
+                                    HorizontalOptions="Center"
+                                    VerticalOptions="Center"
+                                    BackgroundColor="{StaticResource AcceptColor}"
+                                    Text="{Binding CoinBuyButtonText}" 
+                                    Command="{Binding CoinBuyButtonCommand}" 
+                                    CommandParameter="{Binding CoinsQuantity}">                                    
+                                </Button>
+                            </Grid>
+                        </ViewCell.View>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </StackLayout>
+</ContentPage>

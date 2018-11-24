@@ -1,0 +1,117 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Inside.Xamarin.Views.Event.EventPage"
+             Title="Parking Aviability"
+             BindingContext="{Binding Main, Source={StaticResource Locator}}">
+    <ContentPage.Content>
+        <ScrollView
+            BindingContext="{Binding Event}">
+        <StackLayout
+            VerticalOptions="Center">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Label
+                    HorizontalOptions="End"
+                    VerticalOptions="Center"
+                    TextColor="{StaticResource TextFormColor}"
+                    Text="Avialable From"
+                    Grid.Row="0"
+                    Grid.Column="0"/>
+                <TimePicker
+                    IsVisible="{Binding IsByHours}"
+                    HorizontalOptions="Start"
+                    VerticalOptions="Center"
+                    Format="t"
+                    Time="{Binding ParkingEvent.StartTime, Mode=TwoWay}"
+                    Grid.Row="0"
+                    Grid.Column="1"
+                />
+                <DatePicker
+                    IsVisible="{Binding IsByMonth}"
+                    HorizontalOptions="Start"
+                    VerticalOptions="Center"
+                    Date="{Binding ParkingEvent.StartDate, Mode=TwoWay}"
+                    Grid.Row="0"
+                    Grid.Column="1"
+                />
+                    <Label
+                    HorizontalOptions="End"
+                    VerticalOptions="Center"
+                    TextColor="{StaticResource TextFormColor}"
+                    Text="Avialable To"
+                    Grid.Row="1"
+                    Grid.Column="0"/>
+                <TimePicker
+                    IsVisible="{Binding IsByHours}"
+                    HorizontalOptions="Start"
+                    VerticalOptions="Center"
+                    Format="t"
+                    Time="{Binding ParkingEvent.EndTime, Mode=TwoWay}"
+                    Grid.Row="1"
+                    Grid.Column="1"
+                />
+                <DatePicker
+                    IsVisible="{Binding IsByMonth}"
+                    HorizontalOptions="Start"
+                    VerticalOptions="Center"
+                    Date="{Binding ParkingEvent.EndDate, Mode=TwoWay}"
+                    Grid.Row="1"
+                    Grid.Column="1"
+                />
+                    <Label
+                    Text="Repeat"
+                    Grid.Row="2"
+                    Grid.Column="0"
+                    HorizontalOptions="End"
+                    VerticalOptions="Center">
+                </Label>
+                <Switch
+                    IsToggled="{Binding IsRepeated}"
+                    Grid.Row="2"
+                    Grid.Column="1"
+                    HorizontalOptions="StartAndExpand">
+                </Switch>
+            </Grid>
+            <ListView
+                Margin="25,0"
+                ItemsSource="{Binding MyDayOfWeeksRepeat}"
+                ItemSelected="OnItemSelected"
+                IsVisible="{Binding IsRepeated}">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <StackLayout Orientation="Horizontal">
+                                <BoxView IsVisible="{Binding IsSelected}"
+                                         WidthRequest="8" HeightRequest="8"
+                                         Color="DarkGreen" />
+                                <Label Text="{Binding Data}" 
+                                       VerticalOptions="Center"/>
+                            </StackLayout>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+                </ListView>
+
+            <!--<Button
+                BackgroundColor="{StaticResource AcceptColor}"
+                Command="{Binding EventRepeatCommand}"
+                Text="Repeat"
+                TextColor="White" />-->
+            <Button
+                BackgroundColor="{StaticResource AcceptColor}"
+                Command="{Binding EventCreateCommand}"
+                Text="Create "
+                TextColor="White" />
+        </StackLayout>
+        </ScrollView>
+    </ContentPage.Content>
+</ContentPage>

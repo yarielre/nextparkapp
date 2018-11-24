@@ -1,0 +1,117 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Inside.Xamarin.Views.Parking.ParkingEditPage"
+             xmlns:lang="clr-namespace:Inside.Xamarin.Helpers"
+             Title="Edit Parking"
+             BindingContext="{Binding Main, Source={StaticResource Locator}}">
+    <ContentPage.Content>
+        <ScrollView BindingContext="{Binding ParkingEdit}">
+            <StackLayout 
+                HorizontalOptions="Center" 
+                VerticalOptions="Center">
+                <Label 
+                    Text="Edit Parking" 
+                    FontAttributes="Bold" 
+                    FontSize="Large" />
+                <StackLayout 
+                    HorizontalOptions="Center" 
+                    VerticalOptions="Center">
+                    <Image 
+                        Aspect="AspectFit" 
+                        HeightRequest="250" 
+                        Source="{Binding ParkingPhoto,Mode=TwoWay}">
+                        <Image.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding ChangePhotoCommand}" />
+                        </Image.GestureRecognizers>
+                    </Image>
+                    <ActivityIndicator 
+                        IsRunning="{Binding IsRunning, Mode=TwoWay}" />
+                </StackLayout>
+
+                <Grid 
+                    RowSpacing="0" 
+                    HorizontalOptions="Center" 
+                    VerticalOptions="Center">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="50" />
+                        <RowDefinition Height="50" />
+                        <RowDefinition Height="50" />
+                        <RowDefinition Height="50" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Image 
+                        Grid.Row="0" 
+                        Grid.Column="0" 
+                        Source="{Binding IconNameBasedOnCategory}" 
+                        VerticalOptions="Center" 
+                        HorizontalOptions="End" />
+                    <Picker 
+                        Grid.Row="0" 
+                        Grid.Column="1" 
+                        Title="{lang:Translate XamlParkingCreateCategoryPicker}" 
+                        ItemsSource="{Binding Categories}" 
+                        ItemDisplayBinding="{Binding Category}" 
+                        SelectedItem="{Binding SelectedCategory}" />
+                    <Image 
+                        Grid.Row="1" 
+                        Grid.Column="0" 
+                        Source="ic_question" 
+                        VerticalOptions="Center" 
+                        HorizontalOptions="End" />
+                    <Picker 
+                        Grid.Row="1" 
+                        Grid.Column="1" 
+                        Title="{lang:Translate XamlParkingCreateTypePicker}" 
+                        ItemsSource="{Binding ParkingTypes }" 
+                        ItemDisplayBinding="{Binding Type }" 
+                        SelectedItem="{Binding SelectedParkingType}"  />
+                    <Image 
+                        Grid.Row="2" 
+                        Grid.Column="0" 
+                        Source="ic_money" 
+                        VerticalOptions="Center" 
+                        HorizontalOptions="End" />
+                    <Label 
+                        Grid.Row="2" 
+                        Grid.Column="1" 
+                        Text="{Binding ParkingPrice, Mode=TwoWay, StringFormat='{0} Coin/h'}" 
+                        VerticalOptions="Center" />
+                    <!--<Image 
+                        Grid.Row="3" 
+                        Grid.Column="0" 
+                        Source="ic_address" 
+                        VerticalOptions="Center" 
+                        HorizontalOptions="End" /> 
+                    <Entry 
+                        Grid.Row="3" 
+                        Grid.Column="1" 
+                        Text="{Binding Address.Locality}" />-->
+                    <Image 
+                        Grid.Row="3" 
+                        Grid.Column="0" 
+                        Source="ic_address" 
+                        VerticalOptions="Center" 
+                        HorizontalOptions="End" />
+                    <Button 
+                        Grid.Row="3" 
+                        Grid.Column="1" 
+                        Text="Aviability" 
+                        Command="{Binding EventCommand}" />
+                </Grid>
+
+                <StackLayout>
+                    <Button 
+                        BackgroundColor="{StaticResource AcceptColor}" 
+                        Command="{Binding ParkingEditCommand}" 
+                        IsEnabled="{Binding IsEnable, Mode=TwoWay}" 
+                        Text="Edit" 
+                        TextColor="White" />
+                </StackLayout>
+            </StackLayout>
+        </ScrollView>
+    </ContentPage.Content>
+</ContentPage>
