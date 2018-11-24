@@ -185,16 +185,6 @@
     </BundleResource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Inside.Domain\Inside.Domain.csproj">
-      <Project>{B8841A94-37BA-4F21-ACE3-B93D37C07C63}</Project>
-      <Name>Inside.Domain</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Inside.Xamarin\Inside.Xamarin.csproj">
-      <Project>{BAFF9D47-D9D2-45F1-98E1-D4FF7A8BFDA7}</Project>
-      <Name>Inside.Xamarin</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Contents.json">
       <Visible>false</Visible>
     </ImageAsset>
@@ -249,5 +239,15 @@
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="Resources\ic_location_off.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\NextPark.Models\NextPark.Models.csproj">
+      <Project>{86D6B856-CCBC-492D-8D53-EB5D77F31BA2}</Project>
+      <Name>NextPark.Models</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\NextPark\NextPark.Xam.csproj">
+      <Project>{CCBC2890-01A1-4FBC-B22B-D140861D2FA6}</Project>
+      <Name>NextPark.Xam</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>
