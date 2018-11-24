@@ -2,6 +2,7 @@
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using NextPark.Mobile.Views;
+using NextPark.Mobile.Infrastructure;
 
 [assembly: XamlCompilation(XamlCompilationOptions.Compile)]
 namespace NextPark.Mobile
@@ -12,9 +13,14 @@ namespace NextPark.Mobile
         public App()
         {
             InitializeComponent();
+            InitializeApp();
 
+            MainPage = new StartUp();
+        }
 
-            MainPage = new MainPage();
+        private void InitializeApp()
+        {
+            AppContainer.RegisterDependencies();
         }
 
         protected override void OnStart()
