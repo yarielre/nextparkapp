@@ -5,7 +5,7 @@ using System.Linq;
 using Foundation;
 using UIKit;
 
-namespace Inside.Xamarin.iOS
+namespace NextPark.Mobile.iOS
 {
     public class Application
     {
