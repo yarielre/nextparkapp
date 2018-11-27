@@ -10,12 +10,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Autofac" Version="4.8.1" />
     <PackageReference Include="Xamarin.Forms" Version="3.1.0.697729" />  
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\NextPark.Mobile.Infrastructure\NextPark.Mobile.Shared.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Infrastructure\" />
+    <ProjectReference Include="..\NextPark.Mobile.Core\NextPark.Mobile.Core.csproj" />
   </ItemGroup>
 </Project>
