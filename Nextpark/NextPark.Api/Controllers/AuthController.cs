@@ -76,7 +76,7 @@ namespace NextPark.Api.Controllers
                 return BadRequest(string.Format("Server error: {0}", e));
             }
         }
-        [HttpPost]
+        [HttpPost("register")]
         [AllowAnonymous]
         public async Task<IActionResult> Register([FromBody] RegisterModel model)
         {
@@ -116,15 +116,13 @@ namespace NextPark.Api.Controllers
             }
 
         }
-        [HttpGet]
-        [Authorize]
+        [HttpGet("logout")]
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();
             return Ok();
         }
-
-        [HttpPost]
+        [HttpPost("userbyname")]
         public IActionResult GetUserByUserName([FromBody] string username)
         {
             if (string.IsNullOrEmpty(username))
@@ -144,9 +142,5 @@ namespace NextPark.Api.Controllers
                 return BadRequest(string.Format("Server error: {0}", e));
             }
         }
-
-
-
-
     }
 }

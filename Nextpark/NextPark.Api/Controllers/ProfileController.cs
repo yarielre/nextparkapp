@@ -41,7 +41,7 @@ namespace NextPark.Api.Controllers
             _unitOfWork = unitOfWork;
         }
 
-        [HttpPost]
+        [HttpPost("editpass")]
         public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordModel model)
         {
 
@@ -77,7 +77,7 @@ namespace NextPark.Api.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpPost("edit")]
         public async Task<IActionResult> EditProfile([FromBody] EditProfileModel model)
         {
             if (model == null)
@@ -135,7 +135,7 @@ namespace NextPark.Api.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpPost("editcoins")]
         public async Task<ActionResult> UpdateCoin([FromBody] UpdateUserCoinModel model)
         {
             if (model == null)
