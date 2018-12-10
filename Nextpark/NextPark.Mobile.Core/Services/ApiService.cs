@@ -12,7 +12,7 @@ using Plugin.Connectivity;
 
 namespace NextPark.Mobile.Core.Services
 {
-    public class ApiService
+    public class ApiService : IApiService
     {
 
         private readonly string TokenType = "Bearer";

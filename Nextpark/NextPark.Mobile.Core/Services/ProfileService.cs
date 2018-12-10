@@ -9,7 +9,7 @@ using NextPark.Models;
 
 namespace NextPark.Mobile.Core.Services
 {
-    public class ProfileService
+    public class ProfileService : IProfileService
     {
         private readonly ApiService _apiService;
 

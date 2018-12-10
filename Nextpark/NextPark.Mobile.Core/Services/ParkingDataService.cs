@@ -7,7 +7,7 @@ using NextPark.Models;
 
 namespace NextPark.Mobile.Core.Services
 {
-    public class ParkingDataService
+    public class ParkingDataService : IParkingDataService
     {
         private readonly ApiService _apiService;
 

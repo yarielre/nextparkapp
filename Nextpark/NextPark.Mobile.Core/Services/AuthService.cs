@@ -8,7 +8,7 @@ using NextPark.Models;
 
 namespace NextPark.Mobile.Core.Services
 {
-    public class AuthService
+    public class AuthService : IAuthService
     {
 
         private readonly ApiService _apiService;

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+              xmlns:customMap="clr-namespace:NextPark.Mobile.CustomControls;assembly=NextPark.Mobile"
+             x:Class="NextPark.Mobile.Views.HomePage">
+    <ContentPage.Content>
+         <StackLayout>
+              <customMap:CustomMap
+                      x:Name="MyMap"
+                      IsShowingUser="true"
+                      MapType="Street"
+            />
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

@@ -1,6 +1,16 @@
-<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionCode="1" android:versionName="1.0" package="com.wisegar.NextPark">
-    <uses-sdk android:minSdkVersion="21" android:targetSdkVersion="27" />
-    <application android:label="NextPark.Mobile.Android">
-    </application>
+﻿<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionCode="1" android:versionName="1.0" package="com.wisegar.nextpark">
+	<uses-sdk android:minSdkVersion="21" android:targetSdkVersion="27" />
+	<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+	<uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS" />
+	<uses-permission android:name="android.permission.ACCESS_MOCK_LOCATION" />
+	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+	<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+	<uses-permission android:name="android.permission.INTERNET" />
+	<application android:label="NextPark">
+		<!-- Put your Google Maps V2 API Key here. -->
+		<meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyDyi_QvDeCh9gqkxu7Yn5AIZ76d9797Cdw" />
+		<meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />
+	</application>
 </manifest>
