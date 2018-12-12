@@ -11,9 +11,9 @@ namespace NextPark.Mobile.Services
     public class AuthService : IAuthService
     {
 
-        private readonly ApiService _apiService;
+        private readonly IApiService _apiService;
 
-        public AuthService(ApiService apiService)
+        public AuthService(IApiService apiService)
         {
             _apiService = apiService;
         }

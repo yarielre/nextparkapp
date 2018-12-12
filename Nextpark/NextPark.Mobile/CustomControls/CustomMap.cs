@@ -4,7 +4,6 @@ using Xamarin.Forms.Maps;
 
 namespace NextPark.Mobile.CustomControls
 {
-
     public class CustomMap : Map
     {
         /// <summary>
@@ -19,7 +18,7 @@ namespace NextPark.Mobile.CustomControls
         /// <summary>
         /// Default constructor
         /// </summary>
-        public CustomMap()
+        public CustomMap() : base()
         {
 
         }

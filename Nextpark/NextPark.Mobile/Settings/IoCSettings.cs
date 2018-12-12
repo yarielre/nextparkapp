@@ -25,6 +25,7 @@ namespace NextPark.Mobile.Infrastructure
             builder.RegisterType<AuthService>().As<IAuthService>().SingleInstance();
             builder.RegisterType<NavigationService>().As<INavigationService>();
             builder.RegisterType<DialogService>().As<IDialogService>();
+            builder.RegisterType<GeolocatorService>().As<IGeolocatorService>();
 
 
             _container = builder.Build();
