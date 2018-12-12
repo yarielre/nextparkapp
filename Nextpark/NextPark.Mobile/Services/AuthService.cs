@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using NextPark.Models;
 
-namespace NextPark.Mobile.Core.Services
+namespace NextPark.Mobile.Services
 {
     public class AuthService : IAuthService
     {

@@ -1,11 +1,11 @@
 ﻿using System;
-using NextPark.Mobile.Core.Services;
+using NextPark.Mobile.Services;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 
-namespace NextPark.Mobile.Core.Base
+namespace NextPark.Mobile.ViewModels
 {
     public class BaseViewModel : INotifyPropertyChanged
     {

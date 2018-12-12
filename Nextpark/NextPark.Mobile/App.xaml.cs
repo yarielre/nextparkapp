@@ -20,7 +20,7 @@ namespace NextPark.Mobile
 
         private void InitializeApp()
         {
-            AppContainer.RegisterDependencies();
+            IoCSettings.RegisterDependencies();
         }
 
         protected override void OnStart()

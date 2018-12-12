@@ -117,13 +117,13 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Global_Accept" xml:space="preserve">
-    <value>Accettare</value>
+  <data name="Accept_Global" xml:space="preserve">
+    <value />
   </data>
-  <data name="Global_Cancel" xml:space="preserve">
-    <value>Cancellare</value>
+  <data name="Cancel_Global" xml:space="preserve">
+    <value />
   </data>
-  <data name="Global_Error" xml:space="preserve">
-    <value>Errore</value>
+  <data name="Error_Global" xml:space="preserve">
+    <value />
   </data>
 </root>

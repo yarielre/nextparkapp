@@ -11,7 +11,7 @@
                 <Setter Property="BarBackgroundColor" Value="{StaticResource NavigationPrimary}" />
                 <Setter Property="BarTextColor" Value="White" />
             </Style>
-            <infrastructure:ViewModelLocator x:Key="Locator" />
+            <infrastructure:LocatorViewModel x:Key="Locator" />
         </ResourceDictionary>
     </Application.Resources>
 </Application>

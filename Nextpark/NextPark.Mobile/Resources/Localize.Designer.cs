@@ -8,10 +8,10 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace NextPark.Mobile.Core.Resources {
-    using System;
-    
-    
+namespace NextPark.Mobile.Resources
+{
+
+
     /// <summary>
     ///   A strongly-typed resource class, for looking up localized strings, etc.
     /// </summary>
@@ -39,7 +39,7 @@ namespace NextPark.Mobile.Core.Resources {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("NextPark.Mobile.Core.Resources.Localize", typeof(Localize).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("NextPark.Mobile.Resources.Localize", typeof(Localize).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -61,29 +61,29 @@ namespace NextPark.Mobile.Core.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Accettare.
+        ///   Looks up a localized string similar to .
         /// </summary>
-        internal static string Global_Accept {
+        internal static string Accept_Global {
             get {
-                return ResourceManager.GetString("Global_Accept", resourceCulture);
+                return ResourceManager.GetString("Accept_Global", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Cancellare.
+        ///   Looks up a localized string similar to .
         /// </summary>
-        internal static string Global_Cancel {
+        internal static string Cancel_Global {
             get {
-                return ResourceManager.GetString("Global_Cancel", resourceCulture);
+                return ResourceManager.GetString("Cancel_Global", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Errore.
+        ///   Looks up a localized string similar to .
         /// </summary>
-        internal static string Global_Error {
+        internal static string Error_Global {
             get {
-                return ResourceManager.GetString("Global_Error", resourceCulture);
+                return ResourceManager.GetString("Error_Global", resourceCulture);
             }
         }
     }

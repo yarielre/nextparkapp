@@ -1,10 +1,11 @@
 ﻿using System;
 using Autofac;
+using NextPark.Mobile.Services;
 using NextPark.Mobile.ViewModels;
 
 namespace NextPark.Mobile.Infrastructure
 {
-    public class AppContainer
+    public class IoCSettings
     {
         private static IContainer _container;
 
@@ -14,10 +15,16 @@ namespace NextPark.Mobile.Infrastructure
 
             //Register ViewModels
             builder.RegisterType<StartUpViewModel>();
+            builder.RegisterType<HomeViewModel>();
 
             //Services - Data
+            builder.RegisterType<ParkingDataService>().As<IParkingDataService>();
 
             //Services - Application
+            builder.RegisterType<ApiService>().As<IApiService>();
+            builder.RegisterType<AuthService>().As<IAuthService>().SingleInstance();
+            builder.RegisterType<NavigationService>().As<INavigationService>();
+            builder.RegisterType<DialogService>().As<IDialogService>();
 
 
             _container = builder.Build();

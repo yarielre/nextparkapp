@@ -1,8 +1,8 @@
-﻿using NextPark.Mobile.Core.Resources;
+﻿using NextPark.Mobile.Resources;
 using System.Globalization;
 using Xamarin.Forms;
 
-namespace NextPark.Mobile.Core.Services
+namespace NextPark.Mobile.Services
 {
     public interface ILocalize
     {
@@ -20,9 +20,9 @@ namespace NextPark.Mobile.Core.Services
             Localize.Culture = ci;
             DependencyService.Get<ILocalize>().SetLocale(ci);
         }
-        public string Accept { get { return Localize.Global_Accept ?? NotAvailable; } }
-        public string Cancel { get { return Localize.Global_Cancel ?? NotAvailable; } }
-        public string Error { get { return Localize.Global_Error ?? NotAvailable; } }
+        public string Accept { get { return Localize.Accept_Global ?? NotAvailable; } }
+        public string Cancel { get { return Localize.Cancel_Global ?? NotAvailable; } }
+        public string Error { get { return Localize.Error_Global ?? NotAvailable; } }
 
     }
 }

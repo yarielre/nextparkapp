@@ -9,7 +9,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Settings\" />
     <Folder Include="Base\" />
     <Folder Include="Resources\" />
   </ItemGroup>
@@ -33,6 +32,8 @@
   <ItemGroup>
     <Compile Update="Resources\Localize.Designer.cs">
       <DependentUpon>Localize.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
     </Compile>
   </ItemGroup>
 </Project>

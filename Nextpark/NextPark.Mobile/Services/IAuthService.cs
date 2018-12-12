@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using NextPark.Models;
 
-namespace NextPark.Mobile.Core.Services
+namespace NextPark.Mobile.Services
 {
     public interface IAuthService
     {
