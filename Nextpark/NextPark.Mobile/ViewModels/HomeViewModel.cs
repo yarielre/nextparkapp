@@ -1,4 +1,6 @@
-﻿using NextPark.Mobile.Services;
+﻿using NextPark.Mobile.Extensions;
+using NextPark.Mobile.Services;
+using System;
 using System.Threading.Tasks;
 using Xamarin.Forms.Maps;
 
@@ -47,11 +49,16 @@ namespace NextPark.Mobile.ViewModels
 
         private void Map_MapReady(object sender, System.EventArgs e)
         {
-            var getLocationTask = _geoLocatorService.GetLocation();
-            getLocationTask.Wait();
-            var lastKnowPosition = getLocationTask.Result;
+            Xamarin.Forms.Maps.Position position = new Position();
 
-            var position = new Position(lastKnowPosition.Latitude, lastKnowPosition.Longitude);
+            try {
+                var getLocationTask = _geoLocatorService.GetLocation();
+                getLocationTask.RunSynchronously();
+                position = getLocationTask.Result.ToXamMapPosition();
+            }
+            catch (Exception ex) {
+                throw ex.ThrowVerboseException(this);
+            }
             Map.MoveToRegion(MapSpan.FromCenterAndRadius(position, Distance.FromKilometers(1)));
         }
     }
