@@ -21,7 +21,7 @@ namespace NextPark.Mobile.ViewModels
         public int Id { get; set; }
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public BaseViewModel(INavigationService navService, IApiService apiService, IAuthService authService)
+        public BaseViewModel(IApiService apiService, IAuthService authService, INavigationService navService)
         {
             _apiService = apiService;
             _authService = authService;

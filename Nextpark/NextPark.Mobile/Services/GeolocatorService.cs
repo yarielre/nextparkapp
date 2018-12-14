@@ -1,6 +1,8 @@
 ﻿using NextPark.Mobile.Settings;
 using Plugin.Geolocator;
 using Plugin.Geolocator.Abstractions;
+using Plugin.Permissions;
+using Plugin.Permissions.Abstractions;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -10,14 +12,53 @@ namespace NextPark.Mobile.Services
     public class GeolocatorService : IGeolocatorService
     {
         private readonly IGeolocator _geolocator;
+        private readonly IPermissions _permissions;
 
         public GeolocatorService()
         {
             _geolocator = CrossGeolocator.Current;
-
             //TODO: Set other settings here
             _geolocator.DesiredAccuracy = GeoSettings.DesiredAccuracy;
 
+            _permissions = CrossPermissions.Current;
+        }
+
+        public async Task<bool> IsPermissionGaranted() {
+
+            try
+            {
+                var status = await _permissions.CheckPermissionStatusAsync(Permission.Location);
+
+                if (status != PermissionStatus.Granted)
+                {
+                    var showRequest = await _permissions.ShouldShowRequestPermissionRationaleAsync(Permission.Location);
+
+                    if (showRequest)
+                    {
+                        var requestPermissions = await _permissions.RequestPermissionsAsync(Permission.Location);
+                        //Best practice to always check that the key exists
+
+                        if (requestPermissions.ContainsKey(Permission.Location))
+                            status = requestPermissions[Permission.Location];
+                    }
+                }
+
+                if (status == PermissionStatus.Granted)
+                {
+                    return true;
+                }
+                else if (status != PermissionStatus.Unknown)
+                {
+
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+
+            }
+
+            return false;
         }
 
         public bool IsAvailable()
@@ -29,6 +70,8 @@ namespace NextPark.Mobile.Services
         {
             try
             {
+               
+
                 return await _geolocator.GetLastKnownLocationAsync();
             }
             catch (Exception e)

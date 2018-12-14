@@ -1,4 +1,5 @@
-﻿using NextPark.Mobile.ViewModels;
+﻿using NextPark.Mobile.Services;
+using NextPark.Mobile.ViewModels;
 using System;
 
 namespace NextPark.Mobile.Infrastructure

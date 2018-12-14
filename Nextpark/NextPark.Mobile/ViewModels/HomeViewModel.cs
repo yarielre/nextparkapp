@@ -10,13 +10,14 @@ namespace NextPark.Mobile.ViewModels
     {
         private CustomControls.CustomMap Map { get; set; }
         private readonly IGeolocatorService _geoLocatorService;
+        private readonly IDialogService _dialogService;
 
-        public HomeViewModel(IGeolocatorService geolocatorService,
-            INavigationService navService, 
-            IApiService apiService, 
-            IAuthService authService) : base(navService, apiService, authService)
+        public HomeViewModel(IGeolocatorService geolocatorService, IDialogService dialogService, 
+            IApiService apiService,  IAuthService authService, INavigationService navService) 
+            : base(apiService, authService, navService)
         {
             _geoLocatorService = geolocatorService;
+            _dialogService = dialogService;
         }
 
         public override Task InitializeAsync(object data = null)
@@ -25,7 +26,6 @@ namespace NextPark.Mobile.ViewModels
             {
                 return Task.FromResult(false);
             }
-
             if (data is CustomControls.CustomMap map)
             {
                 Map = map;
@@ -49,16 +49,28 @@ namespace NextPark.Mobile.ViewModels
 
         private void Map_MapReady(object sender, System.EventArgs e)
         {
-            Xamarin.Forms.Maps.Position position = new Position();
 
-            try {
-                var getLocationTask = _geoLocatorService.GetLocation();
-                getLocationTask.RunSynchronously();
-                position = getLocationTask.Result.ToXamMapPosition();
+            Map_Ready_Handler();
+        }
+
+        private async void Map_Ready_Handler() {
+
+            Xamarin.Forms.Maps.Position position = new Position(0,0);
+            try
+            {
+                var permissionGaranted = await _geoLocatorService.IsPermissionGaranted();
+
+                if (!permissionGaranted) return;
+
+                var getLocation = await _geoLocatorService.GetLocation();
+
+                position = getLocation.ToXamMapPosition();
             }
-            catch (Exception ex) {
-                throw ex.ThrowVerboseException(this);
+            catch (Exception ex)
+            {
+               // _loggerService.LogVerboseException(ex, this).ShowVerboseException(ex, this).ThrowVerboseException(ex, this);
             }
+
             Map.MoveToRegion(MapSpan.FromCenterAndRadius(position, Distance.FromKilometers(1)));
         }
     }

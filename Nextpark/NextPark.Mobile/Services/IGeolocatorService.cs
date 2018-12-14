@@ -10,5 +10,6 @@ namespace NextPark.Mobile.Services
         Task<Position> GetLocation();
         Task<IEnumerable<Position>> GetPositionForAddress(string address);
         bool IsAvailable();
+        Task<bool> IsPermissionGaranted();
     }
 }

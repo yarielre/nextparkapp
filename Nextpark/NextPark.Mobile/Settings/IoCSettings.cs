@@ -12,21 +12,23 @@ namespace NextPark.Mobile.Infrastructure
         public static void RegisterDependencies()
         {
             var builder = new ContainerBuilder();
-
-            //Register ViewModels
-            builder.RegisterType<StartUpViewModel>();
-            builder.RegisterType<HomeViewModel>();
-
+            
             //Services - Data
             builder.RegisterType<ParkingDataService>().As<IParkingDataService>();
 
             //Services - Application
             builder.RegisterType<ApiService>().As<IApiService>();
+            builder.RegisterType<LocalizationService>().As<ILocalizationService>();
             builder.RegisterType<AuthService>().As<IAuthService>().SingleInstance();
             builder.RegisterType<NavigationService>().As<INavigationService>();
             builder.RegisterType<DialogService>().As<IDialogService>();
             builder.RegisterType<GeolocatorService>().As<IGeolocatorService>();
+            builder.RegisterType<LoggerService>().As<ILoggerService>();
 
+            //Register ViewModels
+            builder.RegisterType<LocatorViewModel>();
+            builder.RegisterType<StartUpViewModel>();
+            builder.RegisterType<HomeViewModel>();
 
             _container = builder.Build();
         }
