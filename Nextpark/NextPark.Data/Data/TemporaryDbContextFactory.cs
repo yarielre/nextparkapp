@@ -18,7 +18,7 @@ namespace NextPark.Data
 
             var connectionString = configuration.GetConnectionString("DefaultConnection");
 
-            builder.UseSqlServer(connectionString, b => b.MigrationsAssembly("Inside.Web"));
+            builder.UseSqlServer(connectionString, b => b.MigrationsAssembly("NextPark.Api"));
 
             return new ApplicationDbContext(builder.Options);
         }
