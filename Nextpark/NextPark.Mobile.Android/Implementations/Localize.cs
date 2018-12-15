@@ -1,20 +1,17 @@
-﻿using System.Globalization;
+﻿using NextPark.Mobile.Services;
+using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Threading;
-using Java.Util;
-using NextPark.Mobile.Droid.Implementations;
-using NextPark.Mobile.Services;
 
-[assembly: Dependency(typeof(Localize))]
-
+[assembly: Xamarin.Forms.Dependency(typeof(NextPark.Mobile.Droid.Implementations.Localize))]
 namespace NextPark.Mobile.Droid.Implementations
 {
-    public class Localize : ILocalize
+    class Localize : ILocalize
     {
         public CultureInfo GetCurrentCultureInfo()
         {
             var netLanguage = "en";
-            var androidLocale = Locale.Default;
+            var androidLocale = Java.Util.Locale.Default;
             netLanguage = AndroidToDotnetLanguage(androidLocale.ToString().Replace("_", "-"));
             CultureInfo ci = null;
             try
@@ -34,7 +31,7 @@ namespace NextPark.Mobile.Droid.Implementations
             Thread.CurrentThread.CurrentUICulture = ci;
         }
 
-        private string AndroidToDotnetLanguage(string androidLanguage)
+        string AndroidToDotnetLanguage(string androidLanguage)
         {
             var netLanguage = androidLanguage;
             //certain languages need to be converted to CultureInfo equivalent
@@ -55,7 +52,7 @@ namespace NextPark.Mobile.Droid.Implementations
             return netLanguage;
         }
 
-        private string ToDotnetFallbackLanguage(PlatformCulture platCulture)
+        string ToDotnetFallbackLanguage(PlatformCulture platCulture)
         {
             var netLanguage = platCulture.LanguageCode;
             switch (platCulture.LanguageCode)

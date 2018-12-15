@@ -10,7 +10,29 @@ namespace NextPark.Mobile.Services
         CultureInfo GetCurrentCultureInfo();
         void SetLocale(CultureInfo ci);
     }
+    public class LocalizationService : ILocalizationService
+    {
+        public string NotAvailable = "NotAvailable";
 
+        public LocalizationService()
+        {
+            try
+            {
+                var ci = DependencyService.Get<ILocalize>().GetCurrentCultureInfo();
+                Localize.Culture = ci;
+                DependencyService.Get<ILocalize>().SetLocale(ci);
+            }
+            catch
+            {
+
+            }
+
+        }
+        public string Accept { get { return Localize.Accept_Global ?? NotAvailable; } }
+        public string Cancel { get { return Localize.Cancel_Global ?? NotAvailable; } }
+        public string Error { get { return Localize.Error_Global ?? NotAvailable; } }
+
+    }
     public class PlatformCulture
     {
         public PlatformCulture(string platformCultureString)
@@ -43,29 +65,6 @@ namespace NextPark.Mobile.Services
         {
             return PlatformString;
         }
-
-        public class LocalizationService : ILocalizationService
-        {
-            public string NotAvailable = "NotAvailable";
-
-            public LocalizationService()
-            {
-                try
-                {
-                    var ci = DependencyService.Get<ILocalize>().GetCurrentCultureInfo();
-                    Localize.Culture = ci;
-                    DependencyService.Get<ILocalize>().SetLocale(ci);
-                }
-                catch
-                {
-
-                }
-
-            }
-            public string Accept { get { return Localize.Accept_Global ?? NotAvailable; } }
-            public string Cancel { get { return Localize.Cancel_Global ?? NotAvailable; } }
-            public string Error { get { return Localize.Error_Global ?? NotAvailable; } }
-
-        }
+        
     }
 }
