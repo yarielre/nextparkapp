@@ -10,7 +10,7 @@ using NextPark.Data;
 namespace NextPark.Api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20181215133609_Initials")]
+    [Migration("20181218135458_Initials")]
     partial class Initials
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

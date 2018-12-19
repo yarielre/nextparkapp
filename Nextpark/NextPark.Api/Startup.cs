@@ -96,7 +96,6 @@ namespace NextPark.Api
             services.AddTransient<IEmailSender, EmailSender>();
             services.AddTransient<IMediaService, MediaService>();
             services.AddTransient<IAuthService, AuthService>();
-            services.AddSingleton(new PushNotificationService());
             services.AddSingleton(mapper);
             services.AddScoped(typeof(IEmailSender), typeof(EmailSender));
             services.AddScoped(typeof(IPushNotificationService), typeof(PushNotificationService));
