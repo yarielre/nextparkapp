@@ -62,18 +62,20 @@ namespace NextPark.Api
             var issuer = Configuration["JwtIssuer"];
             var audience = Configuration["JwtAudience"];
             var jwtExpiration = Configuration["JwtExpireDays"];
+
             var signingKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(secretKey));
+
             var tokenValidationParameters = new TokenValidationParameters
             {
                 ValidateIssuerSigningKey = true,
                 IssuerSigningKey = signingKey,
 
                 // Validate the JWT Issuer (iss) claim
-                ValidateIssuer = true,
+                ValidateIssuer = false,
                 ValidIssuer = issuer,
-
+               
                 // Validate the JWT Audience (aud) claim
-                ValidateAudience = true,
+                ValidateAudience = false,
                 ValidAudience = audience
             };
 

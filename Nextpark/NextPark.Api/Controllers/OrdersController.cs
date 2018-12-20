@@ -17,7 +17,7 @@ namespace NextPark.Api.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    public class OrdersController : BaseController<Order, OrderModel>
+    public class OrdersController : ControllerBase
     {
         private readonly IMapper _mapper;
         private readonly IRepository<Order> _orderRepository;
@@ -33,7 +33,6 @@ namespace NextPark.Api.Controllers
                                 IRepository<Order> orderRepository,
                                 IMapper mapper1,
                                 IRepository<ApplicationUser> useRepository)
-            : base(repository, unitOfWork, mapper)
         {
             _unitOfWork = unitOfWork1;
             _parkingRepository = parkingRepository;
@@ -110,6 +109,70 @@ namespace NextPark.Api.Controllers
 
 
 
+        }
+
+        // GET api/controller
+        [HttpGet]
+        public async Task<IActionResult> Get()
+        {
+            var list = await _orderRepository.FindAllAsync();
+            var vm = _mapper.Map<List<Order>, List<OrderModel>>(list);
+            return Ok(vm);
+        }
+
+        // GET api/controller/5
+        [HttpGet("{id}")]
+        public IActionResult Get(int id)
+        {
+            var entity = _orderRepository.Find(id);
+            if (entity == null)
+                return BadRequest("Entity not found");
+            var vm = _mapper.Map<Order, OrderModel>(entity);
+            return Ok(vm);
+        }
+
+        // POST api/controller
+        [HttpPost]
+        public async Task<IActionResult> Post([FromBody] Order entity)
+        {
+            if (entity == null)
+                return BadRequest("adding null entity");
+            if (ModelState.IsValid)
+            {
+                _orderRepository.Add(entity);
+                await _unitOfWork.CommitAsync();
+                var vm = _mapper.Map<Order, OrderModel>(entity);
+                return Ok(vm);
+            }
+            return BadRequest(ModelState);
+        }
+
+        // PUT api/controller/5
+        [HttpPut("{id}")]
+        public async Task<ActionResult> Put(int id, [FromBody]Order entity)
+        {
+            if (ModelState.IsValid)
+            {
+                _orderRepository.Update(entity);
+                var vm = _mapper.Map<Order, OrderModel>(entity);
+                await _unitOfWork.CommitAsync();
+                return Ok(vm);
+            }
+            return BadRequest(ModelState);
+        }
+
+        // DELETE api/controller/5
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var entity = _orderRepository.Find(id);
+            if (entity == null)
+                return BadRequest("Can't deleted, entity not found.");
+            var vm = _mapper.Map<Order, OrderModel>(entity);
+            _orderRepository.Delete(entity);
+
+            await _unitOfWork.CommitAsync();
+            return Ok(vm);
         }
     }
 }

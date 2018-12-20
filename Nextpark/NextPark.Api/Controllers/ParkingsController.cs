@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using NextPark.Data.Infrastructure;
@@ -16,7 +17,8 @@ namespace NextPark.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ParkingsController : BaseController<Parking, ParkingModel>
+    [Authorize]
+    public class ParkingsController : ControllerBase
     {
         private readonly IHostingEnvironment _appEnvironment;
         private readonly IMapper _mapper;
@@ -35,8 +37,7 @@ namespace NextPark.Api.Controllers
            IHostingEnvironment appEnvironment,
            IEmailSender emailSender,
            IRepository<ParkingType> parkingTypeRepository,
-           IMediaService mediaService) : base(repository,
-           unitOfWork, mapper)
+           IMediaService mediaService)
         {
             _parkingRepository = repository;
             _orderRepository = orderRepository;
@@ -53,7 +54,7 @@ namespace NextPark.Api.Controllers
 
         // GET api/controller
         [HttpGet]
-        protected override async Task<IActionResult> Get()
+        public  async Task<IActionResult> Get()
         {
             var parkigns = await _parkingRepository.FindAllAsync(new CancellationToken(), p => p.ParkingType,
                                p => p.ParkingCategory, p => p.ParkingEvent);
@@ -73,10 +74,21 @@ namespace NextPark.Api.Controllers
             var vm = _mapper.Map<List<Parking>, List<ParkingModel>>(parkigns);
             return Ok(vm);
         }
-
+       
+        // GET api/controller/5
+        [HttpGet("{id}")]
+        public IActionResult Get(int id)
+        {
+            var entity = _parkingRepository.Find(id);
+            if (entity == null)
+                return BadRequest("Entity not found");
+            var vm = _mapper.Map<Parking, ParkingModel>(entity);
+            return Ok(vm);
+        }
+        
         // POST api/controller
         [HttpPost]
-        protected virtual async Task<IActionResult> Post([FromBody] ParkingModel model)
+        public async Task<IActionResult> Post([FromBody] ParkingModel model)
         {
 
             if (!ModelState.IsValid)
@@ -118,7 +130,7 @@ namespace NextPark.Api.Controllers
 
         // PUT api/controller/5
         [HttpPut("{id}")]
-        protected virtual async Task<ActionResult> Put(int id, [FromBody]ParkingModel model)
+        public async Task<ActionResult> Put(int id, [FromBody]ParkingModel model)
         {
 
             if (model == null)
@@ -141,6 +153,19 @@ namespace NextPark.Api.Controllers
             }
         }
 
+        // DELETE api/controller/5
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var entity = _parkingRepository.Find(id);
+            if (entity == null)
+                return BadRequest("Can't deleted, entity not found.");
+            var vm = _mapper.Map<Parking, ParkingModel>(entity);
+            _parkingRepository.Delete(entity);
+
+            await _unitOfWork.CommitAsync();
+            return Ok(vm);
+        }
 
         [HttpGet("rentedbyhours")]
         public async Task<IActionResult> GetParkingRentedByHours([FromBody]int userId)

@@ -26,13 +26,13 @@ namespace NextPark.Api.Controllers
         private readonly IUnitOfWork _unitOfWork;
         private readonly IRepository<ApplicationUser> _useRepository;
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly PushNotificationService _pushNotificationService;
+        private readonly IPushNotificationService _pushNotificationService;
         private readonly IAuthService _authService;
 
         public AuthController(UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager, IConfiguration configuration,
             IMapper mapper, IEmailSender emailSender, IRepository<ApplicationUser> useRepository,
-            IUnitOfWork unitOfWork, PushNotificationService pushNotificationService,
+            IUnitOfWork unitOfWork, IPushNotificationService pushNotificationService,
             IAuthService authService)
         {
             _userManager = userManager;
