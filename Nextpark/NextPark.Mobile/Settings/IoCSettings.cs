@@ -1,6 +1,7 @@
 ﻿using System;
 using Autofac;
 using NextPark.Mobile.Services;
+using NextPark.Mobile.Services.Data;
 using NextPark.Mobile.ViewModels;
 
 namespace NextPark.Mobile.Infrastructure
@@ -15,6 +16,11 @@ namespace NextPark.Mobile.Infrastructure
             
             //Services - Data
             builder.RegisterType<ParkingDataService>().As<IParkingDataService>();
+            builder.RegisterType<EventDataService>().As<IEventDataService>();
+            builder.RegisterType<OrderDataService>().As<IOrderDataService>();
+            builder.RegisterType<ParkingCategoriesDataService>().As<IParkingCategoriesDataService>();
+            builder.RegisterType<ParkingDataService>().As<IParkingDataService>();
+            builder.RegisterType<ParkingTypeDataService>().As<IParkingTypeDataService>();
 
             //Services - Application
             builder.RegisterType<ApiService>().As<IApiService>();
