@@ -30,7 +30,24 @@ namespace NextPark.Mobile.Services
             }
             catch (Exception ex)
             {
-                throw new Exception(string.Format("Error getting parkings from server: {0}", ex.Message));
+                throw new Exception(string.Format("Error getting model from server: {0}", ex.Message));
+            }
+        }
+        public async Task<ParkingModel> Get(int id)
+        {
+            var isConneted = await _apiService.CheckConnection();
+            if (!isConneted.IsSuccess) throw new Exception("Internet correction error.");
+
+            try
+            {
+                var response = await _apiService.Get<ParkingModel>(ApiSettings.ParkingsEndPoint, id);
+
+                if (response.IsSuccess) return response.Result as ParkingModel;
+                else return new ParkingModel();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(string.Format("Error getting model from server: {0}", ex.Message));
             }
         }
 
@@ -48,7 +65,7 @@ namespace NextPark.Mobile.Services
             }
             catch (Exception ex)
             {
-                throw new Exception(string.Format("Error getting parkings from server: {0}", ex.Message));
+                throw new Exception(string.Format("Error setting model on server: {0}", ex.Message));
             }
         }
 
@@ -66,7 +83,25 @@ namespace NextPark.Mobile.Services
             }
             catch (Exception ex)
             {
-                throw new Exception(string.Format("Error getting parkings from server: {0}", ex.Message));
+                throw new Exception(string.Format("Error updating model on server: {0}", ex.Message));
+            }
+        }
+
+        public async Task<ParkingModel> Delete(int id)
+        {
+            var isConneted = await _apiService.CheckConnection();
+            if (!isConneted.IsSuccess) throw new Exception("Internet correction error.");
+
+            try
+            {
+                var response = await _apiService.Delete<ParkingModel>(ApiSettings.ParkingsEndPoint, id);
+
+                if (response.IsSuccess) return response.Result as ParkingModel;
+                else return new ParkingModel();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(string.Format("Error deleting parking from server: {0}", ex.Message));
             }
         }
 
