@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ContentView xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+             x:Class="NextPark.Mobile.Controls.UserProfileItem"
+             x:Name="this"
+             HorizontalOptions="FillAndExpand">
+    <ContentView.ControlTemplate>
+        <ControlTemplate>    
+            <RelativeLayout HorizontalOptions="FillAndExpand">
+                <StackLayout Padding="0" Margin="0" 
+                    RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}">
+
+                    <!-- External Frame container -->
+                    <Frame  x:Name="ItemFrame"
+                            Margin="0,-1,0,0"
+                            BorderColor="{TemplateBinding BorderColor}" 
+                            CornerRadius="9" 
+                            BackgroundColor="White" 
+                            HasShadow="false"
+                            Padding="6"
+                            HeightRequest="100"
+                            MinimumHeightRequest="100"
+                            IsClippedToBounds="true"
+                            HorizontalOptions="FillAndExpand">
+                        <Frame.GestureRecognizers>
+                            <TapGestureRecognizer Command="{TemplateBinding ClickAction}"/>                            
+                        </Frame.GestureRecognizers>
+                            
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="100" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="40" />
+                            </Grid.ColumnDefinitions>
+                            <!-- Right Chevron -->
+                            <Image Source="icons/chevron_right_128.png"
+                                   HeightRequest="40"
+                                   WidthRequest="26"
+                                   Aspect="Fill"
+                                   VerticalOptions="Center"
+                                   HorizontalOptions="Center"
+                                   Grid.Row="0" Grid.Column="1"/>
+                            <!-- Item content -->
+                            <StackLayout HorizontalOptions="CenterAndExpand"
+                                         VerticalOptions="Center"
+                                         Orientation="Vertical"
+                                         Spacing="2"
+                                         Grid.Row="0" Grid.Column="0">
+                                <Label x:Name="TitleLabel"
+                                           Text="{TemplateBinding Title}"
+                                           TextColor="Black"
+                                           FontSize="Medium"
+                                           FontAttributes="Bold"
+                                           HorizontalOptions="Start"
+                                           HorizontalTextAlignment="Start"
+                                           Margin="10,2,10,2"/>
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*"/>
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="80" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <Image Source="{TemplateBinding Icon}"
+                                           HorizontalOptions="Center"
+                                           VerticalOptions="Center"
+                                           HeightRequest="70"
+                                           WidthRequest="70"
+                                           Grid.Row="0" Grid.Column="0"/>
+                                    <StackLayout Spacing="0"
+                                           HorizontalOptions="StartAndExpand"
+                                           VerticalOptions="Center"
+                                           Grid.Row="0" Grid.Column="1">
+                                        
+                                        <!-- Item Info content -->
+                                        <ContentPresenter></ContentPresenter>
+                                    
+                                    </StackLayout>
+                                </Grid>
+                            </StackLayout>
+                        </Grid>               
+                    </Frame>
+                </StackLayout>
+            </RelativeLayout>
+        </ControlTemplate>
+    </ContentView.ControlTemplate>
+</ContentView>

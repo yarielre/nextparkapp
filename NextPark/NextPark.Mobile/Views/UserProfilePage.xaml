@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:NextPark.Mobile.Controls"             
+             BindingContext="{Binding Profile, Source={StaticResource Locator}}"
+             x:Class="NextPark.Mobile.Views.UserProfilePage">
+    <ContentPage.Content>
+        <ContentView>
+            <controls:BasePage x:Name="header"
+                               HeaderBackText="Indietro"
+                               IsHeaderBackVisible="true"
+                               HeaderBackAction="{Binding OnBackClick}"                               
+                               HeaderUserText="{Binding UserName}"
+                               HeaderUserAction="{Binding OnUserClick}"
+                               HeaderMoney="{Binding UserMoney}"
+                               HeaderMoneyAction="{Binding OnMoneyClick}">
+                
+                <StackLayout HorizontalOptions="FillAndExpand" Padding="10,0,10,0" Spacing="0">
+                    <controls:UserProfileItem Title="Dati utente"
+                                              BackgroundColor="White"
+                                              BorderColor="#8CC63F"
+                                              Icon="icons/user_icon_256.png"
+                                              x:Name="liUserData"
+                                              ClickAction="{Binding Path=OnUserDataAction}">
+                        <StackLayout Spacing="1" HorizontalOptions="StartAndExpand">
+                            <Label Text="{Binding UserName}"
+                               FontSize="Small"
+                               FontAttributes="Bold"/>
+                            <Label Text="Pippo Caputo"
+                                   FontSize="Small"
+                                   FontAttributes="None" />
+                            <Label Text="Via Strada 52, 6900 Lugano"
+                                   FontSize="Small"/>
+                            <Label Text="Targa TI 12345" 
+                                   FontSize="Small"/>
+                        </StackLayout>
+                    </controls:UserProfileItem>
+                    <controls:UserProfileItem Title="Il mio budget"
+                                              BackgroundColor="White"
+                                              BorderColor="#8CC63F"
+                                              Icon="icons/coins_256.png"
+                                              ClickAction="{Binding OnBudgetAction}"
+                                              x:Name="liUserBudget">
+                        <StackLayout Spacing="1" HorizontalOptions="StartAndExpand">
+                            <Label Text="Saldo attuale:"
+                               FontSize="Small"
+                               FontAttributes="None"/>
+                            <Label Text="2 CHF"
+                                   FontSize="Small"
+                                   FontAttributes="Bold" />
+                        </StackLayout>
+                    </controls:UserProfileItem>
+                    <controls:UserProfileItem Title="I miei parcheggi"
+                                              BackgroundColor="White"
+                                              BorderColor="#8CC63F"
+                                              Icon="icons/wrench2_256.png"
+                                              ClickAction="{Binding OnParkingsAction}"
+                                              x:Name="liUserParkings">
+                        <StackLayout Spacing="1" HorizontalOptions="StartAndExpand">
+                            <Label Text="Stato attuale:"
+                               FontSize="Small"
+                               FontAttributes="None"/>
+                            <Label Text="1/1 liberi"
+                                   FontSize="Small"
+                                   FontAttributes="Bold"
+                                   TextColor="#8CC63F"/>
+                            <Label Text="1/1 disponibili"
+                                   FontSize="Small"
+                                   FontAttributes="None"/>                            
+                        </StackLayout>
+                    </controls:UserProfileItem>
+                    <controls:UserProfileItem Title="Le mie prenotazioni"
+                                              BackgroundColor="White"
+                                              BorderColor="#8CC63F"
+                                              Icon="icons/bookings_256.png"
+                                              ClickAction="{Binding OnBookingsAction}"
+                                              x:Name="liUserBookings">
+                        <StackLayout Spacing="1" HorizontalOptions="StartAndExpand">
+                            <Label Text="Prossima prenotazione:"
+                               FontSize="Small"
+                               FontAttributes="None"/>
+                            <Label Text="nessuna prenotazione"
+                                   FontSize="Small"
+                                   FontAttributes="None" />
+                        </StackLayout>
+                    </controls:UserProfileItem>                     
+                </StackLayout>
+            </controls:BasePage>
+        </ContentView>
+    </ContentPage.Content>
+</ContentPage>

@@ -131,7 +131,8 @@ namespace NextPark.Mobile.Services
         {
 
             _mappings.Add(typeof(HomeViewModel), typeof(HomePage));
-           
+            _mappings.Add(typeof(UserProfileViewModel), typeof(UserProfilePage));
+
         }
     }
 }

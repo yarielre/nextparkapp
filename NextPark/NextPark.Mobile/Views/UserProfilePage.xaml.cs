@@ -1,22 +1,21 @@
-﻿using NextPark.Mobile.ViewModels;
-using System;
-using System.Windows.Input;
-using System.Collections.Generic;
+﻿using System;
+using NextPark.Mobile.ViewModels;
 
 using Xamarin.Forms;
 
 namespace NextPark.Mobile.Views
 {
-    public partial class HomePage : ContentPage
+    public partial class UserProfilePage : ContentPage
     {
-        public HomePage()
+        public UserProfilePage()
         {
             InitializeComponent();
             if (BindingContext == null) return;
             if (BindingContext is BaseViewModel bvm)
             {
-                bvm.InitializeAsync(MyMap);
+                bvm.InitializeAsync();
             }
+
         }
     }
 }

@@ -126,6 +126,14 @@
     <BundleResource Include="Resources\xamarin_logo%402x.png" />
     <BundleResource Include="Resources\xamarin_logo%403x.png" />
     <InterfaceDefinition Include="Resources\LaunchScreen.storyboard" />
+    <BundleResource Include="Resources\icons\back_blu_48.png" />
+    <BundleResource Include="Resources\icons\bookings_256.png" />
+    <BundleResource Include="Resources\icons\chevron_right_128.png" />
+    <BundleResource Include="Resources\icons\coins_48.png" />
+    <BundleResource Include="Resources\icons\coins_256.png" />
+    <BundleResource Include="Resources\icons\user_icon_256.png" />
+    <BundleResource Include="Resources\icons\wrench2_256.png" />
+    <BundleResource Include="Resources\icons\no_user_256.png" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -159,6 +167,12 @@
     <PackageReference Include="Xamarin.Forms.Maps">
       <Version>3.1.0.697729</Version>
     </PackageReference>
+    <PackageReference Include="Xamarin.Essentials">
+      <Version>1.0.0</Version>
+    </PackageReference>
+    <PackageReference Include="Xamarin.Forms.CarouselView">
+      <Version>2.3.0-pre2</Version>
+    </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NextPark.Mobile\NextPark.Mobile.csproj">
@@ -171,5 +185,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Resources\icons\" />
+    <Folder Include="Resources\images\" />
+  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
 </Project>

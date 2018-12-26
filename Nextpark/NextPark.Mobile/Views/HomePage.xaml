@@ -1,16 +1,60 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms" 
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
-              xmlns:customMap="clr-namespace:NextPark.Mobile.CustomControls;assembly=NextPark.Mobile"
-              BindingContext="{Binding Home, Source={StaticResource Locator}}"
+             xmlns:customMap="clr-namespace:NextPark.Mobile.CustomControls;assembly=NextPark.Mobile"
+             xmlns:controls="clr-namespace:NextPark.Mobile.Controls"             
+             BindingContext="{Binding Home, Source={StaticResource Locator}}"
              x:Class="NextPark.Mobile.Views.HomePage">
     <ContentPage.Content>
-        <StackLayout>
-            <customMap:CustomMap
-                      x:Name="MyMap"
-                      IsShowingUser="true"
-                      MapType="Street"
-            />
-        </StackLayout>
+        <controls:BasePage x:Name="header"
+                           HeaderBackText=""
+                           IsHeaderBackVisible="false"
+                           HeaderUserText="{Binding UserName}"
+                           HeaderUserAction="{Binding OnUserClick}"
+                           HeaderMoney="{Binding UserMoney}"
+                           HeaderMoneyAction="{Binding OnMoneyClick}">
+            <RelativeLayout>
+                <!-- Map -->
+                <StackLayout VerticalOptions="FillAndExpand"
+                             HorizontalOptions="FillAndExpand"
+                             Padding="0"
+                             Margin="0"
+                             RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}"
+                             RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=1}">
+                    <!-- Custom Map -->
+                    <customMap:CustomMap x:Name="MyMap"
+                                         IsShowingUser="true"
+                                         MapType="Street"
+                    />
+                </StackLayout>
+                <!-- Search Entry -->
+                <StackLayout Margin="0" Padding="0"
+                           RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=0, Constant=10}"
+                           RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}"
+                           HorizontalOptions="Center">
+                                 
+                    <Frame BackgroundColor="White"
+                           BorderColor="Gray"
+                           Opacity="0.9"
+                           IsClippedToBounds="true"
+                           HasShadow="false"
+                           Margin="20,0,20,0"
+                           Padding="0"
+                           RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.5}"
+                           HorizontalOptions="Center"
+                           CornerRadius="8"
+                           >
+                        <SearchBar BackgroundColor="White"
+                                   Placeholder="Cerca indirizzo"
+                                   SearchCommand="OnSearch"
+                                   Opacity="0.9"
+                                   HorizontalOptions="Center"
+                                   Margin="0"
+                                   FontSize="Small"
+                                   HeightRequest="40"/>
+                    </Frame>
+                </StackLayout>            
+            </RelativeLayout>
+        </controls:BasePage>
     </ContentPage.Content>
 </ContentPage>

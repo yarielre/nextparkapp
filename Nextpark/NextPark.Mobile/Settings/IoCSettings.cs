@@ -15,12 +15,12 @@ namespace NextPark.Mobile.Infrastructure
             var builder = new ContainerBuilder();
             
             //Services - Data
-            builder.RegisterType<ParkingDataService>().As<IParkingDataService>();
-            builder.RegisterType<EventDataService>().As<IEventDataService>();
-            builder.RegisterType<OrderDataService>().As<IOrderDataService>();
-            builder.RegisterType<ParkingCategoriesDataService>().As<IParkingCategoriesDataService>();
-            builder.RegisterType<ParkingDataService>().As<IParkingDataService>();
-            builder.RegisterType<ParkingTypeDataService>().As<IParkingTypeDataService>();
+            //builder.RegisterType<ParkingDataService>().As<IParkingDataService>();
+            //builder.RegisterType<EventDataService>().As<IEventDataService>();
+            //builder.RegisterType<OrderDataService>().As<IOrderDataService>();
+            //builder.RegisterType<ParkingCategoriesDataService>().As<IParkingCategoriesDataService>();
+            //builder.RegisterType<ParkingDataService>().As<IParkingDataService>();
+            //builder.RegisterType<ParkingTypeDataService>().As<IParkingTypeDataService>();
 
             //Services - Application
             builder.RegisterType<ApiService>().As<IApiService>();
@@ -35,6 +35,7 @@ namespace NextPark.Mobile.Infrastructure
             builder.RegisterType<LocatorViewModel>();
             builder.RegisterType<StartUpViewModel>();
             builder.RegisterType<HomeViewModel>();
+            builder.RegisterType<UserProfileViewModel>();
 
             _container = builder.Build();
         }

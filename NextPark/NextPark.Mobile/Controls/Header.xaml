@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TemplatedView xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+             x:Class="NextPark.Mobile.Controls.Header"
+             x:Name="this">
+    <TemplatedView.Resources>
+        <ResourceDictionary>
+        </ResourceDictionary>
+    </TemplatedView.Resources>
+    <TemplatedView.ControlTemplate>
+        <ControlTemplate>
+            <!-- Header Table -->
+            <Grid Grid.Row="0" Grid.Column="0" Padding="0">                
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>            
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+               
+                <!-- Back -->
+                <StackLayout VerticalOptions="Center" 
+                             Orientation="Horizontal" 
+                             Spacing="1" 
+                             Margin="1" Padding="0"
+                             IsVisible="{TemplateBinding BackVisible}"
+                             Grid.Row="0" Grid.Column="0">
+                    <Image Source="icons/back_blu_48.png" HeightRequest="24" >
+                        <Image.GestureRecognizers>
+                            <TapGestureRecognizer Command="{TemplateBinding BackAction}"/>                            
+                        </Image.GestureRecognizers>                       
+                    </Image>
+                    <Label Margin="0" VerticalOptions="Center" Text="{TemplateBinding BackText}" TextColor="#007aff" FontSize="Medium" HorizontalTextAlignment="Start">
+                        <Label.GestureRecognizers>
+                            <TapGestureRecognizer Command="{TemplateBinding BackAction}"/>                            
+                        </Label.GestureRecognizers>
+                    </Label>
+                </StackLayout>
+                
+                <!-- User -->
+                <StackLayout Margin="1" Padding="0" Spacing="0" Orientation="Vertical" Grid.Row="0" Grid.Column="1">
+                    <Frame HeightRequest="28"
+                           WidthRequest="28"
+                           CornerRadius="14"
+                           BorderColor="Gray"
+                           HasShadow="false"
+                           Padding="0"
+                           Margin="0"
+                           IsClippedToBounds="true"
+                           VerticalOptions="Center"
+                           HorizontalOptions="Center"
+                           BackgroundColor="Transparent"
+                           Grid.Row="0" Grid.Column="1">
+                        <Image Aspect="AspectFill" HeightRequest="24" WidthRequest="24" Source="icons/no_user_256.png"/>
+                        <Frame.GestureRecognizers>
+                            <TapGestureRecognizer Command="{TemplateBinding UserAction}"/>                            
+                        </Frame.GestureRecognizers>
+                    </Frame>
+                    <Label Margin="0" 
+                           TextColor="Gray" 
+                           Text="{TemplateBinding UserText}" 
+                           HorizontalTextAlignment="Center"
+                           FontSize="Micro">
+                        <Label.GestureRecognizers>
+                            <TapGestureRecognizer Command="{TemplateBinding UserAction}"/>                            
+                        </Label.GestureRecognizers>
+                    </Label>
+                </StackLayout>
+        
+                <!-- Money -->
+                <StackLayout HorizontalOptions="End" VerticalOptions="Center" Orientation="Horizontal" Spacing="1" Margin="1,1,10,1" Padding="0" Grid.Row="0" Grid.Column="2">
+                    <Label Margin="8" VerticalOptions="Center" Text="{TemplateBinding Money}" TextColor="Black" FontSize="Medium" HorizontalTextAlignment="End">
+                        <Label.GestureRecognizers>
+                            <TapGestureRecognizer Command="{TemplateBinding MoneyAction}"/>                            
+                        </Label.GestureRecognizers>
+                    </Label>
+                    <Image Source="icons/coins_48.png" HeightRequest="24">
+                        <Image.GestureRecognizers>
+                            <TapGestureRecognizer Command="{TemplateBinding MoneyAction}"/>                            
+                        </Image.GestureRecognizers>
+                     </Image>
+                </StackLayout>
+            
+            </Grid>
+        </ControlTemplate>
+    </TemplatedView.ControlTemplate>
+</TemplatedView>
+

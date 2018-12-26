@@ -1,8 +1,10 @@
 ﻿using NextPark.Mobile.Extensions;
 using NextPark.Mobile.Services;
-using System;
+using System.Windows.Input;
 using System.Threading.Tasks;
 using Xamarin.Forms.Maps;
+using Xamarin.Forms;
+using System;
 
 namespace NextPark.Mobile.ViewModels
 {
@@ -18,6 +20,13 @@ namespace NextPark.Mobile.ViewModels
         {
             _geoLocatorService = geolocatorService;
             _dialogService = dialogService;
+
+            OnUserClick = new Command<object>(OnUserClickMethod);
+            OnMoneyClick = new Command<object>(OnMoneyClickMethod);
+
+            UserName = "Accedi";
+            UserMoney = "0";
+
         }
 
         public override Task InitializeAsync(object data = null)
@@ -33,6 +42,13 @@ namespace NextPark.Mobile.ViewModels
                 Map.Tapped += Map_Tapped;
                 Map.PinTapped += Map_PinTapped;
             }
+
+            UserName = "Jonny";
+            UserMoney = "8";
+            base.OnPropertyChanged("UserName");
+            base.OnPropertyChanged("UserMoney");
+
+            //base.OnPropertyChanged("UserMoney");
 
             return Task.FromResult(false);
         }
@@ -72,6 +88,22 @@ namespace NextPark.Mobile.ViewModels
             }
 
             Map.MoveToRegion(MapSpan.FromCenterAndRadius(position, Distance.FromKilometers(1)));
+        }
+
+        // User Text and Click action
+        public string UserName { get; set; }
+        public ICommand OnUserClick { get; set; }
+        public void OnUserClickMethod(object sender)
+        {
+            NavigationService.NavigateToAsync<UserProfileViewModel>();
+        }
+
+        // Money Text and Click action
+        public string UserMoney { get; set; }
+        public ICommand OnMoneyClick { get; set; }
+        public void OnMoneyClickMethod(object sender)
+        {
+            _dialogService.ShowAlert("Alert", "Money");
         }
     }
 }
