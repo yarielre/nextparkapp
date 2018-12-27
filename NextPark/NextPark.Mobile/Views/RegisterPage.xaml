@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:NextPark.Mobile.Controls"
+             BindingContext="{Binding Register, Source={StaticResource Locator}}"             
+             x:Class="NextPark.Mobile.Views.RegisterPage">
+    <ContentPage.Content>
+        <ContentView>
+            <controls:DetailPage x:Name="header"
+                                HeaderBackText="{Binding BackText}"
+                                IsHeaderBackVisible="true"
+                                HeaderBackAction="{Binding OnBackClick}"                               
+                                HeaderUserText="{Binding UserName}"
+                                HeaderUserAction="{Binding OnUserClick}"
+                                HeaderMoney="{Binding UserMoney}"
+                                HeaderMoneyAction="{Binding OnMoneyClick}">
+                <StackLayout x:Name="UserDataContent"
+                             Spacing="5"
+                             Orientation="Vertical" 
+                             VerticalOptions="FillAndExpand">
+                    <Label Text="I miei dati personali" 
+                           FontFamily="Thaoma Bold" 
+                           FontSize="Large" 
+                           FontAttributes="Bold" 
+                           TextColor="#333333"
+                           Margin="0,0,0,10"/>
+                    <Frame HeightRequest="80"
+                           MinimumHeightRequest="80"
+                           CornerRadius="40"
+                           BorderColor="Gray"
+                           Margin="0"
+                           Padding="0"
+                           BackgroundColor="Transparent"
+                           HorizontalOptions="Center"
+                           IsClippedToBounds="true"
+                           HasShadow="false">
+                        <Image Source="icons/no_user_256.png"
+                               Aspect="AspectFill" />
+                    </Frame>
+                    <Entry Margin="0,5,0,0" Placeholder="Nome utente" Text="{Binding RegisterName}" FontSize="Small"/>
+                    <Entry Margin="0" Placeholder="Password" Text="{Binding Password}" FontSize="Small"/>
+                    <Entry Margin="0" Placeholder="Conferma Password" Text="{Binding PasswordConfirm}" FontSize="Small"/>
+                    <Entry Margin="0" Placeholder="Nome" Text="{Binding Name}" FontSize="Small"/>
+                    <Entry Margin="0" Placeholder="Cognome" Text="{Binding Surname}" FontSize="Small"/>
+                    <Entry Margin="0" Placeholder="Via, N°" Text="{Binding Address}" FontSize="Small"/>
+                    <Grid Margin="0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="2*"/>
+                        </Grid.ColumnDefinitions>
+                        <Entry Grid.Row="0" Grid.Column="0" Placeholder="NPA" Text="{Binding NPA}" FontSize="Small"/>
+                        <Entry Grid.Row="0" Grid.Column="1" Placeholder="Paese" Text="{Binding City}" FontSize="Small"/>
+                    </Grid>
+                    <Entry Margin="0,0,0,5" Placeholder="Targa" Text="{Binding Plate}" FontSize="Small"/>
+
+                    <ActivityIndicator
+                        x:Name="activityContent"
+                        IsRunning="{Binding IsRunning, Mode=TwoWay}"                    
+                        VerticalOptions="Center">
+                    </ActivityIndicator>
+                    <Button Text="Registrati"
+                            FontAttributes="Bold"
+                            VerticalOptions="CenterAndExpand"
+                            HorizontalOptions="Center"
+                            Command="{Binding OnRegisterClick}"
+                            TextColor="White"
+                            FontFamily="Roboto-Bold.ttf"
+                            BorderRadius="8"
+                            BackgroundColor="#8CC63F"
+                            WidthRequest="191"
+                            Margin="0,5,0,5"/>                            
+                </StackLayout>
+            </controls:DetailPage>
+        </ContentView>
+    </ContentPage.Content>
+</ContentPage>
+
+

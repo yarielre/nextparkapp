@@ -1,13 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
 using NextPark.Mobile.ViewModels;
 
 using Xamarin.Forms;
 
 namespace NextPark.Mobile.Views
 {
-    public partial class UserProfilePage : ContentPage
+    public partial class UserDataPage : ContentPage
     {
-        public UserProfilePage()
+        public UserDataPage()
         {
             InitializeComponent();
             if (BindingContext == null) return;

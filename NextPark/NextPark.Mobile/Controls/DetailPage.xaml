@@ -48,7 +48,7 @@
                                        RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width}"
                                        RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=0.5}">
                                 <Image  Aspect="AspectFill"
-                                        Source="bg_nextpark"
+                                        Source="images/bg_nextpark.png" 
                                         RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width}"
                                         RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=0.5}"/>
                                 </Frame>

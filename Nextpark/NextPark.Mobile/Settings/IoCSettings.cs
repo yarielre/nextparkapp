@@ -35,6 +35,8 @@ namespace NextPark.Mobile.Infrastructure
             builder.RegisterType<LocatorViewModel>();
             builder.RegisterType<StartUpViewModel>();
             builder.RegisterType<HomeViewModel>();
+            builder.RegisterType<RegisterViewModel>();
+            builder.RegisterType<UserDataViewModel>();
             builder.RegisterType<UserProfileViewModel>();
 
             _container = builder.Build();

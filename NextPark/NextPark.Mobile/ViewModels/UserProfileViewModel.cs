@@ -45,7 +45,7 @@ namespace NextPark.Mobile.ViewModels
         public override Task InitializeAsync(object data = null)
         {
             /*
-            if (data == null)
+            if (data != null)
             {
                 return Task.FromResult(false);
             }
@@ -109,7 +109,7 @@ namespace NextPark.Mobile.ViewModels
         public ICommand OnUserDataAction { get; set; }
         public void OnUserDataClickMethod(object sender)
         {
-            _dialogService.ShowAlert("Alert", "UserData");
+            NavigationService.NavigateToAsync<UserDataViewModel>();
         }
 
         // Budget Click action
