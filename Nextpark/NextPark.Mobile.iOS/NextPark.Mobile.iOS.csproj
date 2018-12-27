@@ -136,6 +136,7 @@
     <BundleResource Include="Resources\icons\no_user_256.png" />
     <BundleResource Include="Resources\images\bg_nextpark.png" />
     <BundleResource Include="Resources\images\Parking1Pict.png" />
+    <BundleResource Include="Resources\icons\savings_256.png" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

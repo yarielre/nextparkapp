@@ -102,7 +102,7 @@ namespace NextPark.Mobile.ViewModels
         public ICommand OnMoneyClick { get; set; }
         public void OnMoneyClickMethod(object sender)
         {
-            _dialogService.ShowAlert("Alert", "Money");
+            NavigationService.NavigateToAsync<MoneyViewModel>();
         }
 
         // User Data Click action
@@ -116,7 +116,7 @@ namespace NextPark.Mobile.ViewModels
         public ICommand OnBudgetAction { get; set; }
         public void OnBudgetClickMethod(object sender)
         {
-            _dialogService.ShowAlert("Alert", "Budget");
+            NavigationService.NavigateToAsync<MoneyViewModel>();
         }
 
         // Parkings Click action

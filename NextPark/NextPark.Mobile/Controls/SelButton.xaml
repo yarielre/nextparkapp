@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ContentView xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+             x:Class="NextPark.Mobile.Controls.SelButton"
+             x:Name="this">
+    <ContentView.ControlTemplate>
+        <ControlTemplate>    
+        <Frame  x:Name="ButtonFrame"
+                Margin="0"
+                BorderColor="{TemplateBinding BtnBorderColor}" 
+                CornerRadius="9" 
+                BackgroundColor="{TemplateBinding BtnBackgroundColor}" 
+                HasShadow="false"
+                Padding="0"
+                HeightRequest="65"
+                WidthRequest="65"
+                MinimumWidthRequest="65"
+                MinimumHeightRequest="65">
+            <Frame.GestureRecognizers>
+                <TapGestureRecognizer Command="{TemplateBinding TapAction}"
+                                      CommandParameter="{TemplateBinding Info}"/>                            
+            </Frame.GestureRecognizers>
+            <StackLayout HorizontalOptions="CenterAndExpand"
+                         VerticalOptions="Center"
+                         Orientation="Vertical"
+                         Spacing="2">
+                <Label x:Name="InfoLabel"
+                       Text="{TemplateBinding Info}" 
+                       TextColor="{TemplateBinding BtnTextColor}"
+                       FontSize="Medium"
+                       FontAttributes="Bold"
+                       HorizontalOptions="Center"
+                       HorizontalTextAlignment="Center"
+                       Margin="0"
+                       />
+                <Label x:Name="SubInfoLabel"
+                       Text="{TemplateBinding SubInfo}" 
+                       TextColor="{TemplateBinding BtnTextColor}"
+                       FontSize="Small"
+                       FontAttributes="None"
+                       HorizontalOptions="Center"
+                       HorizontalTextAlignment="Center"
+                       Margin="0"
+                       />
+            </StackLayout>
+        </Frame>
+        </ControlTemplate>
+    </ContentView.ControlTemplate>
+</ContentView>

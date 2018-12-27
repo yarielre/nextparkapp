@@ -103,7 +103,7 @@ namespace NextPark.Mobile.ViewModels
         public ICommand OnMoneyClick { get; set; }
         public void OnMoneyClickMethod(object sender)
         {
-            _dialogService.ShowAlert("Alert", "Money");
+            NavigationService.NavigateToAsync<MoneyViewModel>();
         }
     }
 }

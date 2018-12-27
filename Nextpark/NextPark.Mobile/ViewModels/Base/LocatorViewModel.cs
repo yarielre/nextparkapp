@@ -7,6 +7,7 @@ namespace NextPark.Mobile.Infrastructure
     public class LocatorViewModel
     {
         public StartUpViewModel StartUp => IoCSettings.Resolve<StartUpViewModel>();
+        public MoneyViewModel Budget { get { return (MoneyViewModel)IoCSettings.Resolve<MoneyViewModel>(); } }
         public RegisterViewModel Register { get { return (RegisterViewModel)IoCSettings.Resolve<RegisterViewModel>(); } }
         public UserDataViewModel UserData { get { return (UserDataViewModel)IoCSettings.Resolve<UserDataViewModel>(); } }
         public UserProfileViewModel Profile { get { return (UserProfileViewModel)IoCSettings.Resolve<UserProfileViewModel>(); } }

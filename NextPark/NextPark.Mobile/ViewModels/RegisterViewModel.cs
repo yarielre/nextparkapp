@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Windows.Input;
-using NextPark.Mobile.Extensions;
 using NextPark.Mobile.Services;
 using System.Threading.Tasks;
 using Xamarin.Forms;
