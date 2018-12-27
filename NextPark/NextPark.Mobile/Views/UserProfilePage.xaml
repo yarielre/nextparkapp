@@ -26,12 +26,12 @@
                             <Label Text="{Binding UserName}"
                                FontSize="Small"
                                FontAttributes="Bold"/>
-                            <Label Text="Pippo Caputo"
+                            <Label Text="{Binding FullName}"
                                    FontSize="Small"
                                    FontAttributes="None" />
-                            <Label Text="Via Strada 52, 6900 Lugano"
+                            <Label Text="{Binding Address}"
                                    FontSize="Small"/>
-                            <Label Text="Targa TI 12345" 
+                            <Label Text="{Binding FullPlate}" 
                                    FontSize="Small"/>
                         </StackLayout>
                     </controls:UserProfileItem>
@@ -45,7 +45,7 @@
                             <Label Text="Saldo attuale:"
                                FontSize="Small"
                                FontAttributes="None"/>
-                            <Label Text="2 CHF"
+                            <Label Text="{Binding FullMoney}"
                                    FontSize="Small"
                                    FontAttributes="Bold" />
                         </StackLayout>
@@ -60,11 +60,11 @@
                             <Label Text="Stato attuale:"
                                FontSize="Small"
                                FontAttributes="None"/>
-                            <Label Text="1/1 liberi"
+                            <Label Text="{Binding ParkingsStatus}"
                                    FontSize="Small"
                                    FontAttributes="Bold"
                                    TextColor="#8CC63F"/>
-                            <Label Text="1/1 disponibili"
+                            <Label Text="{Binding ParkingsAvailability}"
                                    FontSize="Small"
                                    FontAttributes="None"/>                            
                         </StackLayout>
@@ -79,7 +79,7 @@
                             <Label Text="Prossima prenotazione:"
                                FontSize="Small"
                                FontAttributes="None"/>
-                            <Label Text="nessuna prenotazione"
+                            <Label Text="{Binding NextBooking}"
                                    FontSize="Small"
                                    FontAttributes="None" />
                         </StackLayout>

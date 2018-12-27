@@ -11,6 +11,13 @@ namespace NextPark.Mobile.ViewModels
     public class UserProfileViewModel : BaseViewModel
     {
         private readonly IDialogService _dialogService;
+        public string FullName { get; set; }
+        public string Address { get; set; }
+        public string FullPlate { get; set; }
+        public string FullMoney { get; set; }
+        public string ParkingsStatus { get; set; }
+        public string ParkingsAvailability { get; set; }
+        public string NextBooking { get; set; }
 
         public UserProfileViewModel(IDialogService dialogService,
                                     IApiService apiService, 
@@ -43,10 +50,35 @@ namespace NextPark.Mobile.ViewModels
                 return Task.FromResult(false);
             }
             */
+
+            // Header
             UserName = "Jonny";
             UserMoney = "8";
             base.OnPropertyChanged("UserName");
             base.OnPropertyChanged("UserMoney");
+
+            // User Data
+            // UserName
+            FullName = "Mario Rossi";
+            Address = "Via Strada 1, 6900 Lugano";
+            FullPlate = "Targa TI 123456";
+            base.OnPropertyChanged("FullName");
+            base.OnPropertyChanged("Address");
+            base.OnPropertyChanged("FullPlate");
+
+            // Budget
+            FullMoney = UserMoney + " CHF";
+            base.OnPropertyChanged("FullMoney");
+
+            // Parkings
+            ParkingsStatus = "1/1 liberi";
+            ParkingsAvailability = "1/1 disponibili";
+            base.OnPropertyChanged("ParkingsStatus");
+            base.OnPropertyChanged("ParkingsAvailability");
+
+            // Bookings
+            NextBooking = "nessuna prenotazione";
+            base.OnPropertyChanged("NextBooking");
 
             return Task.FromResult(false);
         }
