@@ -8,17 +8,32 @@ namespace NextPark.Mobile.ViewModels
 {
 	public class MoneyViewModel : BaseViewModel
     {
+        // PROPERTIES
+        public string BackText { get; set; }        // Header back text
+        public ICommand OnBackClick { get; set; }   // Header back action
+        public string UserName { get; set; }        // Header user text
+        public ICommand OnUserClick { get; set; }   // Header user action
+        public string UserMoney { get; set; }       // Header user money value
+        public ICommand OnMoneyClick { get; set; }  // Header user money action
+
+        public string Earn { get; set; }                // User Earn value
+        public Boolean Btn05IsSelected { get; set; }    //  5 CHF button selected
+        public Boolean Btn10IsSelected { get; set; }    // 10 CHF button selected
+        public Boolean Btn15IsSelected { get; set; }    // 15 CHF button selected
+        public Boolean Btn30IsSelected { get; set; }    // 30 CHF button selected
+        public ICommand OnButtonTapped { get; set; }    // Selection button tapped
+
+        public bool IsRunning { get; set; }         // Activity spinner
+        public ICommand OnBuyClick { get; set; }    // Buy button action
+
+        // SERVICES
         private readonly IDialogService _dialogService;
 
-        public string Earn { get; set; }
-        public Boolean Btn05IsSelected { get; set; }
-        public Boolean Btn10IsSelected { get; set; }
-        public Boolean Btn15IsSelected { get; set; }
-        public Boolean Btn30IsSelected { get; set; }
-
+        // PRIVATE VARIABLES
         private static bool activity = false;
         protected static UInt16 selectedValue;
 
+        // METHODS
         public MoneyViewModel(IDialogService dialogService,
                               IApiService apiService,
                               IAuthService authService,
@@ -37,6 +52,7 @@ namespace NextPark.Mobile.ViewModels
             OnBuyClick = new Command<object>(OnBuyClickMethod);
         }
 
+        // Initialization
         public override Task InitializeAsync(object data = null)
         {
             /*
@@ -76,32 +92,25 @@ namespace NextPark.Mobile.ViewModels
         }
 
         // Back Click Action
-        public string BackText { get; set; }
-        public ICommand OnBackClick { get; set; }
         public void OnBackClickMethod(object sender)
         {
             // TODO: evaluate back action (profile or previous view?) 
             NavigationService.NavigateToAsync<UserProfileViewModel>();
         }
 
-        // User Text and Click action
-        public string UserName { get; set; }
-        public ICommand OnUserClick { get; set; }
+        // User Click action
         public void OnUserClickMethod(object sender)
         {
             NavigationService.NavigateToAsync<UserProfileViewModel>();
         }
 
-        // Money Text and Click action
-        public string UserMoney { get; set; }
-        public ICommand OnMoneyClick { get; set; }
+        // Money Click action
         public void OnMoneyClickMethod(object sender)
         {
             // Already in MoneyPage
         }
 
-        // On Button Tapped
-        public ICommand OnButtonTapped { get; set; }
+        // Selection Button Tapped action
         public void OnButtonTappedMethod(string info)
         {
             // Deselect all selection buttons
@@ -128,9 +137,7 @@ namespace NextPark.Mobile.ViewModels
             base.OnPropertyChanged("Btn30IsSelected");
         }
     
-        // On Buy Money
-        public bool IsRunning { get; set; }
-        public ICommand OnBuyClick { get; set; }
+        // Buy Money button click action
         public void OnBuyClickMethod(object sender)
         {
             // TODO: fill data according to buy credit data model

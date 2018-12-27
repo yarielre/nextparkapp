@@ -9,19 +9,34 @@ namespace NextPark.Mobile.ViewModels
 {
     public class UserDataViewModel : BaseViewModel
     {
-        private readonly IDialogService _dialogService;
-        //public string UserName { get; set; } // Already declared for header
-        public string Password { get; set; }
-        public string PasswordConfirm { get; set; }
-        public string Name { get; set; }
-        public string Surname { get; set; }
-        public string Address { get; set; }
-        public string NPA { get; set; }
-        public string City { get; set; }
-        public string Plate { get; set; }
+        // PROPERTIES
+        public string BackText { get; set; }        // Header back text
+        public ICommand OnBackClick { get; set; }   // Header back action
+        public string UserName { get; set; }        // Header user text
+        public ICommand OnUserClick { get; set; }   // Header user action
+        public string UserMoney { get; set; }       // Header money value
+        public ICommand OnMoneyClick { get; set; }  // Header money action
 
+        //public string UserName { get; set; }      // Already declared for header
+        public string Password { get; set; }        // Password text
+        public string PasswordConfirm { get; set; } // Password confirm text
+        public string Name { get; set; }            // Name
+        public string Surname { get; set; }         // Surname
+        public string Address { get; set; }         // Address
+        public string NPA { get; set; }             // NPA
+        public string City { get; set; }            // City/Country
+        public string Plate { get; set; }           // Plate
+
+        public bool IsRunning { get; set; }         // Activity spinner
+        public ICommand OnSaveClick { get; set; }   // Save button click action
+
+        // SERVICES
+        private readonly IDialogService _dialogService;
+
+        // PRIVATE VARIABLES
         private static bool activity = false;
 
+        // METHODS
         public UserDataViewModel(IDialogService dialogService,
                                  IApiService apiService,
                                  IAuthService authService,
@@ -37,6 +52,7 @@ namespace NextPark.Mobile.ViewModels
             OnSaveClick = new Command<object>(OnSaveClickMethod);
         }
 
+        // Initialization
         public override Task InitializeAsync(object data = null)
         {
             /*
@@ -69,31 +85,24 @@ namespace NextPark.Mobile.ViewModels
         }
 
         // Back Click Action
-        public string BackText { get; set; }
-        public ICommand OnBackClick { get; set; }
         public void OnBackClickMethod(object sender)
         {
             NavigationService.NavigateToAsync<UserProfileViewModel>();
         }
 
-        // User Text and Click action
-        public string UserName { get; set; }
-        public ICommand OnUserClick { get; set; }
+        // User Click action
         public void OnUserClickMethod(object sender)
         {
             NavigationService.NavigateToAsync<UserProfileViewModel>();
         }
 
         // Money Text and Click action
-        public string UserMoney { get; set; }
-        public ICommand OnMoneyClick { get; set; }
         public void OnMoneyClickMethod(object sender)
         {
             NavigationService.NavigateToAsync<MoneyViewModel>();
         }
 
-        public bool IsRunning { get; set; }
-        public ICommand OnSaveClick { get; set; }
+        // Save button click action
         public void OnSaveClickMethod(object sender)
         {
             _dialogService.ShowAlert("Alert", "Save");

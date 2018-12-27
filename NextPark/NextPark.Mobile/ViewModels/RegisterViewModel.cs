@@ -8,17 +8,30 @@ namespace NextPark.Mobile.ViewModels
 {
     public class RegisterViewModel : BaseViewModel
     {
-        private readonly IDialogService _dialogService;
-        public string RegisterName { get; set; } // Already used in header
-        public string Password { get; set; }
-        public string PasswordConfirm { get; set; }
-        public string Name { get; set; }
-        public string Surname { get; set; }
-        public string Address { get; set; }
-        public string NPA { get; set; }
-        public string City { get; set; }
-        public string Plate { get; set; }
+        // PROPERTIES
+        public string BackText { get; set; }        // Header back text
+        public ICommand OnBackClick { get; set; }   // Header back action
+        public string UserName { get; set; }        // Header username
+        public ICommand OnUserClick { get; set; }   // Header user action
+        public string UserMoney { get; set; }       // Header money value
+        public ICommand OnMoneyClick { get; set; }  // Header money action
 
+        public string RegisterName { get; set; }    // Username text
+        public string Password { get; set; }        // Password text
+        public string PasswordConfirm { get; set; } // Password confirm text
+        public string Name { get; set; }            // Name
+        public string Surname { get; set; }         // Surname
+        public string Address { get; set; }         // Address
+        public string NPA { get; set; }             // NPA
+        public string City { get; set; }            // City/Country
+        public string Plate { get; set; }           // Plate
+
+        public ICommand OnRegisterClick { get; set; }   // Register button action
+
+        // SERVICES
+        private readonly IDialogService _dialogService;
+
+        // METHODS
         public RegisterViewModel(IDialogService dialogService,
                                  IApiService apiService,
                                  IAuthService authService,
@@ -34,6 +47,7 @@ namespace NextPark.Mobile.ViewModels
             OnRegisterClick = new Command<object>(OnRegisterClickMethod);
         }
 
+        // Initialization
         public override Task InitializeAsync(object data = null)
         {
             /*
@@ -54,34 +68,27 @@ namespace NextPark.Mobile.ViewModels
             return Task.FromResult(false);
         }
 
-        // Back Click Action
-        public string BackText { get; set; }
-        public ICommand OnBackClick { get; set; }
+        // Back Click action
         public void OnBackClickMethod(object sender)
         {
             // TODO: go back to previus view
         }
 
-        // User Text and Click action
-        public string UserName { get; set; }
-        public ICommand OnUserClick { get; set; }
+        // User Click action
         public void OnUserClickMethod(object sender)
         {
             // TODO: evaluate action (try to go to profile, do nothing?)
             //NavigationService.NavigateToAsync<UserProfileViewModel>();
         }
 
-        // Money Text and Click action
-        public string UserMoney { get; set; }
-        public ICommand OnMoneyClick { get; set; }
+        // Money Click action
         public void OnMoneyClickMethod(object sender)
         {
             // TODO: evaluate action (try to go to money page, do nothing?)
             //NavigationService.NavigateToAsync<UserProfileViewModel>();
         }
 
-        // On Register
-        public ICommand OnRegisterClick { get; set; }
+        // Register button action
         public void OnRegisterClickMethod(object sender)
         {
             // TODO: fill user data according to register data model

@@ -10,15 +10,32 @@ namespace NextPark.Mobile.ViewModels
 {
     public class UserProfileViewModel : BaseViewModel
     {
-        private readonly IDialogService _dialogService;
-        public string FullName { get; set; }
-        public string Address { get; set; }
-        public string FullPlate { get; set; }
-        public string FullMoney { get; set; }
-        public string ParkingsStatus { get; set; }
-        public string ParkingsAvailability { get; set; }
-        public string NextBooking { get; set; }
+        // PROPERTIES
+        public ICommand OnBackClick { get; set; }   // Header back action
+        public string UserName { get; set; }        // Header user text
+        public ICommand OnUserClick { get; set; }   // Header user action
+        public string UserMoney { get; set; }       // Header money value
+        public ICommand OnMoneyClick { get; set; }  // Header money action
+        // User data
+        public string FullName { get; set; }            // Name and Surname
+        public string Address { get; set; }             // Address, NPA and City
+        public string FullPlate { get; set; }           // Plate: plate
+        public ICommand OnUserDataAction { get; set; }  // User data selection action
+        // User budget
+        public string FullMoney { get; set; }           // Money value + currency
+        public ICommand OnBudgetAction { get; set; }    // User budget selection action
+        // User parkings
+        public string ParkingsStatus { get; set; }          // Free parkings / Tot. parkings + free
+        public string ParkingsAvailability { get; set; }    // Available parkings / Tot. parkings + available
+        public ICommand OnParkingsAction { get; set; }      // Parkings selection action
+        // User bookings
+        public string NextBooking { get; set; }         // Next booking descriprion, or no bookings
+        public ICommand OnBookingsAction { get; set; }  // Bookings selection action
 
+        // SERVICES
+        private readonly IDialogService _dialogService;
+
+        // METHODS
         public UserProfileViewModel(IDialogService dialogService,
                                     IApiService apiService, 
                                     IAuthService authService, 
@@ -42,6 +59,7 @@ namespace NextPark.Mobile.ViewModels
 
         }
 
+        // Initialization
         public override Task InitializeAsync(object data = null)
         {
             /*
@@ -84,50 +102,41 @@ namespace NextPark.Mobile.ViewModels
         }
 
         // Back Click Action
-        public ICommand OnBackClick { get; set; }
         public void OnBackClickMethod(object sender)
         {
             NavigationService.NavigateToAsync<HomeViewModel>();
         }
 
-        // User Text and Click action
-        public string UserName { get; set; }
-        public ICommand OnUserClick { get; set; }
+        // User Click action
         public void OnUserClickMethod(object sender)
         {
         }
 
-        // Money Text and Click action
-        public string UserMoney { get; set; }
-        public ICommand OnMoneyClick { get; set; }
+        // Money Click action
         public void OnMoneyClickMethod(object sender)
         {
             NavigationService.NavigateToAsync<MoneyViewModel>();
         }
 
         // User Data Click action
-        public ICommand OnUserDataAction { get; set; }
         public void OnUserDataClickMethod(object sender)
         {
             NavigationService.NavigateToAsync<UserDataViewModel>();
         }
 
         // Budget Click action
-        public ICommand OnBudgetAction { get; set; }
         public void OnBudgetClickMethod(object sender)
         {
             NavigationService.NavigateToAsync<MoneyViewModel>();
         }
 
         // Parkings Click action
-        public ICommand OnParkingsAction { get; set; }
         public void OnParkingsClickMethod(object sender)
         {
             _dialogService.ShowAlert("Alert", "Parkings");
         }
 
         // Budget Click action
-        public ICommand OnBookingsAction { get; set; }
         public void OnBookingsClickMethod(object sender)
         {
             _dialogService.ShowAlert("Alert", "Bookings");
