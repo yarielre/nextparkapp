@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ContentView xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+             x:Class="NextPark.Mobile.Controls.UserParkingItem"
+             HorizontalOptions="FillAndExpand">
+    <ContentView.ControlTemplate>
+        <ControlTemplate>    
+            <RelativeLayout HorizontalOptions="FillAndExpand">
+                <StackLayout Padding="0" Margin="0" 
+                    RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}">
+
+                    <!-- External Frame container -->
+                    <Frame  x:Name="ItemFrame"
+                            Margin="0,-1,0,0"
+                            BorderColor="{TemplateBinding BorderColor}" 
+                            BackgroundColor="White" 
+                            HasShadow="false"
+                            Padding="6"
+                            HeightRequest="60"
+                            MinimumHeightRequest="60"
+                            CornerRadius="0"
+                            IsClippedToBounds="true"
+                            HorizontalOptions="FillAndExpand">
+                        <Frame.GestureRecognizers>
+                            <TapGestureRecognizer Command="{TemplateBinding TapAction}" CommandParameter="{TemplateBinding Identifier}"/>                            
+                        </Frame.GestureRecognizers>
+                            
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="60" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="60" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="40" />
+                            </Grid.ColumnDefinitions>
+                            <!-- Right Chevron -->
+                            <Image Source="icons/chevron_right_128"
+                                   HeightRequest="40"
+                                   WidthRequest="26"
+                                   Aspect="Fill"
+                                   VerticalOptions="Center"
+                                   HorizontalOptions="Center"
+                                   Grid.Row="0" Grid.Column="2"/>
+                            <!-- Picture -->
+                            <Frame CornerRadius="8"
+                                   BorderColor="Gray"
+                                   HorizontalOptions="CenterAndExpand"
+                                   VerticalOptions="CenterAndExpand"
+                                   IsClippedToBounds="true"
+                                   Padding="0"
+                                   Grid.Row="0" Grid.Column="0">
+                                <Image Source="{TemplateBinding Picture}"
+                                       HorizontalOptions="Center"
+                                       VerticalOptions="Center"
+                                       HeightRequest="50"
+                                       WidthRequest="50"
+                                       Aspect="AspectFill"
+                                       Grid.Row="0" Grid.Column="0"/>
+                            </Frame>
+                            <!-- Item Info -->    
+                            <StackLayout Spacing="0"
+                                         HorizontalOptions="StartAndExpand"
+                                         VerticalOptions="Center"
+                                         Grid.Row="0" Grid.Column="1">
+                                        
+                                        <!-- Item Info content -->
+                                        <ContentPresenter></ContentPresenter>
+                                    
+                             </StackLayout>
+                        </Grid>               
+                    </Frame>
+                </StackLayout>
+            </RelativeLayout>
+        </ControlTemplate>
+    </ContentView.ControlTemplate>
+</ContentView>

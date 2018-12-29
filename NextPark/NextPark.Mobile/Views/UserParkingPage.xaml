@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:NextPark.Mobile.Controls"
+             BindingContext="{Binding UserParking, Source={StaticResource Locator}}"             
+             x:Class="NextPark.Mobile.Views.UserParkingPage">
+    <ContentPage.Content>
+        <ContentView>
+            <controls:DetailPage x:Name="header"
+                                HeaderBackText="{Binding BackText}"
+                                IsHeaderBackVisible="true"
+                                HeaderBackAction="{Binding OnBackClick}"                               
+                                HeaderUserText="{Binding UserName}"
+                                HeaderUserAction="{Binding OnUserClick}"
+                                HeaderMoney="{Binding UserMoney}"
+                                HeaderMoneyAction="{Binding OnMoneyClick}">
+                
+                <StackLayout Orientation="Vertical" VerticalOptions="FillAndExpand">        
+                    <!-- Title -->
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="40" />
+                        </Grid.ColumnDefinitions>
+                        <Label Text="I miei parcheggi" 
+                               FontFamily="Thaoma Bold" 
+                               FontSize="Large" 
+                               FontAttributes="Bold" 
+                               TextColor="#333333"
+                               Margin="0,0,0,10"
+                               HorizontalOptions="Start"
+                               Grid.Row="0" Grid.Column="0"/>
+                        <ContentView HorizontalOptions="FillAndExpand"
+                                     VerticalOptions="FillAndExpand"
+                                     Grid.Row="0" Grid.Column="1">                            
+                        <Frame BackgroundColor="#8CC63F"
+                               HasShadow="false"
+                               IsClippedToBounds="true"
+                               HeightRequest="40"
+                               WidthRequest="40"
+                               CornerRadius="8"
+                               Margin="5,-5,-5,5"
+                               Padding="0"
+                               >
+
+                            <Image Source="icons/add_48.png"
+                                   HeightRequest="16"
+                                   WidthRequest="16"
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="Center"
+                                   x:Name="addIcon"/>
+                        </Frame>
+                        <ContentView.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding OnAddParking}"/>                                                       
+                        </ContentView.GestureRecognizers>
+                        </ContentView>
+                    </Grid>
+                    <Frame BorderColor="Gray"
+                           CornerRadius="8"
+                           Padding="-1"
+                           Margin="-5,0,-5,0"
+                           IsClippedToBounds="true">
+                        <StackLayout Orientation="Vertical" Spacing="0">
+                            <ListView x:Name="ParkingListView"
+                                      ItemsSource="{Binding ParkingList}"
+                                      HasUnevenRows="true"
+                                      SeparatorVisibility="None"
+                                      ItemSelected="OnItemSelected"
+                                      ItemTapped="OnItemTapped"
+                                      RowHeight="70"
+                                      HeightRequest="{Binding ParkingListHeight}">
+                                <ListView.ItemTemplate>
+                                    <DataTemplate>
+                                    <ViewCell Height="70">
+                                        <controls:UserParkingItem BorderColor="Gray"
+                                                  Picture="images/Parking1Pict.png"
+                                                  Identifier="{Binding UID}"
+                                                  TapAction="{Binding OnParkingTap}">
+                                            <StackLayout Spacing="1" HorizontalOptions="StartAndExpand">
+                                                <Label  Text="{Binding Address}"
+                                                        FontSize="Small"
+                                                        FontAttributes="Bold"
+                                                        TextColor="Gray"/>
+                                                <Label  Text="{Binding City}"
+                                                        FontSize="Small"
+                                                        FontAttributes="None" />
+                                                <Label  Text="{Binding Status}"
+                                                        FontSize="Small"
+                                                        FontAttributes="Bold"
+                                                        TextColor="{Binding StatusColor}"/>
+                                            </StackLayout>
+                                        </controls:UserParkingItem>    
+                                    </ViewCell>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>                                                   
+                        </StackLayout>
+                    </Frame>
+            </StackLayout>
+            </controls:DetailPage>
+        </ContentView>
+    </ContentPage.Content>
+</ContentPage>
+

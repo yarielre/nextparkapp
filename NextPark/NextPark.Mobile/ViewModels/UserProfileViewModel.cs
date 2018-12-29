@@ -133,7 +133,7 @@ namespace NextPark.Mobile.ViewModels
         // Parkings Click action
         public void OnParkingsClickMethod(object sender)
         {
-            _dialogService.ShowAlert("Alert", "Parkings");
+            NavigationService.NavigateToAsync<UserParkingViewModel>();
         }
 
         // Budget Click action
