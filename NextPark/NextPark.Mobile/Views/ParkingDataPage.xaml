@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:NextPark.Mobile.Controls"
+             BindingContext="{Binding ParkingData, Source={StaticResource Locator}}"              
+             x:Class="NextPark.Mobile.Views.ParkingDataPage">
+    <ContentPage.Content>
+        <ContentView>
+            <controls:DetailPage x:Name="header"
+                                HeaderBackText="{Binding BackText}"
+                                IsHeaderBackVisible="true"
+                                HeaderBackAction="{Binding OnBackClick}"                               
+                                HeaderUserText="{Binding UserName}"
+                                HeaderUserAction="{Binding OnUserClick}"
+                                HeaderMoney="{Binding UserMoney}"
+                                HeaderMoneyAction="{Binding OnMoneyClick}">
+                
+                <StackLayout x:Name="RegContent" Orientation="Vertical" VerticalOptions="FillAndExpand" Spacing="5">
+                    <Grid Margin="0,0,0,0" Padding="0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="80"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="80"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="40"/>
+                        </Grid.ColumnDefinitions>
+                        <Frame  BackgroundColor="Transparent"
+                                BorderColor="Gray"
+                                IsClippedToBounds="true"
+                                HasShadow="false"
+                                HeightRequest="80"
+                                WidthRequest="80"
+                                HorizontalOptions="Center"
+                                Padding="0"
+                                Margin="0"
+                                Grid.Row="0" Grid.Column="0">
+                            <Image Source="images/Parking1Pict.png" 
+                                   HeightRequest="80" 
+                                   WidthRequest="80"
+                                   Aspect="AspectFill"/>
+                        </Frame>
+                        
+                        <StackLayout Margin="5,0,0,0"
+                                     Spacing="2"
+                                     Grid.Row="0" Grid.Column="1">
+                        <Label Text="{Binding Address}"
+                               FontSize="Medium"
+                               FontAttributes="Bold"
+                               TextColor="Gray"
+                               HorizontalTextAlignment="Start"/>
+                        <Label Text="{Binding City}"
+                               FontSize="Medium"
+                               FontAttributes="None"
+                               TextColor="Gray"
+                               HorizontalTextAlignment="Start"/>
+                         </StackLayout>
+                        
+                        <ContentView HorizontalOptions="FillAndExpand"
+                                     VerticalOptions="FillAndExpand"
+                                     HeightRequest="40"
+                                     Grid.Row="0" Grid.Column="2">                            
+                        <Frame BackgroundColor="#8CC63F"
+                               HasShadow="false"
+                               IsClippedToBounds="true"
+                               HeightRequest="40"
+                               WidthRequest="40"
+                               CornerRadius="8"
+                               Margin="5,-5,-5,5"
+                               Padding="0"
+                               VerticalOptions="Center">
+                            <Image Source="icons/modify_128.png"
+                                   HeightRequest="20"
+                                   WidthRequest="20"
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="Center"
+                                   x:Name="editIcon"/>
+                        </Frame>
+                        <ContentView.GestureRecognizers>
+                            <TapGestureRecognizer x:Name="editParkingCmd" Command="{Binding OnEditParking}"/>                                                       
+                        </ContentView.GestureRecognizers>
+                        </ContentView>
+                    </Grid>
+                    
+                    <BoxView HeightRequest="1"
+                             Margin="0,5,0,10"
+                             HorizontalOptions="FillAndExpand"
+                             BackgroundColor="Gray"/>
+                     <Grid Margin="0,0,0,0" Padding="0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Label x:Name="activeLabel" 
+                               Text="{Binding ActiveStatusText}"
+                               TextColor="Gray"
+                               FontSize="Medium" 
+                               FontAttributes="None" 
+                               VerticalOptions="Center"
+                               Margin="0"
+                               Grid.Row="0" Grid.Column="0"/>
+                        <Switch BackgroundColor="White"
+                                OnColor="#8CC63F"
+                                IsToggled="{Binding ActiveSwitchToggled}"
+                                Margin="10,0,0,0"
+                                
+                                Grid.Row="0" Grid.Column="1"/> 
+                    </Grid>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="40"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="40"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="40"/>
+                            </Grid.ColumnDefinitions>
+                            <ContentView HorizontalOptions="FillAndExpand"
+                                         VerticalOptions="FillAndExpand"
+                                         HeightRequest="40"
+                                         Grid.Row="0" Grid.Column="0">                            
+                                <Frame BackgroundColor="#8CC63F"
+                                       HasShadow="false"
+                                       IsClippedToBounds="true"
+                                       HeightRequest="40"
+                                       WidthRequest="40"
+                                       CornerRadius="8"
+                                       Margin="5,-5,-5,5"
+                                       Padding="0"
+                                       VerticalOptions="Center">
+                                    <Image Source="icons/calendar_90.png"
+                                           HeightRequest="30"
+                                           WidthRequest="30"
+                                           HorizontalOptions="Center"
+                                           VerticalOptions="Center"
+                                           />
+                                </Frame>
+                                <ContentView.GestureRecognizers>
+                                    <TapGestureRecognizer x:Name="calendarCmd" Command="{Binding OnCalendar}"/>                                                       
+                                </ContentView.GestureRecognizers>
+                            </ContentView>
+                            <Label  Text="15 dicembre 2018"
+                                    TextColor="Gray"
+                                    FontSize="Small"
+                                    HorizontalTextAlignment="Start"
+                                    VerticalOptions="Center"
+                                    Margin="10,0,0,0"
+                                    Grid.Row="0" Grid.Column="1"/>
+                             <ContentView HorizontalOptions="End"
+                                         VerticalOptions="FillAndExpand"
+                                         HeightRequest="40"
+                                         Grid.Row="0" Grid.Column="2">                            
+                                <Frame BackgroundColor="#8CC63F"
+                                       HasShadow="false"
+                                       IsClippedToBounds="true"
+                                       HeightRequest="40"
+                                       WidthRequest="40"
+                                       CornerRadius="8"
+                                       Margin="5,-5,-5,5"
+                                       Padding="0"
+                                       VerticalOptions="Center"
+                                       HorizontalOptions="End">
+                                    <Image Source="icons/add_48.png"
+                                           HeightRequest="20"
+                                           WidthRequest="20"
+                                           HorizontalOptions="Center"
+                                           VerticalOptions="Center"
+                                           />
+                                </Frame>
+                                <ContentView.GestureRecognizers>
+                                    <TapGestureRecognizer x:Name="addAvailabilityCmd" Command="{Binding OnAddAvailability}"/>                                                       
+                                </ContentView.GestureRecognizers>
+                            </ContentView>
+                        </Grid>
+                </StackLayout>
+            </controls:DetailPage>
+        </ContentView>
+    </ContentPage.Content>                
+</ContentPage>

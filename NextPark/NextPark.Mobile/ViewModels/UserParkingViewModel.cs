@@ -167,8 +167,8 @@ namespace NextPark.Mobile.ViewModels
             {
                 ParkingItem item = ParkingList[(int)sender];
                 // TODO: pass parking item to parking data page
-                //NavigationService.NavigateToAsync<UserProfileViewModel>();
-                _dialogService.ShowAlert("Alert", "Parking data: " + item.Address);
+                NavigationService.NavigateToAsync<ParkingDataViewModel>(item);
+                //_dialogService.ShowAlert("Alert", "Parking data: " + item.Address);
             }
         }
     }
