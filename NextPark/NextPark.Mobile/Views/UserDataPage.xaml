@@ -19,7 +19,6 @@
                              Orientation="Vertical" 
                              VerticalOptions="FillAndExpand">
                     <Label Text="I miei dati personali" 
-                           FontFamily="Thaoma Bold" 
                            FontSize="Large" 
                            FontAttributes="Bold" 
                            TextColor="#333333"
@@ -67,7 +66,6 @@
                             HorizontalOptions="Center"
                             Command="{Binding OnSaveClick}"
                             TextColor="White"
-                            FontFamily="Roboto-Bold.ttf"
                             BorderRadius="8"
                             BackgroundColor="#8CC63F"
                             WidthRequest="191"

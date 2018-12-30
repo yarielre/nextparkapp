@@ -16,8 +16,7 @@
                              HeaderMoneyAction="{Binding OnMoneyClick}">
                 
                 <StackLayout x:Name="RegContent" Orientation="Vertical" VerticalOptions="FillAndExpand" Spacing="5">
-                    <Label Text="Nuovo Parcheggio" 
-                           FontFamily="Thaoma Bold" 
+                    <Label Text="Nuovo Parcheggio"                            
                            FontSize="Large" 
                            FontAttributes="Bold" 
                            TextColor="#333333"
@@ -80,7 +79,6 @@
                             HorizontalOptions="Center"
                             Command="{Binding OnAddParking}"
                             TextColor="White"
-                            FontFamily="Roboto-Bold.ttf"
                             BorderRadius="8"
                             BackgroundColor="{Binding AddBtnBackgroundColor}"
                             BorderColor="{Binding AddBtnBorderColor}"

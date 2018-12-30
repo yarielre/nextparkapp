@@ -27,7 +27,6 @@
                         <StackLayout Grid.Row="0" Grid.Column="0">
                             <!-- Title -->
                             <Label Text="Saldo attuale" 
-                                   FontFamily="Thaoma Bold" 
                                    FontSize="Large" 
                                    FontAttributes="Bold" 
                                    TextColor="#333333"
@@ -64,7 +63,6 @@
                         <StackLayout Grid.Row="0" Grid.Column="1">
                             <!-- Title -->
                             <Label Text="Guadagno" 
-                                   FontFamily="Thaoma Bold" 
                                    FontSize="Large" 
                                    FontAttributes="Bold" 
                                    TextColor="#333333"
@@ -157,7 +155,6 @@
                             HorizontalOptions="Center"
                             Command="{Binding OnBuyClick}"
                             TextColor="White"
-                            FontFamily="Roboto-Bold.ttf"
                             BorderRadius="8"
                             BackgroundColor="#8CC63F"
                             WidthRequest="191"

@@ -164,7 +164,6 @@
                                         HorizontalOptions="Center"
                                         Command="{Binding BookAction}"
                                         TextColor="White"
-                                        FontFamily="Roboto-Bold.ttf"
                                         BorderRadius="8"
                                         BackgroundColor="#8CC63F"
                                         WidthRequest="191"

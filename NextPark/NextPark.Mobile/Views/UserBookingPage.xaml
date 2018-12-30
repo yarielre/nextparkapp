@@ -18,7 +18,6 @@
                 <StackLayout Orientation="Vertical" VerticalOptions="FillAndExpand">        
                     <!-- Title -->
                     <Label Text="Le mie prenotazioni" 
-                           FontFamily="Thaoma Bold" 
                            FontSize="Large" 
                            FontAttributes="Bold" 
                            TextColor="#333333"
