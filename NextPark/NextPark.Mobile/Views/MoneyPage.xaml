@@ -125,18 +125,22 @@
                     <StackLayout Orientation="Horizontal" Spacing="10" HorizontalOptions="Center" Margin="5,10,0,0">
                         <controls:SelButton Info="5"
                                             SubInfo="CHF"
+                                            ID="5"
                                             Selected="{Binding Btn05IsSelected}"
                                             TapAction="{Binding OnButtonTapped}" />
                         <controls:SelButton Info="10"
                                             SubInfo="CHF"
+                                            ID="10"
                                             Selected="{Binding Btn10IsSelected}"
                                             TapAction="{Binding OnButtonTapped}" />
                         <controls:SelButton Info="15"
                                             SubInfo="CHF"
+                                            ID="15"
                                             Selected="{Binding Btn15IsSelected}"
                                             TapAction="{Binding OnButtonTapped}" />
                         <controls:SelButton Info="30"
                                             SubInfo="CHF"
+                                            ID="30"
                                             Selected="{Binding Btn30IsSelected}"
                                             TapAction="{Binding OnButtonTapped}" />
                     </StackLayout>

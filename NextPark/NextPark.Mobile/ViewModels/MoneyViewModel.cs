@@ -111,7 +111,7 @@ namespace NextPark.Mobile.ViewModels
         }
 
         // Selection Button Tapped action
-        public void OnButtonTappedMethod(string info)
+        public void OnButtonTappedMethod(string identifier)
         {
             // Deselect all selection buttons
             Btn05IsSelected = false;            
@@ -120,7 +120,7 @@ namespace NextPark.Mobile.ViewModels
             Btn30IsSelected = false;
 
             // Select the tapped selection button
-            selectedValue = Convert.ToUInt16(info);
+            selectedValue = Convert.ToUInt16(identifier);
             switch (selectedValue)
             {
                 case 10: Btn10IsSelected = true; break; 

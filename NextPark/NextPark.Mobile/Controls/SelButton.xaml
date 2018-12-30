@@ -18,7 +18,7 @@
                 MinimumHeightRequest="65">
             <Frame.GestureRecognizers>
                 <TapGestureRecognizer Command="{TemplateBinding TapAction}"
-                                      CommandParameter="{TemplateBinding Info}"/>                            
+                                      CommandParameter="{TemplateBinding ID}"/>                            
             </Frame.GestureRecognizers>
             <StackLayout HorizontalOptions="CenterAndExpand"
                          VerticalOptions="Center"

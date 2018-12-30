@@ -142,7 +142,12 @@ namespace NextPark.Mobile.ViewModels
         // Booking Tap action
         public void OnBookingTappedMethod(object args)
         {
-            _dialogService.ShowAlert("Alert", "Booking: " + args.ToString());
+            if (args is int)
+            {
+                ParkingInfo item = Parkings[(int)args];
+                NavigationService.NavigateToAsync<BookingViewModel>(item);
+                //_dialogService.ShowAlert("Alert", "Booking: " + args.ToString());
+            }
         }
     }
 }

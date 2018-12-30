@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:NextPark.Mobile.Controls"
+             BindingContext="{Binding BookNow, Source={StaticResource Locator}}"
+             x:Class="NextPark.Mobile.Views.BookingPage">
+    <ContentPage.Content>
+        <ContentView>
+            <controls:BasePage x:Name="header"
+                           HeaderBackText="{Binding BackText}"
+                           HeaderBackAction="{Binding OnBackClick}"
+                           IsHeaderBackVisible="true"
+                           HeaderUserText="{Binding UserName}"
+                           HeaderUserAction="{Binding OnUserClick}"
+                           HeaderMoney="{Binding UserMoney}"
+                           HeaderMoneyAction="{Binding OnMoneyClick}">
+            
+                <RelativeLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+            
+                    <StackLayout HorizontalOptions="FillAndExpand"
+                                 RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}">
+                        <Frame  Margin="2,2,2,2"
+                                BorderColor="#8CC63F" 
+                                CornerRadius="9" 
+                                BackgroundColor="Transparent" 
+                                HasShadow="false"
+                                Padding="0"
+                                IsClippedToBounds="true"
+                                VerticalOptions="FillAndExpand">
+                        
+                            <Image Source="{Binding Picture}" 
+                                   HeightRequest="170"
+                                   Aspect="AspectFill"/>
+
+                        </Frame>  
+                    </StackLayout>
+                        <StackLayout HorizontalOptions="FillAndExpand"
+                                     RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}"
+                                     RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent,Property=Height,Factor=0,Constant=160}"
+                                     >
+                            <Frame  Margin="10,0,10,2"
+                                    BorderColor="#8CC63F" 
+                                    CornerRadius="9" 
+                                    BackgroundColor="White" 
+                                    HasShadow="false"
+                                    Padding="2"
+                                    IsClippedToBounds="true"
+                                    VerticalOptions="FillAndExpand">
+                                <StackLayout Orientation="Vertical" Margin="6">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*"/>
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    
+                                    <!-- Parking name and position -->
+                                    <StackLayout Orientation="Vertical"
+                                                 Spacing="2"
+                                                 Grid.Row="0" Grid.Column="0">
+                                        <Label Text="{Binding Info}"
+                                               HorizontalTextAlignment="Start"
+                                               FontAttributes="Bold"
+                                               FontSize="Medium"
+                                               TextColor="Gray"/>
+                                        <Label Text="{Binding SubInfo}"
+                                               HorizontalTextAlignment="Start"
+                                               FontAttributes="None"
+                                               FontSize="Medium"
+                                               TextColor="Gray"/>
+                                    </StackLayout>
+                                    
+                                    <!-- Parking price and availability -->
+                                    <StackLayout Orientation="Vertical"
+                                                 Spacing="2"
+                                                 Grid.Row="0" Grid.Column="1">
+                                        <Label Text="{Binding FullPrice}"
+                                               HorizontalTextAlignment="End"
+                                               FontAttributes="Bold"
+                                               FontSize="Medium"
+                                               TextColor="Gray"/>
+                                        <Label Text="Disponibilità:"
+                                               HorizontalTextAlignment="End"
+                                               FontAttributes="None"
+                                               FontSize="Medium"
+                                               TextColor="Gray"/>
+                                        <Label Text="{Binding FullAvailability}"
+                                               HorizontalTextAlignment="End"
+                                               FontAttributes="None"
+                                               FontSize="Medium"
+                                               TextColor="Gray"/> 
+                                    </StackLayout>
+                                </Grid>
+                                
+                                <!-- Time selector buttons-->
+                                <StackLayout Orientation="Horizontal" Spacing="10" HorizontalOptions="Center" Margin="5,10,0,0">
+                                    <controls:SelButton x:Name="Btn05"
+                                                        Info="0.5 h"
+                                                        SubInfo="1 CHF"
+                                                        ID="1"
+                                                        Selected="{Binding Btn1IsSelected}"
+                                                        TapAction="{Binding OnButtonTapped}"/>
+                                    <controls:SelButton x:Name="Btn1"
+                                                        Info="1 h"
+                                                        SubInfo="2 CHF"
+                                                        ID="2"
+                                                        Selected="{Binding Btn2IsSelected}"
+                                                        TapAction="{Binding OnButtonTapped}"/>
+                                    <controls:SelButton x:Name="Btn2"
+                                                        Info="2 h"
+                                                        SubInfo="4 CHF"
+                                                        ID="3"
+                                                        Selected="{Binding Btn3IsSelected}"
+                                                        TapAction="{Binding OnButtonTapped}"/>
+                                    <controls:SelButton x:Name="Btn3"
+                                                        Info="3 h"
+                                                        SubInfo="6 CHF"
+                                                        ID="4"
+                                                        Selected="{Binding Btn4IsSelected}"
+                                                        TapAction="{Binding OnButtonTapped}"/>
+                                </StackLayout>  
+                                <StackLayout Orientation="Horizontal" Spacing="10" HorizontalOptions="Center" Margin="5,10,0,0">
+                                    <controls:SelButton x:Name="Btn4"
+                                                        Info="4 h"
+                                                        SubInfo="8 CHF"
+                                                        ID="5"
+                                                        Selected="{Binding Btn5IsSelected}"
+                                                        TapAction="{Binding OnButtonTapped}"/>
+                                    <controls:SelButton x:Name="Btn5"
+                                                        Info="5 h"
+                                                        SubInfo="10 CHF"
+                                                        ID="6"
+                                                        Selected="{Binding Btn6IsSelected}"
+                                                        TapAction="{Binding OnButtonTapped}"/>
+                                    <controls:SelButton x:Name="Btn6"
+                                                        Info="6 h"
+                                                        SubInfo="12 CHF"
+                                                        ID="7"
+                                                        Selected="{Binding Btn7IsSelected}"
+                                                        TapAction="{Binding OnButtonTapped}"/>
+                                    <controls:SelButton x:Name="Btn8"
+                                                        Info="8 h"
+                                                        SubInfo="16 CHF"
+                                                        ID="8"
+                                                        Selected="{Binding Btn8IsSelected}"
+                                                        TapAction="{Binding OnButtonTapped}"/>
+                                </StackLayout> 
+                                <TimePicker x:Name="_timePicker"
+                                            Time="{Binding Time}"
+                                            Format="hh:mm"
+                                            HorizontalOptions="Center" />
+                                <!-- Activity indicator, active when buying -->
+                                <ActivityIndicator
+                                    x:Name="activityContent"
+                                    IsRunning="{Binding IsRunning, Mode=TwoWay}"                    
+                                    VerticalOptions="Center">
+                                </ActivityIndicator>
+                                <!-- Buy button -->
+                                <Button Text="Prenota"
+                                        FontAttributes="Bold"
+                                        VerticalOptions="CenterAndExpand"
+                                        HorizontalOptions="Center"
+                                        Command="{Binding BookAction}"
+                                        TextColor="White"
+                                        FontFamily="Roboto-Bold.ttf"
+                                        BorderRadius="8"
+                                        BackgroundColor="#8CC63F"
+                                        WidthRequest="191"
+                                        Margin="0,10,0,10"/>                                 
+                            </StackLayout>
+                        </Frame>  
+                    </StackLayout>
+                </RelativeLayout>
+            </controls:BasePage>
+        </ContentView>
+    </ContentPage.Content>
+</ContentPage>
