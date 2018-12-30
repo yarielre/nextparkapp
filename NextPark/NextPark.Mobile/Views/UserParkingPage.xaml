@@ -71,7 +71,8 @@
                                       ItemSelected="OnItemSelected"
                                       ItemTapped="OnItemTapped"
                                       RowHeight="70"
-                                      HeightRequest="{Binding ParkingListHeight}">
+                                      HeightRequest="{Binding ParkingListHeight}"
+                                      SelectionMode="None">
                                 <ListView.ItemTemplate>
                                     <DataTemplate>
                                     <ViewCell Height="70">

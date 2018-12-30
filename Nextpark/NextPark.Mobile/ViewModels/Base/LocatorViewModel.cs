@@ -11,8 +11,9 @@ namespace NextPark.Mobile.Infrastructure
         public MoneyViewModel Budget { get { return (MoneyViewModel)IoCSettings.Resolve<MoneyViewModel>(); } }
         public ParkingDataViewModel ParkingData { get { return (ParkingDataViewModel)IoCSettings.Resolve<ParkingDataViewModel>(); } }
         public RegisterViewModel Register { get { return (RegisterViewModel)IoCSettings.Resolve<RegisterViewModel>(); } }
-        public UserParkingViewModel UserParking { get { return (UserParkingViewModel)IoCSettings.Resolve<UserParkingViewModel>(); } }
+        public UserBookingViewModel UserBooking { get { return (UserBookingViewModel)IoCSettings.Resolve<UserBookingViewModel>(); } }
         public UserDataViewModel UserData { get { return (UserDataViewModel)IoCSettings.Resolve<UserDataViewModel>(); } }
+        public UserParkingViewModel UserParking { get { return (UserParkingViewModel)IoCSettings.Resolve<UserParkingViewModel>(); } }
         public UserProfileViewModel Profile { get { return (UserProfileViewModel)IoCSettings.Resolve<UserProfileViewModel>(); } }
 
         public HomeViewModel Home

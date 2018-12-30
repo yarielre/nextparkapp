@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ContentView xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+             x:Class="NextPark.Mobile.Controls.UserBookingItem"
+             HorizontalOptions="FillAndExpand">
+    <ContentView.ControlTemplate>
+        <ControlTemplate>    
+            <RelativeLayout HorizontalOptions="FillAndExpand">
+                <StackLayout Padding="0" Margin="0" 
+                    RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}">
+
+                    <!-- External Frame container -->
+                    <Frame  Margin="0,-1,0,0"
+                            BorderColor="{TemplateBinding BorderColor}" 
+                            BackgroundColor="White" 
+                            HasShadow="false"
+                            Padding="6"
+                            HeightRequest="40"
+                            MinimumHeightRequest="40"
+                            CornerRadius="0"
+                            IsClippedToBounds="true"
+                            HorizontalOptions="FillAndExpand">
+                        <Frame.GestureRecognizers>
+                            <TapGestureRecognizer Command="{TemplateBinding TapAction}" CommandParameter="{TemplateBinding Identifier}"/>                            
+                            <SwipeGestureRecognizer Direction="Left" Command="{TemplateBinding SwipeAction}" CommandParameter="Left" Swiped="OnSwiped" />
+                            <SwipeGestureRecognizer Direction="Right" Command="{TemplateBinding SwipeAction}" CommandParameter="Right" Swiped="OnSwiped" />
+                        </Frame.GestureRecognizers>
+                            
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="40" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <!-- Parking Info -->    
+                            <StackLayout Spacing="0"
+                                         HorizontalOptions="StartAndExpand"
+                                         VerticalOptions="Center"
+                                         Grid.Row="0" Grid.Column="0">
+                                                                    
+                                <Label Text="{TemplateBinding Address}"
+                                       FontSize="Small"
+                                       FontAttributes="Bold"
+                                       TextColor="Gray"
+                                       HorizontalTextAlignment="Start"/>
+                                <Label Text="{TemplateBinding City}"
+                                       FontSize="Small"
+                                       FontAttributes="None"
+                                       TextColor="Gray"
+                                       HorizontalTextAlignment="Start"/>
+                            </StackLayout>
+                            <!-- Booking remaining time -->
+                            <StackLayout Spacing="0"
+                                         HorizontalOptions="EndAndExpand"
+                                         VerticalOptions="Center"
+                                         Grid.Row="0" Grid.Column="1">
+                                                                    
+                                <Label Text="{TemplateBinding Time}"
+                                       FontSize="Small"
+                                       FontAttributes="Bold"
+                                       TextColor="Gray"
+                                       HorizontalTextAlignment="End"
+                                       />
+                            </StackLayout>
+                            <!-- Delete box -->
+                            <Frame HeightRequest="40"
+                                   WidthRequest="60"
+                                   BackgroundColor="Red"
+                                   HasShadow="false"
+                                   x:Name="btnDelete"
+                                   CornerRadius="0"
+                                   Margin="0,-5,-5,-5"
+                                   Padding="0"
+                                   IsVisible="{TemplateBinding DelVisible}"
+                                   Grid.Row="0" Grid.Column="2">
+                                <Frame.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{TemplateBinding DelAction}" CommandParameter="{TemplateBinding Identifier}"/>
+                                </Frame.GestureRecognizers>
+                                <Label Text="Elimina"
+                                       TextColor="White"
+                                       FontSize="Small"
+                                       HorizontalTextAlignment="Center"
+                                       VerticalTextAlignment="Center"/>
+                            </Frame>
+                        </Grid>               
+                    </Frame>
+                </StackLayout>
+            </RelativeLayout>
+        </ControlTemplate>
+    </ContentView.ControlTemplate>
+</ContentView>
+

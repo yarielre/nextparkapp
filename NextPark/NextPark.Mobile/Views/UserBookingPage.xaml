@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:NextPark.Mobile.Controls"
+             BindingContext="{Binding UserBooking, Source={StaticResource Locator}}"             
+             x:Class="NextPark.Mobile.Views.UserBookingPage">
+    <ContentPage.Content>
+        <ContentView>
+            <controls:DetailPage x:Name="header"
+                                HeaderBackText="{Binding BackText}"
+                                IsHeaderBackVisible="true"
+                                HeaderBackAction="{Binding OnBackClick}"                               
+                                HeaderUserText="{Binding UserName}"
+                                HeaderUserAction="{Binding OnUserClick}"
+                                HeaderMoney="{Binding UserMoney}"
+                                HeaderMoneyAction="{Binding OnMoneyClick}">
+                
+                <StackLayout Orientation="Vertical" VerticalOptions="FillAndExpand">        
+                    <!-- Title -->
+                    <Label Text="Le mie prenotazioni" 
+                           FontFamily="Thaoma Bold" 
+                           FontSize="Large" 
+                           FontAttributes="Bold" 
+                           TextColor="#333333"
+                           Margin="0,0,0,10"/>
+                    <Frame x:Name="BookingList"
+                           BorderColor="Gray"
+                           CornerRadius="8"
+                           Padding="-1"
+                           Margin="-5,0,-5,0"
+                           IsClippedToBounds="true">
+                        <StackLayout Orientation="Vertical" Spacing="0">
+                            <ListView x:Name="BookingListView"
+                                      ItemsSource="{Binding BookingList}"
+                                      HasUnevenRows="true"
+                                      SeparatorVisibility="None"
+                                      ItemSelected="OnItemSelected"
+                                      ItemTapped="OnItemTapped"
+                                      RowHeight="50"
+                                      HeightRequest="{Binding BookingListHeight}"
+                                      SelectionMode="None"
+                                      BackgroundColor="Transparent">
+                                <ListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <ViewCell Height="50">
+                                            <controls:UserBookingItem BorderColor="Gray" 
+                                                                      Identifier="{Binding UID}"
+                                                                      Address="{Binding Address}"
+                                                                      City="{Binding City}"
+                                                                      Time="{Binding Time}"
+                                                                      TapAction="{Binding OnBookingTap}"
+                                                                      DelAction="{Binding OnBookingDel}"
+                                                                      />
+                                        </ViewCell>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+                        </StackLayout>
+                    </Frame>
+            </StackLayout></controls:DetailPage>
+        </ContentView>
+    </ContentPage.Content>
+</ContentPage>

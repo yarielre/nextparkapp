@@ -139,7 +139,7 @@ namespace NextPark.Mobile.ViewModels
         // Budget Click action
         public void OnBookingsClickMethod(object sender)
         {
-            _dialogService.ShowAlert("Alert", "Bookings");
+            NavigationService.NavigateToAsync<UserBookingViewModel>();
         }
     }
 }
