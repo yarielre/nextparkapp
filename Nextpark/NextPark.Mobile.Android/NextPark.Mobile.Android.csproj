@@ -96,6 +96,21 @@
     <None Include="Resources\AboutResources.txt" />
     <None Include="Assets\AboutAssets.txt" />
     <None Include="Properties\AndroidManifest.xml" />
+    <None Include="Resources\drawable\icons\add_48.png" />
+    <None Include="Resources\drawable\icons\add_photo_256.png" />
+    <None Include="Resources\drawable\icons\back_blu_48.png" />
+    <None Include="Resources\drawable\icons\bookings_256.png" />
+    <None Include="Resources\drawable\icons\calendar_90.png" />
+    <None Include="Resources\drawable\icons\chevron_right_128.png" />
+    <None Include="Resources\drawable\icons\coins_48.png" />
+    <None Include="Resources\drawable\icons\coins_256.png" />
+    <None Include="Resources\drawable\icons\modify_128.png" />
+    <None Include="Resources\drawable\icons\no_user_256.png" />
+    <None Include="Resources\drawable\icons\savings_256.png" />
+    <None Include="Resources\drawable\icons\user_icon_256.png" />
+    <None Include="Resources\drawable\icons\wrench2_256.png" />
+    <None Include="Resources\drawable\images\bg_nextpark.png" />
+    <None Include="Resources\drawable\images\Parking1Pict.png" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\Tabbar.axml" />
@@ -121,6 +136,8 @@
     <Folder Include="Resources\drawable-xhdpi\" />
     <Folder Include="Resources\drawable-xxhdpi\" />
     <Folder Include="Resources\drawable-xxxhdpi\" />
+    <Folder Include="Resources\drawable\icons\" />
+    <Folder Include="Resources\drawable\images\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NextPark.Mobile\NextPark.Mobile.csproj">

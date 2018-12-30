@@ -16,8 +16,6 @@ namespace NextPark.Mobile.Views
             set { SetValue(TimeProperty, value); }
         }
 
-        private static double selectedValue;
-
         public BookingPage()
         {
             InitializeComponent();
@@ -27,16 +25,5 @@ namespace NextPark.Mobile.Views
                 bvm.InitializeAsync();
             }
         }
-
-        /*
-        void OnTimePickerPropertyChanged(object sender, PropertyChangedEventArgs args)
-        {
-            if (args.PropertyName == "Time")
-            {
-                selectedValue = Convert.ToDouble(_timePicker.Time.TotalHours);
-                OnPropertyChanged();
-            }
-        }
-        */
     }
 }

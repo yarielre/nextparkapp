@@ -35,6 +35,7 @@ namespace NextPark.Mobile.Infrastructure
             builder.RegisterType<LocatorViewModel>();
             builder.RegisterType<StartUpViewModel>();
             builder.RegisterType<AddParkingViewModel>();
+            builder.RegisterType<BookingMapViewModel>();
             builder.RegisterType<BookingViewModel>();
             builder.RegisterType<HomeViewModel>();
             builder.RegisterType<MoneyViewModel>();

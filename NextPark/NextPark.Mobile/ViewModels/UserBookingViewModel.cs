@@ -172,7 +172,7 @@ namespace NextPark.Mobile.ViewModels
             {
                 BookingItem item = BookingList[(int)sender];
                 // TODO: pass booking item to booking map page
-                //NavigationService.NavigateToAsync<ParkingDataViewModel>(item);
+                NavigationService.NavigateToAsync<BookingMapViewModel>(item);
                 _dialogService.ShowAlert("Alert", "Booking data: " + item.Address);
             }
         }
