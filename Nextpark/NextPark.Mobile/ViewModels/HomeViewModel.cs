@@ -1,5 +1,6 @@
 ﻿using NextPark.Mobile.Extensions;
 using NextPark.Mobile.Services;
+using System.Collections.ObjectModel;
 using System.Windows.Input;
 using System.Threading.Tasks;
 using Xamarin.Forms.Maps;
@@ -8,12 +9,41 @@ using System;
 
 namespace NextPark.Mobile.ViewModels
 {
+    public class ParkingInfo
+    {
+        public int UID { get; set; }
+        public string Info { get; set; }
+        public string SubInfo { get; set; }
+        public string Picture { get; set; }
+        public string FullPrice { get; set; }
+        public string FullAvailability { get; set; }
+        public ICommand BookAction { get; set; }
+    }
+
     public class HomeViewModel : BaseViewModel
     {
-        private CustomControls.CustomMap Map { get; set; }
+        // PROPERTIES
+        public string UserName { get; set; }        // Header user text
+        public ICommand OnUserClick { get; set; }   // Header user action
+        public string UserMoney { get; set; }       // Header money value
+        public ICommand OnMoneyClick { get; set; }  // Header money action
+
+        private CustomControls.CustomMap Map { get; set; }  // Custom Map
+        public ICommand OnBookingTapped { get; set; }       // Booking button click action
+
+        // SERVICES
         private readonly IGeolocatorService _geoLocatorService;
         private readonly IDialogService _dialogService;
 
+        // PRIVATE VARIABLES
+        private ObservableCollection<ParkingInfo> parkings;
+        public ObservableCollection<ParkingInfo> Parkings
+        {
+            get { return parkings; }
+            set { parkings = value; base.OnPropertyChanged("Parkings"); }
+        }
+
+        // METHODS
         public HomeViewModel(IGeolocatorService geolocatorService, IDialogService dialogService, 
             IApiService apiService,  IAuthService authService, INavigationService navService) 
             : base(apiService, authService, navService)
@@ -23,10 +53,10 @@ namespace NextPark.Mobile.ViewModels
 
             OnUserClick = new Command<object>(OnUserClickMethod);
             OnMoneyClick = new Command<object>(OnMoneyClickMethod);
+            OnBookingTapped = new Command<object>(OnBookingTappedMethod);
 
             UserName = "Accedi";
             UserMoney = "0";
-
         }
 
         public override Task InitializeAsync(object data = null)
@@ -48,7 +78,14 @@ namespace NextPark.Mobile.ViewModels
             base.OnPropertyChanged("UserName");
             base.OnPropertyChanged("UserMoney");
 
-            //base.OnPropertyChanged("UserMoney");
+            // TODO: fill parking list
+            Parkings = new ObservableCollection<ParkingInfo>
+            {
+                new ParkingInfo { UID = 0, Info = "Via Strada 1", SubInfo = "Lugano, Ticino", Picture="images/Parking1Pict.png", FullPrice = "2 CHF/h", FullAvailability = "08:00-12:00", BookAction = OnBookingTapped},
+                new ParkingInfo { UID = 1, Info = "Via Strada 1.5", SubInfo = "Lugano, Ticino", Picture="images/Parking1Pict.png", FullPrice = "2 CHF/h", FullAvailability = "08:00-12:00", BookAction = OnBookingTapped},
+                new ParkingInfo { UID = 2, Info = "Via Strada 2", SubInfo = "Lugano, Ticino", Picture="images/Parking1Pict.png", FullPrice = "2 CHF/h", FullAvailability = "08:00-12:00", BookAction = OnBookingTapped}
+            };
+            base.OnPropertyChanged("Parkings");
 
             return Task.FromResult(false);
         }
@@ -90,20 +127,22 @@ namespace NextPark.Mobile.ViewModels
             Map.MoveToRegion(MapSpan.FromCenterAndRadius(position, Distance.FromKilometers(1)));
         }
 
-        // User Text and Click action
-        public string UserName { get; set; }
-        public ICommand OnUserClick { get; set; }
+        // User Click action
         public void OnUserClickMethod(object sender)
         {
             NavigationService.NavigateToAsync<UserProfileViewModel>();
         }
 
-        // Money Text and Click action
-        public string UserMoney { get; set; }
-        public ICommand OnMoneyClick { get; set; }
+        // Money Click action
         public void OnMoneyClickMethod(object sender)
         {
             NavigationService.NavigateToAsync<MoneyViewModel>();
+        }
+
+        // Booking Tap action
+        public void OnBookingTappedMethod(object args)
+        {
+            _dialogService.ShowAlert("Alert", "Booking: " + args.ToString());
         }
     }
 }
