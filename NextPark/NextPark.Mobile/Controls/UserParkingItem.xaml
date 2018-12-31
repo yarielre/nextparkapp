@@ -35,7 +35,7 @@
                                 <ColumnDefinition Width="40" />
                             </Grid.ColumnDefinitions>
                             <!-- Right Chevron -->
-                            <Image Source="icons/chevron_right_128"
+                            <Image Source="icon_right_128"
                                    HeightRequest="40"
                                    WidthRequest="26"
                                    Aspect="Fill"

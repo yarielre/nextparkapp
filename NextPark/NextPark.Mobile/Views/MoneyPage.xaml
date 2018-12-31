@@ -40,7 +40,7 @@
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
-                                <Image Source="icons/coins_256.png"
+                                <Image Source="icon_coins_256.png"
                                        HeightRequest="100"
                                        Grid.Row="0" Grid.Column="0"
                                        VerticalOptions="Start"
@@ -76,7 +76,7 @@
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
-                                <Image Source="icons/savings_256.png"
+                                <Image Source="icon_savings_256.png"
                                        HeightRequest="100"
                                        Grid.Row="0" Grid.Column="0"
                                        VerticalOptions="Start"

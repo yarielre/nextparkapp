@@ -126,21 +126,21 @@
     <BundleResource Include="Resources\xamarin_logo%402x.png" />
     <BundleResource Include="Resources\xamarin_logo%403x.png" />
     <InterfaceDefinition Include="Resources\LaunchScreen.storyboard" />
-    <BundleResource Include="Resources\icons\back_blu_48.png" />
-    <BundleResource Include="Resources\icons\bookings_256.png" />
-    <BundleResource Include="Resources\icons\chevron_right_128.png" />
-    <BundleResource Include="Resources\icons\coins_48.png" />
-    <BundleResource Include="Resources\icons\coins_256.png" />
-    <BundleResource Include="Resources\icons\user_icon_256.png" />
-    <BundleResource Include="Resources\icons\wrench2_256.png" />
-    <BundleResource Include="Resources\icons\no_user_256.png" />
-    <BundleResource Include="Resources\images\bg_nextpark.png" />
-    <BundleResource Include="Resources\images\Parking1Pict.png" />
-    <BundleResource Include="Resources\icons\savings_256.png" />
-    <BundleResource Include="Resources\icons\add_48.png" />
-    <BundleResource Include="Resources\icons\add_photo_256.png" />
-    <BundleResource Include="Resources\icons\modify_128.png" />
-    <BundleResource Include="Resources\icons\calendar_90.png" />
+    <BundleResource Include="Resources\icon_add_48.png" />
+    <BundleResource Include="Resources\icon_add_photo_256.png" />
+    <BundleResource Include="Resources\icon_back_blue_48.png" />
+    <BundleResource Include="Resources\icon_bookings_256.png" />
+    <BundleResource Include="Resources\icon_calendar_90.png" />
+    <BundleResource Include="Resources\icon_coins_48.png" />
+    <BundleResource Include="Resources\icon_coins_256.png" />
+    <BundleResource Include="Resources\icon_modify_128.png" />
+    <BundleResource Include="Resources\icon_no_user_256.png" />
+    <BundleResource Include="Resources\icon_right_128.png" />
+    <BundleResource Include="Resources\icon_savings_256.png" />
+    <BundleResource Include="Resources\icon_user_256.png" />
+    <BundleResource Include="Resources\icon_wrench_256.png" />
+    <BundleResource Include="Resources\image_bg_nextpark.png" />
+    <BundleResource Include="Resources\image_parking1.png" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -192,9 +192,5 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />
-  <ItemGroup>
-    <Folder Include="Resources\icons\" />
-    <Folder Include="Resources\images\" />
-  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
 </Project>

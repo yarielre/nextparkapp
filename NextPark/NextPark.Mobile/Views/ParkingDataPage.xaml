@@ -35,7 +35,7 @@
                                 Padding="0"
                                 Margin="0"
                                 Grid.Row="0" Grid.Column="0">
-                            <Image Source="images/Parking1Pict.png" 
+                            <Image Source="image_parking1.png" 
                                    HeightRequest="80" 
                                    WidthRequest="80"
                                    Aspect="AspectFill"/>
@@ -69,7 +69,7 @@
                                Margin="5,-5,-5,5"
                                Padding="0"
                                VerticalOptions="Center">
-                            <Image Source="icons/modify_128.png"
+                            <Image Source="icon_modify_128.png"
                                    HeightRequest="20"
                                    WidthRequest="20"
                                    HorizontalOptions="Center"
@@ -131,7 +131,7 @@
                                        Margin="5,-5,-5,5"
                                        Padding="0"
                                        VerticalOptions="Center">
-                                    <Image Source="icons/calendar_90.png"
+                                    <Image Source="icon_calendar_90.png"
                                            HeightRequest="30"
                                            WidthRequest="30"
                                            HorizontalOptions="Center"
@@ -163,7 +163,7 @@
                                        Padding="0"
                                        VerticalOptions="Center"
                                        HorizontalOptions="End">
-                                    <Image Source="icons/add_48.png"
+                                    <Image Source="icon_add_48.png"
                                            HeightRequest="20"
                                            WidthRequest="20"
                                            HorizontalOptions="Center"

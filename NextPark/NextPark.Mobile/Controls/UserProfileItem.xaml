@@ -18,8 +18,8 @@
                             BackgroundColor="White" 
                             HasShadow="false"
                             Padding="6"
-                            HeightRequest="100"
-                            MinimumHeightRequest="100"
+                            HeightRequest="110"
+                            MinimumHeightRequest="110"
                             IsClippedToBounds="true"
                             HorizontalOptions="FillAndExpand">
                         <Frame.GestureRecognizers>
@@ -28,14 +28,14 @@
                             
                         <Grid>
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="100" />
+                                <RowDefinition Height="110" />
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="40" />
                             </Grid.ColumnDefinitions>
                             <!-- Right Chevron -->
-                            <Image Source="icons/chevron_right_128.png"
+                            <Image Source="icon_right_128.png"
                                    HeightRequest="40"
                                    WidthRequest="26"
                                    Aspect="Fill"

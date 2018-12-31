@@ -27,7 +27,7 @@
                              Margin="1" Padding="0"
                              IsVisible="{TemplateBinding BackVisible}"
                              Grid.Row="0" Grid.Column="0">
-                    <Image Source="icons/back_blu_48.png" HeightRequest="24" >
+                    <Image Source="icon_back_blue_48.png" HeightRequest="24" >
                         <Image.GestureRecognizers>
                             <TapGestureRecognizer Command="{TemplateBinding BackAction}"/>                            
                         </Image.GestureRecognizers>                       
@@ -53,7 +53,7 @@
                            HorizontalOptions="Center"
                            BackgroundColor="Transparent"
                            Grid.Row="0" Grid.Column="1">
-                        <Image Aspect="AspectFill" HeightRequest="24" WidthRequest="24" Source="icons/no_user_256.png"/>
+                        <Image Aspect="AspectFill" HeightRequest="24" WidthRequest="24" Source="icon_no_user_256.png"/>
                         <Frame.GestureRecognizers>
                             <TapGestureRecognizer Command="{TemplateBinding UserAction}"/>                            
                         </Frame.GestureRecognizers>
@@ -76,7 +76,7 @@
                             <TapGestureRecognizer Command="{TemplateBinding MoneyAction}"/>                            
                         </Label.GestureRecognizers>
                     </Label>
-                    <Image Source="icons/coins_48.png" HeightRequest="24">
+                    <Image Source="icon_coins_48.png" HeightRequest="24">
                         <Image.GestureRecognizers>
                             <TapGestureRecognizer Command="{TemplateBinding MoneyAction}"/>                            
                         </Image.GestureRecognizers>

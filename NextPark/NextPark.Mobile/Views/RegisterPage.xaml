@@ -33,7 +33,7 @@
                            HorizontalOptions="Center"
                            IsClippedToBounds="true"
                            HasShadow="false">
-                        <Image Source="icons/no_user_256.png"
+                        <Image Source="icon_no_user_256.png"
                                Aspect="AspectFill" />
                     </Frame>
                     <Entry Margin="0,5,0,0" Placeholder="Nome utente" Text="{Binding RegisterName}" FontSize="Small"/>

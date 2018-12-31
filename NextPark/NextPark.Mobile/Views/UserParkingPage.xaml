@@ -46,7 +46,7 @@
                                Padding="0"
                                >
 
-                            <Image Source="icons/add_48.png"
+                            <Image Source="icon_add_48.png"
                                    HeightRequest="16"
                                    WidthRequest="16"
                                    HorizontalOptions="Center"
@@ -77,7 +77,7 @@
                                     <DataTemplate>
                                     <ViewCell Height="70">
                                         <controls:UserParkingItem BorderColor="Gray"
-                                                  Picture="images/Parking1Pict.png"
+                                                  Picture="image_parking1.png"
                                                   Identifier="{Binding UID}"
                                                   TapAction="{Binding OnParkingTap}">
                                             <StackLayout Spacing="1" HorizontalOptions="StartAndExpand">

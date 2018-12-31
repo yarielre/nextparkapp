@@ -96,51 +96,6 @@
     <None Include="Resources\AboutResources.txt" />
     <None Include="Assets\AboutAssets.txt" />
     <None Include="Properties\AndroidManifest.xml" />
-    <None Include="Resources\drawable\icons\add_48.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Resources\drawable\icons\add_photo_256.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Resources\drawable\icons\back_blu_48.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Resources\drawable\icons\bookings_256.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Resources\drawable\icons\calendar_90.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Resources\drawable\icons\chevron_right_128.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Resources\drawable\icons\coins_48.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Resources\drawable\icons\coins_256.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Resources\drawable\icons\modify_128.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Resources\drawable\icons\no_user_256.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Resources\drawable\icons\savings_256.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Resources\drawable\icons\user_icon_256.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Resources\drawable\icons\wrench2_256.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Resources\drawable\images\bg_nextpark.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Resources\drawable\images\Parking1Pict.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\Tabbar.axml" />
@@ -160,14 +115,27 @@
     <AndroidResource Include="Resources\mipmap-xxxhdpi\Icon.png" />
     <AndroidResource Include="Resources\mipmap-xxxhdpi\launcher_foreground.png" />
     <AndroidResource Include="Resources\drawable\xamarin_logo.png" />
+    <AndroidResource Include="Resources\drawable\icon_add_48.png" />
+    <AndroidResource Include="Resources\drawable\icon_add_photo_256.png" />
+    <AndroidResource Include="Resources\drawable\icon_back_blue_48.png" />
+    <AndroidResource Include="Resources\drawable\icon_bookings_256.png" />
+    <AndroidResource Include="Resources\drawable\icon_calendar_90.png" />
+    <AndroidResource Include="Resources\drawable\icon_coins_48.png" />
+    <AndroidResource Include="Resources\drawable\icon_coins_256.png" />
+    <AndroidResource Include="Resources\drawable\icon_modify_128.png" />
+    <AndroidResource Include="Resources\drawable\icon_no_user_256.png" />
+    <AndroidResource Include="Resources\drawable\icon_right_128.png" />
+    <AndroidResource Include="Resources\drawable\icon_savings_256.png" />
+    <AndroidResource Include="Resources\drawable\icon_user_256.png" />
+    <AndroidResource Include="Resources\drawable\icon_wrench_256.png" />
+    <AndroidResource Include="Resources\drawable\image_bg_nextpark.png" />
+    <AndroidResource Include="Resources\drawable\image_parking1.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\drawable-hdpi\" />
     <Folder Include="Resources\drawable-xhdpi\" />
     <Folder Include="Resources\drawable-xxhdpi\" />
     <Folder Include="Resources\drawable-xxxhdpi\" />
-    <Folder Include="Resources\drawable\icons\" />
-    <Folder Include="Resources\drawable\images\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NextPark.Mobile\NextPark.Mobile.csproj">
