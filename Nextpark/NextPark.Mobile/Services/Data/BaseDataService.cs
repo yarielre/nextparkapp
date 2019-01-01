@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace NextPark.Mobile.Services.Data
 {
-    public class BaseDataService<TModel> : IBaseDataService<TModel> where TModel : class, new()
+    public class BaseDataService<TModel> where TModel : class, new()
     {
         public ApiService ApiService { get; }
 

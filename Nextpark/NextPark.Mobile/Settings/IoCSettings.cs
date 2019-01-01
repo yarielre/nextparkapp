@@ -15,12 +15,12 @@ namespace NextPark.Mobile.Infrastructure
             var builder = new ContainerBuilder();
             
             //Services - Data
-            //builder.RegisterType<ParkingDataService>().As<IParkingDataService>();
-            //builder.RegisterType<EventDataService>().As<IEventDataService>();
-            //builder.RegisterType<OrderDataService>().As<IOrderDataService>();
-            //builder.RegisterType<ParkingCategoriesDataService>().As<IParkingCategoriesDataService>();
-            //builder.RegisterType<ParkingDataService>().As<IParkingDataService>();
-            //builder.RegisterType<ParkingTypeDataService>().As<IParkingTypeDataService>();
+            builder.RegisterType<ParkingDataService>();
+            builder.RegisterType<EventDataService>();
+            builder.RegisterType<OrderDataService>();
+            builder.RegisterType<ParkingCategoriesDataService>();
+            builder.RegisterType<ParkingDataService>();
+            builder.RegisterType<ParkingTypeDataService>();
 
             //Services - Application
             builder.RegisterType<ApiService>().As<IApiService>();
