@@ -58,7 +58,7 @@
                 </StackLayout>
                 
                 <!-- Parking Items Region -->
-                <Frame BorderColor="Red"
+                <Frame BorderColor="Transparent"
                        BackgroundColor="Transparent"
                        IsClippedToBounds="true"
                        HasShadow="false"
@@ -81,7 +81,6 @@
                                                 ShowArrows="true"
                                                 ArrowsBackgroundColor="White"
                                                 ArrowsTintColor="#8CC63F"
-                                                
                                                 ArrowsTransparency="0.9"
                                                 ShowIndicators="false">
                             <cv:CarouselViewControl.ItemTemplate>

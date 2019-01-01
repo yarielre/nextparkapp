@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ContentView xmlns="http://xamarin.com/schemas/2014/forms" 
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:controls="clr-namespace:NextPark.Mobile.Controls"             
+             xmlns:controls="clr-namespace:NextPark.Mobile.Controls"
+             xmlns:ios="clr-namespace:Xamarin.Forms.PlatformConfiguration.iOSSpecific;assembly=Xamarin.Forms.Core" 
+             ios:Page.UseSafeArea="true"
              x:Class="NextPark.Mobile.Controls.BasePage" BackgroundColor="White">
     <ContentView.Padding>
         <OnPlatform x:TypeArguments="Thickness">
-            <On Platform="iOS" Value="0,20,0,0" />
+            <!-- <On Platform="iOS" Value="0,20,0,0" / -->
             <On Platform="Android, WinPhone, Windows" Value="0,5,0,0" />
         </OnPlatform>
     </ContentView.Padding>
