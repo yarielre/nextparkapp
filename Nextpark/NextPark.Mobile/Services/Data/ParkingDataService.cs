@@ -7,7 +7,7 @@ namespace NextPark.Mobile.Services.Data
 {
     public class ParkingDataService : BaseDataService<ParkingModel>
     {
-        public ParkingDataService(ApiService apiService) : base(apiService, ApiSettings.ParkingsEndPoint)
+        public ParkingDataService(IApiService apiService) : base(apiService, ApiSettings.ParkingsEndPoint)
         {
         }
     }
