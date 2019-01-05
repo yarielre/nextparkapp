@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 using NextPark.Mobile.Core.Settings;
 using NextPark.Models;
 using Plugin.Connectivity;
+using Plugin.Connectivity.Abstractions;
 
 namespace NextPark.Mobile.Services
 {
@@ -16,32 +17,44 @@ namespace NextPark.Mobile.Services
     {
 
         private readonly string TokenType = "Bearer";
+        private readonly IConnectivity _crossConnectivity;
 
         public string AuthToken { get; set; }
 
         public ApiService()
         {
-
+            _crossConnectivity = CrossConnectivity.Current;
         }
 
         public async Task<Response> CheckConnection()
         {
-            if (!CrossConnectivity.Current.IsConnected)
+            if (_crossConnectivity == null)
+            {
+
+                return new Response
+                {
+                    IsSuccess = false,
+                    Message = "Network connectivity not available."
+                };
+            }
+
+            if (!_crossConnectivity.IsConnected)
             {
                 return new Response
                 {
                     IsSuccess = false,
-                    Message = "Please turn on your internet settings.",
+                    Message = "Please turn on your internet settings."
                 };
             }
 
-            var isReachable = await CrossConnectivity.Current.IsRemoteReachable("google.com");
+            var isReachable = await _crossConnectivity.IsRemoteReachable("google.com");
+        
             if (!isReachable)
             {
                 return new Response
                 {
                     IsSuccess = false,
-                    Message = "Check you internet connection.",
+                    Message = "Check you internet connection."
                 };
             }
 
@@ -169,7 +182,7 @@ namespace NextPark.Mobile.Services
             }
         }
 
-        public async Task<Response> Put<TVm>(string endpoint, int id,  TVm tvm)
+        public async Task<Response> Put<TVm>(string endpoint, int id, TVm tvm)
         {
             var isConneted = await CheckConnection();
             if (!isConneted.IsSuccess) return isConneted;
