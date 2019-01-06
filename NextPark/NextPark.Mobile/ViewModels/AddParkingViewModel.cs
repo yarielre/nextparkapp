@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Windows.Input;
 using NextPark.Mobile.Services;
+using NextPark.Models;
 using System.Threading.Tasks;
 using Xamarin.Forms;
+using Xamarin.Forms.Maps;
+using NextPark.Mobile.Services.Data;
+
 namespace NextPark.Mobile.ViewModels
 {
     public class AddParkingViewModel : BaseViewModel
@@ -52,6 +56,7 @@ namespace NextPark.Mobile.ViewModels
 
         // SERVICES
         private readonly IDialogService _dialogService;
+        private readonly IGeolocatorService _geoLocatorService;
 
         // PRIVATE VARIABLES
         private double _minPriceValue;
@@ -59,12 +64,14 @@ namespace NextPark.Mobile.ViewModels
 
         // METHODS
         public AddParkingViewModel(IDialogService dialogService,
+                                   IGeolocatorService geoLocatorService,
                                    IApiService apiService,
                                    IAuthService authService,
                                    INavigationService navService)
                                    : base(apiService, authService, navService)
         {
             _dialogService = dialogService;
+            _geoLocatorService = geoLocatorService;
 
             // Header actions
             OnBackClick = new Command<object>(OnBackClickMethod);
@@ -165,9 +172,50 @@ namespace NextPark.Mobile.ViewModels
         // Add Parking button action
         public void OnAddParkingMethod(object sender)
         {
-            // TODO: fill add parking data according to parking data model
+
+
             // TODO: send add parking request to backend
+            AddNewParking();
+            /* var eventResponse = await DataService.GetInstance().AddParkingEvent(ParkingEvent);
+
+            if (eventResponse.IsSuccess)
+            {
+                ParkingEvent = eventResponse.Result as EventModel; //TODO: Use a generic response to avoid this CAST!
+                IsRunning = false;
+            }
+            */
             _dialogService.ShowAlert("Alert", "TODO: Add parking");
+        }
+
+        public async void AddNewParking()
+        {
+            ParkingDataService parkingDataService = new ParkingDataService((ApiService)base.ApiService);
+
+            // TODO: fill add parking data according to parking data model
+            ParkingModel parkingModel = new ParkingModel();
+
+            // TODO: get position on parking picture capture
+            // Get Position
+            Position position = new Position(0, 0);
+            try
+            {
+                var permissionGaranted = await _geoLocatorService.IsPermissionGaranted();
+
+                if (!permissionGaranted) return;
+
+                var getLocation = await _geoLocatorService.GetLocation();
+
+                parkingModel.Latitude = getLocation.Latitude.ToString();
+                parkingModel.Longitude = getLocation.Longitude.ToString();
+                parkingModel.UserId = 1;
+
+                var response = await parkingDataService.Post(parkingModel);
+                await _dialogService.ShowAlert("Alert", response.ToString());
+            }
+            catch (Exception ex)
+            {
+                // _loggerService.LogVerboseException(ex, this).ShowVerboseException(ex, this).ThrowVerboseException(ex, this);
+            }
         }
     }
 }

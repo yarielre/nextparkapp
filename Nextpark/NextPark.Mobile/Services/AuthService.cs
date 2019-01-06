@@ -51,7 +51,7 @@ namespace NextPark.Mobile.Services
                 result.IsSuccess = true;
                 return result;
             }
-            catch
+            catch (Exception ex)
             {
                 return null;
             }

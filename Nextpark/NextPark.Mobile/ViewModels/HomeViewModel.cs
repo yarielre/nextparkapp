@@ -1,5 +1,6 @@
 ﻿using NextPark.Mobile.Extensions;
 using NextPark.Mobile.Services;
+using NextPark.Mobile.Services.Data;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 using System.Threading.Tasks;
@@ -34,6 +35,7 @@ namespace NextPark.Mobile.ViewModels
         // SERVICES
         private readonly IGeolocatorService _geoLocatorService;
         private readonly IDialogService _dialogService;
+        private readonly ParkingDataService _parkingDataService;
 
         // PRIVATE VARIABLES
         private ObservableCollection<ParkingInfo> parkings;
@@ -44,12 +46,16 @@ namespace NextPark.Mobile.ViewModels
         }
 
         // METHODS
-        public HomeViewModel(IGeolocatorService geolocatorService, IDialogService dialogService, 
-            IApiService apiService,  IAuthService authService, INavigationService navService) 
+        public HomeViewModel(IGeolocatorService geolocatorService, 
+                             IDialogService dialogService, 
+                             IApiService apiService,  
+                             IAuthService authService, 
+                             INavigationService navService)
             : base(apiService, authService, navService)
         {
             _geoLocatorService = geolocatorService;
             _dialogService = dialogService;
+            _parkingDataService = new ParkingDataService((ApiService)base.ApiService);
 
             OnUserClick = new Command<object>(OnUserClickMethod);
             OnMoneyClick = new Command<object>(OnMoneyClickMethod);
@@ -77,6 +83,8 @@ namespace NextPark.Mobile.ViewModels
             UserMoney = "8";
             base.OnPropertyChanged("UserName");
             base.OnPropertyChanged("UserMoney");
+
+            UpdateParkings();
 
             // TODO: fill parking list
             Parkings = new ObservableCollection<ParkingInfo>
@@ -148,6 +156,31 @@ namespace NextPark.Mobile.ViewModels
                 NavigationService.NavigateToAsync<BookingViewModel>(item);
                 //_dialogService.ShowAlert("Alert", "Booking: " + args.ToString());
             }
+        }
+
+        private async void UpdateParkings()
+        {
+            Models.RegisterModel model = new Models.RegisterModel();
+            model.Name = "Jaro";
+            model.Lastname = "Serena";
+            model.Username = "JarJar";
+            model.Password = "Jaro.001";
+            model.Address = "Via XY 01";
+            model.CarPlate = "TI 1234";
+            model.Email = "jaro.serena@gmail.com";
+            model.State = "CH";
+
+            var response = await base.AuthService.Register(Core.Settings.ApiSettings.AuthEndPoint, model);
+            var response2 = await base.AuthService.Login(NextPark.Mobile.Core.Settings.ApiSettings.AuthEndPoint, "JarJar", "Jaro.001");
+            /*if (response == null) return; 
+            if (response.IsSuccess)
+            {
+
+            }
+            */
+            var ParkingList = await _parkingDataService.Get();
+            int i = 1;
+            if (i == 1) i++;
         }
     }
 }
