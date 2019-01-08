@@ -101,7 +101,7 @@ namespace NextPark.Mobile.ViewModels
                 new ParkingInfo { UID = 2, Info = "Via Strada 2", SubInfo = "Lugano, Ticino", Picture="image_parking1.png", FullPrice = "2 CHF/h", FullAvailability = "08:00-12:00", BookAction = OnBookingTapped}
             };
 
-            DemoAuthentication();
+            DemoBackEndCalls();
             //GetParkings(); //TODO: Use this!
 
 
@@ -110,42 +110,37 @@ namespace NextPark.Mobile.ViewModels
             return Task.FromResult(false);
         }
 
-        private async void DemoAuthentication() {
-
-            //Demo Login
-            try {
-                var loginResponse = await AuthService.Login("test@wip.ch", "Wisegar.1");
-
-            }
-            catch(Exception e) { 
-            
-            }
-
-            //Demo Register
-            //var demoUser = new RegisterModel
-            //{
-            //    Address = "Via Demo User",
-            //    CarPlate = "TI 00DEMO00",
-            //    Email = "demo@nextpark.ch",
-            //    Lastname = "Demo",
-            //    Name = "User",
-            //    Password = "Wisegar.1",
-            //    State = "DemoState",
-            //    Username = "demo@nextpark.ch"
-            //};
-
-            //var registerResponse = await AuthService.Register(demoUser);
-        }
-
-
-        private async void GetParkings()
+        private async void DemoBackEndCalls()
         {
 
-            var parkings = await _parkingDataService.Get();
 
-            if (parkings.Count == 0)
+            try
             {
-                await _parkingDataService.Post(new ParkingModel
+                //Demo Login OK
+                var loginResponse = await AuthService.Login("demo@nextpark.ch", "Wisegar.1");
+
+                //Demo Register OK
+                var demoUser = new RegisterModel
+                {
+                    Address = "Via Demo User",
+                    CarPlate = "TI 00DEMO00",
+                    Email = "demo@nextpark.ch",
+                    Lastname = "Demo",
+                    Name = "User",
+                    Password = "Wisegar.1",
+                    State = "DemoState",
+                    Username = "demo@nextpark.ch"
+                };
+
+                var registerResponse = await AuthService.Register(demoUser);
+
+                //Demo Get Parkings OK
+                var parkings = await _parkingDataService.Get();
+
+                if (parkings.Count > 0) return;
+
+                //Demo Post Parking Working on It!
+                var parking1 = new ParkingModel
                 {
                     ImageUrl = "image_parking1.png",
                     IsRented = false,
@@ -164,10 +159,22 @@ namespace NextPark.Mobile.ViewModels
                     {
                         Type = "Business"
                     }
-                });
+                };
 
-                return;
+                await _parkingDataService.Post(parking1);
+
             }
+            catch (Exception e)
+            {
+
+            }
+        }
+
+
+        private async Task GetParkings()
+        {
+
+            var parkings = await _parkingDataService.Get();
 
             // TODO: fill parking list and use parkingModel
             Parkings = new ObservableCollection<ParkingInfo>

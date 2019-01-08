@@ -3,8 +3,8 @@ namespace NextPark.Mobile.Core.Settings
 {
     public static class ApiSettings
     {
-        public static string BaseUri = "http://vps519741.ovh.net";
-        public static int BasePort = 5043;
+        public static string BaseUri = "https://nextpark-api.azurewebsites.net";
+        public static int BasePort = 443;
         public static string BaseUrl = string.Format("{0}:{1}", BaseUri, BasePort);  
 
         public static string AuthEndPoint => string.Format("{0}/api/auth", BaseUrl);
