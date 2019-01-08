@@ -101,6 +101,7 @@ namespace NextPark.Mobile.ViewModels
                 new ParkingInfo { UID = 2, Info = "Via Strada 2", SubInfo = "Lugano, Ticino", Picture="image_parking1.png", FullPrice = "2 CHF/h", FullAvailability = "08:00-12:00", BookAction = OnBookingTapped}
             };
 
+            DemoAuthentication();
             //GetParkings(); //TODO: Use this!
 
 
@@ -108,6 +109,34 @@ namespace NextPark.Mobile.ViewModels
 
             return Task.FromResult(false);
         }
+
+        private async void DemoAuthentication() {
+
+            //Demo Login
+            try {
+                var loginResponse = await AuthService.Login("test@wip.ch", "Wisegar.1");
+
+            }
+            catch(Exception e) { 
+            
+            }
+
+            //Demo Register
+            //var demoUser = new RegisterModel
+            //{
+            //    Address = "Via Demo User",
+            //    CarPlate = "TI 00DEMO00",
+            //    Email = "demo@nextpark.ch",
+            //    Lastname = "Demo",
+            //    Name = "User",
+            //    Password = "Wisegar.1",
+            //    State = "DemoState",
+            //    Username = "demo@nextpark.ch"
+            //};
+
+            //var registerResponse = await AuthService.Register(demoUser);
+        }
+
 
         private async void GetParkings()
         {

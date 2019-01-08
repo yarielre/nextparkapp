@@ -47,7 +47,7 @@ namespace NextPark.Mobile.Services
                 };
             }
 
-            var isReachable = await _crossConnectivity.IsRemoteReachable("google.com");
+            var isReachable = await _crossConnectivity.IsRemoteReachable(ApiSettings.BaseUri, ApiSettings.BasePort, 1000);
         
             if (!isReachable)
             {
