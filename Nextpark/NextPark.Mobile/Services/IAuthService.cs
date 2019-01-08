@@ -5,10 +5,10 @@ namespace NextPark.Mobile.Services
 {
     public interface IAuthService
     {
-        Task<Response> GetUserByUserName(string endpoint, string userName);
+        Task<Response> GetUserByUserName(string userName);
         bool IsUserAuthenticated();
-        Task<TokenResponse> Login(string endpoint, string username, string password);
-        Task<TokenResponse> Logout(string endpoint);
-        Task<TokenResponse> Register(string endpoint, RegisterModel model);
+        Task<TokenResponse> Login(string username, string password);
+        Task<TokenResponse> Logout();
+        Task<TokenResponse> Register(RegisterModel model);
     }
 }

@@ -7,9 +7,9 @@ namespace NextPark.Mobile.Services.Data
 {
     public class BaseDataService<TModel> where TModel : class, new()
     {
-        public IApiService ApiService { get; }
-
+        public readonly IApiService ApiService;
         private readonly string _apiEndPoint;
+
 
         public BaseDataService(IApiService apiService, string apiEndpoint)
         {

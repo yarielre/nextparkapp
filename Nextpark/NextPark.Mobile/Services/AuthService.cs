@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using NextPark.Mobile.Core.Settings;
 using NextPark.Models;
 
 namespace NextPark.Mobile.Services
@@ -12,6 +13,7 @@ namespace NextPark.Mobile.Services
     {
 
         private readonly IApiService _apiService;
+        private readonly string AuthEndPoint = ApiSettings.AuthEndPoint;
 
         public AuthService(IApiService apiService)
         {
@@ -20,7 +22,7 @@ namespace NextPark.Mobile.Services
         public bool IsUserAuthenticated() {
             return false;
         }
-        public async Task<TokenResponse> Login(string endpoint, string username, string password)
+        public async Task<TokenResponse> Login(string username, string password)
         {
             var isConneted = await _apiService.CheckConnection();
             if (!isConneted.IsSuccess) return new TokenResponse { IsSuccess = isConneted.IsSuccess };
@@ -36,10 +38,12 @@ namespace NextPark.Mobile.Services
                 var json = JsonConvert.SerializeObject(model);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-                var url = $"{endpoint}/login";
+                var url = $"{AuthEndPoint}/login";
 
                 var http = _apiService.GetHttpClient();
-                var response = await http.PostAsync(endpoint, content);
+
+                var response = await http.PostAsync(url, content);
+
                 if (response.StatusCode == HttpStatusCode.BadRequest)
                     return new TokenResponse
                     {
@@ -49,15 +53,24 @@ namespace NextPark.Mobile.Services
                 var result = JsonConvert.DeserializeObject<TokenResponse>(
                     resultJson);
                 result.IsSuccess = true;
+
+
+                AuthSettings.Token = result.AuthToken;
+                AuthSettings.UserId = result.UserId.ToString();
+
+
                 return result;
             }
-            catch
+            catch (Exception e)
             {
-                return null;
+                return new TokenResponse
+                {
+                    IsSuccess = false
+                };
             }
         }
 
-        public async Task<TokenResponse> Logout(string endpoint)
+        public async Task<TokenResponse> Logout()
         {
             var isConneted = await _apiService.CheckConnection();
             if (!isConneted.IsSuccess) return new TokenResponse { IsSuccess = isConneted.IsSuccess };
@@ -65,10 +78,10 @@ namespace NextPark.Mobile.Services
             try
             {
 
-                var url = $"{endpoint}/logout";
+                var url = $"{AuthEndPoint}/logout";
 
                 var http = _apiService.GetHttpClient();
-                var response = await http.GetAsync(endpoint);
+                var response = await http.GetAsync(url);
 
                 if (response.StatusCode == HttpStatusCode.BadRequest)
                     return new TokenResponse
@@ -80,19 +93,27 @@ namespace NextPark.Mobile.Services
                     resultJson);
                 result.IsSuccess = true;
 
+                AuthSettings.Token = null;
+                AuthSettings.UserId = null;
+                AuthSettings.UserName = null;
+
                 return result;
 
             }
-            catch
+            catch (Exception)
             {
-                return null;
+                return new TokenResponse
+                {
+                    IsSuccess = false
+                };
             }
         }
 
-        public async Task<TokenResponse> Register(string endpoint, RegisterModel model)
+        public async Task<TokenResponse> Register(RegisterModel model)
         {
             var isConneted = await _apiService.CheckConnection();
             if (!isConneted.IsSuccess) return new TokenResponse { IsSuccess = isConneted.IsSuccess };
+
 
             try
             {
@@ -100,10 +121,10 @@ namespace NextPark.Mobile.Services
                 var json = JsonConvert.SerializeObject(model);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-                var url = $"{endpoint}/register";
+                var url = $"{AuthEndPoint}/register";
 
                 var http = _apiService.GetHttpClient();
-                var response = await http.PostAsync(endpoint, content);
+                var response = await http.PostAsync(url, content);
                 if (response.StatusCode == HttpStatusCode.BadRequest)
                     return new TokenResponse
                     {
@@ -115,19 +136,22 @@ namespace NextPark.Mobile.Services
                 result.IsSuccess = true;
                 return result;
             }
-            catch
+            catch(Exception)
             {
-                return null;
+                return new TokenResponse
+                {
+                    IsSuccess = false
+                };
             }
         }
-        public async Task<Response> GetUserByUserName(string endpoint, string userName)
+        public async Task<Response> GetUserByUserName(string userName)
         {
             var isConneted = await _apiService.CheckConnection();
             if (!isConneted.IsSuccess) return isConneted;
 
             try
             {
-                var url = $"{endpoint}/userbyname";
+                var url = $"{AuthEndPoint}/userbyname";
                 var json = JsonConvert.SerializeObject(userName);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
@@ -142,6 +166,8 @@ namespace NextPark.Mobile.Services
 
                 var resultJson = await response.Content.ReadAsStringAsync();
                 var result = JsonConvert.DeserializeObject<UserModel>(resultJson);
+
+                AuthSettings.UserName = result.UserName;
 
                 return new Response
                 {
