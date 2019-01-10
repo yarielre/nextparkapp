@@ -22,6 +22,8 @@ namespace NextPark.Mobile.ViewModels
         public string NPA { get; set; }
         public string City { get; set; }
         public string Notes { get; set; }
+        public string Longitude { get; set; }
+        public string Latitude { get; set; }
         public double MinPriceValue 
         {
             get { return this._minPriceValue; }
@@ -63,6 +65,7 @@ namespace NextPark.Mobile.ViewModels
 
         // SERVICES
         private readonly IDialogService _dialogService;
+        private readonly IGeolocatorService _geoLocatorService;
 
         // PRIVATE VARIABLES
         private double _minPriceValue;
@@ -70,12 +73,14 @@ namespace NextPark.Mobile.ViewModels
 
         // METHODS
         public AddParkingViewModel(IDialogService dialogService,
+                                   IGeolocatorService geolocatorService,
                                    IApiService apiService,
                                    IAuthService authService,
                                    INavigationService navService)
                                    : base(apiService, authService, navService)
         {
             _dialogService = dialogService;
+            _geoLocatorService = geolocatorService;
 
             // Header actions
             OnBackClick = new Command<object>(OnBackClickMethod);
@@ -184,6 +189,7 @@ namespace NextPark.Mobile.ViewModels
         // Add Parking button action
         public void OnAddParkingMethod(object sender)
         {
+            // TODO: check picture and location, location is a must have!
             // TODO: fill add parking data according to parking data model
             // TODO: send add parking request to backend
             _dialogService.ShowAlert("Alert", "TODO: Add parking");
@@ -199,6 +205,7 @@ namespace NextPark.Mobile.ViewModels
                     "Errore Fotocamera",
                     "Fotocamera non disponibile o non supportata.",
                     "OK");
+
                 return;
             }
             mediaFile = await CrossMedia.Current.TakePhotoAsync(new StoreCameraMediaOptions
@@ -212,6 +219,30 @@ namespace NextPark.Mobile.ViewModels
             if (mediaFile == null)
                 return;
             ParkingImage = ImageSource.FromStream(() => { return mediaFile.GetStream(); });
+
+            try
+            {
+                var permissionGaranted = await _geoLocatorService.IsPermissionGaranted();
+
+                if (!permissionGaranted) {
+                    // TODO: ask for location, location is a must have!
+                    return;
+                }
+
+                var getLocation = await _geoLocatorService.GetLocation();
+
+                if (getLocation == null) {
+                    // TODO: ask for location, location is a must have!
+                    return;
+                }
+                Longitude = getLocation.Latitude.ToString();
+                Latitude = getLocation.Longitude.ToString();
+
+            }
+            catch (Exception ex)
+            {
+                // _loggerService.LogVerboseException(ex, this).ShowVerboseException(ex, this).ThrowVerboseException(ex, this);
+            }
         }
     }
 }
