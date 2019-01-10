@@ -6,8 +6,6 @@ using System.Text;
 
 namespace NextPark.Mobile.Services.Data
 {
-    public interface IEventDataService : IBaseDataService<EventModel> {
-    }
     public class EventDataService : BaseDataService<EventModel>
     {
         public EventDataService(ApiService apiService) : base(apiService, ApiSettings.EventsEndPoint)

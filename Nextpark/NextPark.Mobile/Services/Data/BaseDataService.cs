@@ -5,13 +5,13 @@ using System.Threading.Tasks;
 
 namespace NextPark.Mobile.Services.Data
 {
-    public class BaseDataService<TModel> : IBaseDataService<TModel> where TModel : class, new()
+    public class BaseDataService<TModel> where TModel : class, new()
     {
-        public ApiService ApiService { get; }
-
+        public readonly IApiService ApiService;
         private readonly string _apiEndPoint;
 
-        public BaseDataService(ApiService apiService, string apiEndpoint)
+
+        public BaseDataService(IApiService apiService, string apiEndpoint)
         {
             ApiService = apiService;
             _apiEndPoint = apiEndpoint;

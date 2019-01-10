@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace NextPark.Mobile.Services.Data
 {
-    public class OrderDataService : BaseDataService<OrderModel>, IOrderDataService
+    public class OrderDataService : BaseDataService<OrderModel>
     {
         public OrderDataService(ApiService apiService) : base(apiService, ApiSettings.OrdersEndPoint)
         {

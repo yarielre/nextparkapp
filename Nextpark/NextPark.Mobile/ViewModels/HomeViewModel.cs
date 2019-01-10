@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using Xamarin.Forms.Maps;
 using Xamarin.Forms;
 using System;
+using NextPark.Mobile.Services.Data;
+using NextPark.Models;
 
 namespace NextPark.Mobile.ViewModels
 {
@@ -34,22 +36,26 @@ namespace NextPark.Mobile.ViewModels
         // SERVICES
         private readonly IGeolocatorService _geoLocatorService;
         private readonly IDialogService _dialogService;
+        private readonly ParkingDataService _parkingDataService;
 
         // PRIVATE VARIABLES
         private ObservableCollection<ParkingInfo> parkings;
         public ObservableCollection<ParkingInfo> Parkings
         {
             get { return parkings; }
+
+            //set => SetValue(ref parkings, value); TODO: Use this.
             set { parkings = value; base.OnPropertyChanged("Parkings"); }
         }
 
         // METHODS
-        public HomeViewModel(IGeolocatorService geolocatorService, IDialogService dialogService, 
-            IApiService apiService,  IAuthService authService, INavigationService navService) 
+        public HomeViewModel(IGeolocatorService geolocatorService, IDialogService dialogService,
+            IApiService apiService, IAuthService authService, INavigationService navService, ParkingDataService parkingDataService)
             : base(apiService, authService, navService)
         {
             _geoLocatorService = geolocatorService;
             _dialogService = dialogService;
+            _parkingDataService = parkingDataService;
 
             OnUserClick = new Command<object>(OnUserClickMethod);
             OnMoneyClick = new Command<object>(OnMoneyClickMethod);
@@ -75,19 +81,116 @@ namespace NextPark.Mobile.ViewModels
 
             UserName = "Jonny";
             UserMoney = "8";
+
             base.OnPropertyChanged("UserName");
             base.OnPropertyChanged("UserMoney");
 
-            // TODO: fill parking list
+            // TODO: fill parking list and use parkingModel
             Parkings = new ObservableCollection<ParkingInfo>
             {
-                new ParkingInfo { UID = 0, Info = "Via Strada 1", SubInfo = "Lugano, Ticino", Picture="image_parking1.png", FullPrice = "2 CHF/h", FullAvailability = "08:00-12:00", BookAction = OnBookingTapped},
+                new ParkingInfo {
+                UID = 0,
+                Info = "Via Strada 1",
+                SubInfo = "Lugano, Ticino",
+                Picture="image_parking1.png",
+                FullPrice = "2 CHF/h",
+                FullAvailability = "08:00-12:00",
+                BookAction = OnBookingTapped},
+
                 new ParkingInfo { UID = 1, Info = "Via Strada 1.5", SubInfo = "Lugano, Ticino", Picture="image_parking1.png", FullPrice = "2 CHF/h", FullAvailability = "08:00-12:00", BookAction = OnBookingTapped},
                 new ParkingInfo { UID = 2, Info = "Via Strada 2", SubInfo = "Lugano, Ticino", Picture="image_parking1.png", FullPrice = "2 CHF/h", FullAvailability = "08:00-12:00", BookAction = OnBookingTapped}
             };
+
+            DemoBackEndCalls();
+            //GetParkings(); //TODO: Use this!
+
+
             base.OnPropertyChanged("Parkings");
 
             return Task.FromResult(false);
+        }
+
+        private async void DemoBackEndCalls()
+        {
+
+
+            try
+            {
+                //Demo Login OK
+                var loginResponse = await AuthService.Login("demo@nextpark.ch", "Wisegar.1");
+
+                //Demo Register OK
+                var demoUser = new RegisterModel
+                {
+                    Address = "Via Demo User",
+                    CarPlate = "TI 00DEMO00",
+                    Email = "demo@nextpark.ch",
+                    Lastname = "Demo",
+                    Name = "User",
+                    Password = "Wisegar.1",
+                    State = "DemoState",
+                    Username = "demo@nextpark.ch"
+                };
+
+                var registerResponse = await AuthService.Register(demoUser);
+
+                //Demo Get Parkings OK
+                var parkings = await _parkingDataService.Get();
+
+                if (parkings.Count > 0) return;
+
+                //Demo Post Parking Working on It!
+                var parking1 = new ParkingModel
+                {
+                    ImageUrl = "image_parking1.png",
+                    IsRented = false,
+                    ParkingEvent = new EventModel
+                    {
+                        EndDate = DateTime.Now,
+                        StartDate = DateTime.Now
+                    },
+                    ParkingCategory = new ParkingCategoryModel
+                    {
+                        Category = "Test",
+                        HourPrice = 2.0,
+                        MonthPrice = 3.0
+                    },
+                    ParkingType = new ParkingTypeModel
+                    {
+                        Type = "Business"
+                    }
+                };
+
+                await _parkingDataService.Post(parking1);
+
+            }
+            catch (Exception e)
+            {
+
+            }
+        }
+
+
+        private async Task GetParkings()
+        {
+
+            var parkings = await _parkingDataService.Get();
+
+            // TODO: fill parking list and use parkingModel
+            Parkings = new ObservableCollection<ParkingInfo>
+            {
+                new ParkingInfo {
+                UID = 0,
+                Info = "Via Strada 1",
+                SubInfo = "Lugano, Ticino",
+                Picture="image_parking1.png",
+                FullPrice = "2 CHF/h",
+                FullAvailability = "08:00-12:00",
+                BookAction = OnBookingTapped},
+
+                new ParkingInfo { UID = 1, Info = "Via Strada 1.5", SubInfo = "Lugano, Ticino", Picture="image_parking1.png", FullPrice = "2 CHF/h", FullAvailability = "08:00-12:00", BookAction = OnBookingTapped},
+                new ParkingInfo { UID = 2, Info = "Via Strada 2", SubInfo = "Lugano, Ticino", Picture="image_parking1.png", FullPrice = "2 CHF/h", FullAvailability = "08:00-12:00", BookAction = OnBookingTapped}
+            };
         }
 
         private void Map_Tapped(object sender, CustomControls.MapTapEventArgs e)
@@ -106,9 +209,10 @@ namespace NextPark.Mobile.ViewModels
             Map_Ready_Handler();
         }
 
-        private async void Map_Ready_Handler() {
+        private async void Map_Ready_Handler()
+        {
 
-            Xamarin.Forms.Maps.Position position = new Position(0,0);
+            Xamarin.Forms.Maps.Position position = new Position(0, 0);
             try
             {
                 var permissionGaranted = await _geoLocatorService.IsPermissionGaranted();
@@ -121,7 +225,7 @@ namespace NextPark.Mobile.ViewModels
             }
             catch (Exception ex)
             {
-               // _loggerService.LogVerboseException(ex, this).ShowVerboseException(ex, this).ThrowVerboseException(ex, this);
+                // _loggerService.LogVerboseException(ex, this).ShowVerboseException(ex, this).ThrowVerboseException(ex, this);
             }
 
             Map.MoveToRegion(MapSpan.FromCenterAndRadius(position, Distance.FromKilometers(1)));

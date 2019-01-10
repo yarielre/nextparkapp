@@ -6,9 +6,6 @@ using System.Text;
 
 namespace NextPark.Mobile.Services.Data
 {
-    public interface IParkingCategoriesDataService : IBaseDataService<ParkingCategoryModel>
-    {
-    }
     public class ParkingCategoriesDataService : BaseDataService<ParkingCategoryModel>
     {
         public ParkingCategoriesDataService(ApiService apiService) : base(apiService, ApiSettings.ParkingCategoriesEndPoint)
