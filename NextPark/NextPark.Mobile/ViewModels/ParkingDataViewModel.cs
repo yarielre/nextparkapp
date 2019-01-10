@@ -114,7 +114,7 @@ namespace NextPark.Mobile.ViewModels
         public void OnEditParkingMethod(object sender)
         {
             // TODO: Evaluate Add Parking page with element or EditParking Page to be added
-            NavigationService.NavigateToAsync<AddParkingViewModel>();
+            NavigationService.NavigateToAsync<AddParkingViewModel>(parking);
         }
 
         // Activate/Deactivate Parking toggle switch action

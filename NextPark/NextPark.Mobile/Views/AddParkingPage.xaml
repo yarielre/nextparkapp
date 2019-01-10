@@ -16,7 +16,7 @@
                              HeaderMoneyAction="{Binding OnMoneyClick}">
                 
                 <StackLayout x:Name="RegContent" Orientation="Vertical" VerticalOptions="FillAndExpand" Spacing="5">
-                    <Label Text="Nuovo Parcheggio"                            
+                    <Label Text="{Binding Title}"
                            FontSize="Large" 
                            FontAttributes="Bold" 
                            TextColor="#333333"

@@ -18,6 +18,7 @@ namespace NextPark.Mobile.ViewModels
         public string UserMoney { get; set; }       // Header money value
         public ICommand OnMoneyClick { get; set; }  // Header money action
 
+        public string Title { get; set; }
         public string Street { get; set; }
         public string NPA { get; set; }
         public string City { get; set; }
@@ -100,12 +101,22 @@ namespace NextPark.Mobile.ViewModels
         // Initialization
         public override Task InitializeAsync(object data = null)
         {
-            /*
-            if (data != null)
+
+            if ((data != null) && (data is ParkingItem parking))
             {
-                return Task.FromResult(false);
+                // Edit Parking
+                Title = "Modifica Parcheggio";
+                Street = parking.Address;
+                City = parking.City;
+                base.OnPropertyChanged("Title");
+                base.OnPropertyChanged("Street");
+                base.OnPropertyChanged("City");
+            } else {
+                // New Parking
+                Title = "Nuovo Parcheggio";
+                base.OnPropertyChanged("Title");
             }
-            */
+
 
             // Header
             BackText = "Parcheggi";
