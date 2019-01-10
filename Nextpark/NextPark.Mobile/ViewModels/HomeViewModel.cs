@@ -130,7 +130,7 @@ namespace NextPark.Mobile.ViewModels
         // User Click action
         public void OnUserClickMethod(object sender)
         {
-            NavigationService.NavigateToAsync<RegisterViewModel>();
+            NavigationService.NavigateToAsync<LoginViewModel>();
         }
 
         // Money Click action

@@ -4,6 +4,8 @@ using NextPark.Mobile.Extensions;
 using NextPark.Mobile.Services;
 using System.Threading.Tasks;
 using Xamarin.Forms;
+using Plugin.Media;
+using Plugin.Media.Abstractions;
 
 namespace NextPark.Mobile.ViewModels
 {
@@ -26,6 +28,14 @@ namespace NextPark.Mobile.ViewModels
         public string NPA { get; set; }             // NPA
         public string City { get; set; }            // City/Country
         public string Plate { get; set; }           // Plate
+        private ImageSource _userImage;             // user image
+        public ImageSource UserImage
+        {
+            get => _userImage;
+            set => SetValue(ref _userImage, value);
+        }
+
+        public ICommand OnUserImageTap { get; set; }    // User image action
 
         public bool IsRunning { get; set; }         // Activity spinner
         public ICommand OnSaveClick { get; set; }   // Save button click action
@@ -49,7 +59,10 @@ namespace NextPark.Mobile.ViewModels
             OnBackClick = new Command<object>(OnBackClickMethod);
             OnUserClick = new Command<object>(OnUserClickMethod);
             OnMoneyClick = new Command<object>(OnMoneyClickMethod);
+            OnUserImageTap = new Command<object>(OnUserImageTapMethod);
             OnSaveClick = new Command<object>(OnSaveClickMethod);
+
+            UserImage = "icon_add_photo_256.png";
         }
 
         // Initialization
@@ -102,14 +115,87 @@ namespace NextPark.Mobile.ViewModels
             NavigationService.NavigateToAsync<MoneyViewModel>();
         }
 
+        // User image tap action
+        public void OnUserImageTapMethod(object args)
+        {
+            AddPhoto();
+        }
+
+        private async void AddPhoto()
+        {
+            await CrossMedia.Current.Initialize();
+            var source = await Application.Current.MainPage.DisplayActionSheet(
+                "Scegli la fonte per aggiungere la foto.",
+                "Annulla",
+                null,
+                "Galleria",
+                "Fotocamera");
+            if (source == null)
+            {
+                return;
+            }
+            if (source == "Fotocamera")
+                TakeUserPhoto();
+            if (source == "Galleria")
+                PickUserPhoto();
+        }
+
+        // Take User Image
+        private async void TakeUserPhoto()
+        {
+            MediaFile mediaFile;
+            if (!CrossMedia.Current.IsCameraAvailable || !CrossMedia.Current.IsTakePhotoSupported)
+            {
+                await Application.Current.MainPage.DisplayAlert(
+                    "Errore Fotocamera",
+                    "Fotocamera non disponibile o non supportata.",
+                    "OK");
+                return;
+            }
+            mediaFile = await CrossMedia.Current.TakePhotoAsync(new StoreCameraMediaOptions
+            {
+                Directory = "Sample",
+                Name = "parking_photo.jpg",
+                PhotoSize = PhotoSize.Small
+            });
+
+
+            if (mediaFile == null)
+                return;
+            UserImage = ImageSource.FromStream(() => { return mediaFile.GetStream(); });
+        }
+
+        // Pick User Image
+        private async void PickUserPhoto()
+        {
+            MediaFile mediaFile;
+            await CrossMedia.Current.Initialize();
+            if (!CrossMedia.Current.IsPickPhotoSupported)
+            {
+                await Application.Current.MainPage.DisplayAlert(
+                    "Errore Galleria",
+                    "Nessuna foto disponibile",
+                    "OK");
+                return;
+            }
+            try
+            {
+                mediaFile = await CrossMedia.Current.PickPhotoAsync();
+                if (mediaFile == null)
+                    return;
+                UserImage = ImageSource.FromStream(() => { return mediaFile.GetStream(); });
+            }
+            catch (Exception ex)
+            {
+                //TODO: manage exception here...
+            }
+        }
+
         // Save button click action
         public void OnSaveClickMethod(object sender)
         {
-            _dialogService.ShowAlert("Alert", "Save");
-            if (activity == true) activity = false;
-            else activity = true;
-
-            IsRunning = activity;
+            _dialogService.ShowAlert("Alert", "TODO: Update User");
+            IsRunning = true;
             base.OnPropertyChanged("IsRunning");
         }
     }

@@ -10,6 +10,7 @@ namespace NextPark.Mobile.Infrastructure
         public AddParkingViewModel AddParking { get { return (AddParkingViewModel)IoCSettings.Resolve<AddParkingViewModel>(); } }
         public BookingMapViewModel BookMap { get { return (BookingMapViewModel)IoCSettings.Resolve<BookingMapViewModel>(); } }
         public BookingViewModel BookNow { get { return (BookingViewModel)IoCSettings.Resolve<BookingViewModel>(); } }
+        public LoginViewModel Login { get { return (LoginViewModel)IoCSettings.Resolve<LoginViewModel>(); } }
         public MoneyViewModel Budget { get { return (MoneyViewModel)IoCSettings.Resolve<MoneyViewModel>(); } }
         public ParkingDataViewModel ParkingData { get { return (ParkingDataViewModel)IoCSettings.Resolve<ParkingDataViewModel>(); } }
         public RegisterViewModel Register { get { return (RegisterViewModel)IoCSettings.Resolve<RegisterViewModel>(); } }

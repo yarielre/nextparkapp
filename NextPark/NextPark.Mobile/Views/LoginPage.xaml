@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+             xmlns:controls="clr-namespace:NextPark.Mobile.Controls"
+             BindingContext="{Binding Login, Source={StaticResource Locator}}"             
+             x:Class="NextPark.Mobile.Views.LoginPage">
+    <ContentPage.Content>
+        <ContentView x:Name="contentView">             
+            <controls:DetailPage x:Name="header"
+                                HeaderBackText="{Binding BackText}"
+                                IsHeaderBackVisible="true"
+                                HeaderBackAction="{Binding OnBackClick}"                               
+                                HeaderUserText="{Binding UserName}"
+                                HeaderUserAction="{Binding OnUserClick}"
+                                HeaderMoney="{Binding UserMoney}"
+                                HeaderMoneyAction="{Binding OnMoneyClick}">
+                
+                    <StackLayout Orientation="Vertical" VerticalOptions="FillAndExpand">
+                        <Label Text="Accesso" 
+                               FontFamily="Thaoma Bold" 
+                               FontSize="Large" 
+                               FontAttributes="Bold" 
+                               TextColor="#333333"
+                               Margin="0,0,0,10"/>
+                        <Entry Margin="0,10,0,5" Text="{Binding LoginName}" Placeholder="Nome utente" FontSize="Small"/>
+                        <Entry Margin="0,5,0,30" Text="{Binding Password}" Placeholder="Password" FontSize="Small"/>
+                        <ActivityIndicator
+                            x:Name="activityContent"
+                            IsRunning="{Binding IsRunning, Mode=TwoWay}"                    
+                            VerticalOptions="Center">
+                        </ActivityIndicator>
+                        <Button Text="Accesso"
+                                FontAttributes="Bold"
+                                VerticalOptions="CenterAndExpand"
+                                HorizontalOptions="Center"
+                                Command="{Binding OnLoginClick}"
+                                TextColor="White"                               
+                                BorderRadius="8"
+                                BackgroundColor="#8CC63F"
+                                WidthRequest="191"
+                                Margin="0,10,0,20"/>
+                        <Label Text="Non sei ancora registrato?" TextColor="Gray" HorizontalTextAlignment="Center" FontSize="Small"/>
+                        <Button Text="Registrati"
+                                FontAttributes="Bold"
+                                VerticalOptions="CenterAndExpand"
+                                HorizontalOptions="Center"
+                                Command="{Binding OnRegisterClick}"
+                                TextColor="White"
+                                BorderRadius="8"
+                                BackgroundColor="#8CC63F"
+                                WidthRequest="191"
+                                Margin="0,10,0,10"/>                            
+                    </StackLayout>
+            </controls:DetailPage>
+        </ContentView>
+    </ContentPage.Content>
+</ContentPage>

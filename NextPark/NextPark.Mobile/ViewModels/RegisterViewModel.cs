@@ -35,6 +35,8 @@ namespace NextPark.Mobile.ViewModels
         }
 
         public ICommand OnUserImageTap { get; set; }    // User image action
+
+        public bool IsRunning { get; set; }             // Activity spinner
         public ICommand OnRegisterClick { get; set; }   // Register button action
 
         // SERVICES
@@ -84,20 +86,21 @@ namespace NextPark.Mobile.ViewModels
         public void OnBackClickMethod(object sender)
         {
             // TODO: go back to previus view
+            NavigationService.NavigateToAsync<LoginViewModel>();
         }
 
         // User Click action
         public void OnUserClickMethod(object sender)
         {
             // TODO: evaluate action (try to go to profile, do nothing?)
-            //NavigationService.NavigateToAsync<UserProfileViewModel>();
+            NavigationService.NavigateToAsync<LoginViewModel>();
         }
 
         // Money Click action
         public void OnMoneyClickMethod(object sender)
         {
             // TODO: evaluate action (try to go to money page, do nothing?)
-            NavigationService.NavigateToAsync<MoneyViewModel>();
+            NavigationService.NavigateToAsync<LoginViewModel>();
         }
 
         // Register button action
@@ -106,6 +109,8 @@ namespace NextPark.Mobile.ViewModels
             // TODO: fill user data according to register data model
             // TODO: send registration request to backend
             _dialogService.ShowAlert("Alert", "TODO: Register user");
+            IsRunning = true;
+            base.OnPropertyChanged("IsRunning");
         }
 
         // User image tap action
