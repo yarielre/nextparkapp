@@ -53,5 +53,9 @@
 	<string>Can we use your location when your app is being used?</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>Can we use your location at all times?</string>
+	<key>NSCameraUsageDescription</key>
+	<string>NextPark will access to your camera to take pictures</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>NexPark will access to your gallery to pick pictures</string>
 </dict>
 </plist>

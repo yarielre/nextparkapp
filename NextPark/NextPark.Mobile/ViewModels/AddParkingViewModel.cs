@@ -3,6 +3,9 @@ using System.Windows.Input;
 using NextPark.Mobile.Services;
 using System.Threading.Tasks;
 using Xamarin.Forms;
+using Plugin.Media.Abstractions;
+using Plugin.Media;
+
 namespace NextPark.Mobile.ViewModels
 {
     public class AddParkingViewModel : BaseViewModel
@@ -50,6 +53,14 @@ namespace NextPark.Mobile.ViewModels
         public Color AddBtnBackgroundColor { get; set; }
         public Color AddBtnBorderColor { get; set; }
 
+        private ImageSource _parkingImage;              // Parking image
+        public ImageSource ParkingImage
+        {
+            get => _parkingImage;
+            set => SetValue(ref _parkingImage, value);
+        }
+        public ICommand OnParkingImageTap { get; set; } // Parking image action
+
         // SERVICES
         private readonly IDialogService _dialogService;
 
@@ -70,13 +81,15 @@ namespace NextPark.Mobile.ViewModels
             OnBackClick = new Command<object>(OnBackClickMethod);
             OnUserClick = new Command<object>(OnUserClickMethod);
             OnMoneyClick = new Command<object>(OnMoneyClickMethod);
-
+            OnParkingImageTap = new Command<object>(OnParkingImageTapMethod);
             OnAddParking = new Command<object>(OnAddParkingMethod);
 
             MinPriceValue = (int)1;
             MaxPriceValue = (int)1;
             base.OnPropertyChanged("MinPriceValue");
             base.OnPropertyChanged("MaxPriceValue");
+
+            ParkingImage = "icon_add_photo_256.png";
         }
 
         // Initialization
@@ -162,12 +175,43 @@ namespace NextPark.Mobile.ViewModels
             base.OnPropertyChanged("AddBtnBorderColor");
         }
 
+        // Parking image tap action
+        public void OnParkingImageTapMethod(object args)
+        {
+            TakeParkingPhoto();
+        }
+
         // Add Parking button action
         public void OnAddParkingMethod(object sender)
         {
             // TODO: fill add parking data according to parking data model
             // TODO: send add parking request to backend
             _dialogService.ShowAlert("Alert", "TODO: Add parking");
+        }
+
+        // Take User Image
+        private async void TakeParkingPhoto()
+        {
+            MediaFile mediaFile;
+            if (!CrossMedia.Current.IsCameraAvailable || !CrossMedia.Current.IsTakePhotoSupported)
+            {
+                await Application.Current.MainPage.DisplayAlert(
+                    "Errore Fotocamera",
+                    "Fotocamera non disponibile o non supportata.",
+                    "OK");
+                return;
+            }
+            mediaFile = await CrossMedia.Current.TakePhotoAsync(new StoreCameraMediaOptions
+            {
+                Directory = "Sample",
+                Name = "parking_photo.jpg",
+                PhotoSize = PhotoSize.Small
+            });
+
+
+            if (mediaFile == null)
+                return;
+            ParkingImage = ImageSource.FromStream(() => { return mediaFile.GetStream(); });
         }
     }
 }
