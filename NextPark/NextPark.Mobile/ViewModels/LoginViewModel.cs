@@ -93,12 +93,35 @@ namespace NextPark.Mobile.ViewModels
             IsRunning = true;
             base.OnPropertyChanged("IsRunning");
             // TODO: call login method
+            LoginMethod();
         }
 
         // Register button action
         public void OnRegisterClickMethod(object sender)
         {
             NavigationService.NavigateToAsync<RegisterViewModel>();
+        }
+
+        public async void LoginMethod()
+        {
+            try
+            {
+                //Demo Login OK
+                var loginResponse = await AuthService.Login(LoginName, Password);
+
+                IsRunning = false;
+                base.OnPropertyChanged("IsRunning");
+
+                if (loginResponse.IsSuccess == true)
+                {
+                    // get user info
+                    await _dialogService.ShowAlert("Attenzione", "Accesso completato");
+                }
+                else
+                {
+                    await _dialogService.ShowAlert("Attenzione", "Accesso fallito");
+                }
+            } catch (Exception ex) {}
         }
 
     }

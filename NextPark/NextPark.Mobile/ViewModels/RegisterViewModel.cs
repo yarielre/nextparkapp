@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Xamarin.Forms;
 using Plugin.Media;
 using Plugin.Media.Abstractions;
+using NextPark.Models;
 
 namespace NextPark.Mobile.ViewModels
 {
@@ -106,11 +107,57 @@ namespace NextPark.Mobile.ViewModels
         // Register button action
         public void OnRegisterClickMethod(object sender)
         {
-            // TODO: fill user data according to register data model
-            // TODO: send registration request to backend
-            _dialogService.ShowAlert("Alert", "TODO: Register user");
             IsRunning = true;
             base.OnPropertyChanged("IsRunning");
+            RegisterMethod();
+        }
+
+        public async void RegisterMethod()
+        {
+            //Demo Login OK
+            //var loginResponse = await AuthService.Login("demo@nextpark.ch", "Wisegar.1");
+
+            // TODO: fill user data according to register data model
+            // TODO: send registration request to backend
+            try
+            {
+                /*
+                //Demo Register OK
+                var demoUser = new RegisterModel
+                {
+                    Address = "Via Demo User3",
+                    CarPlate = "TI 30DEMO03",
+                    Email = "demo3@nextpark.ch",
+                    Lastname = "Demo3",
+                    Name = "User2",
+                    Password = "Demo.3",
+                    State = "DemoState",
+                    Username = "Demo3"
+                };
+                */
+                //Demo Register OK
+                var demoUser = new RegisterModel
+                {
+                    Address = this.Address,
+                    CarPlate = this.Plate,
+                    Email = "demo4@nextpark.ch",
+                    Lastname = this.Surname,
+                    Name = this.Name.ToString(),
+                    Password = this.Password,
+                    State = "CH",
+                    Username = this.RegisterName
+                };
+
+                var registerResponse = await AuthService.Register(demoUser);
+
+                IsRunning = false;
+                base.OnPropertyChanged("IsRunning");
+                if ((registerResponse != null) && (registerResponse.IsSuccess)) {
+                    await _dialogService.ShowAlert("Alert", "Registered");
+                } else {
+                    await _dialogService.ShowAlert("Alert", "Registration failed");
+                }
+            } catch(Exception ex) {}
         }
 
         // User image tap action

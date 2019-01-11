@@ -101,8 +101,8 @@ namespace NextPark.Mobile.ViewModels
                 new ParkingInfo { UID = 2, Info = "Via Strada 2", SubInfo = "Lugano, Ticino", Picture="image_parking1.png", FullPrice = "2 CHF/h", FullAvailability = "08:00-12:00", BookAction = OnBookingTapped}
             };
 
-            DemoBackEndCalls();
-            //GetParkings(); //TODO: Use this!
+            //DemoBackEndCalls();
+            GetParkings(); //TODO: Use this!
 
 
             base.OnPropertyChanged("Parkings");
@@ -174,7 +174,36 @@ namespace NextPark.Mobile.ViewModels
         private async Task GetParkings()
         {
 
-            var parkings = await _parkingDataService.Get();
+            //Demo Login OK
+            var loginResponse = await AuthService.Login("JarJar", "Jaro.001");
+
+            var parkingsResponse = await _parkingDataService.Get();
+
+            if (parkingsResponse.Count > 0) return;
+
+            //Demo Post Parking Working on It!
+            var parking1 = new ParkingModel
+            {
+                ImageUrl = "image_parking1.png",
+                IsRented = false,
+                ParkingEvent = new EventModel
+                {
+                    EndDate = DateTime.Now,
+                    StartDate = DateTime.Now
+                },
+                ParkingCategory = new ParkingCategoryModel
+                {
+                    Category = "Test",
+                    HourPrice = 2.0,
+                    MonthPrice = 3.0
+                },
+                ParkingType = new ParkingTypeModel
+                {
+                    Type = "Business"
+                }
+            };
+
+            var response = await _parkingDataService.Post(parking1);
 
             // TODO: fill parking list and use parkingModel
             Parkings = new ObservableCollection<ParkingInfo>
