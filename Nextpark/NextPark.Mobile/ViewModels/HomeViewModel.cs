@@ -8,6 +8,7 @@ using Xamarin.Forms;
 using System;
 using NextPark.Mobile.Services.Data;
 using NextPark.Models;
+using NextPark.Mobile.Core.Settings;
 
 namespace NextPark.Mobile.ViewModels
 {
@@ -37,6 +38,7 @@ namespace NextPark.Mobile.ViewModels
         private readonly IGeolocatorService _geoLocatorService;
         private readonly IDialogService _dialogService;
         private readonly ParkingDataService _parkingDataService;
+        private readonly IAuthService _authService;
 
         // PRIVATE VARIABLES
         private ObservableCollection<ParkingInfo> parkings;
@@ -56,13 +58,11 @@ namespace NextPark.Mobile.ViewModels
             _geoLocatorService = geolocatorService;
             _dialogService = dialogService;
             _parkingDataService = parkingDataService;
+            _authService = authService;
 
             OnUserClick = new Command<object>(OnUserClickMethod);
             OnMoneyClick = new Command<object>(OnMoneyClickMethod);
             OnBookingTapped = new Command<object>(OnBookingTappedMethod);
-
-            UserName = "Accedi";
-            UserMoney = "0";
         }
 
         public override Task InitializeAsync(object data = null)
@@ -79,9 +79,9 @@ namespace NextPark.Mobile.ViewModels
                 Map.PinTapped += Map_PinTapped;
             }
 
-            UserName = "Jonny";
-            UserMoney = "8";
-
+            // Set User data
+            UserName = AuthSettings.UserName;
+            UserMoney = AuthSettings.UserCoin.ToString("N0");
             base.OnPropertyChanged("UserName");
             base.OnPropertyChanged("UserMoney");
 
@@ -102,7 +102,7 @@ namespace NextPark.Mobile.ViewModels
             };
 
             //DemoBackEndCalls();
-            GetParkings(); //TODO: Use this!
+            //GetParkings(); //TODO: Use this!
 
 
             base.OnPropertyChanged("Parkings");
@@ -224,7 +224,7 @@ namespace NextPark.Mobile.ViewModels
 
         private void Map_Tapped(object sender, CustomControls.MapTapEventArgs e)
         {
-            throw new System.NotImplementedException();
+            //throw new System.NotImplementedException();
         }
 
         private void Map_PinTapped(object sender, CustomControls.PinTapEventArgs e)
@@ -263,23 +263,57 @@ namespace NextPark.Mobile.ViewModels
         // User Click action
         public void OnUserClickMethod(object sender)
         {
-            NavigationService.NavigateToAsync<LoginViewModel>();
+            if (_authService.IsUserAuthenticated())
+            {
+                NavigationService.NavigateToAsync<UserProfileViewModel>();
+            }
+            else
+            {
+                NavigationService.NavigateToAsync<LoginViewModel>();
+            }
         }
 
         // Money Click action
         public void OnMoneyClickMethod(object sender)
         {
-            NavigationService.NavigateToAsync<MoneyViewModel>();
+            if (_authService.IsUserAuthenticated())
+            {
+                try
+                {
+                    //NavigationService.NavigateToAsync<MoneyViewModel>();
+                    GoToMoneyPage();
+                } catch (Exception ex) {}
+            } 
+            else
+            {
+                NavigationService.NavigateToAsync<LoginViewModel>();
+            }
+
+        }
+
+        public async void GoToMoneyPage()
+        {
+            try
+            {
+                await NavigationService.NavigateToAsync<MoneyViewModel>();
+            } catch (Exception ex){}
         }
 
         // Booking Tap action
         public void OnBookingTappedMethod(object args)
         {
-            if (args is int)
+            if (_authService.IsUserAuthenticated())
             {
-                ParkingInfo item = Parkings[(int)args];
-                NavigationService.NavigateToAsync<BookingViewModel>(item);
-                //_dialogService.ShowAlert("Alert", "Booking: " + args.ToString());
+                if (args is int)
+                {
+                    ParkingInfo item = Parkings[(int)args];
+                    NavigationService.NavigateToAsync<BookingViewModel>(item);
+                    //_dialogService.ShowAlert("Alert", "Booking: " + args.ToString());
+                }
+            }
+            else
+            {
+                NavigationService.NavigateToAsync<LoginViewModel>();
             }
         }
     }

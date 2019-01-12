@@ -9,12 +9,14 @@ namespace NextPark.Mobile.Core.Settings
         #region Attributes
         private static ISettings AppSettings => CrossSettings.Current;
         private static readonly string stringDefault = string.Empty;
+        private static readonly double doubleDefault = 0.0;
 
 
         private const string _tokenId = "Token";
         private const string _userId = "UserId";
-        private const string _userName = "UserId";
+        private const string _userName = "UserName";
         private const string _apiUrl = "apiUrl";
+        private const string _userCoin = "UserCoin";
         #endregion
 
         #region Properties
@@ -35,6 +37,12 @@ namespace NextPark.Mobile.Core.Settings
             //TODO: Encrypt & decrypt
             get => AppSettings.GetValueOrDefault(_userName, stringDefault);
             set => AppSettings.AddOrUpdateValue(_userName, value);
+        }
+        public static double UserCoin
+        {
+            //TODO: Encrypt & decrypt
+            get => AppSettings.GetValueOrDefault(_userCoin, 0.0);
+            set => AppSettings.AddOrUpdateValue(_userCoin, value);
         }
         #endregion
 

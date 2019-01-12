@@ -56,7 +56,7 @@ namespace NextPark.Mobile.ViewModels
 
             // Header
             BackText = "Indietro";
-            UserName = "Login";
+            UserName = "Accedi";
             UserMoney = "0";
             base.OnPropertyChanged("BackText");
             base.OnPropertyChanged("UserName");
@@ -106,22 +106,41 @@ namespace NextPark.Mobile.ViewModels
         {
             try
             {
-                //Demo Login OK
+                // Send login request to backend
                 var loginResponse = await AuthService.Login(LoginName, Password);
 
-                IsRunning = false;
-                base.OnPropertyChanged("IsRunning");
-
+                // Check login result
                 if (loginResponse.IsSuccess == true)
                 {
-                    // get user info
-                    await _dialogService.ShowAlert("Attenzione", "Accesso completato");
+                    var userResponse = await AuthService.GetUserByUserName(LoginName);
+
+                    // Stop activity spinner
+                    IsRunning = false;
+                    base.OnPropertyChanged("IsRunning");
+
+                    // Check user data response
+                    if (userResponse.IsSuccess == true) 
+                    {
+                        await NavigationService.NavigateToAsync<HomeViewModel>();
+                    } 
+                    else
+                    {
+                        // TODO: manage this case, use another message to user
+                        await _dialogService.ShowAlert("Attenzione", "Errore durante il caricamento dei dati");
+                    }
                 }
                 else
                 {
+                    // Stop activity spinner
+                    IsRunning = false;
+                    base.OnPropertyChanged("IsRunning");
+
                     await _dialogService.ShowAlert("Attenzione", "Accesso fallito");
                 }
-            } catch (Exception ex) {}
+            } catch (Exception ex) {
+                // TODO: manage exception, remove follwoing debug message!
+                await _dialogService.ShowAlert("Errore", ex.Message);
+            }
         }
 
     }

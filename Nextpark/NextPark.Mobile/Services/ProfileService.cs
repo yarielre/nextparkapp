@@ -11,9 +11,9 @@ namespace NextPark.Mobile.Services
 {
     public class ProfileService : IProfileService
     {
-        private readonly ApiService _apiService;
+        private readonly IApiService _apiService;
 
-        public ProfileService(ApiService apiService)
+        public ProfileService(IApiService apiService)
         {
             _apiService = apiService;
         }

@@ -1,10 +1,11 @@
-﻿using NextPark.Mobile.Extensions;
-using NextPark.Mobile.Services;
+﻿using System;
 using System.Windows.Input;
 using System.Threading.Tasks;
-using Xamarin.Forms.Maps;
+
+using NextPark.Mobile.Services;
+using NextPark.Mobile.Core.Settings;
+
 using Xamarin.Forms;
-using System;
 
 namespace NextPark.Mobile.ViewModels
 {
@@ -70,16 +71,23 @@ namespace NextPark.Mobile.ViewModels
             */
 
             // Header
-            UserName = "Jonny";
-            UserMoney = "8";
+            UserName = AuthSettings.UserName;
+            UserMoney = AuthSettings.UserCoin.ToString("N2");
             base.OnPropertyChanged("UserName");
             base.OnPropertyChanged("UserMoney");
 
             // User Data
-            // UserName
-            FullName = "Mario Rossi";
-            Address = "Via Strada 1, 6900 Lugano";
-            FullPlate = "Targa TI 123456";
+            if (AuthService.IsUserAuthenticated())
+            {
+
+            }
+            else
+            {
+                // UserName
+                FullName = "Mario Rossi";
+                Address = "Via Strada 1, 6900 Lugano";
+                FullPlate = "Targa TI 123456";
+            }
             base.OnPropertyChanged("FullName");
             base.OnPropertyChanged("Address");
             base.OnPropertyChanged("FullPlate");

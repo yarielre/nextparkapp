@@ -14,14 +14,16 @@ namespace NextPark.Mobile.Services
 
         private readonly IApiService _apiService;
         private readonly string AuthEndPoint = ApiSettings.AuthEndPoint;
+        public bool Authenticated { get; set; }
 
         public AuthService(IApiService apiService)
         {
             _apiService = apiService;
+            Authenticated = false;
+            AuthSettings.UserName = "Accedi";
+            AuthSettings.UserCoin = 0;
         }
-        public bool IsUserAuthenticated() {
-            return false;
-        }
+
         public async Task<TokenResponse> Login(string username, string password)
         {
             var isConneted = await _apiService.CheckConnection();
@@ -54,10 +56,10 @@ namespace NextPark.Mobile.Services
                     resultJson);
                 result.IsSuccess = true;
 
-
+                Authenticated = true;
                 AuthSettings.Token = result.AuthToken;
                 AuthSettings.UserId = result.UserId.ToString();
-
+                AuthSettings.UserName = username;
 
                 return result;
             }
@@ -95,7 +97,9 @@ namespace NextPark.Mobile.Services
 
                 AuthSettings.Token = null;
                 AuthSettings.UserId = null;
-                AuthSettings.UserName = null;
+                AuthSettings.UserName = "Accedi";
+                AuthSettings.UserCoin = 0;
+                Authenticated = false;
 
                 return result;
 
@@ -167,7 +171,8 @@ namespace NextPark.Mobile.Services
                 var resultJson = await response.Content.ReadAsStringAsync();
                 var result = JsonConvert.DeserializeObject<UserModel>(resultJson);
 
-                AuthSettings.UserName = result.UserName;
+                //AuthSettings.UserName = result.UserName;
+                AuthSettings.UserCoin = result.Coins;
 
                 return new Response
                 {
@@ -185,5 +190,9 @@ namespace NextPark.Mobile.Services
             }
         }
 
+        bool IAuthService.IsUserAuthenticated()
+        {
+            return Authenticated;
+        }
     }
 }

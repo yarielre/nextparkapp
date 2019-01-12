@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ContentView xmlns="http://xamarin.com/schemas/2014/forms" 
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
-             x:Class="NextPark.Mobile.Controls.SelButton"
-             x:Name="this">
+             x:Class="NextPark.Mobile.Controls.SelButton">
     <ContentView.ControlTemplate>
         <ControlTemplate>    
-        <Frame  x:Name="ButtonFrame"
-                Margin="0"
+        <Frame  Margin="0"
                 BorderColor="{TemplateBinding BtnBorderColor}" 
                 CornerRadius="9" 
                 BackgroundColor="{TemplateBinding BtnBackgroundColor}" 
@@ -24,8 +22,7 @@
                          VerticalOptions="Center"
                          Orientation="Vertical"
                          Spacing="2">
-                <Label x:Name="InfoLabel"
-                       Text="{TemplateBinding Info}" 
+                <Label Text="{TemplateBinding Info}" 
                        TextColor="{TemplateBinding BtnTextColor}"
                        FontSize="Medium"
                        FontAttributes="Bold"
@@ -33,8 +30,7 @@
                        HorizontalTextAlignment="Center"
                        Margin="0"
                        />
-                <Label x:Name="SubInfoLabel"
-                       Text="{TemplateBinding SubInfo}" 
+                <Label Text="{TemplateBinding SubInfo}" 
                        TextColor="{TemplateBinding BtnTextColor}"
                        FontSize="Small"
                        FontAttributes="None"

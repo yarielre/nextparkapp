@@ -3,6 +3,8 @@ using System.Windows.Input;
 using NextPark.Mobile.Services;
 using System.Threading.Tasks;
 using Xamarin.Forms;
+using NextPark.Models;
+using NextPark.Mobile.Core.Settings;
 
 namespace NextPark.Mobile.ViewModels
 {
@@ -28,10 +30,11 @@ namespace NextPark.Mobile.ViewModels
 
         // SERVICES
         private readonly IDialogService _dialogService;
+        private readonly IProfileService _profileService;
 
         // PRIVATE VARIABLES
-        private static bool activity = false;
         protected static UInt16 selectedValue;
+        private UpdateUserCoinModel UpdateUserCoin;
 
         // METHODS
         public MoneyViewModel(IDialogService dialogService,
@@ -41,6 +44,13 @@ namespace NextPark.Mobile.ViewModels
                               : base(apiService, authService, navService)
         {
             _dialogService = dialogService;
+            _profileService = new ProfileService(apiService);
+
+            // Header
+            // TODO: evaluate back text and action
+            BackText = "Profilo";
+            UserName = AuthSettings.UserName;
+            UserMoney = AuthSettings.UserCoin.ToString("N0");
 
             // Header actions
             OnBackClick = new Command<object>(OnBackClickMethod);
@@ -65,8 +75,9 @@ namespace NextPark.Mobile.ViewModels
             // Header
             // TODO: evaluate back text and action
             BackText = "Profilo";
-            UserName = "Jonny";
-            UserMoney = "8";
+            UserName = AuthSettings.UserName;
+            UserMoney = AuthSettings.UserCoin.ToString("N0");
+
             base.OnPropertyChanged("BackText");
             base.OnPropertyChanged("UserName");
             base.OnPropertyChanged("UserMoney");
@@ -142,13 +153,39 @@ namespace NextPark.Mobile.ViewModels
         {
             // TODO: fill data according to buy credit data model
             // TODO: send buy credit request to backend
-            _dialogService.ShowAlert("Alert", "TODO: Buy credit: " + selectedValue + " CHF");
+            _dialogService.ShowAlert("Alert", "TODO: Payment operations for: " + selectedValue.ToString() + " CHF");
 
-            if (activity == true) activity = false;
-            else activity = true;
+            UpdateUserCoin = new UpdateUserCoinModel { Coins = AuthSettings.UserCoin + double.Parse(selectedValue.ToString()), UserId = int.Parse(AuthSettings.UserId) };
 
-            IsRunning = activity;
+            // Start activity spinner
+            IsRunning = true;
             base.OnPropertyChanged("IsRunning");
+
+            // Send request to backend
+            BuyMoney();
         } 
+
+        public async void BuyMoney()
+        {
+            if (UpdateUserCoin != null)
+            {
+                var buyResponse = await _profileService.UpdateUserCoins(UpdateUserCoin);
+
+                // Stop activity spinner
+                IsRunning = false;
+                base.OnPropertyChanged("IsRunning");
+
+                // Check update result
+                if (buyResponse != null) {
+                    AuthSettings.UserCoin = buyResponse.Coins;
+                    UserMoney = AuthSettings.UserCoin.ToString("N0");
+                    base.OnPropertyChanged("UserMoney");
+                } else {
+                    await _dialogService.ShowAlert("Attenzione", "Acquisto fallito");
+                }
+            } else {
+                await _dialogService.ShowAlert("Errore", "Dati non validi");
+            }
+        }
     }
 }

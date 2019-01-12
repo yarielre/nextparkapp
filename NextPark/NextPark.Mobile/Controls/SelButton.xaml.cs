@@ -17,7 +17,7 @@ namespace NextPark.Mobile.Controls
         public static readonly BindableProperty IdentifierProperty = BindableProperty.Create(nameof(ID), typeof(string), typeof(SelButton), null, Xamarin.Forms.BindingMode.OneWay);
         public static readonly BindableProperty SelectedProperty = BindableProperty.Create(nameof(Selected), typeof(Boolean), typeof(SelButton), false, Xamarin.Forms.BindingMode.TwoWay, propertyChanged:OnSelectionChanged );
 
-        private bool _isSelected = false;
+        //private readonly _isSelected = false;
         private string _identifier = "0";
 
         private static void OnSelectionChanged(BindableObject bindable, object oldValue, object newValue)
@@ -31,14 +31,14 @@ namespace NextPark.Mobile.Controls
                     control.BtnBackgroundColor = Color.FromHex("#8CC63F");
                     control.BtnBorderColor = Color.FromHex("#8CC63F");
                     control.BtnTextColor = Color.White;
-                    control._isSelected = true;
+                    //control._isSelected = true;
                 }
                 else
                 {
                     control.BtnBackgroundColor = Color.White;
                     control.BtnBorderColor = Color.Gray;
                     control.BtnTextColor = Color.Gray;
-                    control._isSelected = false;
+                    //control._isSelected = false;
                 }
             }
         }
@@ -81,7 +81,12 @@ namespace NextPark.Mobile.Controls
 
         public SelButton()
         {
-            InitializeComponent();
+            try
+            {
+                InitializeComponent();
+            } catch (Exception ex) {
+
+            }
         }
 
         public bool Selected
@@ -89,20 +94,22 @@ namespace NextPark.Mobile.Controls
             get { return (bool)this.GetValue(SelectedProperty); }
             set
             {
+                /*
                 if ((bool)value == true)
                 {
                     this.BtnBackgroundColor = Color.FromHex("#8CC63F");
                     this.BtnBorderColor = Color.FromHex("#8CC63F");
                     this.BtnTextColor = Color.White;
-                    this._isSelected = true;
+                    //this._isSelected = true;
                 }
                 else
                 {
                     this.BtnBackgroundColor = Color.White;
                     this.BtnBorderColor = Color.Gray;
                     this.BtnTextColor = Color.Gray;
-                    this._isSelected = false;
+                    //this._isSelected = false;
                 }
+                */
                 SetValue(SelectedProperty, value);
             }
         }
