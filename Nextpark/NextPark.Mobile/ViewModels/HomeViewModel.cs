@@ -28,6 +28,7 @@ namespace NextPark.Mobile.ViewModels
         // PROPERTIES
         public string UserName { get; set; }        // Header user text
         public ICommand OnUserClick { get; set; }   // Header user action
+        public ImageSource UserImage { get; set; }  // Header user image
         public string UserMoney { get; set; }       // Header money value
         public ICommand OnMoneyClick { get; set; }  // Header money action
 
@@ -81,8 +82,10 @@ namespace NextPark.Mobile.ViewModels
 
             // Set User data
             UserName = AuthSettings.UserName;
+            UserImage = "icon_no_user_256.png";
             UserMoney = AuthSettings.UserCoin.ToString("N0");
             base.OnPropertyChanged("UserName");
+            base.OnPropertyChanged("UserImage");
             base.OnPropertyChanged("UserMoney");
 
             // TODO: fill parking list and use parkingModel
@@ -225,6 +228,11 @@ namespace NextPark.Mobile.ViewModels
         private void Map_Tapped(object sender, CustomControls.MapTapEventArgs e)
         {
             //throw new System.NotImplementedException();
+            // DEMO ONLY! 
+            if (_authService.IsUserAuthenticated()) {
+                ParkingInfo item = Parkings[0];
+                NavigationService.NavigateToAsync<BookingViewModel>(item);
+            }
         }
 
         private void Map_PinTapped(object sender, CustomControls.PinTapEventArgs e)
@@ -258,6 +266,13 @@ namespace NextPark.Mobile.ViewModels
             }
 
             Map.MoveToRegion(MapSpan.FromCenterAndRadius(position, Distance.FromKilometers(1)));
+
+            // Update parkings
+            if (Parkings.Count > 0)
+            {
+                base.OnPropertyChanged("Parkings");
+            }
+
         }
 
         // User Click action

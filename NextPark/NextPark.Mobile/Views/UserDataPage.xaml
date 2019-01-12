@@ -25,6 +25,8 @@
                            Margin="0,0,0,10"/>
                     <Frame HeightRequest="80"
                            MinimumHeightRequest="80"
+                           WidthRequest="80"
+                           MinimumWidthRequest="80"
                            CornerRadius="40"
                            BorderColor="Gray"
                            Margin="0"

@@ -83,7 +83,7 @@ namespace NextPark.Mobile.ViewModels
         public void OnMoneyClickMethod(object sender)
         {
             // TODO: evaluate action (try to go to money page, do nothing?)
-            NavigationService.NavigateToAsync<MoneyViewModel>();
+            //NavigationService.NavigateToAsync<MoneyViewModel>();
         }
 
         // Login button action

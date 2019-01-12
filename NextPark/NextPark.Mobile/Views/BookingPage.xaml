@@ -149,7 +149,7 @@
                                 </StackLayout> 
                                 <TimePicker x:Name="_timePicker"
                                             Time="{Binding Time}"
-                                            Format="hh:mm"
+                                            Format="HH:mm"
                                             HorizontalOptions="Center" />
                                 <!-- Activity indicator, active when buying -->
                                 <ActivityIndicator

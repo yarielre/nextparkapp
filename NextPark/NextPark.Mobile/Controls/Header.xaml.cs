@@ -17,6 +17,7 @@ namespace NextPark.Mobile.Controls
         // User
         public static readonly BindableProperty UserTextProperty = BindableProperty.Create(nameof(UserText), typeof(string), typeof(Header), "", Xamarin.Forms.BindingMode.OneWay);
         public static readonly BindableProperty UserActionProperty = BindableProperty.Create(nameof(UserAction), typeof(ICommand), typeof(Header), null, Xamarin.Forms.BindingMode.OneWay);
+        public static readonly BindableProperty UserImageProperty = BindableProperty.Create(nameof(UserIcon), typeof(ImageSource), typeof(Header), null, Xamarin.Forms.BindingMode.OneWay);
         // Money
         public static readonly BindableProperty MoneyProperty = BindableProperty.Create(nameof(Money), typeof(string), typeof(Header), "", Xamarin.Forms.BindingMode.OneWay);
         public static readonly BindableProperty MoneyActionProperty = BindableProperty.Create(nameof(MoneyAction), typeof(ICommand), typeof(Header), null, Xamarin.Forms.BindingMode.OneWay);
@@ -49,6 +50,12 @@ namespace NextPark.Mobile.Controls
         {
             get { return (ICommand)this.GetValue(UserActionProperty); }
             set { SetValue(UserActionProperty, value); }
+        }
+
+        public ImageSource UserIcon
+        {
+            get { return (ImageSource)this.GetValue(UserImageProperty); }
+            set { SetValue(UserImageProperty, value); }
         }
 
         public string Money

@@ -6,6 +6,7 @@ using NextPark.Mobile.Extensions;
 using NextPark.Mobile.Services;
 using System.Threading.Tasks;
 using Xamarin.Forms;
+using NextPark.Mobile.Core.Settings;
 
 namespace NextPark.Mobile.ViewModels
 {
@@ -99,6 +100,10 @@ namespace NextPark.Mobile.ViewModels
         {
             _dialogService = dialogService;
 
+            // Header
+            UserName = AuthSettings.UserName;
+            UserMoney = AuthSettings.UserCoin.ToString("N0");
+
             // Header actions
             OnBackClick = new Command<object>(OnBackClickMethod);
             OnUserClick = new Command<object>(OnUserClickMethod);
@@ -134,8 +139,8 @@ namespace NextPark.Mobile.ViewModels
 
             // Header
             BackText = "Profilo";
-            UserName = "Jonny";
-            UserMoney = "8";
+            UserName = AuthSettings.UserName;
+            UserMoney = AuthSettings.UserCoin.ToString("N0");
             base.OnPropertyChanged("BackText");
             base.OnPropertyChanged("UserName");
             base.OnPropertyChanged("UserMoney");

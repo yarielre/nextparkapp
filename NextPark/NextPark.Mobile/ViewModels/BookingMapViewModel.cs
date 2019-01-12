@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Xamarin.Forms.Maps;
 using Xamarin.Forms;
 using System;
+using NextPark.Mobile.Core.Settings;
 
 namespace NextPark.Mobile.ViewModels
 {
@@ -47,6 +48,12 @@ namespace NextPark.Mobile.ViewModels
             _geoLocatorService = geolocatorService;
             _dialogService = dialogService;
 
+            // Header
+            UserName = AuthSettings.UserName;
+            UserMoney = AuthSettings.UserCoin.ToString("N0");
+            base.OnPropertyChanged("UserName");
+            base.OnPropertyChanged("UserMoney");
+
             OnBackClick = new Command<object>(OnBackClickMethod);
             OnUserClick = new Command<object>(OnUserClickMethod);
             OnMoneyClick = new Command<object>(OnMoneyClickMethod);
@@ -69,9 +76,10 @@ namespace NextPark.Mobile.ViewModels
                 Map.PinTapped += Map_PinTapped;
             }
 
-            BackText = "Prenotazioni";
-            UserName = "Jonny";
-            UserMoney = "8";
+            // Header
+            BackText = "Indietro";
+            UserName = AuthSettings.UserName;
+            UserMoney = AuthSettings.UserCoin.ToString("N0");
             base.OnPropertyChanged("BackText");
             base.OnPropertyChanged("UserName");
             base.OnPropertyChanged("UserMoney");

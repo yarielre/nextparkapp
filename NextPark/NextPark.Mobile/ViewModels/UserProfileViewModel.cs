@@ -55,8 +55,8 @@ namespace NextPark.Mobile.ViewModels
             OnParkingsAction = new Command(OnParkingsClickMethod);
             OnBookingsAction = new Command(OnBookingsClickMethod);
 
-            UserName = "Accedi";
-            UserMoney = "0";
+            UserName = AuthSettings.UserName;
+            UserMoney = AuthSettings.UserCoin.ToString("N0");
 
         }
 
@@ -72,7 +72,7 @@ namespace NextPark.Mobile.ViewModels
 
             // Header
             UserName = AuthSettings.UserName;
-            UserMoney = AuthSettings.UserCoin.ToString("N2");
+            UserMoney = AuthSettings.UserCoin.ToString("N0");
             base.OnPropertyChanged("UserName");
             base.OnPropertyChanged("UserMoney");
 

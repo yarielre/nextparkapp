@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Xamarin.Forms;
 using Plugin.Media.Abstractions;
 using Plugin.Media;
+using NextPark.Mobile.Core.Settings;
 
 namespace NextPark.Mobile.ViewModels
 {
@@ -83,6 +84,12 @@ namespace NextPark.Mobile.ViewModels
             _dialogService = dialogService;
             _geoLocatorService = geolocatorService;
 
+            // Header
+            UserName = AuthSettings.UserName;
+            UserMoney = AuthSettings.UserCoin.ToString("N0");
+            base.OnPropertyChanged("UserName");
+            base.OnPropertyChanged("UserMoney");
+
             // Header actions
             OnBackClick = new Command<object>(OnBackClickMethod);
             OnUserClick = new Command<object>(OnUserClickMethod);
@@ -120,8 +127,8 @@ namespace NextPark.Mobile.ViewModels
 
             // Header
             BackText = "Parcheggi";
-            UserName = "Jonny";
-            UserMoney = "8";
+            UserName = AuthSettings.UserName;
+            UserMoney = AuthSettings.UserCoin.ToString("N0");
             base.OnPropertyChanged("BackText");
             base.OnPropertyChanged("UserName");
             base.OnPropertyChanged("UserMoney");

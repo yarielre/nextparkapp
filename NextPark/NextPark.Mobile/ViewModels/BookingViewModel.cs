@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Xamarin.Forms.Maps;
 using Xamarin.Forms;
 using System;
+using NextPark.Mobile.Core.Settings;
 
 namespace NextPark.Mobile.ViewModels
 {
@@ -56,6 +57,12 @@ namespace NextPark.Mobile.ViewModels
         {
             _dialogService = dialogService;
 
+            // Header
+            UserName = AuthSettings.UserName;
+            UserMoney = AuthSettings.UserCoin.ToString("N0");
+            base.OnPropertyChanged("UserName");
+            base.OnPropertyChanged("UserMoney");
+
             // Header actions
             OnBackClick = new Command<object>(OnBackClickMethod);
             OnUserClick = new Command<object>(OnUserClickMethod);
@@ -77,8 +84,8 @@ namespace NextPark.Mobile.ViewModels
 
             // Header
             BackText = "Mappa";
-            UserName = "Jonny";
-            UserMoney = "8";
+            UserName = AuthSettings.UserName;
+            UserMoney = AuthSettings.UserCoin.ToString("N0");
             base.OnPropertyChanged("BackText");
             base.OnPropertyChanged("UserName");
             base.OnPropertyChanged("UserMoney");

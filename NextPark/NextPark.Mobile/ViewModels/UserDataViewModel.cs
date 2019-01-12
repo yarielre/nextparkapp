@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using Xamarin.Forms;
 using Plugin.Media;
 using Plugin.Media.Abstractions;
+using NextPark.Mobile.Core.Settings;
+using NextPark.Models;
 
 namespace NextPark.Mobile.ViewModels
 {
@@ -16,6 +18,13 @@ namespace NextPark.Mobile.ViewModels
         public ICommand OnBackClick { get; set; }   // Header back action
         public string UserName { get; set; }        // Header user text
         public ICommand OnUserClick { get; set; }   // Header user action
+        private ImageSource _userIcon;
+        public ImageSource UserIcon
+        {
+            get => _userIcon;
+            set => SetValue(ref _userIcon, value);
+        }
+
         public string UserMoney { get; set; }       // Header money value
         public ICommand OnMoneyClick { get; set; }  // Header money action
 
@@ -62,6 +71,8 @@ namespace NextPark.Mobile.ViewModels
             OnUserImageTap = new Command<object>(OnUserImageTapMethod);
             OnSaveClick = new Command<object>(OnSaveClickMethod);
 
+            UserName = AuthSettings.UserName;
+            UserMoney = AuthSettings.UserCoin.ToString("N0");
             UserImage = "icon_add_photo_256.png";
         }
 
@@ -77,8 +88,9 @@ namespace NextPark.Mobile.ViewModels
 
             // Header
             BackText = "Profilo";
-            UserName = "Jonny";
-            UserMoney = "8";
+            UserName = AuthSettings.UserName;
+            UserMoney = AuthSettings.UserCoin.ToString("N0");
+
             base.OnPropertyChanged("BackText");
             base.OnPropertyChanged("UserName");
             base.OnPropertyChanged("UserMoney");
@@ -93,6 +105,7 @@ namespace NextPark.Mobile.ViewModels
             // NPA
             // City
             // Plate
+            GetUserData();
 
             return Task.FromResult(false);
         }
@@ -119,6 +132,24 @@ namespace NextPark.Mobile.ViewModels
         public void OnUserImageTapMethod(object args)
         {
             AddPhoto();
+        }
+
+        private async void GetUserData()
+        {
+            Response response = await AuthService.GetUserByUserName(AuthSettings.UserName);
+            if (response.IsSuccess == true)
+            {
+                UserModel userData = (UserModel)response.Result;
+                Name = userData.Name;
+                Surname = userData.Lastname;
+                Address = userData.Address;
+                Plate = userData.CarPlate;
+
+                base.OnPropertyChanged("Name");
+                base.OnPropertyChanged("Surname");
+                base.OnPropertyChanged("Address");
+                base.OnPropertyChanged("Plate");
+            }
         }
 
         private async void AddPhoto()
@@ -163,6 +194,7 @@ namespace NextPark.Mobile.ViewModels
             if (mediaFile == null)
                 return;
             UserImage = ImageSource.FromStream(() => { return mediaFile.GetStream(); });
+            UserIcon = ImageSource.FromStream(() => { return mediaFile.GetStream(); });
         }
 
         // Pick User Image

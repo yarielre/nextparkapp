@@ -53,7 +53,8 @@
                            HorizontalOptions="Center"
                            BackgroundColor="Transparent"
                            Grid.Row="0" Grid.Column="1">
-                        <Image Aspect="AspectFill" HeightRequest="24" WidthRequest="24" Source="icon_no_user_256.png"/>
+                        <Image Aspect="AspectFill" HeightRequest="24" WidthRequest="24" 
+                               Source="icon_no_user_256.png"/>
                         <Frame.GestureRecognizers>
                             <TapGestureRecognizer Command="{TemplateBinding UserAction}"/>                            
                         </Frame.GestureRecognizers>
