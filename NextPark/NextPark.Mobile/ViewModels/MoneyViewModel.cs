@@ -19,6 +19,7 @@ namespace NextPark.Mobile.ViewModels
         public ICommand OnMoneyClick { get; set; }  // Header user money action
 
         public string Earn { get; set; }                // User Earn value
+        public int EarnSize { get; set; }
         public Boolean Btn05IsSelected { get; set; }    //  5 CHF button selected
         public Boolean Btn10IsSelected { get; set; }    // 10 CHF button selected
         public Boolean Btn15IsSelected { get; set; }    // 15 CHF button selected
@@ -85,6 +86,11 @@ namespace NextPark.Mobile.ViewModels
             // Budget Values
             // User Money already updated for header
             Earn = "0";
+            EarnSize = 44;
+            if (Earn.Length > 2) {
+                EarnSize = 34;
+            }
+            base.OnPropertyChanged("EarnSize");
             base.OnPropertyChanged("Earn");
 
             // Buttons start/default value
