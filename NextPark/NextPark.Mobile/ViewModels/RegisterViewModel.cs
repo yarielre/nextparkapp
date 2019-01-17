@@ -20,10 +20,11 @@ namespace NextPark.Mobile.ViewModels
         public ICommand OnMoneyClick { get; set; }  // Header money action
 
         public string RegisterName { get; set; }    // Username text
+        public string Email { get; set; }           // User e-mail
         public string Password { get; set; }        // Password text
         public string PasswordConfirm { get; set; } // Password confirm text
         public string Name { get; set; }            // Name
-        public string Surname { get; set; }         // Surname
+        public string Lastname { get; set; }        // Lastname
         public string Address { get; set; }         // Address
         public string NPA { get; set; }             // NPA
         public string City { get; set; }            // City/Country
@@ -42,6 +43,9 @@ namespace NextPark.Mobile.ViewModels
 
         // SERVICES
         private readonly IDialogService _dialogService;
+
+        // PRIVATE VARIBLES
+        private bool dataCheckError;
 
         // METHODS
         public RegisterViewModel(IDialogService dialogService,
@@ -112,37 +116,95 @@ namespace NextPark.Mobile.ViewModels
             RegisterMethod();
         }
 
+        private async Task<bool> RegisterDataCheck()
+        {
+            bool error = false;
+
+            // TODO: implemet all data check
+            // Username
+            if ((this.RegisterName == null) || (this.RegisterName.Length == 0))
+            {
+                await _dialogService.ShowAlert("Errore Nome utente", "Inserire un nome utente");
+                error = true;
+            }
+            // E-mail
+            if (!error && ((this.Email == null) || (this.Email.Length == 0) || !this.Email.Contains("@")))
+            {
+                await _dialogService.ShowAlert("Errore e-mail", "Inserire un indirizzo e-mail valido");
+                error = true;
+            }
+            // Password
+            if (!error && ((this.Password == null) || (this.Password.Length == 0)))
+            {
+                // TODO: add other checks
+                // No password inserted
+                await _dialogService.ShowAlert("Errore Password", "La password deve essere lunga almeno n caratteri");
+                error = true;
+            }
+            // Password confirm
+            if (!error && ((this.PasswordConfirm == null) || (false == this.Password.Equals(this.PasswordConfirm))))
+            {
+                await _dialogService.ShowAlert("Le password sono differenti", "Il campo password e conferma password devono essere identici.");
+                error = true;
+            }
+            // Name
+            if (!error && ((this.Name == null) || (this.Name.Length == 0)))
+            {
+                await _dialogService.ShowAlert("Errore Nome utente", "Il campo Nome è obbligatorio");
+                error = true;
+            }
+            // Lastname
+            if (!error && ((this.Lastname == null) || (this.Lastname.Length == 0)))
+            {
+                await _dialogService.ShowAlert("Errore Nome utente", "Il campo Cognome è obbligatorio");
+                error = true;
+            }
+            // Address
+            // TODO: if is mandatory
+            // Plate
+            if (!error && ((this.Plate == null) || (this.Plate.Length == 0)))
+            {
+                await _dialogService.ShowAlert("Errore Targa", "Inserire una targa valida");
+                error = true;
+            }
+
+            return error;
+        }
+
         public async void RegisterMethod()
         {
             //Demo Login OK
             //var loginResponse = await AuthService.Login("demo@nextpark.ch", "Wisegar.1");
 
+
+            // TODO: define user data
+
+            // Register data check
+            bool error = await RegisterDataCheck();
+            if (error) 
+            {
+                // Stop activity spinner
+                IsRunning = false;
+                base.OnPropertyChanged("IsRunning");
+                return;
+            }
+
             // TODO: fill user data according to register data model
             // TODO: send registration request to backend
             try
-            {
-                /*
+            { 
+                // 
+
+
                 //Demo Register OK
+                string registerAddress = this.Address + "," + this.NPA + "," + this.City;
                 var demoUser = new RegisterModel
                 {
-                    Address = "Via Demo User3",
-                    CarPlate = "TI 30DEMO03",
-                    Email = "demo3@nextpark.ch",
-                    Lastname = "Demo3",
-                    Name = "User2",
-                    Password = "Demo.3",
-                    State = "DemoState",
-                    Username = "Demo3"
-                };
-                */
-                //Demo Register OK
-                var demoUser = new RegisterModel
-                {
-                    Address = this.Address,
+                    Address = registerAddress,
                     CarPlate = this.Plate,
-                    Email = "demo4@nextpark.ch",
-                    Lastname = this.Surname,
-                    Name = this.Name.ToString(),
+                    Email = this.Email,
+                    Lastname = this.Lastname,
+                    Name = this.Name,
                     Password = this.Password,
                     State = "CH",
                     Username = this.RegisterName
@@ -153,9 +215,9 @@ namespace NextPark.Mobile.ViewModels
                 IsRunning = false;
                 base.OnPropertyChanged("IsRunning");
                 if ((registerResponse != null) && (registerResponse.IsSuccess)) {
-                    await _dialogService.ShowAlert("Alert", "Registered");
+                    await NavigationService.NavigateToAsync<HomeViewModel>();
                 } else {
-                    await _dialogService.ShowAlert("Alert", "Registration failed");
+                    await _dialogService.ShowAlert("Alert", "Registrazione non riuscita");
                 }
             } catch(Exception ex) {}
         }

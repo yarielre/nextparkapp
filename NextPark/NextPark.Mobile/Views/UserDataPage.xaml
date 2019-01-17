@@ -41,10 +41,11 @@
                         </Frame.GestureRecognizers>                        
                     </Frame>
                     <Entry Margin="0,5,0,0" Placeholder="Nome utente" Text="{Binding UserName}" FontSize="Small"/>
-                    <Entry Margin="0" Placeholder="Password" Text="{Binding Password}" FontSize="Small"/>
-                    <Entry Margin="0" Placeholder="Conferma Password" Text="{Binding PasswordConfirm}" FontSize="Small"/>
+                    <Entry Margin="0" Placeholder="E-mail" Text="{Binding Email}" FontSize="Small"/>
+                    <!-- <Entry Margin="0" Placeholder="Password" IsPassword="true" Text="{Binding Password}" FontSize="Small"/> -->
+                    <!-- <Entry Margin="0" Placeholder="Conferma Password" IsPassword="true" Text="{Binding PasswordConfirm}" FontSize="Small"/> -->
                     <Entry Margin="0" Placeholder="Nome" Text="{Binding Name}" FontSize="Small"/>
-                    <Entry Margin="0" Placeholder="Cognome" Text="{Binding Surname}" FontSize="Small"/>
+                    <Entry Margin="0" Placeholder="Cognome" Text="{Binding Lastname}" FontSize="Small"/>
                     <Entry Margin="0" Placeholder="Via, N°" Text="{Binding Address}" FontSize="Small"/>
                     <Grid Margin="0">
                         <Grid.RowDefinitions>

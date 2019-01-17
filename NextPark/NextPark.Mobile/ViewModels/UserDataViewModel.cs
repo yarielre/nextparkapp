@@ -8,6 +8,7 @@ using Plugin.Media;
 using Plugin.Media.Abstractions;
 using NextPark.Mobile.Core.Settings;
 using NextPark.Models;
+using System.Collections.Generic;
 
 namespace NextPark.Mobile.ViewModels
 {
@@ -28,11 +29,11 @@ namespace NextPark.Mobile.ViewModels
         public string UserMoney { get; set; }       // Header money value
         public ICommand OnMoneyClick { get; set; }  // Header money action
 
-        //public string UserName { get; set; }      // Already declared for header
+        public string Email { get; set; }           // E-mail
         public string Password { get; set; }        // Password text
         public string PasswordConfirm { get; set; } // Password confirm text
         public string Name { get; set; }            // Name
-        public string Surname { get; set; }         // Surname
+        public string Lastname { get; set; }        // Lastname
         public string Address { get; set; }         // Address
         public string NPA { get; set; }             // NPA
         public string City { get; set; }            // City/Country
@@ -100,7 +101,7 @@ namespace NextPark.Mobile.ViewModels
             // Password
             // PasswordConfirm
             // Name
-            // Surname
+            // Lastname
             // Address
             // NPA
             // City
@@ -139,15 +140,26 @@ namespace NextPark.Mobile.ViewModels
             Response response = await AuthService.GetUserByUserName(AuthSettings.UserName);
             if (response.IsSuccess == true)
             {
+
                 UserModel userData = (UserModel)response.Result;
+
+                string[] addressElements = userData.Address.Split(',');
+                if (addressElements.Length > 2) {
+                    Address = addressElements[0];
+                    NPA = addressElements[1];
+                    City = addressElements[2];
+                }
+                Email = userData.Email;
                 Name = userData.Name;
-                Surname = userData.Lastname;
-                Address = userData.Address;
+                Lastname = userData.Lastname;
                 Plate = userData.CarPlate;
 
+                base.OnPropertyChanged("Email");
                 base.OnPropertyChanged("Name");
-                base.OnPropertyChanged("Surname");
+                base.OnPropertyChanged("Lastname");
                 base.OnPropertyChanged("Address");
+                base.OnPropertyChanged("NPA");
+                base.OnPropertyChanged("City");
                 base.OnPropertyChanged("Plate");
             }
         }
@@ -226,7 +238,21 @@ namespace NextPark.Mobile.ViewModels
         // Save button click action
         public void OnSaveClickMethod(object sender)
         {
+            // Prepare user model to update user data
+            string userAddress = this.Address + "," + this.NPA + "," + this.City;
+            UserModel userModel = new UserModel
+            {
+                UserName = this.UserName,
+                Email = this.Email,
+                Name = this.Name,
+                Lastname = this.Lastname,
+                Address = userAddress,
+                CarPlate = this.Plate
+            };
+
+            // Update user data
             _dialogService.ShowAlert("Alert", "TODO: Update User");
+
             IsRunning = true;
             base.OnPropertyChanged("IsRunning");
         }

@@ -41,10 +41,11 @@
                         </Frame.GestureRecognizers>
                     </Frame>
                     <Entry Margin="0,5,0,0" Placeholder="Nome utente" Text="{Binding RegisterName}" FontSize="Small"/>
-                    <Entry Margin="0" Placeholder="Password" Text="{Binding Password}" FontSize="Small"/>
-                    <Entry Margin="0" Placeholder="Conferma Password" Text="{Binding PasswordConfirm}" FontSize="Small"/>
+                    <Entry Margin="0" Placeholder="E-mail" Text="{Binding Email}" Keyboard="Email"  FontSize="Small"/>
+                    <Entry Margin="0" Placeholder="Password" Text="{Binding Password}" IsPassword="true" FontSize="Small"/>
+                    <Entry Margin="0" Placeholder="Conferma Password" IsPassword="true" Text="{Binding PasswordConfirm}" FontSize="Small"/>
                     <Entry Margin="0" Placeholder="Nome" Text="{Binding Name}" FontSize="Small"/>
-                    <Entry Margin="0" Placeholder="Cognome" Text="{Binding Surname}" FontSize="Small"/>
+                    <Entry Margin="0" Placeholder="Cognome" Text="{Binding Lastname}" FontSize="Small"/>
                     <Entry Margin="0" Placeholder="Via, N°" Text="{Binding Address}" FontSize="Small"/>
                     <Grid Margin="0">
                         <Grid.RowDefinitions>
@@ -55,7 +56,7 @@
                             <ColumnDefinition Width="2*"/>
                         </Grid.ColumnDefinitions>
                         <Entry Grid.Row="0" Grid.Column="0" Placeholder="NPA" Text="{Binding NPA}" FontSize="Small"/>
-                        <Entry Grid.Row="0" Grid.Column="1" Placeholder="Paese" Text="{Binding City}" FontSize="Small"/>
+                        <Entry Grid.Row="0" Grid.Column="1" Placeholder="Comune" Text="{Binding City}" FontSize="Small"/>
                     </Grid>
                     <Entry Margin="0,0,0,5" Placeholder="Targa" Text="{Binding Plate}" FontSize="Small"/>
 
