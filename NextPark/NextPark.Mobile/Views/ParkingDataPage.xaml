@@ -175,6 +175,7 @@
                                 </ContentView.GestureRecognizers>
                             </ContentView>
                         </Grid>
+                    <controls:DayView HeightRequest="350" x:Name="MyDayView"/>
                 </StackLayout>
             </controls:DetailPage>
         </ContentView>

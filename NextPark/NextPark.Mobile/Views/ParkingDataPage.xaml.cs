@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using NextPark.Mobile.Controls;
 using NextPark.Mobile.ViewModels;
 
 using Xamarin.Forms;
@@ -19,6 +20,8 @@ namespace NextPark.Mobile.Views
             {
                 bvm.InitializeAsync();
             }
+
+            DayView.AddEvent(this.MyDayView, "TI 12345");
         }
     }
 }
