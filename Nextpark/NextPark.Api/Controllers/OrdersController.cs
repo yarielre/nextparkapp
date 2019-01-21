@@ -92,9 +92,7 @@ namespace NextPark.Api.Controllers
                 }
 
                 _orderRepository.Delete(order);
-                var parking = await _parkingRepository.FirstWhereAsync(p => p.Id == order.ParkingId, new CancellationToken(),
-                    p => p.ParkingCategory, p => p.ParkingType, p => p.ParkingEvent);
-                parking.IsRented = false;
+                var parking = await _parkingRepository.FirstWhereAsync(p => p.Id == order.ParkingId, new CancellationToken());
                 _parkingRepository.Update(parking);
                 await _unitOfWork.CommitAsync();
                 var vm = _mapper.Map<Parking, ParkingModel>(parking);

@@ -30,10 +30,6 @@ namespace NextPark.MapperTools
             CreateMap<ParkingModel, Parking>()
                  .ForMember(pvm => pvm.ImageUrl, cfg => cfg.MapFrom(p => p.ImageUrl));
             CreateMap<Parking, ParkingModel>()
-                .ForMember(pvm => pvm.Status, cfg => cfg.MapFrom(p => p.IsRented ? "Rented" : "Avialable"))
-                .ForMember(pvm => pvm.RentByHour, cfg => cfg.MapFrom(p => p.Orders.Find(o=>o.OrderStatus==OrderStatus.Actived && o.Parking.ParkingType.Type=="By Hours")))
-                .ForMember(pvm => pvm.RentForMonth, cfg => cfg.MapFrom(p => p.Orders.Find(o=>o.OrderStatus==OrderStatus.Actived && o.Parking.ParkingType.Type=="For Month"))) 
-                .ForMember(pvm => pvm.ParkingType, cfg => cfg.MapFrom(p => p.ParkingType))
                 .ForMember(pvm => pvm.ImageUrl, cfg => cfg.MapFrom(p => p.ImageUrl));
 
             CreateMap<ParkingCategory, ParkingCategoryModel>()

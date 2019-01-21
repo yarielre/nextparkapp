@@ -56,8 +56,7 @@ namespace NextPark.Api.Controllers
         [HttpGet]
         public  async Task<IActionResult> Get()
         {
-            var parkigns = await _parkingRepository.FindAllAsync(new CancellationToken(), p => p.ParkingType,
-                               p => p.ParkingCategory, p => p.ParkingEvent);
+            var parkigns = await _parkingRepository.FindAllAsync(new CancellationToken());
 
             //TODO: Quitar toda logica de negocio de los conroladores a no ser que sea estrctamente necesario. 
             //Utilizar el backend lo mas posible como DATA CENTER!
@@ -108,15 +107,6 @@ namespace NextPark.Api.Controllers
             try
             {
                 var parking = _mapper.Map<ParkingModel, Parking>(model);
-
-                var category = _parkingCategoryRepository.Find(model.ParkingCategoryId);
-                parking.ParkingCategory = category;
-
-                var parkingEvent = _parkingEventRepository.Find(model.ParkingEventId);
-                parking.ParkingEvent = parkingEvent;
-
-                var parkingType = _parkingTypeRepository.Find(model.ParkingTypeId);
-                parking.ParkingType = parkingType;
                 _parkingRepository.Add(parking);
                 await _unitOfWork.CommitAsync();
                 var vm = _mapper.Map<Parking, ParkingModel>(parking);
@@ -178,14 +168,9 @@ namespace NextPark.Api.Controllers
                 {
                     foreach (var order in orders)
                     {
-                        var parking = await _parkingRepository.FirstWhereAsync(p => p.Id == order.ParkingId, new CancellationToken(),
-                            p => p.ParkingType, p => p.ParkingCategory);
-
-                        if (parking.ParkingType.Type == "By Hours")
-                        {
-                            var vm = _mapper.Map<Parking, ParkingModel>(parking);
-                            return Ok(vm);
-                        }
+                        var parking = await _parkingRepository.FirstWhereAsync(p => p.Id == order.ParkingId, new CancellationToken());
+                        var vm = _mapper.Map<Parking, ParkingModel>(parking);
+                        return Ok(vm);
                     }
                 }
 
@@ -209,13 +194,9 @@ namespace NextPark.Api.Controllers
             {
                 foreach (var order in orders)
                 {
-                    var parking = await _parkingRepository.FirstWhereAsync(p => p.Id == order.ParkingId, new CancellationToken(),
-                        p => p.ParkingType, p => p.ParkingCategory);
-                    if (parking.ParkingType.Type == "For Month")
-                    {
-                        var vm = _mapper.Map<Parking, ParkingModel>(parking);
-                        return Ok(vm);
-                    }
+                    var parking = await _parkingRepository.FirstWhereAsync(p => p.Id == order.ParkingId, new CancellationToken());
+                    var vm = _mapper.Map<Parking, ParkingModel>(parking);
+                    return Ok(vm);
                 }
             }
 

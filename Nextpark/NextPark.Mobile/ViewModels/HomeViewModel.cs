@@ -142,23 +142,7 @@ namespace NextPark.Mobile.ViewModels
                 //Demo Post Parking Working on It!
                 var parking1 = new ParkingModel
                 {
-                    ImageUrl = "image_parking1.png",
-                    IsRented = false,
-                    ParkingEvent = new EventModel
-                    {
-                        EndDate = DateTime.Now,
-                        StartDate = DateTime.Now
-                    },
-                    ParkingCategory = new ParkingCategoryModel
-                    {
-                        Category = "Test",
-                        HourPrice = 2.0,
-                        MonthPrice = 3.0
-                    },
-                    ParkingType = new ParkingTypeModel
-                    {
-                        Type = "Business"
-                    }
+                    ImageUrl = "image_parking1.png"
                 };
 
                 await _parkingDataService.Post(parking1);
