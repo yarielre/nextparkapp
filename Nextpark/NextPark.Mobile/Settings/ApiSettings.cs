@@ -3,11 +3,7 @@ namespace NextPark.Mobile.Core.Settings
 {
     public static class ApiSettings
     {
-<<<<<<< HEAD
-        public static string BaseUrl = "https://nextpark-api.azurewebsites.net"; // "http://10.211.55.3/NextPark.Api";// "https://nextpark-api.azurewebsites.net";
-=======
-        public static string BaseUrl =  "https://nextpark-api.azurewebsites.net"; //"http://10.211.55.3/NextPark.Api";
->>>>>>> d242d12... Restore online server url
+        public static string BaseUrl = "https://nextpark-api.azurewebsites.net"; // "http://10.211.55.3/NextPark.Api";
         //public static int BasePort = 80;
         //public static string BaseUrl = string.Format("{0}:{1}", BaseUri, BasePort);  
 
