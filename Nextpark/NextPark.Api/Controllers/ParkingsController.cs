@@ -23,8 +23,7 @@ namespace NextPark.Api.Controllers
         private readonly IHostingEnvironment _appEnvironment;
         private readonly IMapper _mapper;
         private readonly IRepository<Order> _orderRepository;
-        private readonly IRepository<ParkingCategory> _parkingCategoryRepository;
-        private readonly IRepository<ParkingType> _parkingTypeRepository;
+     
         private readonly IRepository<Event> _parkingEventRepository;
         private readonly IRepository<Parking> _parkingRepository;
         private readonly IUnitOfWork _unitOfWork;
@@ -32,18 +31,15 @@ namespace NextPark.Api.Controllers
         private readonly IMediaService _mediaService;
 
         public ParkingsController(IRepository<Parking> repository, IUnitOfWork unitOfWork, IMapper mapper,
-           IRepository<Order> orderRepository, IRepository<ParkingCategory> parkingCategoryRepository,
+           IRepository<Order> orderRepository, 
            IRepository<Event> parkingEventRepository,
            IHostingEnvironment appEnvironment,
            IEmailSender emailSender,
-           IRepository<ParkingType> parkingTypeRepository,
            IMediaService mediaService)
         {
             _parkingRepository = repository;
             _orderRepository = orderRepository;
             _appEnvironment = appEnvironment;
-            _parkingTypeRepository = parkingTypeRepository;
-            _parkingCategoryRepository = parkingCategoryRepository;
             _parkingEventRepository = parkingEventRepository;
             _unitOfWork = unitOfWork;
             _mapper = mapper;

@@ -145,8 +145,8 @@ namespace NextPark.Mobile.ViewModels
                 {
                     Address = "Via Strada",
                     CarPlate = "TI 000000",
-                    Latitude = "40",
-                    Longitude = "40",
+                    Latitude = 40,
+                    Longitude = 40,
                     PriceMax = 4,
                     PriceMin = 4,
                     State = "Ticino",

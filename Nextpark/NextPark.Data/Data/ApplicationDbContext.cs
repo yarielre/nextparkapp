@@ -24,8 +24,6 @@ namespace NextPark.Data
         #region DbSets
         public new DbSet<ApplicationUser> Users { get; set; }
         public DbSet<Parking> Parkings { get; set; }
-        public DbSet<ParkingCategory> ParkingCategories { get; set; }
-        public DbSet<ParkingType> ParkingTypes { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<Event> Events { get; set; }
         #endregion

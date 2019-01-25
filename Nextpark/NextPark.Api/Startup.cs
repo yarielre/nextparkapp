@@ -32,7 +32,7 @@ namespace NextPark.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            var config = new MapperConfiguration(cfg => { cfg.AddProfile(new InsideAutoMapperProfile()); });
+            var config = new MapperConfiguration(cfg => { cfg.AddProfile(new AutoMapperProfile()); });
             var mapper = config.CreateMapper();
 
             services.AddDbContext<ApplicationDbContext>(options =>

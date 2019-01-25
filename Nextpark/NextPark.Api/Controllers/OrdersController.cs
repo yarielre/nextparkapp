@@ -61,7 +61,7 @@ namespace NextPark.Api.Controllers
                 var order = _mapper.Map<OrderModel, Order>(model.Order);
                 _orderRepository.Update(order);
                 var user = _useRepository.Find(model.User.Id);
-                user.Coins = model.User.Coins;
+                user.Balance = model.User.Coins;
                 _useRepository.Update(user);
                 await _unitOfWork.CommitAsync();
                 var vm = _mapper.Map<Order, OrderModel>(order);

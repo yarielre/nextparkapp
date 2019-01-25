@@ -9,11 +9,14 @@ namespace NextPark.Domain.Entities
         public string ImageUrl { get; set; }
 
         public string Address { get; set; }
+        public int Cap { get; set; }
+        public string City { get; set; }
         public string State { get; set; }
+
         public string CarPlate { get; set; }
 
-        public string Latitude { get; set; }
-        public string Longitude { get; set; }
+        public double Latitude { get; set; }
+        public double Longitude { get; set; }
 
         public int UserId { get; set; }
 

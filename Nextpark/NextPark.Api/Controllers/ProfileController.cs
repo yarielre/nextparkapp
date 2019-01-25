@@ -151,7 +151,7 @@ namespace NextPark.Api.Controllers
             }
             try
             {
-                user.Coins = model.Coins;
+                user.Balance = model.Coins;
                 _useRepository.Update(user);
                 await _unitOfWork.CommitAsync();
                 var vm = _mapper.Map<ApplicationUser, UserModel>(user);

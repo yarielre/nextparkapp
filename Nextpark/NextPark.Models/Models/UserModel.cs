@@ -16,6 +16,9 @@ namespace NextPark.Models
         public string Address { get; set; }
         public string State { get; set; }
         public string CarPlate { get; set; }
-        
+
+        public string ImageUrl { get; set; }
+        public byte[] ImageBinary { get; set; }
+
     }
 }
