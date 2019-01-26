@@ -141,6 +141,8 @@
     <BundleResource Include="Resources\icon_wrench_256.png" />
     <BundleResource Include="Resources\image_bg_nextpark.png" />
     <BundleResource Include="Resources\image_parking1.png" />
+    <BundleResource Include="Resources\icon_left_gray_128.png" />
+    <BundleResource Include="Resources\icon_right_gray_128.png" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

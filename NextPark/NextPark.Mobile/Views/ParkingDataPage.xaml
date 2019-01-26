@@ -2,6 +2,7 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms" 
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:controls="clr-namespace:NextPark.Mobile.Controls"
+             xmlns:repeater="clr-namespace:NextPark.Mobile.Repeater"
              BindingContext="{Binding ParkingData, Source={StaticResource Locator}}"              
              x:Class="NextPark.Mobile.Views.ParkingDataPage">
     <ContentPage.Content>
@@ -14,8 +15,10 @@
                                 HeaderUserAction="{Binding OnUserClick}"
                                 HeaderMoney="{Binding UserMoney}"
                                 HeaderMoneyAction="{Binding OnMoneyClick}">
-                
-                <StackLayout x:Name="RegContent" Orientation="Vertical" VerticalOptions="FillAndExpand" Spacing="5">
+                                
+                <StackLayout Orientation="Vertical" VerticalOptions="Fill" Spacing="5">
+                    
+                    <!-- Parking Informations group -->
                     <Grid Margin="0,0,0,0" Padding="0">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="80"/>
@@ -82,15 +85,19 @@
                         </ContentView>
                     </Grid>
                     
+                    <!-- Separator -->
                     <BoxView HeightRequest="1"
                              Margin="0,5,0,10"
                              HorizontalOptions="FillAndExpand"
                              BackgroundColor="Gray"/>
-                     <Grid Margin="0,0,0,0" Padding="0">
+                    
+                    <!-- Active status and add button -->
+                    <Grid Margin="0,0,0,0" Padding="0">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
@@ -100,82 +107,245 @@
                                FontSize="Medium" 
                                FontAttributes="None" 
                                VerticalOptions="Center"
+                               HorizontalOptions="End"
                                Margin="0"
                                Grid.Row="0" Grid.Column="0"/>
                         <Switch BackgroundColor="White"
                                 OnColor="#8CC63F"
                                 IsToggled="{Binding ActiveSwitchToggled}"
                                 Margin="10,0,0,0"
-                                
-                                Grid.Row="0" Grid.Column="1"/> 
+                                VerticalOptions="Start"
+                                Grid.Row="0" Grid.Column="1"/>
+                        <Frame BackgroundColor="#8CC63F"
+                               HasShadow="false"
+                               IsClippedToBounds="true"
+                               HeightRequest="40"
+                               WidthRequest="40"
+                               CornerRadius="8"
+                               Margin="5,-5,-5,5"
+                               Padding="0"
+                               VerticalOptions="Center"
+                               HorizontalOptions="End"
+                               Grid.Row="0" Grid.Column="2">
+                               <Image Source="icon_add_48.png"
+                                      HeightRequest="20"
+                                      WidthRequest="20"
+                                      HorizontalOptions="Center"
+                                      VerticalOptions="Center"/>
+                            <Frame.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding OnAddAvailability}"/>
+                            </Frame.GestureRecognizers>
+                        </Frame>
                     </Grid>
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="40"/>
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="40"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="40"/>
-                            </Grid.ColumnDefinitions>
-                            <ContentView HorizontalOptions="FillAndExpand"
-                                         VerticalOptions="FillAndExpand"
-                                         HeightRequest="40"
-                                         Grid.Row="0" Grid.Column="0">                            
-                                <Frame BackgroundColor="#8CC63F"
-                                       HasShadow="false"
-                                       IsClippedToBounds="true"
-                                       HeightRequest="40"
-                                       WidthRequest="40"
-                                       CornerRadius="8"
-                                       Margin="5,-5,-5,5"
-                                       Padding="0"
-                                       VerticalOptions="Center">
-                                    <Image Source="icon_calendar_90.png"
-                                           HeightRequest="30"
-                                           WidthRequest="30"
-                                           HorizontalOptions="Center"
-                                           VerticalOptions="Center"
-                                           />
-                                </Frame>
-                                <ContentView.GestureRecognizers>
-                                    <TapGestureRecognizer x:Name="calendarCmd" Command="{Binding OnCalendar}"/>                                                       
-                                </ContentView.GestureRecognizers>
-                            </ContentView>
-                            <Label  Text="15 dicembre 2018"
-                                    TextColor="Gray"
-                                    FontSize="Small"
-                                    HorizontalTextAlignment="Start"
-                                    VerticalOptions="Center"
-                                    Margin="10,0,0,0"
-                                    Grid.Row="0" Grid.Column="1"/>
-                             <ContentView HorizontalOptions="End"
-                                         VerticalOptions="FillAndExpand"
-                                         HeightRequest="40"
-                                         Grid.Row="0" Grid.Column="2">                            
-                                <Frame BackgroundColor="#8CC63F"
-                                       HasShadow="false"
-                                       IsClippedToBounds="true"
-                                       HeightRequest="40"
-                                       WidthRequest="40"
-                                       CornerRadius="8"
-                                       Margin="5,-5,-5,5"
-                                       Padding="0"
-                                       VerticalOptions="Center"
-                                       HorizontalOptions="End">
-                                    <Image Source="icon_add_48.png"
-                                           HeightRequest="20"
-                                           WidthRequest="20"
-                                           HorizontalOptions="Center"
-                                           VerticalOptions="Center"
-                                           />
-                                </Frame>
-                                <ContentView.GestureRecognizers>
-                                    <TapGestureRecognizer x:Name="addAvailabilityCmd" Command="{Binding OnAddAvailability}"/>                                                       
-                                </ContentView.GestureRecognizers>
-                            </ContentView>
-                        </Grid>
-                    <controls:DayView HeightRequest="350" x:Name="MyDayView"/>
+                                        
+                    <!-- Week days -->
+                    <Grid Margin="-10,0,-10,0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="60"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="20"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="20"/>
+                        </Grid.ColumnDefinitions>
+                        <ContentView Grid.Row="0" Grid.Column="0" HorizontalOptions="Fill" VerticalOptions="Fill">
+                            <Image Source="icon_left_gray_128.png" HeightRequest="20" WidthRequest="20" VerticalOptions="Center" HorizontalOptions="Center"/>
+                            <ContentView.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding OnPreviousWeek}"/>
+                            </ContentView.GestureRecognizers>
+                        </ContentView>
+                        <StackLayout Grid.Row="0" Grid.Column="1" Spacing="0" BackgroundColor="Transparent" Padding="0" Margin="0" VerticalOptions="Center">
+                            <Label Text="L" TextColor="Gray" FontSize="Small" HorizontalOptions="Center" VerticalOptions="Start"/>
+                            <Frame Grid.Row="0" Grid.Column="0"
+                               HeightRequest="36"
+                               WidthRequest="36"
+                               CornerRadius="18"
+                               HasShadow="false"
+                               Padding="0"
+                               Margin="0"
+                               BackgroundColor="{Binding Day1BackgroundColor}"
+                               BorderColor="{Binding Day1BackgroundColor}"
+                               IsClippedToBounds="true"
+                               VerticalOptions="Start"
+                               HorizontalOptions="Center">
+                                <Label Text="{Binding Day1Text}" TextColor="{Binding Day1TextColor}" FontSize="Medium" HorizontalOptions="Center" VerticalOptions="Center"/>
+                                <Frame.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding OnDaySelected}" CommandParameter="{Binding Day1DateTime}"/>
+                                </Frame.GestureRecognizers>
+                            </Frame>
+                        </StackLayout>
+                        <StackLayout Grid.Row="0" Grid.Column="2" Spacing="0" BackgroundColor="Transparent" Padding="0" Margin="0" VerticalOptions="Center">
+                            <Label Text="M" TextColor="Gray" FontSize="Small" HorizontalOptions="Center" VerticalOptions="Start"/>
+                            <Frame Grid.Row="0" Grid.Column="0"
+                               HeightRequest="36"
+                               WidthRequest="36"
+                               CornerRadius="18"
+                               HasShadow="false"
+                               Padding="0"
+                               Margin="0"
+                               BackgroundColor="{Binding Day2BackgroundColor}"
+                               BorderColor="{Binding Day2BackgroundColor}"
+                               IsClippedToBounds="true"
+                               VerticalOptions="Start"
+                               HorizontalOptions="Center">
+                                <Label Text="{Binding Day2Text}" TextColor="{Binding Day2TextColor}" FontSize="Medium" HorizontalOptions="Center" VerticalOptions="Center"/>                                                            
+                                <Frame.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding OnDaySelected}" CommandParameter="{Binding Day2DateTime}"/>
+                                </Frame.GestureRecognizers>
+                            </Frame>
+                        </StackLayout>
+                        <StackLayout Grid.Row="0" Grid.Column="3" Spacing="0" BackgroundColor="Transparent" Padding="0" Margin="0" VerticalOptions="Center">
+                            <Label Text="M" TextColor="Gray" FontSize="Small" HorizontalOptions="Center" VerticalOptions="Start"/>
+                            <Frame Grid.Row="0" Grid.Column="0"
+                               HeightRequest="36"
+                               WidthRequest="36"
+                               CornerRadius="18"
+                               HasShadow="false"
+                               Padding="0"
+                               Margin="0"
+                               BackgroundColor="{Binding Day3BackgroundColor}"
+                               BorderColor="{Binding Day3BackgroundColor}"
+                               IsClippedToBounds="true"
+                               VerticalOptions="Start"
+                               HorizontalOptions="Center">
+                                <Label Text="{Binding Day3Text}" TextColor="{Binding Day3TextColor}" FontSize="Medium" HorizontalOptions="Center" VerticalOptions="Center"/>                                                            
+                                <Frame.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding OnDaySelected}" CommandParameter="{Binding Day3DateTime}"/>
+                                </Frame.GestureRecognizers>
+                            </Frame>
+                        </StackLayout>
+                        <StackLayout Grid.Row="0" Grid.Column="4" Spacing="0" BackgroundColor="Transparent" Padding="0" Margin="0" VerticalOptions="Center">
+                            <Label Text="G" TextColor="Gray" FontSize="Small" HorizontalOptions="Center" VerticalOptions="Start"/>
+                            <Frame Grid.Row="0" Grid.Column="0"
+                               HeightRequest="36"
+                               WidthRequest="36"
+                               CornerRadius="18"
+                               HasShadow="false"
+                               Padding="0"
+                               Margin="0"
+                               BackgroundColor="{Binding Day4BackgroundColor}"
+                               BorderColor="{Binding Day4BackgroundColor}"
+                               IsClippedToBounds="true"
+                               VerticalOptions="Start"
+                               HorizontalOptions="Center">
+                                <Label Text="{Binding Day4Text}" TextColor="{Binding Day4TextColor}" FontSize="Medium" HorizontalOptions="Center" VerticalOptions="Center"/>                                                            
+                                <Frame.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding OnDaySelected}" CommandParameter="{Binding Day4DateTime}"/>
+                                </Frame.GestureRecognizers>
+                            </Frame>
+                        </StackLayout>
+                        <StackLayout Grid.Row="0" Grid.Column="5" Spacing="0" BackgroundColor="Transparent" Padding="0" Margin="0" VerticalOptions="Center">
+                            <Label Text="V" TextColor="Gray" FontSize="Small" HorizontalOptions="Center" VerticalOptions="Start"/>
+                            <Frame Grid.Row="0" Grid.Column="0"
+                               HeightRequest="36"
+                               WidthRequest="36"
+                               CornerRadius="18"
+                               HasShadow="false"
+                               Padding="0"
+                               Margin="0"
+                               BackgroundColor="{Binding Day5BackgroundColor}"
+                               BorderColor="{Binding Day5BackgroundColor}"
+                               IsClippedToBounds="true"
+                               VerticalOptions="Start"
+                               HorizontalOptions="Center">
+                                <Label Text="{Binding Day5Text}" TextColor="{Binding Day5TextColor}" FontSize="Medium" HorizontalOptions="Center" VerticalOptions="Center"/>
+                                <Frame.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding OnDaySelected}" CommandParameter="{Binding Day5DateTime}"/>
+                                </Frame.GestureRecognizers>
+                            </Frame>
+                        </StackLayout>
+                        <StackLayout Grid.Row="0" Grid.Column="6" Spacing="0" BackgroundColor="Transparent" Padding="0" Margin="0" VerticalOptions="Center">
+                            <Label Text="S" TextColor="Gray" FontSize="Small" HorizontalOptions="Center" VerticalOptions="Start"/>
+                            <Frame Grid.Row="0" Grid.Column="0"
+                               HeightRequest="36"
+                               WidthRequest="36"
+                               CornerRadius="18"
+                               HasShadow="false"
+                               Padding="0"
+                               Margin="0"
+                               BackgroundColor="{Binding Day6BackgroundColor}"
+                               BorderColor="{Binding Day6BackgroundColor}"
+                               IsClippedToBounds="true"
+                               VerticalOptions="Start"
+                               HorizontalOptions="Center">
+                                <Label Text="{Binding Day6Text}" TextColor="{Binding Day6TextColor}" FontSize="Medium" HorizontalOptions="Center" VerticalOptions="Center"/>
+                                <Frame.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding OnDaySelected}" CommandParameter="{Binding Day6DateTime}"/>
+                                </Frame.GestureRecognizers>
+                            </Frame>
+                        </StackLayout>
+                        <StackLayout Grid.Row="0" Grid.Column="7" Spacing="0" BackgroundColor="Transparent" Padding="0" Margin="0" VerticalOptions="Center">
+                            <Label Text="D" TextColor="Gray" FontSize="Small" HorizontalOptions="Center" VerticalOptions="Start"/>
+                            <Frame Grid.Row="0" Grid.Column="0"
+                               HeightRequest="36"
+                               WidthRequest="36"
+                               CornerRadius="18"
+                               HasShadow="false"
+                               Padding="0"
+                               Margin="0"
+                               BackgroundColor="{Binding Day7BackgroundColor}"
+                               BorderColor="{Binding Day7BackgroundColor}"
+                               IsClippedToBounds="true"
+                               VerticalOptions="Start"
+                               HorizontalOptions="Center">
+                                <Label Text="{Binding Day7Text}" TextColor="{Binding Day7TextColor}" FontSize="Medium" HorizontalOptions="Center" VerticalOptions="Center"/>
+                                <Frame.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding OnDaySelected}" CommandParameter="{Binding Day7DateTime}"/>
+                                </Frame.GestureRecognizers>
+                            </Frame>
+                        </StackLayout>
+                        <ContentView Grid.Row="0" Grid.Column="8" HorizontalOptions="Fill" VerticalOptions="Fill">
+                            <Image Source="icon_right_gray_128.png" HeightRequest="20" WidthRequest="20" VerticalOptions="Center" HorizontalOptions="Center"/>
+                            <ContentView.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding OnNextWeek}"/>
+                            </ContentView.GestureRecognizers>
+                        </ContentView>
+                        
+                    </Grid>                                       
+                    
+                    <!-- Day select -->
+                    <DatePicker x:Name="startDatePicker"
+                                Format="D"
+                                Margin="30,0,30,5"
+                                FontSize="Small"
+                                Date="{Binding DatePickerDate}"/>
+                    
+                    <!-- Day view -->
+                    <controls:DayView HeightRequest="300" Padding="0" Margin="0,-5,0,0" VerticalOptions="Fill">
+                        
+                        <!-- Events and Orders -->
+                        <repeater:RelRepeaterView  HorizontalOptions="FillAndExpand" ItemsSource="{Binding Events}">
+                            <repeater:RelRepeaterView.ItemTemplate>
+                                <DataTemplate>
+                                    <ViewCell>
+                                        <Frame   BackgroundColor="{Binding EventColor}"
+                                                 CornerRadius="8"
+                                                 HeightRequest="{Binding DurationSeconds}"
+                                                 Margin="0"
+                                                 Padding="0"
+                                                 Opacity="0.8"
+                                                 RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.45}"
+                                                 RelativeLayout.YConstraint="{Binding yConstPosition}"
+                                                 RelativeLayout.XConstraint="{Binding xConstPosition}">
+                                            <Label TextColor="{Binding TextColor}" Text="{Binding Text}"
+                                                   FontSize="Small"
+                                                   Margin="10,2,0,0"
+                                                   Opacity="1"
+                                                   HorizontalTextAlignment="Start"
+                                                   VerticalTextAlignment="Start"/> 
+                                        </Frame>
+                                    </ViewCell>
+                                </DataTemplate>
+                            </repeater:RelRepeaterView.ItemTemplate>
+                        </repeater:RelRepeaterView>
+                    </controls:DayView>
+                    
                 </StackLayout>
             </controls:DetailPage>
         </ContentView>

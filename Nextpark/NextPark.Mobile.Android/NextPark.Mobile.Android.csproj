@@ -134,6 +134,8 @@
     <AndroidResource Include="Resources\drawable\image_bg_nextpark.png" />
     <AndroidResource Include="Resources\drawable\image_parking1.png" />
     <AndroidResource Include="Resources\xml\file_paths.xml" />
+    <AndroidResource Include="Resources\drawable\icon_left_gray_128.png" />
+    <AndroidResource Include="Resources\drawable\icon_right_gray_128.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\drawable-hdpi\" />

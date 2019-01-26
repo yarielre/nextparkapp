@@ -20,8 +20,11 @@ namespace NextPark.Mobile.Views
             {
                 bvm.InitializeAsync();
             }
+        }
 
-            DayView.AddEvent(this.MyDayView, "TI 12345");
+        void OnDateSelected(object sender, DateChangedEventArgs args)
+        {
+            int i = 0;
         }
     }
 }

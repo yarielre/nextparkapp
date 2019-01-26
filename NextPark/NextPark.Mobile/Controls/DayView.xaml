@@ -7,140 +7,280 @@
                    BorderColor="Gray"
                    CornerRadius="8"
                    HasShadow="false"
-                   Padding="0,20,0,0"
-                   Margin="0,10,0,0">
-            <ScrollView Padding="10">
-                <Grid Margin="0,0,0,0" Padding="0" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" BackgroundColor="White">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="*" />
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="40" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
+                   Padding="0,0,0,0"
+                   Margin="0">
+                <ScrollView Padding="10,0,10,0">
+                    <Grid Margin="0,10,0,0" Padding="0" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" BackgroundColor="White">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="40" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
                 
-                    <!-- Hours -->
-                    <StackLayout Grid.Row="0" Grid.Column="0"
-                                 Orientation="Vertical"
-                                 Padding="0"
-                                 Margin="0"
-                                 BackgroundColor="Transparent"
-                                 Spacing="0">
-                        <Label Text="00:00"
+                        <!-- Hours -->
+                        <StackLayout Grid.Row="0" Grid.Column="0"
+                                     Orientation="Vertical"
+                                     Padding="0"
+                                     Margin="0"
+                                     BackgroundColor="Transparent"
+                                     Spacing="0">
+                            <Label Text="00:00"
                                    HorizontalTextAlignment="Start"
                                    VerticalTextAlignment="Start"
                                    TextColor="Silver"
                                    FontSize="12"
                                    Margin="0,0,0,45"/>
-                        <Label Text="01:00"
+                            <Label Text="01:00"
                                    HorizontalTextAlignment="Start"
                                    VerticalTextAlignment="Start"
                                    TextColor="Silver"
                                    FontSize="12"
                                    Margin="0,0,0,45"/>
-                        <Label Text="02:00"
+                            <Label Text="02:00"
                                    HorizontalTextAlignment="Start"
                                    VerticalTextAlignment="Start"
                                    TextColor="Silver"
                                    FontSize="12"
                                    Margin="0,0,0,46"/>
-                        <Label Text="03:00"
+                            <Label Text="03:00"
                                    HorizontalTextAlignment="Start"
                                    VerticalTextAlignment="Start"
                                    TextColor="Silver"
                                    FontSize="12"
                                    Margin="0,0,0,46"/>
-                        <Label Text="04:00"
+                            <Label Text="04:00"
                                    HorizontalTextAlignment="Start"
                                    VerticalTextAlignment="Start"
                                    TextColor="Silver"
                                    FontSize="12"
                                    Margin="0,0,0,46"/>
-                        <Label Text="05:00"
+                            <Label Text="05:00"
                                    HorizontalTextAlignment="Start"
                                    VerticalTextAlignment="Start"
                                    TextColor="Silver"
                                    FontSize="12"
                                    Margin="0,0,0,45"/>
-                        <Label Text="06:00"
+                            <Label Text="06:00"
                                    HorizontalTextAlignment="Start"
                                    VerticalTextAlignment="Start"
                                    TextColor="Silver"
                                    FontSize="12"
                                    Margin="0,0,0,46"/>
-                        <Label Text="07:00"
+                            <Label Text="07:00"
                                    HorizontalTextAlignment="Start"
                                    VerticalTextAlignment="Start"
                                    TextColor="Silver"
                                    FontSize="12"
                                    Margin="0,0,0,45"/>  
-                        <Label Text="08:00"
+                            <Label Text="08:00"
                                    HorizontalTextAlignment="Start"
                                    VerticalTextAlignment="Start"
                                    TextColor="Silver"
                                    FontSize="12"
-                                   Margin="0,0,0,46"/>  
-                    </StackLayout>
-                    
-                    <!-- Rows -->
-                    <RelativeLayout Grid.Row="0" Grid.Column="1"
-                                    Padding="0"
-                                    Margin="0"
-                                    BackgroundColor="Transparent"
-                                    x:Name="RowsView" >
-                        <BoxView BackgroundColor="Silver"
-                                 HeightRequest="1"
-                                 RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}"
-                                 RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Y, Factor=1, Constant=7}"/>
-                        <BoxView BackgroundColor="Silver"
-                                 HeightRequest="1"
-                                 RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}"
-                                 RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Y, Factor=1, Constant=67}"/>
-                        <BoxView BackgroundColor="Silver"
-                                 HeightRequest="1"
-                                 RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}"
-                                 RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Y, Factor=1, Constant=127}"/>
-                        <BoxView BackgroundColor="Silver"
-                                 HeightRequest="1"
-                                 RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}"
-                                 RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Y, Factor=1, Constant=187}"/>
-                        <BoxView BackgroundColor="Silver"
-                                 HeightRequest="1"
-                                 RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}"
-                                 RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Y, Factor=1, Constant=247}"/>
-                        <BoxView BackgroundColor="Silver"
-                                 HeightRequest="1"
-                                 RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}"
-                                 RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Y, Factor=1, Constant=307}"/>
-                        <BoxView BackgroundColor="Silver"
-                                 HeightRequest="1"
-                                 RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}"
-                                 RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Y, Factor=1, Constant=367}"/>                            
-                        <BoxView BackgroundColor="Silver"
-                                 HeightRequest="1"
-                                 RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}"
-                                 RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Y, Factor=1, Constant=427}"/>
-                        <BoxView BackgroundColor="Silver"
-                                 HeightRequest="1"
-                                 RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}"
-                                 RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Y, Factor=1, Constant=487}"/>
-                        <Frame   BackgroundColor="#8CC63F"
-                                 CornerRadius="8"
-                                 HeightRequest="60"
-                                 Margin="0"
-                                 Padding="0"
-                                 Opacity="0.8"
-                                 RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.8}"
-                                 RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Y, Factor=1, Constant=217}"
-                                 RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=X, Factor=1, Constant=-20}">
-                            <Label TextColor="Green" Text="Disponibile"
-                                   FontSize="Small"
-                                   Margin="10,2,0,0"
-                                   Opacity="1"
+                                   Margin="0,0,0,46"/>
+                            <Label Text="09:00"
                                    HorizontalTextAlignment="Start"
-                                   VerticalTextAlignment="Start"/> 
-                        </Frame>
+                                   VerticalTextAlignment="Start"
+                                   TextColor="Silver"
+                                   FontSize="12"
+                                   Margin="0,0,0,45"/>
+                            <Label Text="10:00"
+                                   HorizontalTextAlignment="Start"
+                                   VerticalTextAlignment="Start"
+                                   TextColor="Silver"
+                                   FontSize="12"
+                                   Margin="0,0,0,46"/>
+                            <Label Text="11:00"
+                                   HorizontalTextAlignment="Start"
+                                   VerticalTextAlignment="Start"
+                                   TextColor="Silver"
+                                   FontSize="12"
+                                   Margin="0,0,0,45"/>
+                            <Label Text="12:00"
+                                   HorizontalTextAlignment="Start"
+                                   VerticalTextAlignment="Start"
+                                   TextColor="Silver"
+                                   FontSize="12"
+                                   Margin="0,0,0,46"/>
+                            <Label Text="13:00"
+                                   HorizontalTextAlignment="Start"
+                                   VerticalTextAlignment="Start"
+                                   TextColor="Silver"
+                                   FontSize="12"
+                                   Margin="0,0,0,45"/>
+                            <Label Text="14:00"
+                                   HorizontalTextAlignment="Start"
+                                   VerticalTextAlignment="Start"
+                                   TextColor="Silver"
+                                   FontSize="12"
+                                   Margin="0,0,0,46"/>
+                            <Label Text="15:00"
+                                   HorizontalTextAlignment="Start"
+                                   VerticalTextAlignment="Start"
+                                   TextColor="Silver"
+                                   FontSize="12"
+                                   Margin="0,0,0,45"/>
+                            <Label Text="16:00"
+                                   HorizontalTextAlignment="Start"
+                                   VerticalTextAlignment="Start"
+                                   TextColor="Silver"
+                                   FontSize="12"
+                                   Margin="0,0,0,46"/>
+                            <Label Text="17:00"
+                                   HorizontalTextAlignment="Start"
+                                   VerticalTextAlignment="Start"
+                                   TextColor="Silver"
+                                   FontSize="12"
+                                   Margin="0,0,0,45"/>
+                            <Label Text="18:00"
+                                   HorizontalTextAlignment="Start"
+                                   VerticalTextAlignment="Start"
+                                   TextColor="Silver"
+                                   FontSize="12"
+                                   Margin="0,0,0,46"/>
+                            <Label Text="19:00"
+                                   HorizontalTextAlignment="Start"
+                                   VerticalTextAlignment="Start"
+                                   TextColor="Silver"
+                                   FontSize="12"
+                                   Margin="0,0,0,45"/>
+                            <Label Text="20:00"
+                                   HorizontalTextAlignment="Start"
+                                   VerticalTextAlignment="Start"
+                                   TextColor="Silver"
+                                   FontSize="12"
+                                   Margin="0,0,0,46"/>
+                            <Label Text="21:00"
+                                   HorizontalTextAlignment="Start"
+                                   VerticalTextAlignment="Start"
+                                   TextColor="Silver"
+                                   FontSize="12"
+                                   Margin="0,0,0,45"/>
+                            <Label Text="22:00"
+                                   HorizontalTextAlignment="Start"
+                                   VerticalTextAlignment="Start"
+                                   TextColor="Silver"
+                                   FontSize="12"
+                                   Margin="0,0,0,46"/>
+                            <Label Text="23:00"
+                                   HorizontalTextAlignment="Start"
+                                   VerticalTextAlignment="Start"
+                                   TextColor="Silver"
+                                   FontSize="12"
+                                   Margin="0,0,0,46"/>
+                        </StackLayout>
+                    
+                        <!-- Rows -->
+                        <RelativeLayout Grid.Row="0" Grid.Column="1"
+                                        Padding="0"
+                                        Margin="0"
+                                        BackgroundColor="Transparent"
+                                        x:Name="RowsView">
+                            <BoxView BackgroundColor="Silver"
+                                     HeightRequest="1"
+                                     RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}"
+                                     RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Y, Factor=1, Constant=7}"/>
+                            <BoxView BackgroundColor="Silver"
+                                     HeightRequest="1"
+                                     RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}"
+                                     RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Y, Factor=1, Constant=67}"/>
+                            <BoxView BackgroundColor="Silver"
+                                     HeightRequest="1"
+                                     RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}"
+                                     RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Y, Factor=1, Constant=127}"/>
+                            <BoxView BackgroundColor="Silver"
+                                     HeightRequest="1"
+                                     RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}"
+                                     RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Y, Factor=1, Constant=187}"/>
+                            <BoxView BackgroundColor="Silver"
+                                     HeightRequest="1"
+                                     RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}"
+                                     RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Y, Factor=1, Constant=247}"/>
+                            <BoxView BackgroundColor="Silver"
+                                     HeightRequest="1"
+                                     RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}"
+                                     RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Y, Factor=1, Constant=307}"/>
+                            <BoxView BackgroundColor="Silver"
+                                     HeightRequest="1"
+                                     RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}"
+                                     RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Y, Factor=1, Constant=367}"/>                            
+                            <BoxView BackgroundColor="Silver"
+                                     HeightRequest="1"
+                                     RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}"
+                                     RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Y, Factor=1, Constant=427}"/>
+                            <BoxView BackgroundColor="Silver"
+                                     HeightRequest="1"
+                                     RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}"
+                                     RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Y, Factor=1, Constant=487}"/>
+                            <BoxView BackgroundColor="Silver"
+                                     HeightRequest="1"
+                                     RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}"
+                                     RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Y, Factor=1, Constant=547}"/>
+                            <BoxView BackgroundColor="Silver"
+                                     HeightRequest="1"
+                                     RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}"
+                                     RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Y, Factor=1, Constant=607}"/>
+                            <BoxView BackgroundColor="Silver"
+                                     HeightRequest="1"
+                                     RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}"
+                                     RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Y, Factor=1, Constant=667}"/>
+                            <BoxView BackgroundColor="Silver"
+                                     HeightRequest="1"
+                                     RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}"
+                                     RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Y, Factor=1, Constant=727}"/>
+                            <BoxView BackgroundColor="Silver"
+                                     HeightRequest="1"
+                                     RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}"
+                                     RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Y, Factor=1, Constant=787}"/>
+                            <BoxView BackgroundColor="Silver"
+                                     HeightRequest="1"
+                                     RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}"
+                                     RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Y, Factor=1, Constant=847}"/>
+                            <BoxView BackgroundColor="Silver"
+                                     HeightRequest="1"
+                                     RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}"
+                                     RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Y, Factor=1, Constant=907}"/>
+                            <BoxView BackgroundColor="Silver"
+                                     HeightRequest="1"
+                                     RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}"
+                                     RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Y, Factor=1, Constant=967}"/>
+                            <BoxView BackgroundColor="Silver"
+                                     HeightRequest="1"
+                                     RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}"
+                                     RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Y, Factor=1, Constant=1027}"/>
+                            <BoxView BackgroundColor="Silver"
+                                     HeightRequest="1"
+                                     RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}"
+                                     RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Y, Factor=1, Constant=1087}"/>
+                            <BoxView BackgroundColor="Silver"
+                                     HeightRequest="1"
+                                     RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}"
+                                     RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Y, Factor=1, Constant=1147}"/>
+                            <BoxView BackgroundColor="Silver"
+                                     HeightRequest="1"
+                                     RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}"
+                                     RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Y, Factor=1, Constant=1207}"/>
+                            <BoxView BackgroundColor="Silver"
+                                     HeightRequest="1"
+                                     RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}"
+                                     RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Y, Factor=1, Constant=1267}"/>
+                            <BoxView BackgroundColor="Silver"
+                                     HeightRequest="1"
+                                     RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}"
+                                     RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Y, Factor=1, Constant=1327}"/>
+                            <BoxView BackgroundColor="Silver"
+                                     HeightRequest="1"
+                                     RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}"
+                                     RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Y, Factor=1, Constant=1387}"/>
                     </RelativeLayout>
+                    <ContentPresenter Grid.Row="0" 
+                                      Grid.Column="1" 
+                                      HorizontalOptions="FillAndExpand" 
+                                      VerticalOptions="StartAndExpand">
+                            
+                    </ContentPresenter>
                 </Grid>
             </ScrollView>
             </Frame>
