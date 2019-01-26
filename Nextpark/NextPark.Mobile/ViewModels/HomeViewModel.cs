@@ -116,7 +116,6 @@ namespace NextPark.Mobile.ViewModels
         private async void DemoBackEndCalls()
         {
 
-
             try
             {
                 //Demo Login OK
@@ -140,31 +139,37 @@ namespace NextPark.Mobile.ViewModels
                 //Demo Get Parkings OK
                 var parkings = await _parkingDataService.Get();
 
+             
+
                 if (parkings.Count > 0) return;
 
-                //Demo Post Parking Working on It!
+                //Demo Posting Parking
                 var parking1 = new ParkingModel
                 {
-                    ImageUrl = "image_parking1.png",
-                    IsRented = false,
-                    ParkingEvent = new EventModel
-                    {
-                        EndDate = DateTime.Now,
-                        StartDate = DateTime.Now
-                    },
-                    ParkingCategory = new ParkingCategoryModel
-                    {
-                        Category = "Test",
-                        HourPrice = 2.0,
-                        MonthPrice = 3.0
-                    },
-                    ParkingType = new ParkingTypeModel
-                    {
-                        Type = "Business"
-                    }
+                    Address = "Via Strada",
+                    CarPlate = "TI 000000",
+                    Latitude = 40,
+                    Longitude = 40,
+                    PriceMax = 4,
+                    PriceMin = 4,
+                    State = "Ticino",
+                    Status = Enums.Enums.ParkingStatus.Enabled,
+                    UserId = 1,
+                    ImageUrl = "image_parking1.png"
                 };
 
-                await _parkingDataService.Post(parking1);
+
+                var postedParking = await _parkingDataService.Post(parking1);
+
+
+                postedParking.Status = Enums.Enums.ParkingStatus.Disabled;
+
+                //Demo Puting Parking
+                var parkingResult =  await _parkingDataService.Put(postedParking, postedParking.Id);
+
+                //Demo Deleting Parking
+                var deletedParking =  await _parkingDataService.Delete(parkingResult.Id);
+
 
             }
             catch (Exception e)

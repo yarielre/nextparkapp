@@ -27,8 +27,6 @@ namespace NextPark.Mobile.Infrastructure
             builder.RegisterType<ParkingDataService>();
             builder.RegisterType<EventDataService>();
             builder.RegisterType<OrderDataService>();
-            builder.RegisterType<ParkingCategoriesDataService>();
-            builder.RegisterType<ParkingTypeDataService>();
 
             //Register ViewModels
             builder.RegisterType<LocatorViewModel>();

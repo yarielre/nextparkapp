@@ -12,5 +12,11 @@ namespace NextPark.MapperTools
             return array[array.Length - 1];
 
         }
+        public string Resolve(UserModel source, ApplicationUser destination, string destMember, ResolutionContext context)
+        {
+            string[] array = source.ImageUrl.Split('/');
+            return array[array.Length - 1];
+
+        }
     }
 }

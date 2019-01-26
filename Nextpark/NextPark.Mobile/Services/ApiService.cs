@@ -46,8 +46,8 @@ namespace NextPark.Mobile.Services
                     Message = "Please turn on your internet settings."
                 };
             }
-
-            var isReachable = await _crossConnectivity.IsRemoteReachable(ApiSettings.BaseUri, ApiSettings.BasePort, 1000);
+            var isReachable = await _crossConnectivity.IsReachable("www.google.com", 1000);
+            //var isReachable = await _crossConnectivity.IsRemoteReachable(ApiSettings.BaseUri, ApiSettings.BasePort, 1000);
         
             if (!isReachable)
             {
@@ -154,7 +154,7 @@ namespace NextPark.Mobile.Services
                 var json = JsonConvert.SerializeObject(tvm);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-                var response = await client.PostAsync(endpoint, content);
+                var response = await client.PostAsync(url, content);
 
                 if (response.StatusCode == HttpStatusCode.BadRequest)
                     return new Response
@@ -195,7 +195,7 @@ namespace NextPark.Mobile.Services
                 var json = JsonConvert.SerializeObject(tvm);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-                var response = await client.PutAsync(endpoint, content);
+                var response = await client.PutAsync(url, content);
 
                 if (response.StatusCode == HttpStatusCode.BadRequest)
                     return new Response
@@ -232,7 +232,7 @@ namespace NextPark.Mobile.Services
             {
                 var url = $"{endpoint}/{id}";
                 var client = GetHttpClient();
-                var response = await client.DeleteAsync(endpoint);
+                var response = await client.DeleteAsync(url);
 
                 if (response.StatusCode == HttpStatusCode.BadRequest)
                     return new Response

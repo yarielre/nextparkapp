@@ -1,11 +1,11 @@
-﻿using System;
+using System;
 namespace NextPark.Mobile.Core.Settings
 {
     public static class ApiSettings
     {
-        public static string BaseUri = "https://nextpark-api.azurewebsites.net";
-        public static int BasePort = 443;
-        public static string BaseUrl = string.Format("{0}:{1}", BaseUri, BasePort);  
+        public static string BaseUrl = "https://nextpark-api.azurewebsites.net"; // "http://10.211.55.3/NextPark.Api";
+        //public static int BasePort = 80;
+        //public static string BaseUrl = string.Format("{0}:{1}", BaseUri, BasePort);  
 
         public static string AuthEndPoint => string.Format("{0}/api/auth", BaseUrl);
         public static string ProfileEndPoint => string.Format("{0}/api/profile", BaseUrl);

@@ -31,12 +31,14 @@ namespace NextPark.Mobile.Services.Data
 
                 if (response.IsSuccess)
                 {
-                    return response.Result as List<TModel>;
+                    if (response.Result is List<TModel> r)
+                    {
+                        return r;
+                    }
+
                 }
-                else
-                {
-                    return new List<TModel>();
-                }
+
+                return new List<TModel>();
             }
             catch (Exception ex)
             {
@@ -57,12 +59,11 @@ namespace NextPark.Mobile.Services.Data
 
                 if (response.IsSuccess)
                 {
-                    return response.Result as TModel;
+                    if (response.Result is TModel r)
+                        return r;
                 }
-                else
-                {
-                    return new TModel();
-                }
+
+                return new TModel();
             }
             catch (Exception ex)
             {
@@ -83,12 +84,11 @@ namespace NextPark.Mobile.Services.Data
 
                 if (response.IsSuccess)
                 {
-                    return response.Result as TModel;
+                    if (response.Result is TModel r)
+                        return r;
                 }
-                else
-                {
-                    return null;
-                }
+
+                return null;
             }
             catch (Exception ex)
             {
@@ -109,12 +109,11 @@ namespace NextPark.Mobile.Services.Data
 
                 if (response.IsSuccess)
                 {
-                    return response.Result as TModel;
+                    if (response.Result is TModel r)
+                        return r;
                 }
-                else
-                {
-                    return null;
-                }
+
+                return null;
             }
             catch (Exception ex)
             {
@@ -135,12 +134,11 @@ namespace NextPark.Mobile.Services.Data
 
                 if (response.IsSuccess)
                 {
-                    return response.Result as TModel;
+                    if (response.Result is TModel r)
+                        return r;
                 }
-                else
-                {
-                    return new TModel();
-                }
+
+                return new TModel();
             }
             catch (Exception ex)
             {
