@@ -4,8 +4,11 @@ using System.Threading.Tasks;
 
 using NextPark.Mobile.Services;
 using NextPark.Mobile.Core.Settings;
+using NextPark.Models;
 
 using Xamarin.Forms;
+using NextPark.Mobile.Services.Data;
+using NextPark.Enums.Enums;
 
 namespace NextPark.Mobile.ViewModels
 {
@@ -27,6 +30,8 @@ namespace NextPark.Mobile.ViewModels
         public string FullMoney { get; set; }           // Money value + currency
         public ICommand OnBudgetAction { get; set; }    // User budget selection action
         // User parkings
+        private int _totUserParkings { get; set; }
+        private int _activeUserParkings { get; set; }
         public string ParkingsStatus { get; set; }          // Free parkings / Tot. parkings + free
         public string ParkingsAvailability { get; set; }    // Available parkings / Tot. parkings + available
         public ICommand OnParkingsAction { get; set; }      // Parkings selection action
@@ -36,15 +41,22 @@ namespace NextPark.Mobile.ViewModels
 
         // SERVICES
         private readonly IDialogService _dialogService;
+        private readonly ParkingDataService _parkingDataService;
+        private readonly OrderDataService _orderDataService;
 
         // METHODS
         public UserProfileViewModel(IDialogService dialogService,
                                     IApiService apiService, 
                                     IAuthService authService, 
-                                    INavigationService navService)
+                                    INavigationService navService,
+                                    ParkingDataService parkingDataService,
+                                    OrderDataService orderDataService
+                                   )
                                     : base(apiService, authService, navService)
         {
             _dialogService = dialogService;
+            _parkingDataService = parkingDataService;
+            _orderDataService = orderDataService;
 
             // Header actions
             OnBackClick = new Command<object>(OnBackClickMethod);
@@ -64,13 +76,6 @@ namespace NextPark.Mobile.ViewModels
         // Initialization
         public override Task InitializeAsync(object data = null)
         {
-            /*
-            if (data != null)
-            {
-                return Task.FromResult(false);
-            }
-            */
-
             // Header
             UserName = AuthSettings.UserName;
             UserMoney = AuthSettings.UserCoin.ToString("N0");
@@ -103,6 +108,8 @@ namespace NextPark.Mobile.ViewModels
             // Bookings
             NextBooking = "nessuna prenotazione";
             base.OnPropertyChanged("NextBooking");
+
+            UpdateUserParkingData();
 
             return Task.FromResult(false);
         }
@@ -146,6 +153,89 @@ namespace NextPark.Mobile.ViewModels
         public void OnBookingsClickMethod(object sender)
         {
             NavigationService.NavigateToAsync<UserBookingViewModel>();
+        }
+
+        // Updated UserParkings
+        public void UpdateUserParkingData()
+        {
+            // Reset counters
+            _totUserParkings = 0;
+            _activeUserParkings = 0;
+
+            // Search user parkings 
+            // TODO: use a filter on Parkings
+            if (_parkingDataService.Parkings != null)
+            {
+                foreach (ParkingModel parking in _parkingDataService.Parkings)
+                {
+                    if (parking.UserId == int.Parse(AuthSettings.UserId))
+                    {
+                        _totUserParkings++;
+                        if (parking.Status == ParkingStatus.Enabled)
+                        {
+                            _activeUserParkings++;
+                        }
+                    }
+                }
+            }
+
+            // Update status on page
+            ParkingsStatus = _totUserParkings.ToString() + "/" + _totUserParkings.ToString() + " liberi";
+            ParkingsAvailability = _activeUserParkings.ToString() + "/" + _totUserParkings.ToString() + " disponibili";
+            base.OnPropertyChanged("ParkingsStatus");
+            base.OnPropertyChanged("ParkingsAvailability");
+
+            UpdateUserBookingsData();
+        }
+
+        public async void UpdateUserBookingsData()
+        {
+            await GetBookings();
+        }
+
+        // Get User Bookings
+        public async Task<bool> GetBookings()
+        {
+            try {
+                var orderList = await _orderDataService.Get();
+                if (orderList != null)
+                {
+                    if (orderList.Count > 0)
+                    {
+                        _orderDataService.Orders = orderList;
+
+                        OrderModel nextOrder = null;
+
+                        foreach (OrderModel order in _orderDataService.Orders) 
+                        {
+                            if (order.UserId == int.Parse(AuthSettings.UserId))
+                            {
+                                if (nextOrder == null)
+                                {
+                                    nextOrder = order;
+                                } else {
+                                    if (nextOrder.StartDate > order.StartDate)
+                                    {
+                                        nextOrder = order;
+                                    }
+                                }
+                            }
+                        }
+
+                        if (nextOrder != null) {
+                            NextBooking = nextOrder.StartDate.ToShortTimeString();
+                        } else {
+                            NextBooking = "nessuna prenotazione";
+                        }
+                        base.OnPropertyChanged("NextBooking");
+                        return true;
+                    }
+                }
+            } catch (Exception e)
+            {
+
+            }
+            return false;
         }
     }
 }
