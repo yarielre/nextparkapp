@@ -7,6 +7,9 @@ using NextPark.Mobile.Services;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 using NextPark.Mobile.Core.Settings;
+using NextPark.Mobile.Services.Data;
+using NextPark.Models;
+using NextPark.Enums.Enums;
 
 namespace NextPark.Mobile.ViewModels
 {
@@ -17,6 +20,13 @@ namespace NextPark.Mobile.ViewModels
         {
             get { return uid; }
             set { uid = value; }
+        }
+
+        private int index;
+        public int Index
+        {
+            get { return index; }
+            set { index = value; }
         }
 
         private string address;
@@ -55,7 +65,7 @@ namespace NextPark.Mobile.ViewModels
         }
     }
 
-    public class UserParkingViewModel: BaseViewModel
+    public class UserParkingViewModel : BaseViewModel
     {
         // PROPERTIES
         public string BackText { get; set; }        // Header back text
@@ -72,6 +82,7 @@ namespace NextPark.Mobile.ViewModels
 
         // SERVICES
         private readonly IDialogService _dialogService;
+        private readonly ParkingDataService _parkingDataService;
 
         // PRIVATE VARIABLES
         private ObservableCollection<ParkingItem> _parkingList;
@@ -86,10 +97,12 @@ namespace NextPark.Mobile.ViewModels
         public UserParkingViewModel(IDialogService dialogService,
                                     IApiService apiService,
                                     IAuthService authService,
-                                    INavigationService navService)
+                                    INavigationService navService,
+                                    ParkingDataService parkingDataService)
                                     : base(apiService, authService, navService)
         {
             _dialogService = dialogService;
+            _parkingDataService = parkingDataService;
 
             // Header
             UserName = AuthSettings.UserName;
@@ -103,28 +116,12 @@ namespace NextPark.Mobile.ViewModels
             OnAddParking = new Command<object>(OnAddParkingMethod);
             OnParkingTapped = new Command<object>(OnParkingTappedMethod);
 
-            ParkingList = new ObservableCollection<ParkingItem>
-            {
-                new ParkingItem { UID = 0, Address = "Via Strada 1", City = "Lugano, Ticino", Status = "libero", StatusColor = Color.Green, OnParkingTap = OnParkingTapped},
-                new ParkingItem { UID = 1, Address = "Via Strada 1.5", City = "Lugano, Ticino", Status = "libero", StatusColor = Color.Green, OnParkingTap = OnParkingTapped},
-                new ParkingItem { UID = 2, Address = "Via Strada 2", City = "Lugano, Ticino", Status = "libero", StatusColor = Color.Green, OnParkingTap = OnParkingTapped}
-            };
-            base.OnPropertyChanged("ParkingList");
-
-            ParkingListHeight = ParkingList.Count * 70.0;
-            base.OnPropertyChanged("ParkingListHeight");
+            ParkingList = new ObservableCollection<ParkingItem>();
         }
 
         // Initialization
         public override Task InitializeAsync(object data = null)
         {
-            /*
-            if (data != null)
-            {
-                return Task.FromResult(false);
-            }
-            */
-
             // Header
             BackText = "Profilo";
             UserName = AuthSettings.UserName;
@@ -134,7 +131,7 @@ namespace NextPark.Mobile.ViewModels
             base.OnPropertyChanged("UserMoney");
 
             // TODO: add parking list
-
+            UpdateUserParkingData();
 
             return Task.FromResult(false);
         }
@@ -174,6 +171,57 @@ namespace NextPark.Mobile.ViewModels
                 // TODO: pass parking item to parking data page
                 NavigationService.NavigateToAsync<ParkingDataViewModel>(item);
                 //_dialogService.ShowAlert("Alert", "Parking data: " + item.Address);
+            }
+        }
+
+        // Updated UserParkings
+        public async void UpdateUserParkingData()
+        {
+            await GetUserParkings();
+        }
+
+        private async Task GetUserParkings()
+        {
+            var parkingList = await _parkingDataService.Get();
+
+            if (parkingList.Count > 0) _parkingDataService.Parkings = parkingList;
+
+            if (ParkingList != null)
+            {
+                ParkingList.Clear();
+            }
+
+            // Search user parkings 
+            // TODO: use a filter on Parkings
+            if (_parkingDataService.Parkings != null)
+            {
+                int count = 0;
+                foreach (ParkingModel parking in _parkingDataService.Parkings)
+                {
+                    if (parking.UserId == int.Parse(AuthSettings.UserId))
+                    {
+                        bool free = false;
+                        // TODO: check parking orders
+                        if (parking.Status == ParkingStatus.Enabled)
+                        {
+                            free = true;
+                        }
+                        ParkingList.Add(new ParkingItem
+                        {
+                            UID = parking.Id,
+                            Index = count++,
+                            Address = parking.Address,
+                            City = parking.Cap.ToString() + " " + parking.City,
+                            Status = (free) ? "libero" : "occupato",
+                            StatusColor = (free) ? Color.Green : Color.Red,
+                            OnParkingTap = OnParkingTapped
+                        });
+                    }
+                }
+                base.OnPropertyChanged("ParkingList");
+
+                ParkingListHeight = ParkingList.Count * 70.0;
+                base.OnPropertyChanged("ParkingListHeight");
             }
         }
     }

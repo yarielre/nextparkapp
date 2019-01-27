@@ -156,8 +156,18 @@ namespace NextPark.Mobile.ViewModels
         }
 
         // Updated UserParkings
-        public void UpdateUserParkingData()
+        public async void UpdateUserParkingData()
         {
+            await GetUserParkings();
+        }
+
+        private async Task GetUserParkings()
+        {
+        
+            var parkingList = await _parkingDataService.Get();
+
+            if (parkingList.Count > 0) _parkingDataService.Parkings = parkingList;
+
             // Reset counters
             _totUserParkings = 0;
             _activeUserParkings = 0;

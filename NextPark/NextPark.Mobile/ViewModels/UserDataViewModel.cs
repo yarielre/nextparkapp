@@ -143,7 +143,7 @@ namespace NextPark.Mobile.ViewModels
         }
         */
 
-        private async void GetUserData()
+        private void GetUserData()
         {
             UserModel userData = AuthSettings.User;
 

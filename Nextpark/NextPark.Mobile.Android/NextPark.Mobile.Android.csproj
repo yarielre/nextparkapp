@@ -136,6 +136,10 @@
     <AndroidResource Include="Resources\xml\file_paths.xml" />
     <AndroidResource Include="Resources\drawable\icon_left_gray_128.png" />
     <AndroidResource Include="Resources\drawable\icon_right_gray_128.png" />
+    <AndroidResource Include="Resources\drawable\pin_green.png" />
+    <AndroidResource Include="Resources\drawable\pin_red.png" />
+    <AndroidResource Include="Resources\drawable\ic_location_black.png" />
+    <AndroidResource Include="Resources\drawable\ic_location_green.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\drawable-hdpi\" />

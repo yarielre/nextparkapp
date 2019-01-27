@@ -78,7 +78,7 @@
                                     <ViewCell Height="70">
                                         <controls:UserParkingItem BorderColor="Gray"
                                                   Picture="image_parking1.png"
-                                                  Identifier="{Binding UID}"
+                                                  Identifier="{Binding Index}"
                                                   TapAction="{Binding OnParkingTap}">
                                             <StackLayout Spacing="1" HorizontalOptions="StartAndExpand">
                                                 <Label  Text="{Binding Address}"

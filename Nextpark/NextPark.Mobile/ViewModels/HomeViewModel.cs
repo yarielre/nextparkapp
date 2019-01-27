@@ -9,6 +9,8 @@ using System;
 using NextPark.Mobile.Services.Data;
 using NextPark.Models;
 using NextPark.Mobile.Core.Settings;
+using NextPark.Enums.Enums;
+using NextPark.Mobile.CustomControls;
 
 namespace NextPark.Mobile.ViewModels
 {
@@ -105,10 +107,10 @@ namespace NextPark.Mobile.ViewModels
             };
 
             //DemoBackEndCalls();
-            //GetParkings(); //TODO: Use this!
 
+            UpdateParkingList();
 
-            base.OnPropertyChanged("Parkings");
+            //base.OnPropertyChanged("Parkings");
 
             return Task.FromResult(false);
         }
@@ -137,11 +139,11 @@ namespace NextPark.Mobile.ViewModels
                 var registerResponse = await AuthService.Register(demoUser);
 
                 //Demo Get Parkings OK
-                var parkings = await _parkingDataService.Get();
+                var parkingList = await _parkingDataService.Get();
 
-             
+                _parkingDataService.Parkings = parkingList;
 
-                if (parkings.Count > 0) return;
+                if (parkingList.Count > 0) return;
 
                 //Demo Posting Parking
                 var parking1 = new ParkingModel
@@ -178,17 +180,45 @@ namespace NextPark.Mobile.ViewModels
             }
         }
 
-
+        public async void UpdateParkingList()
+        {
+            await GetParkings();
+        }
         private async Task GetParkings()
         {
 
             //Demo Login OK
-            var loginResponse = await AuthService.Login("JarJar", "Jaro.001");
+            //var loginResponse = await AuthService.Login("JarJar", "Jaro.001");
 
             var parkingsResponse = await _parkingDataService.Get();
+            _parkingDataService.Parkings = parkingsResponse;
 
-            if (parkingsResponse.Count > 0) return;
+            if (parkingsResponse.Count == 0) return;
 
+            Parkings.Clear();
+
+            foreach (ParkingModel parking in parkingsResponse) {
+                Parkings.Add(new ParkingInfo {
+                    UID = parking.Id,
+                    Info = parking.Address,
+                    SubInfo = parking.Cap.ToString() + " " + parking.City,
+                    FullAvailability = (parking.Status == ParkingStatus.Enabled) ? "disponibile" : "occupato",
+                    FullPrice = parking.PriceMin.ToString() + " CHF/h",
+                    BookAction = OnBookingTapped
+                });
+            }
+
+
+            Xamarin.Forms.Device.StartTimer(TimeSpan.FromSeconds(2), () =>
+            {
+                UpdateMapPins();
+                return false;
+            });
+
+
+            //base.OnPropertyChanged("Parkings");
+
+            /*
             //Demo Post Parking Working on It!
             var parking1 = new ParkingModel
             {
@@ -228,15 +258,43 @@ namespace NextPark.Mobile.ViewModels
                 new ParkingInfo { UID = 1, Info = "Via Strada 1.5", SubInfo = "Lugano, Ticino", Picture="image_parking1.png", FullPrice = "2 CHF/h", FullAvailability = "08:00-12:00", BookAction = OnBookingTapped},
                 new ParkingInfo { UID = 2, Info = "Via Strada 2", SubInfo = "Lugano, Ticino", Picture="image_parking1.png", FullPrice = "2 CHF/h", FullAvailability = "08:00-12:00", BookAction = OnBookingTapped}
             };
+            */
         }
 
-        private void Map_Tapped(object sender, CustomControls.MapTapEventArgs e)
+        private void UpdateMapPins()
+        {
+            // Update parkings
+            if (_parkingDataService.Parkings.Count > 0)
+            {
+                foreach (ParkingModel parking in _parkingDataService.Parkings)
+                {
+                    var pin = new CustomPin
+                    {
+                        Id = parking.Id,
+                        Parking = parking,
+                        Type = PinType.Place,
+                        Position = new Position(parking.Latitude, parking.Longitude),
+                        Label = parking.Address,
+                        Address = parking.Cap.ToString() + " " + parking.City,
+                        Icon = "ic_location_green"
+                    };
+                    if (parking.Status == ParkingStatus.Disabled)
+                    {
+                        pin.Icon = "ic_location_black";
+                    }
+                    Map.Pins.Add(pin);
+                }
+                base.OnPropertyChanged("Parkings");
+            }
+        }
+
+        private async void Map_Tapped(object sender, CustomControls.MapTapEventArgs e)
         {
             //throw new System.NotImplementedException();
             // DEMO ONLY! 
             if (_authService.IsUserAuthenticated()) {
                 ParkingInfo item = Parkings[0];
-                NavigationService.NavigateToAsync<BookingViewModel>(item);
+                await NavigationService.NavigateToAsync<BookingViewModel>(item);
             }
         }
 
@@ -248,6 +306,11 @@ namespace NextPark.Mobile.ViewModels
         private void Map_MapReady(object sender, System.EventArgs e)
         {
 
+            Map_Ready_Handler();
+        }
+
+        private void CallMapReady()
+        {
             Map_Ready_Handler();
         }
 
@@ -272,11 +335,27 @@ namespace NextPark.Mobile.ViewModels
 
             Map.MoveToRegion(MapSpan.FromCenterAndRadius(position, Distance.FromKilometers(1)));
 
-            // Update parkings
-            if (Parkings.Count > 0)
+            /*
+            Xamarin.Forms.Device.StartTimer(TimeSpan.FromSeconds(2), () =>
             {
-                base.OnPropertyChanged("Parkings");
-            }
+                // Update parkings
+                if (_parkingDataService.Parkings.Count > 0)
+                {
+                    foreach (ParkingModel parking in _parkingDataService.Parkings)
+                    {
+                        Map.Pins.Add(new Pin
+                        {
+                            Position = new Position(parking.Latitude, parking.Longitude),
+                            Label = parking.Address,
+                            BindingContext = Map.BindingContext
+                        });
+                    }
+                    base.OnPropertyChanged("Parkings");
+                }
+                return false;
+            });
+            */
+
 
         }
 
