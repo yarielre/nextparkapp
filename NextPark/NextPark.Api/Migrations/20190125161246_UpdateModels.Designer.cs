@@ -10,8 +10,8 @@ using NextPark.Data;
 namespace NextPark.Api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20190123152557_Initials")]
-    partial class Initials
+    [Migration("20190125161246_UpdateModels")]
+    partial class UpdateModels
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -139,9 +139,13 @@ namespace NextPark.Api.Migrations
 
                     b.Property<string>("Address");
 
+                    b.Property<double>("Balance");
+
+                    b.Property<int>("Cap");
+
                     b.Property<string>("CarPlate");
 
-                    b.Property<double>("Coins");
+                    b.Property<string>("City");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken();
@@ -150,6 +154,8 @@ namespace NextPark.Api.Migrations
                         .HasMaxLength(256);
 
                     b.Property<bool>("EmailConfirmed");
+
+                    b.Property<string>("ImageUrl");
 
                     b.Property<string>("Lastname");
 
@@ -167,9 +173,13 @@ namespace NextPark.Api.Migrations
 
                     b.Property<string>("PasswordHash");
 
+                    b.Property<string>("Phone");
+
                     b.Property<string>("PhoneNumber");
 
                     b.Property<bool>("PhoneNumberConfirmed");
+
+                    b.Property<double>("Profit");
 
                     b.Property<string>("SecurityStamp");
 
@@ -201,15 +211,15 @@ namespace NextPark.Api.Migrations
 
                     b.Property<DateTime>("EndDate");
 
-                    b.Property<TimeSpan>("EndTime");
+                    b.Property<int>("ParkingId");
 
-                    b.Property<int?>("ParkingId");
+                    b.Property<DateTime>("RepetitionEndDate");
+
+                    b.Property<Guid>("RepetitionId");
+
+                    b.Property<int>("RepetitionType");
 
                     b.Property<DateTime>("StartDate");
-
-                    b.Property<TimeSpan>("StartTime");
-
-                    b.Property<string>("WeekRepeat");
 
                     b.HasKey("Id");
 
@@ -228,17 +238,17 @@ namespace NextPark.Api.Migrations
 
                     b.Property<DateTime>("EndDate");
 
-                    b.Property<TimeSpan>("EndTime");
-
                     b.Property<int>("OrderStatus");
 
                     b.Property<int>("ParkingId");
 
+                    b.Property<string>("PaymentCode");
+
+                    b.Property<int>("PaymentStatus");
+
                     b.Property<double>("Price");
 
                     b.Property<DateTime>("StartDate");
-
-                    b.Property<TimeSpan>("StartTime");
 
                     b.Property<int>("UserId");
 
@@ -261,17 +271,17 @@ namespace NextPark.Api.Migrations
 
                     b.Property<int?>("ApplicationUserId");
 
+                    b.Property<int>("Cap");
+
                     b.Property<string>("CarPlate");
+
+                    b.Property<string>("City");
 
                     b.Property<string>("ImageUrl");
 
-                    b.Property<string>("Latitude");
+                    b.Property<double>("Latitude");
 
-                    b.Property<string>("Longitude");
-
-                    b.Property<int?>("ParkingCategoryId");
-
-                    b.Property<int?>("ParkingTypeId");
+                    b.Property<double>("Longitude");
 
                     b.Property<double>("PriceMax");
 
@@ -287,41 +297,7 @@ namespace NextPark.Api.Migrations
 
                     b.HasIndex("ApplicationUserId");
 
-                    b.HasIndex("ParkingCategoryId");
-
-                    b.HasIndex("ParkingTypeId");
-
                     b.ToTable("Parkings");
-                });
-
-            modelBuilder.Entity("NextPark.Domain.Entities.ParkingCategory", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Category");
-
-                    b.Property<double>("HourPrice");
-
-                    b.Property<double>("MonthPrice");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ParkingCategories");
-                });
-
-            modelBuilder.Entity("NextPark.Domain.Entities.ParkingType", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Type");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ParkingTypes");
                 });
 
             modelBuilder.Entity("NextPark.Domain.Auth.RoleClaim", b =>
@@ -371,9 +347,10 @@ namespace NextPark.Api.Migrations
 
             modelBuilder.Entity("NextPark.Domain.Entities.Event", b =>
                 {
-                    b.HasOne("NextPark.Domain.Entities.Parking")
+                    b.HasOne("NextPark.Domain.Entities.Parking", "Parking")
                         .WithMany("ParkingEvents")
-                        .HasForeignKey("ParkingId");
+                        .HasForeignKey("ParkingId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("NextPark.Domain.Entities.Order", b =>
@@ -393,14 +370,6 @@ namespace NextPark.Api.Migrations
                     b.HasOne("NextPark.Domain.Entities.ApplicationUser")
                         .WithMany("Parkings")
                         .HasForeignKey("ApplicationUserId");
-
-                    b.HasOne("NextPark.Domain.Entities.ParkingCategory")
-                        .WithMany("Parkings")
-                        .HasForeignKey("ParkingCategoryId");
-
-                    b.HasOne("NextPark.Domain.Entities.ParkingType")
-                        .WithMany("Parkings")
-                        .HasForeignKey("ParkingTypeId");
                 });
 #pragma warning restore 612, 618
         }

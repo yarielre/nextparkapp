@@ -53,7 +53,7 @@ namespace NextPark.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] Event entity)
         {
-            if (entity == null)
+             if (entity == null)
                 return BadRequest("adding null entity");
             if (ModelState.IsValid)
             {
