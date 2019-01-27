@@ -8,6 +8,8 @@ using Xamarin.Forms;
 using System;
 using NextPark.Mobile.Services.Data;
 using NextPark.Models;
+using System.Collections.Generic;
+using NextPark.Enums;
 
 namespace NextPark.Mobile.ViewModels
 {
@@ -37,6 +39,8 @@ namespace NextPark.Mobile.ViewModels
         private readonly IGeolocatorService _geoLocatorService;
         private readonly IDialogService _dialogService;
         private readonly ParkingDataService _parkingDataService;
+        private readonly EventDataService _eventDataService;
+
 
         // PRIVATE VARIABLES
         private ObservableCollection<ParkingInfo> parkings;
@@ -50,12 +54,14 @@ namespace NextPark.Mobile.ViewModels
 
         // METHODS
         public HomeViewModel(IGeolocatorService geolocatorService, IDialogService dialogService,
-            IApiService apiService, IAuthService authService, INavigationService navService, ParkingDataService parkingDataService)
+            IApiService apiService, IAuthService authService, INavigationService navService,
+            ParkingDataService parkingDataService, EventDataService eventDataService)
             : base(apiService, authService, navService)
         {
             _geoLocatorService = geolocatorService;
             _dialogService = dialogService;
             _parkingDataService = parkingDataService;
+            _eventDataService = eventDataService;
 
             OnUserClick = new Command<object>(OnUserClickMethod);
             OnMoneyClick = new Command<object>(OnMoneyClickMethod);
@@ -136,14 +142,17 @@ namespace NextPark.Mobile.ViewModels
                 //Demo Get Parkings OK
                 var parkings = await _parkingDataService.Get();
 
-             
 
-                if (parkings.Count > 0) return;
+                if (parkings.Count > 0) {
+                    await _parkingDataService.Delete(parkings[0].Id);
+                }
 
                 //Demo Posting Parking
                 var parking1 = new ParkingModel
                 {
                     Address = "Via Strada",
+                    Cap = 7777,
+                    City = "Lugano",
                     CarPlate = "TI 000000",
                     Latitude = 40,
                     Longitude = 40,
@@ -155,18 +164,29 @@ namespace NextPark.Mobile.ViewModels
                     ImageUrl = "image_parking1.png"
                 };
 
-
+                //Demo Posting Parking
                 var postedParking = await _parkingDataService.Post(parking1);
 
+                var eventParking = new EventModel
+                {
+                    StartDate = DateTime.Now,
+                    EndDate = DateTime.Now,
+                    ParkingId = postedParking.Id,
+                    RepetitionEndDate = DateTime.Now,
+                    RepetitionType = Enums.Enums.RepetitionType.Dayly,
+                    MonthRepeat = new List<Enums.MyMonthOfYear>(),
+                    WeekRepeat = new List<MyDayOfWeek>()
 
+                };
                 postedParking.Status = Enums.Enums.ParkingStatus.Disabled;
 
+                var result = await _eventDataService.Post(eventParking);
+
                 //Demo Puting Parking
-                var parkingResult =  await _parkingDataService.Put(postedParking, postedParking.Id);
+                var parkingResult = await _parkingDataService.Put(postedParking, postedParking.Id);
 
                 //Demo Deleting Parking
-                var deletedParking =  await _parkingDataService.Delete(parkingResult.Id);
-
+                var deletedParking = await _parkingDataService.Delete(parkingResult.Id);
 
             }
             catch (Exception e)

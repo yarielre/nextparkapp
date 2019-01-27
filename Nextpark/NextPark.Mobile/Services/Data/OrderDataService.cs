@@ -9,7 +9,7 @@ namespace NextPark.Mobile.Services.Data
 {
     public class OrderDataService : BaseDataService<OrderModel>
     {
-        public OrderDataService(ApiService apiService) : base(apiService, ApiSettings.OrdersEndPoint)
+        public OrderDataService(IApiService apiService) : base(apiService, ApiSettings.OrdersEndPoint)
         {
         }
         public async Task<ParkingModel> TerminateOrder(int id)

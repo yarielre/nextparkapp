@@ -8,7 +8,7 @@ namespace NextPark.Mobile.Services.Data
 {
     public class EventDataService : BaseDataService<EventModel>
     {
-        public EventDataService(ApiService apiService) : base(apiService, ApiSettings.EventsEndPoint)
+        public EventDataService(IApiService apiService) : base(apiService, ApiSettings.EventsEndPoint)
         {
         }
     }
