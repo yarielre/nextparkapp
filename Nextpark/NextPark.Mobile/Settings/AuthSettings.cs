@@ -1,4 +1,5 @@
 ﻿using System;
+using NextPark.Models;
 using Plugin.Settings;
 using Plugin.Settings.Abstractions;
 
@@ -11,7 +12,6 @@ namespace NextPark.Mobile.Core.Settings
         private static readonly string stringDefault = string.Empty;
         private static readonly double doubleDefault = 0.0;
 
-
         private const string _tokenId = "Token";
         private const string _userId = "UserId";
         private const string _userName = "UserName";
@@ -20,6 +20,8 @@ namespace NextPark.Mobile.Core.Settings
         #endregion
 
         #region Properties
+        public static UserModel User { get; set; }
+
         public static string Token
         {
             //TODO: Encrypt & decrypt

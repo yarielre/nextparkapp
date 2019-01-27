@@ -23,12 +23,16 @@
                                               x:Name="liUserData"
                                               ClickAction="{Binding Path=OnUserDataAction}">
                         <StackLayout Spacing="0" HorizontalOptions="StartAndExpand">
-                            <Label Text="{Binding UserName}"
-                               FontSize="Small"
-                               FontAttributes="Bold"/>
-                            <Label Text="{Binding FullName}"
+                            <StackLayout Orientation="Horizontal" Spacing="2" HorizontalOptions="Start">
+                                <Label Text="{Binding UserName}"
                                    FontSize="Small"
-                                   FontAttributes="None" />
+                                   FontAttributes="Bold"/>
+                                <Label Text="{Binding Lastname}"
+                                       FontSize="Small"
+                                       FontAttributes="None" />
+                            </StackLayout>
+                            <Label Text="{Binding Email}"
+                                   FontSize="Small"/>
                             <Label Text="{Binding Address}"
                                    FontSize="Small"/>
                             <Label Text="{Binding FullPlate}" 
@@ -42,12 +46,26 @@
                                               ClickAction="{Binding OnBudgetAction}"
                                               x:Name="liUserBudget">
                         <StackLayout Spacing="1" HorizontalOptions="StartAndExpand">
-                            <Label Text="Saldo attuale:"
-                               FontSize="Small"
-                               FontAttributes="None"/>
-                            <Label Text="{Binding FullMoney}"
-                                   FontSize="Small"
-                                   FontAttributes="Bold" />
+                            <StackLayout Orientation="Horizontal" Spacing="2" HorizontalOptions="Start">
+                                <Label Text="Saldo attuale:"
+                                       FontSize="Small"
+                                       FontAttributes="None"
+                                       Grid.Row="0" Grid.Column="0"/>
+                                <Label Text="{Binding FullMoney}"
+                                       FontSize="Small"
+                                       FontAttributes="Bold"
+                                       Grid.Row="0" Grid.Column="1"/>
+                            </StackLayout>
+                            <StackLayout Orientation="Horizontal" Spacing="2" HorizontalOptions="Start">
+                                <Label Text="Guadagno:"
+                                       FontSize="Small"
+                                       FontAttributes="None"
+                                       Grid.Row="1" Grid.Column="0"/>
+                                <Label Text="{Binding FullEarn}"
+                                       FontSize="Small"
+                                       FontAttributes="Bold"
+                                       Grid.Row="1" Grid.Column="1"/>
+                            </StackLayout>
                         </StackLayout>
                     </controls:UserProfileItem>
                     <controls:UserProfileItem Title="I miei parcheggi"

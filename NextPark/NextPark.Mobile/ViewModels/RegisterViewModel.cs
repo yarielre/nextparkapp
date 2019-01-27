@@ -19,24 +19,26 @@ namespace NextPark.Mobile.ViewModels
         public string UserMoney { get; set; }       // Header money value
         public ICommand OnMoneyClick { get; set; }  // Header money action
 
-        public string RegisterName { get; set; }    // Username text
         public string Email { get; set; }           // User e-mail
         public string Password { get; set; }        // Password text
         public string PasswordConfirm { get; set; } // Password confirm text
         public string Name { get; set; }            // Name
         public string Lastname { get; set; }        // Lastname
+        public string Phone { get; set; }           // Phone
         public string Address { get; set; }         // Address
         public string NPA { get; set; }             // NPA
         public string City { get; set; }            // City/Country
-        public string Plate { get; set; }           // Plate
+        public string CarPlate { get; set; }        // Car Plate
+
+        /* Future implementation
         private ImageSource _userImage;             // user image
         public ImageSource UserImage
         {
             get => _userImage;
             set => SetValue(ref _userImage, value);
         }
-
         public ICommand OnUserImageTap { get; set; }    // User image action
+        */
 
         public bool IsRunning { get; set; }             // Activity spinner
         public ICommand OnRegisterClick { get; set; }   // Register button action
@@ -61,21 +63,15 @@ namespace NextPark.Mobile.ViewModels
             OnUserClick = new Command<object>(OnUserClickMethod);
             OnMoneyClick = new Command<object>(OnMoneyClickMethod);
             OnRegisterClick = new Command<object>(OnRegisterClickMethod);
-            OnUserImageTap = new Command<object>(OnUserImageTapMethod);
 
-            UserImage = "icon_add_photo_256.png";
+            // Future implementation
+            //OnUserImageTap = new Command<object>(OnUserImageTapMethod);
+            //UserImage = "icon_add_photo_256.png";
         }
 
         // Initialization
         public override Task InitializeAsync(object data = null)
         {
-            /*
-            if (data != null)
-            {
-                return Task.FromResult(false);
-            }
-            */
-
             // Header
             BackText = "Indietro";
             UserName = "Login";
@@ -121,12 +117,6 @@ namespace NextPark.Mobile.ViewModels
             bool error = false;
 
             // TODO: implemet all data check
-            // Username
-            if ((this.RegisterName == null) || (this.RegisterName.Length == 0))
-            {
-                await _dialogService.ShowAlert("Errore Nome utente", "Inserire un nome utente");
-                error = true;
-            }
             // E-mail
             if (!error && ((this.Email == null) || (this.Email.Length == 0) || !this.Email.Contains("@")))
             {
@@ -159,10 +149,16 @@ namespace NextPark.Mobile.ViewModels
                 await _dialogService.ShowAlert("Errore Nome utente", "Il campo Cognome è obbligatorio");
                 error = true;
             }
+            // Phone
+            if (!error && ((this.Phone == null) || (this.Phone.Length == 0)))
+            {
+                await _dialogService.ShowAlert("Errore Targa", "Inserire una targa valida");
+                error = true;
+            }
             // Address
             // TODO: if is mandatory
             // Plate
-            if (!error && ((this.Plate == null) || (this.Plate.Length == 0)))
+            if (!error && ((this.CarPlate == null) || (this.CarPlate.Length == 0)))
             {
                 await _dialogService.ShowAlert("Errore Targa", "Inserire una targa valida");
                 error = true;
@@ -201,13 +197,13 @@ namespace NextPark.Mobile.ViewModels
                 var demoUser = new RegisterModel
                 {
                     Address = registerAddress,
-                    CarPlate = this.Plate,
+                    CarPlate = this.CarPlate,
                     Email = this.Email,
                     Lastname = this.Lastname,
                     Name = this.Name,
                     Password = this.Password,
                     State = "CH",
-                    Username = this.RegisterName
+                    Username = this.Email
                 };
 
                 var registerResponse = await AuthService.Register(demoUser);
@@ -215,6 +211,9 @@ namespace NextPark.Mobile.ViewModels
                 IsRunning = false;
                 base.OnPropertyChanged("IsRunning");
                 if ((registerResponse != null) && (registerResponse.IsSuccess)) {
+
+
+
                     await NavigationService.NavigateToAsync<HomeViewModel>();
                 } else {
                     await _dialogService.ShowAlert("Alert", "Registrazione non riuscita");
@@ -222,6 +221,7 @@ namespace NextPark.Mobile.ViewModels
             } catch(Exception ex) {}
         }
 
+        /* Future implementation
         // User image tap action
         public void OnUserImageTapMethod(object args)
         {
@@ -248,6 +248,7 @@ namespace NextPark.Mobile.ViewModels
         }
 
         // Take User Image
+
         private async void TakeUserPhoto()
         {
             MediaFile mediaFile;
@@ -295,5 +296,6 @@ namespace NextPark.Mobile.ViewModels
                 //TODO: manage exception here...
             }
         }
+        */
     }
 }

@@ -59,7 +59,7 @@ namespace NextPark.Mobile.Services
                 Authenticated = true;
                 AuthSettings.Token = result.AuthToken;
                 AuthSettings.UserId = result.UserId.ToString();
-                AuthSettings.UserName = username;
+                //AuthSettings.UserName = username;
 
                 return result;
             }
@@ -171,7 +171,8 @@ namespace NextPark.Mobile.Services
                 var resultJson = await response.Content.ReadAsStringAsync();
                 var result = JsonConvert.DeserializeObject<UserModel>(resultJson);
 
-                //AuthSettings.UserName = result.UserName;
+                AuthSettings.User = result;
+                AuthSettings.UserName = result.Name;
                 AuthSettings.UserCoin = result.Coins;
 
                 return new Response

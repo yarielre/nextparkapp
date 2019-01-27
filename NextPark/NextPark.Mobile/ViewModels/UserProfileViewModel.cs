@@ -18,8 +18,9 @@ namespace NextPark.Mobile.ViewModels
         public string UserMoney { get; set; }       // Header money value
         public ICommand OnMoneyClick { get; set; }  // Header money action
         // User data
-        public string FullName { get; set; }            // Name and Surname
+        public string Lastname { get; set; }            // Lastname
         public string Address { get; set; }             // Address, NPA and City
+        public string Email { get; set; }               // E-mail
         public string FullPlate { get; set; }           // Plate: plate
         public ICommand OnUserDataAction { get; set; }  // User data selection action
         // User budget
@@ -79,16 +80,13 @@ namespace NextPark.Mobile.ViewModels
             // User Data
             if (AuthService.IsUserAuthenticated())
             {
-
+                Lastname = AuthSettings.User.Lastname;
+                Email = AuthSettings.User.Email;
+                Address = AuthSettings.User.Address;
+                FullPlate = "Targa: " + AuthSettings.User.CarPlate;
             }
-            else
-            {
-                // UserName
-                FullName = "Mario Rossi";
-                Address = "Via Strada 1, 6900 Lugano";
-                FullPlate = "Targa TI 123456";
-            }
-            base.OnPropertyChanged("FullName");
+            base.OnPropertyChanged("Lastname");
+            base.OnPropertyChanged("Email");
             base.OnPropertyChanged("Address");
             base.OnPropertyChanged("FullPlate");
 

@@ -38,5 +38,26 @@ namespace NextPark.Mobile.Services
 
             return result == null ? new UpdateUserCoinModel() : result as UpdateUserCoinModel;
         }
+
+        public async Task<EditProfileModel> UpdateUserData(EditProfileModel model)
+        {
+            var isConneted = await _apiService.CheckConnection();
+            if (!isConneted.IsSuccess) throw new Exception("Internet correction error.");
+
+            var json = JsonConvert.SerializeObject(model);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var endpoint = $"{ApiSettings.ProfileEndPoint}/editcoins";
+
+            var client = _apiService.GetHttpClient();
+            var response = await client.PostAsync(endpoint, content);
+
+            if (response.StatusCode == HttpStatusCode.BadRequest) throw new Exception(string.Format("Bad request: {0}", response.ReasonPhrase));
+
+            var resultJson = await response.Content.ReadAsStringAsync();
+            var result = JsonConvert.DeserializeObject<EditProfileModel>(resultJson);
+
+            return result == null ? new EditProfileModel() : result as EditProfileModel;
+        }
     }
 }

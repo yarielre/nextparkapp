@@ -23,29 +23,13 @@
                            FontAttributes="Bold" 
                            TextColor="#333333"
                            Margin="0,0,0,10"/>
-                    <Frame HeightRequest="80"
-                           MinimumHeightRequest="80"
-                           WidthRequest="80"
-                           MinimumWidthRequest="80"
-                           CornerRadius="40"
-                           BorderColor="Gray"
-                           Margin="0"
-                           Padding="0"
-                           BackgroundColor="Transparent"
-                           HorizontalOptions="Center"
-                           IsClippedToBounds="true"
-                           HasShadow="false">
-                        <Image Aspect="Fill" Source="{Binding UserImage}"/>
-                        <Frame.GestureRecognizers>
-                            <TapGestureRecognizer Command="{Binding OnUserImageTap}"/>  
-                        </Frame.GestureRecognizers>
-                    </Frame>
-                    <Entry Margin="0,5,0,0" Placeholder="Nome utente" Text="{Binding RegisterName}" FontSize="Small"/>
+                    
                     <Entry Margin="0" Placeholder="E-mail" Text="{Binding Email}" Keyboard="Email"  FontSize="Small"/>
                     <Entry Margin="0" Placeholder="Password" Text="{Binding Password}" IsPassword="true" FontSize="Small"/>
                     <Entry Margin="0" Placeholder="Conferma Password" IsPassword="true" Text="{Binding PasswordConfirm}" FontSize="Small"/>
                     <Entry Margin="0" Placeholder="Nome" Text="{Binding Name}" FontSize="Small"/>
                     <Entry Margin="0" Placeholder="Cognome" Text="{Binding Lastname}" FontSize="Small"/>
+                    <Entry Margin="0" Placeholder="Telefono" Text="{Binding Phone}" Keyboard="Telephone" FontSize="Small"/>
                     <Entry Margin="0" Placeholder="Via, N°" Text="{Binding Address}" FontSize="Small"/>
                     <Grid Margin="0">
                         <Grid.RowDefinitions>
@@ -58,7 +42,7 @@
                         <Entry Grid.Row="0" Grid.Column="0" Placeholder="NPA" Text="{Binding NPA}" FontSize="Small"/>
                         <Entry Grid.Row="0" Grid.Column="1" Placeholder="Comune" Text="{Binding City}" FontSize="Small"/>
                     </Grid>
-                    <Entry Margin="0,0,0,5" Placeholder="Targa" Text="{Binding Plate}" FontSize="Small"/>
+                    <Entry Margin="0,0,0,5" Placeholder="Targa" Text="{Binding CarPlate}" FontSize="Small"/>
 
                     <ActivityIndicator
                         x:Name="activityContent"

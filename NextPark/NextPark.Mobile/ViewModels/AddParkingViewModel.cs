@@ -6,6 +6,8 @@ using Xamarin.Forms;
 using Plugin.Media.Abstractions;
 using Plugin.Media;
 using NextPark.Mobile.Core.Settings;
+using NextPark.Mobile.Services.Data;
+using NextPark.Models;
 
 namespace NextPark.Mobile.ViewModels
 {
@@ -24,8 +26,8 @@ namespace NextPark.Mobile.ViewModels
         public string NPA { get; set; }
         public string City { get; set; }
         public string Notes { get; set; }
-        public string Longitude { get; set; }
-        public string Latitude { get; set; }
+        public double Longitude { get; set; }
+        public double Latitude { get; set; }
         public double MinPriceValue 
         {
             get { return this._minPriceValue; }
@@ -52,6 +54,8 @@ namespace NextPark.Mobile.ViewModels
         public string MaxPriceText { get; set; }
         public double MaxPriceLowerBound { get; set; }
 
+        public bool IsRunning { get; set; }         // Activity spinner
+
         public ICommand OnAddParking { get; set; }
         public bool AddBtnEnabled { get; set; }
         public Color AddBtnBackgroundColor { get; set; }
@@ -68,21 +72,25 @@ namespace NextPark.Mobile.ViewModels
         // SERVICES
         private readonly IDialogService _dialogService;
         private readonly IGeolocatorService _geoLocatorService;
+        private readonly ParkingDataService _parkingDataService;
 
         // PRIVATE VARIABLES
         private double _minPriceValue;
         private double _maxPriceValue;
+        private bool _isAuthorized;
 
         // METHODS
         public AddParkingViewModel(IDialogService dialogService,
                                    IGeolocatorService geolocatorService,
                                    IApiService apiService,
                                    IAuthService authService,
-                                   INavigationService navService)
+                                   INavigationService navService,
+                                   ParkingDataService parkingDataService)
                                    : base(apiService, authService, navService)
         {
             _dialogService = dialogService;
             _geoLocatorService = geolocatorService;
+            _parkingDataService = parkingDataService;
 
             // Header
             UserName = AuthSettings.UserName;
@@ -118,10 +126,12 @@ namespace NextPark.Mobile.ViewModels
                 base.OnPropertyChanged("Title");
                 base.OnPropertyChanged("Street");
                 base.OnPropertyChanged("City");
+                _isAuthorized = true;
             } else {
                 // New Parking
                 Title = "Nuovo Parcheggio";
                 base.OnPropertyChanged("Title");
+                _isAuthorized = false;
             }
 
 
@@ -208,9 +218,48 @@ namespace NextPark.Mobile.ViewModels
         public void OnAddParkingMethod(object sender)
         {
             // TODO: check picture and location, location is a must have!
-            // TODO: fill add parking data according to parking data model
-            // TODO: send add parking request to backend
-            _dialogService.ShowAlert("Alert", "TODO: Add parking");
+            if (_isAuthorized) {
+
+                // TODO: fill add parking data according to parking data model
+                ParkingModel model = new ParkingModel
+                {
+                    Address = this.Street,
+                    Cap = int.Parse(NPA),
+                    City = City,
+                    Latitude = Latitude,
+                    Longitude = Longitude,
+                    UserId = int.Parse(AuthSettings.UserId),
+                    PriceMin = _minPriceValue,
+                    PriceMax = _maxPriceValue
+
+                };
+
+                // Start activity spinner
+                IsRunning = true;
+                base.OnPropertyChanged("IsRunning");
+
+                // TODO: send add parking request to backend
+                AddParkingMethod(model);
+            }
+        }
+
+        public async void AddParkingMethod(ParkingModel model)
+        {
+            try {
+                var addResponse = await _parkingDataService.Post(model);
+
+                if (addResponse != null) {
+                    if (addResponse is ParkingModel addedModel) {
+
+                    }
+                }
+            } catch (Exception e) {
+
+            } finally {
+                // Stop activity spinner
+                IsRunning = false;
+                base.OnPropertyChanged("IsRunning");
+            }
         }
 
         // Take User Image
@@ -223,6 +272,9 @@ namespace NextPark.Mobile.ViewModels
                     "Errore Fotocamera",
                     "Fotocamera non disponibile o non supportata.",
                     "OK");
+
+                // TODO: remove the following line, DEMO ONLY!
+                _isAuthorized = await GetCurrentLocation();
 
                 return;
             }
@@ -238,29 +290,38 @@ namespace NextPark.Mobile.ViewModels
                 return;
             ParkingImage = ImageSource.FromStream(() => { return mediaFile.GetStream(); });
 
+            _isAuthorized = await GetCurrentLocation();
+        }
+
+        public async Task<bool> GetCurrentLocation()
+        {
             try
             {
                 var permissionGaranted = await _geoLocatorService.IsPermissionGaranted();
 
-                if (!permissionGaranted) {
+                if (!permissionGaranted)
+                {
                     // TODO: ask for location, location is a must have!
-                    return;
+                    return false;
                 }
 
                 var getLocation = await _geoLocatorService.GetLocation();
 
-                if (getLocation == null) {
+                if (getLocation == null)
+                {
                     // TODO: ask for location, location is a must have!
-                    return;
+                    return false;
                 }
-                Longitude = getLocation.Latitude.ToString();
-                Latitude = getLocation.Longitude.ToString();
+                Longitude = getLocation.Latitude;
+                Latitude = getLocation.Longitude;
 
+                return true;
             }
             catch (Exception ex)
             {
                 // _loggerService.LogVerboseException(ex, this).ShowVerboseException(ex, this).ThrowVerboseException(ex, this);
             }
+            return false;
         }
     }
 }
