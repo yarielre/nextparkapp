@@ -13,16 +13,16 @@ namespace NextPark.Mobile.Services
 
         public Task ShowAlert(string title, string message)
         {
-            return UserDialogs.Instance.AlertAsync(message, title, _localizationService.Accept);
+            return UserDialogs.Instance.AlertAsync(message, title, "Accettare");
         }
         public async Task<bool> ShowConfirmAlert(string title, string message)
         {
-            var result = await UserDialogs.Instance.ConfirmAsync(message, title, _localizationService.Accept, _localizationService.Cancel);
+            var result = await UserDialogs.Instance.ConfirmAsync(message, title, "Accettare", "Cancellare");
             return result;
         }
         public Task ShowErrorAlert(string message)
         {
-            return UserDialogs.Instance.AlertAsync(message, _localizationService.Error, _localizationService.Accept);
+            return UserDialogs.Instance.AlertAsync(message, "Errore", "Accettare");
         }
 
         public void ShowToast(string message)

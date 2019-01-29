@@ -10,6 +10,10 @@ using Xamarin.Forms.Platform.Android;
 using NextPark.Mobile.CustomControls;
 using NextPark.Mobile.Droid.Renderers;
 using NextPark.Models;
+using Android.Graphics.Drawables;
+using Android.Support.V4.Content;
+using Android.Graphics;
+using Android.Support.Annotation;
 
 [assembly: ExportRenderer(typeof(CustomMap), typeof(CustomMapRenderer))]
 
@@ -29,36 +33,6 @@ namespace NextPark.Mobile.Droid.Renderers
 
         public CustomMapRenderer(Context context) : base(context)
         {
-           AndroidMessageSubscriber();
-        }
-
-        private void AndroidMessageSubscriber()
-        {
-            //MessagingCenter.Subscribe<ParkingModel>(this, Messages.ChangeIconAfterRent, parking =>
-            //{
-            //    var pos = new Position(Double.Parse(parking.Latitude), Double.Parse(parking.Longitude));
-            //    var pin = _formsMap.Pins.First(p => p.Position == pos);
-            //    var customPin = pin as CustomPin;
-            //    customPin.Icon = "ic_location_rented";
-            //    _formsMap.Pins.Remove(pin);
-            //    _formsMap.Pins.Add(customPin);
-            //});
-            //MessagingCenter.Subscribe<ParkingModel>(this, Messages.ChangeIconAfterTerminateRent, parking =>
-            //{
-            //    var pos = new Position(Double.Parse(parking.Latitude), Double.Parse(parking.Longitude));
-            //    var pin = _formsMap.Pins.First(p => p.Position == pos);
-            //    var customPin = pin as CustomPin;
-            //    if (parking.ParkingCategory.Category=="Basic")
-            //    {
-            //        customPin.Icon = "ic_location_black";
-            //    }
-            //    else
-            //    {
-            //        customPin.Icon = "ic_location_green";
-            //    }
-            //    _formsMap.Pins.Remove(pin);
-            //    _formsMap.Pins.Add(customPin);
-            //});
         }
 
         protected override void OnMapReady(GoogleMap googleMap)
@@ -69,6 +43,7 @@ namespace NextPark.Mobile.Droid.Renderers
                 _map.MapClick += googleMap_MapClick;
                 _map.MarkerClick += OnMarkerClick;
                 ((CustomMap)Element).OnMapReady();
+                _map.UiSettings.MyLocationButtonEnabled = true;
             }
         }
 
@@ -97,21 +72,7 @@ namespace NextPark.Mobile.Droid.Renderers
             }
         }
 
-        /* private void CustomPins_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-         {
-             _customPins = (ObservableCollection<CustomPin>)sender;
-             _map.Clear();
-             foreach (var pin in _customPins)
-             {
-                 var marker = new MarkerOptions();
-                 marker.SetPosition(new LatLng(pin.Position.Latitude, pin.Position.Longitude));
-                 marker.SetTitle(pin.Label);
-                 marker.SetSnippet(pin.Address);
-                // marker.SetIcon(BitmapDescriptorFactory.FromResource(Resource.Drawable.pin));
-
-                 _map.AddMarker(marker);
-             }
-         }*/
+       
 
         private void googleMap_MapClick(object sender, GoogleMap.MapClickEventArgs e)
         {
@@ -124,7 +85,12 @@ namespace NextPark.Mobile.Droid.Renderers
             marker.SetPosition(new LatLng(pin.Position.Latitude, pin.Position.Longitude));
             marker.SetTitle(pin.Label);
             marker.SetSnippet(pin.Address);
-            marker.SetIcon(BitmapDescriptorFactory.FromResource(Resources.GetIdentifier(customPin.Icon, "drawable", "com.wisegar.inside")));
+
+            var resourceId = Resources.GetIdentifier(customPin.Icon, "drawable", "com.wisegar.nextpark");
+            var bitmapResource = BitmapDescriptorFactory.FromResource(resourceId);
+            marker.SetIcon(bitmapResource);
+
+
             return marker;
         }
     }

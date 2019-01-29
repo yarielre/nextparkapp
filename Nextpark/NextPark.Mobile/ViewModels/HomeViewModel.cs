@@ -10,6 +10,7 @@ using NextPark.Mobile.Services.Data;
 using NextPark.Models;
 using System.Collections.Generic;
 using NextPark.Enums;
+using NextPark.Mobile.CustomControls;
 
 namespace NextPark.Mobile.ViewModels
 {
@@ -220,12 +221,25 @@ namespace NextPark.Mobile.ViewModels
 
         private void Map_Tapped(object sender, CustomControls.MapTapEventArgs e)
         {
-            throw new System.NotImplementedException();
+            _dialogService.ShowAlert("Map Tapped", string.Format("Lat {0}, Long {1}", e.Position.Latitude, e.Position.Longitude));
+
+            Map.MoveToRegion(MapSpan.FromCenterAndRadius(e.Position, Distance.FromKilometers(1)));
+
+            var demoParking = new ParkingModel
+            {
+                Id = 1,
+                Latitude = e.Position.Latitude,
+                Longitude = e.Position.Longitude,
+
+            };
+
+            CreatePin(e.Position, demoParking);
         }
 
         private void Map_PinTapped(object sender, CustomControls.PinTapEventArgs e)
         {
-            throw new System.NotImplementedException();
+            _dialogService.ShowConfirmAlert("Pin Tapped", "Marker tapped");
+
         }
 
         private void Map_MapReady(object sender, System.EventArgs e)
@@ -240,20 +254,37 @@ namespace NextPark.Mobile.ViewModels
             Xamarin.Forms.Maps.Position position = new Position(0, 0);
             try
             {
-                var permissionGaranted = await _geoLocatorService.IsPermissionGaranted();
 
-                if (!permissionGaranted) return;
+                var geoLocation = await _geoLocatorService.GetLocation();
 
-                var getLocation = await _geoLocatorService.GetLocation();
+                if (geoLocation == null) return;
 
-                position = getLocation.ToXamMapPosition();
+                position = geoLocation.ToXamMapPosition();
+
+                Map.MoveToRegion(MapSpan.FromCenterAndRadius(position, Distance.FromKilometers(1)));
+
+
             }
             catch (Exception ex)
             {
                 // _loggerService.LogVerboseException(ex, this).ShowVerboseException(ex, this).ThrowVerboseException(ex, this);
             }
 
-            Map.MoveToRegion(MapSpan.FromCenterAndRadius(position, Distance.FromKilometers(1)));
+        }
+        private void CreatePin(Position position, ParkingModel parking)
+        {
+            var pin = new CustomPin
+            {
+                Id = parking.Id,
+                Parking = parking,
+                Type = PinType.Place,
+                Position = position,
+                Label = "custom pin",
+                Address = "custom detail info",
+                Icon = "icon_coins_48"
+            };
+
+            Map.Pins.Add(pin);
         }
 
         // User Click action
