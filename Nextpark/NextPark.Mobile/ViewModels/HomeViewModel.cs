@@ -189,31 +189,40 @@ namespace NextPark.Mobile.ViewModels
 
             //Demo Login OK
             //var loginResponse = await AuthService.Login("JarJar", "Jaro.001");
+            try
+            {
+                var parkingsResponse = await _parkingDataService.Get();
+                _parkingDataService.Parkings = parkingsResponse;
 
-            var parkingsResponse = await _parkingDataService.Get();
-            _parkingDataService.Parkings = parkingsResponse;
+                if (parkingsResponse.Count == 0) return;
 
-            if (parkingsResponse.Count == 0) return;
+                Parkings.Clear();
 
-            Parkings.Clear();
+                foreach (ParkingModel parking in parkingsResponse)
+                {
+                    Parkings.Add(new ParkingInfo
+                    {
+                        UID = parking.Id,
+                        Info = parking.Address,
+                        SubInfo = parking.Cap.ToString() + " " + parking.City,
+                        FullAvailability = (parking.Status == ParkingStatus.Enabled) ? "disponibile" : "occupato",
+                        FullPrice = parking.PriceMin.ToString() + " CHF/h",
+                        BookAction = OnBookingTapped
+                    });
+                }
 
-            foreach (ParkingModel parking in parkingsResponse) {
-                Parkings.Add(new ParkingInfo {
-                    UID = parking.Id,
-                    Info = parking.Address,
-                    SubInfo = parking.Cap.ToString() + " " + parking.City,
-                    FullAvailability = (parking.Status == ParkingStatus.Enabled) ? "disponibile" : "occupato",
-                    FullPrice = parking.PriceMin.ToString() + " CHF/h",
-                    BookAction = OnBookingTapped
+
+                Xamarin.Forms.Device.StartTimer(TimeSpan.FromSeconds(2), () =>
+                {
+                    UpdateMapPins();
+                    return false;
                 });
+
+            } catch (Exception e) {
+                await _dialogService.ShowErrorAlert(e.Message);
             }
 
 
-            Xamarin.Forms.Device.StartTimer(TimeSpan.FromSeconds(2), () =>
-            {
-                UpdateMapPins();
-                return false;
-            });
 
 
             //base.OnPropertyChanged("Parkings");
@@ -263,6 +272,9 @@ namespace NextPark.Mobile.ViewModels
 
         private void UpdateMapPins()
         {
+            Map_Ready_Handler();
+
+            /*
             // Update parkings
             if (_parkingDataService.Parkings.Count > 0)
             {
@@ -286,6 +298,7 @@ namespace NextPark.Mobile.ViewModels
                 }
                 base.OnPropertyChanged("Parkings");
             }
+            */
         }
 
         private async void Map_Tapped(object sender, CustomControls.MapTapEventArgs e)

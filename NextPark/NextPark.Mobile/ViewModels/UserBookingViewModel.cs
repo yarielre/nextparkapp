@@ -7,6 +7,8 @@ using NextPark.Mobile.Services;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 using NextPark.Mobile.Core.Settings;
+using NextPark.Mobile.Services.Data;
+using NextPark.Models;
 
 namespace NextPark.Mobile.ViewModels
 {
@@ -17,6 +19,13 @@ namespace NextPark.Mobile.ViewModels
         {
             get { return uid; }
             set { uid = value; }
+        }
+
+        private int index;
+        public int Index
+        {
+            get { return index; }
+            set { index = value; }
         }
 
         private string address;
@@ -73,6 +82,7 @@ namespace NextPark.Mobile.ViewModels
         public string UserMoney { get; set; }       // Header money value
         public ICommand OnMoneyClick { get; set; }  // Header money action
 
+        public bool NoElementFound { get; set; }
         public double BookingListHeight { get; set; }   // Booking List View Height Request
 
         public ICommand OnBookingTapped { get; set; }   // Booking list tap action
@@ -81,6 +91,8 @@ namespace NextPark.Mobile.ViewModels
 
         // SERVICES
         private readonly IDialogService _dialogService;
+        private readonly ParkingDataService _parkingDataService;
+        private readonly OrderDataService _orderDataService;
 
         // PRIVATE VARIABLES
         private ObservableCollection<BookingItem> bookingList;
@@ -95,10 +107,14 @@ namespace NextPark.Mobile.ViewModels
         public UserBookingViewModel(IDialogService dialogService,
                                     IApiService apiService,
                                     IAuthService authService,
-                                    INavigationService navService)
+                                    INavigationService navService,
+                                    ParkingDataService parkingDataService,
+                                    OrderDataService orderDataService)
                                     : base(apiService, authService, navService)
         {
             _dialogService = dialogService;
+            _parkingDataService = parkingDataService;
+            _orderDataService = orderDataService;
 
             // Header
             UserName = AuthSettings.UserName;
@@ -115,27 +131,14 @@ namespace NextPark.Mobile.ViewModels
             //OnBookingSwiped = new Command<object>(OnBookingSwipedMethod);
 
             // Example starting values
-            BookingList = new ObservableCollection<BookingItem>
-            {
-                new BookingItem { UID = 0, Address = "Via Strada 1", City = "Lugano, Ticino", Time = "01h45", OnBookingTap = OnBookingTapped, OnBookingDel = OnBookingDelete},
-                new BookingItem { UID = 1, Address = "Via Strada 1.5", City = "Lugano, Ticino", Time = "02h00", OnBookingTap = OnBookingTapped, OnBookingDel = OnBookingDelete},
-                new BookingItem { UID = 2, Address = "Via Strada 2", City = "Lugano, Ticino", Time = "02h30", OnBookingTap = OnBookingTapped, OnBookingDel = OnBookingDelete}
-            };
-            base.OnPropertyChanged("BookingList");
+            BookingList = new ObservableCollection<BookingItem>();
 
-            BookingListHeight = BookingList.Count * 50.0;
-            base.OnPropertyChanged("BookingListHeight");
+            NoElementFound = false;
         }
 
         // Initialization
         public override Task InitializeAsync(object data = null)
         {
-            /*
-            if (data != null)
-            {
-                return Task.FromResult(false);
-            }
-            */
 
             // Header
             BackText = "Profilo";
@@ -146,9 +149,70 @@ namespace NextPark.Mobile.ViewModels
             base.OnPropertyChanged("UserMoney");
 
             // TODO: add booking list
-
+            UpdateUserBookings();
 
             return Task.FromResult(false);
+        }
+
+        public async void UpdateUserBookings()
+        {
+            await GetUserBookings();
+        }
+
+        private async Task GetUserBookings()
+        {
+            var ordersResponse = await _orderDataService.Get();
+
+            /*
+            {
+                new BookingItem { UID = 0, Address = "Via Strada 1", City = "Lugano, Ticino", Time = "01h45", OnBookingTap = OnBookingTapped, OnBookingDel = OnBookingDelete },
+                new BookingItem { UID = 1, Address = "Via Strada 1.5", City = "Lugano, Ticino", Time = "02h00", OnBookingTap = OnBookingTapped, OnBookingDel = OnBookingDelete },
+                new BookingItem { UID = 2, Address = "Via Strada 2", City = "Lugano, Ticino", Time = "02h30", OnBookingTap = OnBookingTapped, OnBookingDel = OnBookingDelete }
+            };
+            */
+
+            int count = 0;
+            BookingList.Clear();
+
+            foreach (OrderModel order in ordersResponse)
+            {
+                if (order.UserId == int.Parse(AuthSettings.UserId))
+                {
+                    var parkingResponse = await _parkingDataService.Get(order.ParkingId);
+
+                    if (parkingResponse != null) {
+
+                        TimeSpan remainingTime = order.EndDate - DateTime.Now;
+
+                        BookingList.Add(new BookingItem
+                        {
+                            UID = order.Id,
+                            Index = count++,
+                            Address = parkingResponse.Address, // get parking descrption from order.ParkingId
+                            City = parkingResponse.Cap.ToString() + " " + parkingResponse.City, // get parking city order.ParkingId
+                            Time = string.Format("{0}:{1}", remainingTime.Hours.ToString(), remainingTime.Minutes.ToString()),
+                            OnBookingDel = OnBookingDelete,
+                            OnBookingTap = OnBookingTapped
+                        });
+                    }
+
+                }
+            }
+            base.OnPropertyChanged("BookingList");
+
+            if (BookingList.Count == 0)
+            {
+                NoElementFound = true;
+
+            }
+            else
+            {
+                NoElementFound = false;
+            }
+            base.OnPropertyChanged("NoElementFound");
+
+            BookingListHeight = BookingList.Count * 50.0;
+            base.OnPropertyChanged("BookingListHeight");
         }
 
         // Back Click Action

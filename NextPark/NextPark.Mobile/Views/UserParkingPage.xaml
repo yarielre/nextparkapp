@@ -58,6 +58,12 @@
                         </ContentView.GestureRecognizers>
                         </ContentView>
                     </Grid>
+                    <Label Text="Nessun parcheggio registrato"
+                           FontSize="Small"
+                           Margin="0"
+                           HorizontalTextAlignment="Center"
+                           VerticalTextAlignment="Center"
+                           IsVisible="{Binding NoElementFound}"/>
                     <Frame BorderColor="Gray"
                            CornerRadius="8"
                            Padding="-1"

@@ -6,6 +6,7 @@ using Xamarin.Forms;
 using NextPark.Mobile.Core.Settings;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using NextPark.Models;
 
 namespace NextPark.Mobile.ViewModels
 {
@@ -229,7 +230,7 @@ namespace NextPark.Mobile.ViewModels
         public void OnAddAvailabilityMethod(object sender)
         {
             // TODO: Add availability
-            _dialogService.ShowAlert("Alert", "TODO: add availability");
+            NavigationService.NavigateToAsync<AddEventViewModel>(new EventModel { ParkingId = parking.UID});
         }
 
         // Go to previous week

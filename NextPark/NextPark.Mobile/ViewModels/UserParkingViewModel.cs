@@ -75,6 +75,7 @@ namespace NextPark.Mobile.ViewModels
         public string UserMoney { get; set; }       // Header money value
         public ICommand OnMoneyClick { get; set; }  // Header money action
 
+        public bool NoElementFound { get; set; }
         public double ParkingListHeight { get; set; }   // Parking List View Height Request
 
         public ICommand OnAddParking { get; set; }      // Add parking button action
@@ -184,19 +185,14 @@ namespace NextPark.Mobile.ViewModels
         {
             var parkingList = await _parkingDataService.Get();
 
-            if (parkingList.Count > 0) _parkingDataService.Parkings = parkingList;
-
-            if (ParkingList != null)
-            {
-                ParkingList.Clear();
-            }
+            ParkingList.Clear();
 
             // Search user parkings 
             // TODO: use a filter on Parkings
-            if (_parkingDataService.Parkings != null)
+            if (parkingList != null)
             {
                 int count = 0;
-                foreach (ParkingModel parking in _parkingDataService.Parkings)
+                foreach (ParkingModel parking in parkingList)
                 {
                     if (parking.UserId == int.Parse(AuthSettings.UserId))
                     {
@@ -219,6 +215,16 @@ namespace NextPark.Mobile.ViewModels
                     }
                 }
                 base.OnPropertyChanged("ParkingList");
+                if (ParkingList.Count == 0)
+                {
+                    NoElementFound = true;
+
+                }
+                else
+                {
+                    NoElementFound = false;
+                }
+                base.OnPropertyChanged("NoElementFound");
 
                 ParkingListHeight = ParkingList.Count * 70.0;
                 base.OnPropertyChanged("ParkingListHeight");

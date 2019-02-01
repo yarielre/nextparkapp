@@ -22,6 +22,12 @@
                            FontAttributes="Bold" 
                            TextColor="#333333"
                            Margin="0,0,0,10"/>
+                    <Label Text="Nessuna prenotazione attiva"
+                           FontSize="Small"
+                           Margin="0"
+                           HorizontalTextAlignment="Center"
+                           VerticalTextAlignment="Center"
+                           IsVisible="{Binding NoElementFound}"/>
                     <Frame x:Name="BookingList"
                            BorderColor="Gray"
                            CornerRadius="8"
@@ -43,7 +49,7 @@
                                     <DataTemplate>
                                         <ViewCell Height="50">
                                             <controls:UserBookingItem BorderColor="Gray" 
-                                                                      Identifier="{Binding UID}"
+                                                                      Identifier="{Binding Index}"
                                                                       Address="{Binding Address}"
                                                                       City="{Binding City}"
                                                                       Time="{Binding Time}"

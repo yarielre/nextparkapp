@@ -22,6 +22,7 @@ namespace NextPark.Mobile.Infrastructure
             builder.RegisterType<DialogService>().As<IDialogService>();
             builder.RegisterType<GeolocatorService>().As<IGeolocatorService>();
             builder.RegisterType<LoggerService>().As<ILoggerService>();
+            builder.RegisterType<ProfileService>().As<IProfileService>().SingleInstance();
 
             //Services - Data
             builder.RegisterType<ParkingDataService>();
@@ -31,6 +32,7 @@ namespace NextPark.Mobile.Infrastructure
             //Register ViewModels
             builder.RegisterType<LocatorViewModel>();
             builder.RegisterType<StartUpViewModel>();
+            builder.RegisterType<AddEventViewModel>();
             builder.RegisterType<AddParkingViewModel>();
             builder.RegisterType<BookingMapViewModel>();
             builder.RegisterType<BookingViewModel>();

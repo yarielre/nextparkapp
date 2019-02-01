@@ -21,6 +21,7 @@ namespace NextPark.Mobile.ViewModels
         public string UserMoney { get; set; }       // Header money value
         public ICommand OnMoneyClick { get; set; }  // Header money action
 
+        public int UID { get; set; }
         public string Title { get; set; }
         public string Street { get; set; }
         public string NPA { get; set; }
@@ -78,6 +79,7 @@ namespace NextPark.Mobile.ViewModels
         private double _minPriceValue;
         private double _maxPriceValue;
         private bool _isAuthorized;
+        private bool _modify;
 
         // METHODS
         public AddParkingViewModel(IDialogService dialogService,
@@ -123,15 +125,18 @@ namespace NextPark.Mobile.ViewModels
                 Title = "Modifica Parcheggio";
                 Street = parking.Address;
                 City = parking.City;
+                UID = parking.UID;
                 base.OnPropertyChanged("Title");
                 base.OnPropertyChanged("Street");
                 base.OnPropertyChanged("City");
                 _isAuthorized = true;
+                _modify = true;
             } else {
                 // New Parking
                 Title = "Nuovo Parcheggio";
                 base.OnPropertyChanged("Title");
                 _isAuthorized = false;
+                _modify = false;
             }
 
 
@@ -231,15 +236,18 @@ namespace NextPark.Mobile.ViewModels
                     UserId = int.Parse(AuthSettings.UserId),
                     PriceMin = _minPriceValue,
                     PriceMax = _maxPriceValue
-
                 };
 
                 // Start activity spinner
                 IsRunning = true;
                 base.OnPropertyChanged("IsRunning");
 
-                // TODO: send add parking request to backend
-                AddParkingMethod(model);
+                if (_modify == true) {
+                    model.Id = UID;
+                    EditParkingMethod(model);
+                } else {
+                    AddParkingMethod(model);
+                }
             }
         }
 
@@ -252,10 +260,38 @@ namespace NextPark.Mobile.ViewModels
                     if (addResponse is ParkingModel addedModel) {
 
                     }
+                    await NavigationService.NavigateToAsync<UserParkingViewModel>();
                 }
             } catch (Exception e) {
 
             } finally {
+                // Stop activity spinner
+                IsRunning = false;
+                base.OnPropertyChanged("IsRunning");
+            }
+        }
+
+        public async void EditParkingMethod(ParkingModel model)
+        {
+            try
+            {
+                var addResponse = await _parkingDataService.Put(model, model.Id);
+
+                if (addResponse != null)
+                {
+                    if (addResponse is ParkingModel addedModel)
+                    {
+
+                    }
+                    await NavigationService.NavigateToAsync<UserParkingViewModel>();
+                }
+            }
+            catch (Exception e)
+            {
+
+            }
+            finally
+            {
                 // Stop activity spinner
                 IsRunning = false;
                 base.OnPropertyChanged("IsRunning");

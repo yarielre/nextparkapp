@@ -150,7 +150,9 @@
                                 <TimePicker x:Name="_timePicker"
                                             Time="{Binding Time}"
                                             Format="HH:mm"
-                                            HorizontalOptions="Center" />
+                                            HorizontalOptions="Center">
+                                    <TimePicker.Format>HH:mm</TimePicker.Format>
+                                </TimePicker>
                                 <!-- Activity indicator, active when buying -->
                                 <ActivityIndicator
                                     x:Name="activityContent"

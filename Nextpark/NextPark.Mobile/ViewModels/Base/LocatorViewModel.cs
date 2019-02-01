@@ -7,6 +7,7 @@ namespace NextPark.Mobile.Infrastructure
     public class LocatorViewModel
     {
         public StartUpViewModel StartUp => IoCSettings.Resolve<StartUpViewModel>();
+        public AddEventViewModel AddEvent { get { return (AddEventViewModel)IoCSettings.Resolve<AddEventViewModel>(); } }
         public AddParkingViewModel AddParking { get { return (AddParkingViewModel)IoCSettings.Resolve<AddParkingViewModel>(); } }
         public BookingMapViewModel BookMap { get { return (BookingMapViewModel)IoCSettings.Resolve<BookingMapViewModel>(); } }
         public BookingViewModel BookNow { get { return (BookingViewModel)IoCSettings.Resolve<BookingViewModel>(); } }
