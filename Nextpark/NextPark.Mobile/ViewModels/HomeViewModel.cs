@@ -8,6 +8,8 @@ using Xamarin.Forms;
 using System;
 using NextPark.Mobile.Services.Data;
 using NextPark.Models;
+using System.Collections.Generic;
+using NextPark.Enums;
 using NextPark.Mobile.Core.Settings;
 using NextPark.Enums.Enums;
 using NextPark.Mobile.CustomControls;
@@ -41,6 +43,8 @@ namespace NextPark.Mobile.ViewModels
         private readonly IGeolocatorService _geoLocatorService;
         private readonly IDialogService _dialogService;
         private readonly ParkingDataService _parkingDataService;
+        private readonly EventDataService _eventDataService;
+
         private readonly IAuthService _authService;
 
         // PRIVATE VARIABLES
@@ -55,12 +59,14 @@ namespace NextPark.Mobile.ViewModels
 
         // METHODS
         public HomeViewModel(IGeolocatorService geolocatorService, IDialogService dialogService,
-            IApiService apiService, IAuthService authService, INavigationService navService, ParkingDataService parkingDataService)
+            IApiService apiService, IAuthService authService, INavigationService navService,
+            ParkingDataService parkingDataService, EventDataService eventDataService)
             : base(apiService, authService, navService)
         {
             _geoLocatorService = geolocatorService;
             _dialogService = dialogService;
             _parkingDataService = parkingDataService;
+            _eventDataService = eventDataService;
             _authService = authService;
 
             OnUserClick = new Command<object>(OnUserClickMethod);
@@ -141,14 +147,17 @@ namespace NextPark.Mobile.ViewModels
                 //Demo Get Parkings OK
                 var parkingList = await _parkingDataService.Get();
 
-                _parkingDataService.Parkings = parkingList;
 
-                if (parkingList.Count > 0) return;
+                if (parkings.Count > 0) {
+                    await _parkingDataService.Delete(parkings[0].Id);
+                }
 
                 //Demo Posting Parking
                 var parking1 = new ParkingModel
                 {
                     Address = "Via Strada",
+                    Cap = 7777,
+                    City = "Lugano",
                     CarPlate = "TI 000000",
                     Latitude = 40,
                     Longitude = 40,
@@ -160,18 +169,29 @@ namespace NextPark.Mobile.ViewModels
                     ImageUrl = "image_parking1.png"
                 };
 
-
+                //Demo Posting Parking
                 var postedParking = await _parkingDataService.Post(parking1);
 
+                var eventParking = new EventModel
+                {
+                    StartDate = DateTime.Now,
+                    EndDate = DateTime.Now,
+                    ParkingId = postedParking.Id,
+                    RepetitionEndDate = DateTime.Now,
+                    RepetitionType = Enums.Enums.RepetitionType.Dayly,
+                    MonthRepeat = new List<Enums.MyMonthOfYear>(),
+                    WeekRepeat = new List<MyDayOfWeek>()
 
+                };
                 postedParking.Status = Enums.Enums.ParkingStatus.Disabled;
 
+                var result = await _eventDataService.Post(eventParking);
+
                 //Demo Puting Parking
-                var parkingResult =  await _parkingDataService.Put(postedParking, postedParking.Id);
+                var parkingResult = await _parkingDataService.Put(postedParking, postedParking.Id);
 
                 //Demo Deleting Parking
-                var deletedParking =  await _parkingDataService.Delete(parkingResult.Id);
-
+                var deletedParking = await _parkingDataService.Delete(parkingResult.Id);
 
             }
             catch (Exception e)
@@ -304,16 +324,30 @@ namespace NextPark.Mobile.ViewModels
         private async void Map_Tapped(object sender, CustomControls.MapTapEventArgs e)
         {
             //throw new System.NotImplementedException();
-            // DEMO ONLY! 
+            // DEMO ONLY!
             if (_authService.IsUserAuthenticated()) {
                 ParkingInfo item = Parkings[0];
                 await NavigationService.NavigateToAsync<BookingViewModel>(item);
             }
+            _dialogService.ShowAlert("Map Tapped", string.Format("Lat {0}, Long {1}", e.Position.Latitude, e.Position.Longitude));
+
+            Map.MoveToRegion(MapSpan.FromCenterAndRadius(e.Position, Distance.FromKilometers(1)));
+
+            var demoParking = new ParkingModel
+            {
+                Id = 1,
+                Latitude = e.Position.Latitude,
+                Longitude = e.Position.Longitude,
+
+            };
+
+            CreatePin(e.Position, demoParking);
         }
 
         private void Map_PinTapped(object sender, CustomControls.PinTapEventArgs e)
         {
-            throw new System.NotImplementedException();
+            _dialogService.ShowConfirmAlert("Pin Tapped", "Marker tapped");
+
         }
 
         private void Map_MapReady(object sender, System.EventArgs e)
@@ -333,13 +367,16 @@ namespace NextPark.Mobile.ViewModels
             Xamarin.Forms.Maps.Position position = new Position(0, 0);
             try
             {
-                var permissionGaranted = await _geoLocatorService.IsPermissionGaranted();
 
-                if (!permissionGaranted) return;
+                var geoLocation = await _geoLocatorService.GetLocation();
 
-                var getLocation = await _geoLocatorService.GetLocation();
+                if (geoLocation == null) return;
 
-                position = getLocation.ToXamMapPosition();
+                position = geoLocation.ToXamMapPosition();
+
+                Map.MoveToRegion(MapSpan.FromCenterAndRadius(position, Distance.FromKilometers(1)));
+
+
             }
             catch (Exception ex)
             {
@@ -371,6 +408,21 @@ namespace NextPark.Mobile.ViewModels
 
 
         }
+        private void CreatePin(Position position, ParkingModel parking)
+        {
+            var pin = new CustomPin
+            {
+                Id = parking.Id,
+                Parking = parking,
+                Type = PinType.Place,
+                Position = position,
+                Label = "custom pin",
+                Address = "custom detail info",
+                Icon = "icon_coins_48"
+            };
+
+            Map.Pins.Add(pin);
+        }
 
         // User Click action
         public void OnUserClickMethod(object sender)
@@ -395,7 +447,7 @@ namespace NextPark.Mobile.ViewModels
                     //NavigationService.NavigateToAsync<MoneyViewModel>();
                     GoToMoneyPage();
                 } catch (Exception ex) {}
-            } 
+            }
             else
             {
                 NavigationService.NavigateToAsync<LoginViewModel>();

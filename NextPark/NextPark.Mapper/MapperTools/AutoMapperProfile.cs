@@ -26,7 +26,7 @@ namespace NextPark.MapperTools
             CreateMap<ApplicationUser, UserModel>()
                 .ForMember(pvm => pvm.ImageUrl, cfg => cfg.MapFrom(p => p.ImageUrl))
                 .ReverseMap();
-            CreateMap<ApplicationUser, UserModel>()
+            CreateMap<UserModel, ApplicationUser>()
                 .ForMember(pvm => pvm.ImageUrl, cfg => cfg.MapFrom(p => p.ImageUrl))
                 .ReverseMap();
             CreateMap<ParkingModel, Parking>()
