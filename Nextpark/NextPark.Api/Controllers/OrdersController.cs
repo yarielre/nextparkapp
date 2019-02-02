@@ -105,8 +105,6 @@ namespace NextPark.Api.Controllers
                 return BadRequest(string.Format("Server error: {0}", e));
             }
 
-
-
         }
 
         // GET api/controller
@@ -131,18 +129,26 @@ namespace NextPark.Api.Controllers
 
         // POST api/controller
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] Order entity)
+        public async Task<IActionResult> Post([FromBody] OrderModel orderModel)
         {
-            if (entity == null)
-                return BadRequest("adding null entity");
-            if (ModelState.IsValid)
-            {
-                _orderRepository.Add(entity);
-                await _unitOfWork.CommitAsync();
-                var vm = _mapper.Map<Order, OrderModel>(entity);
-                return Ok(vm);
-            }
-            return BadRequest(ModelState);
+            if (orderModel == null)
+                return BadRequest("adding null orderModel");
+
+            //START LOCK
+            //Parking disponibile No? Return Error
+            //Soldi suficcenti? No? Return Error
+            //Altri check
+            //END LOCK   
+
+            var order = _mapper.Map<OrderModel, Order>(orderModel);
+
+            _orderRepository.Add(order);
+
+            await _unitOfWork.CommitAsync();
+
+            var vm = _mapper.Map<Order, OrderModel>(order);
+            return Ok(vm);
+
         }
 
         // PUT api/controller/5
