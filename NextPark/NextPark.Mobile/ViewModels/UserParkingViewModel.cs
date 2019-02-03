@@ -36,6 +36,13 @@ namespace NextPark.Mobile.ViewModels
             set { address = value; }
         }
 
+        private int cap;
+        public int Cap
+        {
+            get { return cap; }
+            set { cap = value; }
+        }
+
         private string city;
         public string City
         {
@@ -207,7 +214,8 @@ namespace NextPark.Mobile.ViewModels
                             UID = parking.Id,
                             Index = count++,
                             Address = parking.Address,
-                            City = parking.Cap.ToString() + " " + parking.City,
+                            Cap = parking.Cap,
+                            City = parking.City,
                             Status = (free) ? "libero" : "occupato",
                             StatusColor = (free) ? Color.Green : Color.Red,
                             OnParkingTap = OnParkingTapped

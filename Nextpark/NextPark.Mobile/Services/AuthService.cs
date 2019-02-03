@@ -173,7 +173,7 @@ namespace NextPark.Mobile.Services
 
                 AuthSettings.User = result;
                 AuthSettings.UserName = result.Name;
-                AuthSettings.UserCoin = result.Coins;
+                AuthSettings.UserCoin = result.Balance;
 
                 return new Response
                 {

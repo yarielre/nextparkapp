@@ -6,6 +6,8 @@ using Xamarin.Forms.Maps;
 using Xamarin.Forms;
 using System;
 using NextPark.Mobile.Core.Settings;
+using NextPark.Mobile.Services.Data;
+using NextPark.Models;
 
 namespace NextPark.Mobile.ViewModels
 {
@@ -44,18 +46,22 @@ namespace NextPark.Mobile.ViewModels
 
         // SERVICES
         private readonly IDialogService _dialogService;
+        private readonly OrderDataService _orderDataService;
 
         // PRIVATE VARIABLES
         private static bool activity = false;
+        private ParkingInfo parkingInfo;
 
         // METHODS
         public BookingViewModel(IDialogService dialogService,
                                 IApiService apiService,
                                 IAuthService authService,
-                                INavigationService navService)
+                                INavigationService navService,
+                                OrderDataService orderDataService)
                                 : base(apiService, authService, navService)
         {
             _dialogService = dialogService;
+            _orderDataService = orderDataService;
 
             // Header
             UserName = AuthSettings.UserName;
@@ -75,8 +81,6 @@ namespace NextPark.Mobile.ViewModels
         // Initialization
         public override Task InitializeAsync(object data = null)
         {
-            ParkingInfo parkingInfo;
-
             if (data == null)
             {
                 return Task.FromResult(false);
@@ -155,7 +159,13 @@ namespace NextPark.Mobile.ViewModels
 
             // TODO: execute payment
             // TODO: fill book data according to add book backend method
-            // TODO: send book action to backend
+            OrderModel order = new OrderModel
+            {
+                ParkingId = parkingInfo.UID,
+                StartDate = DateTime.Now,
+                EndDate = DateTime.Now + Time,
+                UserId = int.Parse(AuthSettings.UserId)
+            };
 
             // Show activity spinner
             if (activity == true)
@@ -168,6 +178,9 @@ namespace NextPark.Mobile.ViewModels
             }
             this.IsRunning = activity;
             base.OnPropertyChanged("IsRunning");
+
+            // TODO: send book action to backend
+            SendOrder(order);
         }
 
         // Selection Button Tapped action
@@ -213,5 +226,22 @@ namespace NextPark.Mobile.ViewModels
             base.OnPropertyChanged("Time");
         }
 
+        public async void SendOrder(OrderModel order)
+        {
+            try {
+                var result = await _orderDataService.Post(order);
+
+                IsRunning = false;
+                base.OnPropertyChanged("IsRunning");
+
+                if (result != null) {
+                    await NavigationService.NavigateToAsync<UserBookingViewModel>();
+                } else {
+                    await _dialogService.ShowAlert("Errore", "Impossibile eseguire l'ordine");
+                }
+            } catch (Exception e) {
+                await _dialogService.ShowAlert("Errore", e.Message);
+            }
+        }
     }
 }

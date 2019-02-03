@@ -47,16 +47,23 @@
                         <StackLayout Margin="5,0,0,0"
                                      Spacing="2"
                                      Grid.Row="0" Grid.Column="1">
-                        <Label Text="{Binding Address}"
-                               FontSize="Medium"
-                               FontAttributes="Bold"
-                               TextColor="Gray"
-                               HorizontalTextAlignment="Start"/>
-                        <Label Text="{Binding City}"
-                               FontSize="Medium"
-                               FontAttributes="None"
-                               TextColor="Gray"
-                               HorizontalTextAlignment="Start"/>
+                            <Label Text="{Binding Address}"
+                                   FontSize="Medium"
+                                   FontAttributes="Bold"
+                                   TextColor="Gray"
+                                   HorizontalTextAlignment="Start"/>
+                            <StackLayout Orientation="Horizontal" Spacing="2">
+                                <Label Text="{Binding Cap}"
+                                       FontSize="Medium"
+                                       FontAttributes="None"
+                                       TextColor="Gray"
+                                       HorizontalTextAlignment="Start"/>
+                                <Label Text="{Binding City}"
+                                       FontSize="Medium"
+                                       FontAttributes="None"
+                                       TextColor="Gray"
+                                       HorizontalTextAlignment="Start"/>
+                            </StackLayout>
                          </StackLayout>
                         
                         <ContentView HorizontalOptions="FillAndExpand"

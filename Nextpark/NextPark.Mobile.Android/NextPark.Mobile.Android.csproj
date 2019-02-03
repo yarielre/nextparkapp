@@ -140,6 +140,9 @@
     <AndroidResource Include="Resources\drawable\pin_red.png" />
     <AndroidResource Include="Resources\drawable\ic_location_black.png" />
     <AndroidResource Include="Resources\drawable\ic_location_green.png" />
+    <AndroidResource Include="Resources\drawable\bg_logo.png" />
+    <AndroidResource Include="Resources\drawable\pin_np_green1.png" />
+    <AndroidResource Include="Resources\drawable\pin_np_red1.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\drawable-hdpi\" />

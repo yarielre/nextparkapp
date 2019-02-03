@@ -24,7 +24,7 @@ namespace NextPark.Mobile.ViewModels
         public int UID { get; set; }
         public string Title { get; set; }
         public string Street { get; set; }
-        public string NPA { get; set; }
+        public string Cap { get; set; }
         public string City { get; set; }
         public string Notes { get; set; }
         public double Longitude { get; set; }
@@ -59,8 +59,12 @@ namespace NextPark.Mobile.ViewModels
 
         public ICommand OnAddParking { get; set; }
         public bool AddBtnEnabled { get; set; }
+        public string AddBtnText { get; set; }
         public Color AddBtnBackgroundColor { get; set; }
         public Color AddBtnBorderColor { get; set; }
+
+        public ICommand OnDelParking { get; set; }
+        public bool DelBtnVisible { get; set; }
 
         private ImageSource _parkingImage;              // Parking image
         public ImageSource ParkingImage
@@ -106,6 +110,7 @@ namespace NextPark.Mobile.ViewModels
             OnMoneyClick = new Command<object>(OnMoneyClickMethod);
             OnParkingImageTap = new Command<object>(OnParkingImageTapMethod);
             OnAddParking = new Command<object>(OnAddParkingMethod);
+            OnDelParking = new Command<object>(OnDelParkingMethod);
 
             MinPriceValue = (int)1;
             MaxPriceValue = (int)1;
@@ -126,19 +131,29 @@ namespace NextPark.Mobile.ViewModels
                 Street = parking.Address;
                 City = parking.City;
                 UID = parking.UID;
+                Cap = parking.Cap.ToString();
                 base.OnPropertyChanged("Title");
                 base.OnPropertyChanged("Street");
+                base.OnPropertyChanged("Cap");
                 base.OnPropertyChanged("City");
                 _isAuthorized = true;
                 _modify = true;
+                AddBtnText = "Modifica";
+                base.OnPropertyChanged("AddBtnText");
+                DelBtnVisible = true;
+                base.OnPropertyChanged("DelBtnVisible");
             } else {
                 // New Parking
                 Title = "Nuovo Parcheggio";
                 base.OnPropertyChanged("Title");
                 _isAuthorized = false;
                 _modify = false;
+                AddBtnText = "Aggiungi";
+                base.OnPropertyChanged("AddBtnText");
+                DelBtnVisible = false;
+                base.OnPropertyChanged("DelBtnVisible");
             }
-
+            EnableAddButton();
 
             // Header
             BackText = "Parcheggi";
@@ -150,12 +165,16 @@ namespace NextPark.Mobile.ViewModels
 
             MinPriceText = String.Format("Prezzo minimo: {0} CHF", (int)MinPriceValue);
             MaxPriceText = String.Format("Prezzo massimo: {0} CHF", (int)MaxPriceValue);
-            AddBtnBackgroundColor = Color.FromHex("#E3E3E3");
-            AddBtnBorderColor = Color.Gray;
+
             base.OnPropertyChanged("MinPriceText");
             base.OnPropertyChanged("MaxPriceText");
+
+            /*
+            AddBtnBackgroundColor = Color.FromHex("#E3E3E3");
+            AddBtnBorderColor = Color.Gray;
             base.OnPropertyChanged("AddBtnBackgroundColor");
             base.OnPropertyChanged("AddBtnBorderColor");
+            */
 
             return Task.FromResult(false);
         }
@@ -229,7 +248,7 @@ namespace NextPark.Mobile.ViewModels
                 ParkingModel model = new ParkingModel
                 {
                     Address = this.Street,
-                    Cap = int.Parse(NPA),
+                    Cap = (Cap!=null)?int.Parse(Cap):0,
                     City = City,
                     Latitude = Latitude,
                     Longitude = Longitude,
@@ -248,6 +267,8 @@ namespace NextPark.Mobile.ViewModels
                 } else {
                     AddParkingMethod(model);
                 }
+            } else {
+                _dialogService.ShowAlert("Errore", "La foto e la posizione sono obbligatorie");
             }
         }
 
@@ -283,6 +304,43 @@ namespace NextPark.Mobile.ViewModels
                     {
 
                     }
+                    await NavigationService.NavigateToAsync<UserParkingViewModel>();
+                }
+            }
+            catch (Exception e)
+            {
+
+            }
+            finally
+            {
+                // Stop activity spinner
+                IsRunning = false;
+                base.OnPropertyChanged("IsRunning");
+            }
+        }
+
+        // Delete Parking button action
+        public void OnDelParkingMethod(object sender)
+        {
+            // TODO: check picture and location, location is a must have!
+            if (_isAuthorized)
+            {
+                // Start activity spinner
+                IsRunning = true;
+                base.OnPropertyChanged("IsRunning");
+
+                DeleteParkingMethod(UID);
+            }
+        }
+
+        public async void DeleteParkingMethod(int parkingId)
+        {
+            try
+            {
+                var delResponse = await _parkingDataService.Delete(parkingId);
+
+                if (delResponse != null)
+                {
                     await NavigationService.NavigateToAsync<UserParkingViewModel>();
                 }
             }
@@ -348,8 +406,8 @@ namespace NextPark.Mobile.ViewModels
                     // TODO: ask for location, location is a must have!
                     return false;
                 }
-                Longitude = getLocation.Latitude;
-                Latitude = getLocation.Longitude;
+                Longitude = getLocation.Longitude;
+                Latitude = getLocation.Latitude;
 
                 return true;
             }

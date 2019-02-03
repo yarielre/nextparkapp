@@ -3,7 +3,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
              xmlns:customMap="clr-namespace:NextPark.Mobile.CustomControls;assembly=NextPark.Mobile"
              xmlns:controls="clr-namespace:NextPark.Mobile.Controls"
-             xmlns:cv="clr-namespace:CarouselView.FormsPlugin.Abstractions;assembly=CarouselView.FormsPlugin.Abstractions"
              BindingContext="{Binding Home, Source={StaticResource Locator}}"
              x:Class="NextPark.Mobile.Views.HomePage">
     <ContentPage.Content>
@@ -48,7 +47,8 @@
                            >
                         <SearchBar BackgroundColor="White"
                                    Placeholder="Cerca indirizzo"
-                                   SearchCommand="OnSearch"
+                                   SearchCommand="{Binding OnSearch}"
+                                   Text="{Binding SearchText}"
                                    Opacity="0.9"
                                    HorizontalOptions="Center"
                                    Margin="0"
@@ -68,113 +68,73 @@
                        Margin="0"
                        RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}"
                        RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=1, Constant=-180}">
-                    <ContentView WidthRequest="280" HeightRequest="148" HorizontalOptions="Center">
-                        <cv:CarouselViewControl Orientation="Horizontal"
-                                                InterPageSpacing="1" 
-                                                Position="{Binding SelectedIndex}" 
-                                                ItemsSource="{Binding Parkings}"                                                
-                                                HeightRequest="145" WidthRequest="205"
-                                                MinimumHeightRequest="148"
-                                                MinimumWidthRequest="200"
-                                                HorizontalOptions="FillAndExpand"
-                                                VerticalOptions="FillAndExpand"
-                                                ShowArrows="true"
-                                                ArrowsBackgroundColor="White"
-                                                ArrowsTintColor="#8CC63F"
-                                                ArrowsTransparency="0.9"
-                                                ShowIndicators="false">
-                            <cv:CarouselViewControl.ItemTemplate>
-                                <DataTemplate>
-                                    <ContentView>
-                                    <Frame BorderColor="#8CC63F"
-                                           BackgroundColor="White"
-                                           CornerRadius="14"
+                    <ContentView WidthRequest="280" HeightRequest="148" HorizontalOptions="Center" IsVisible="{Binding InfoPanelVisible}">
+                        <Frame BorderColor="#8CC63F"
+                               BackgroundColor="White"
+                               CornerRadius="14"
+                               IsClippedToBounds="true"
+                               HasShadow="false"
+                               HeightRequest="145"
+                               WidthRequest="205"
+                               MinimumHeightRequest="148"
+                               MinimumWidthRequest="200"
+                               Padding="10"
+                               Margin="10,0,10,0"
+                               HorizontalOptions="Center">
+                            <StackLayout Orientation="Vertical" Spacing="1" Padding="0">
+                                <Grid Margin="0" Padding="0">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*"/>
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="80"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Frame HeightRequest="80"
+                                           WidthRequest="80"
+                                           CornerRadius="8"
                                            IsClippedToBounds="true"
-                                           HasShadow="false"
-                                           HeightRequest="145"
-                                           WidthRequest="205"
-                                           MinimumHeightRequest="148"
-                                           MinimumWidthRequest="200"
-                                           Padding="10"
-                                           Margin="10,0,10,0"
-                                           HorizontalOptions="Center">
-                                        <StackLayout Orientation="Vertical" Spacing="1" Padding="0">
-                                            <Grid Margin="0" Padding="0">
-                                                <Grid.RowDefinitions>
-                                                    <RowDefinition Height="*"/>
-                                                </Grid.RowDefinitions>
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="80"/>
-                                                    <ColumnDefinition Width="*"/>
-                                                </Grid.ColumnDefinitions>
-                                                <Frame HeightRequest="80"
-                                                       WidthRequest="80"
-                                                       CornerRadius="8"
-                                                       IsClippedToBounds="true"
-                                                       BackgroundColor="Teal"
-                                                       HorizontalOptions="Center"
-                                                       VerticalOptions="Center"
-                                                       Margin="0"
-                                                       Padding="0"
-                                                       Grid.Row="0" Grid.Column="0">
-                                                        <Image Source="{Binding Picture}"
-                                                               Aspect="AspectFill"
-                                                               HeightRequest="80"
-                                                               WidthRequest="80"/>
-                                                </Frame>
-                                                <StackLayout Margin="5,0,0,0" Spacing="1" Grid.Row="0" Grid.Column="1">
-                                                    <Label Text="{Binding Info}" FontAttributes="Bold"
-                                                           TextColor="Gray"
-                                                           FontSize="Small"
-                                                           Margin="0"
-                                                           HorizontalTextAlignment="Start"/>
-                                                    <Label Text="{Binding SubInfo}" FontAttributes="None"
-                                                           TextColor="Gray"
-                                                           FontSize="Micro"
-                                                           Margin="0"
-                                                           HorizontalTextAlignment="Start"/>
-                                                    <BoxView HeightRequest="1"
-                                                             Margin="0,4,0,4"
-                                                             HorizontalOptions="FillAndExpand"
-                                                             BackgroundColor="Gray"/>
-                                                    <Label x:Name="PriceLabel"
-                                                           Text="{Binding FullPrice}"
-                                                           TextColor="Gray"
-                                                           FontSize="Micro"
-                                                           FontAttributes="Bold"
-                                                           HorizontalOptions="Start"
-                                                           HorizontalTextAlignment="Start"
-                                                           Margin="0"/>   
-                                                    <Label x:Name="availabilityLabel"
-                                                           Text="{Binding FullAvailability}"
-                                                           TextColor="Gray"
-                                                           FontSize="Micro"
-                                                           FontAttributes="None"
-                                                           HorizontalOptions="Start"
-                                                           HorizontalTextAlignment="Start"
-                                                           Margin="0"/>                                                        
-                                                </StackLayout>
-                                            </Grid>
-                                            <Button Text="Prenota"
-                                                    FontAttributes="Bold"
-                                                    FontSize="Default"
-                                                    VerticalOptions="Center"
-                                                    HorizontalOptions="Center"
-                                                    Command="{Binding BookAction}"
-                                                    CommandParameter="{Binding UID}"
-                                                    TextColor="White"
-                                                    BorderRadius="8"
-                                                    BackgroundColor="#8CC63F"
-                                                    WidthRequest="191"
-                                                    HeightRequest="30"
-                                                    Padding="0"
-                                                    Margin="0,8,0,0"/>                                          
-                                        </StackLayout>
+                                           BackgroundColor="White"
+                                           BorderColor="Gray"
+                                           HorizontalOptions="Center"
+                                           VerticalOptions="Center"
+                                           Margin="0"
+                                           Padding="0"
+                                           Grid.Row="0" Grid.Column="0">
+                                        <Image Source="{Binding Picture}"
+                                               Aspect="AspectFill"
+                                               HeightRequest="80"
+                                               WidthRequest="80"/>
                                     </Frame>
-                                    </ContentView>
-                                </DataTemplate>
-                            </cv:CarouselViewControl.ItemTemplate>
-                        </cv:CarouselViewControl>
+                                    <StackLayout Margin="5,0,0,0" Spacing="1" Grid.Row="0" Grid.Column="1">
+                                        <Label  Text="{Binding Info}" FontAttributes="Bold"
+                                                TextColor="Gray"
+                                                FontSize="Small"
+                                                Margin="0"
+                                                HorizontalTextAlignment="Start"/>
+                                        <Label  Text="{Binding SubInfo}" FontAttributes="None"
+                                                TextColor="Gray"
+                                                FontSize="Micro"
+                                                Margin="0"
+                                                HorizontalTextAlignment="Start"/>                                                      
+                                    </StackLayout>
+                                </Grid>
+                                <Button Text="Prenota"
+                                        FontAttributes="Bold"
+                                        FontSize="Default"
+                                        VerticalOptions="Center"
+                                        HorizontalOptions="Center"
+                                        Command="{Binding OnBookingTapped}"
+                                        CommandParameter="{Binding Index}"
+                                        TextColor="White"
+                                        BorderRadius="8"
+                                        BackgroundColor="#8CC63F"
+                                        WidthRequest="191"
+                                        HeightRequest="30"
+                                        Padding="0"
+                                        Margin="0,8,0,0"/>                                          
+                            </StackLayout>
+                        </Frame>
                     </ContentView>
                 </Frame>                
             </RelativeLayout>

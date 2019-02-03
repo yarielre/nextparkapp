@@ -15,7 +15,7 @@ namespace NextPark.Mobile
             InitializeComponent();
             InitializeApp();
 
-            MainPage = new HomePage();
+            MainPage = new LaunchScreen();
         }
 
         private void InitializeApp()

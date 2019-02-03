@@ -13,6 +13,7 @@ using NextPark.Enums;
 using NextPark.Mobile.Core.Settings;
 using NextPark.Enums.Enums;
 using NextPark.Mobile.CustomControls;
+using Xamarin.Forms.PlatformConfiguration.iOSSpecific;
 
 namespace NextPark.Mobile.ViewModels
 {
@@ -36,8 +37,17 @@ namespace NextPark.Mobile.ViewModels
         public string UserMoney { get; set; }       // Header money value
         public ICommand OnMoneyClick { get; set; }  // Header money action
 
-        private CustomControls.CustomMap Map { get; set; }  // Custom Map
+        public string Info { get; set; }
+        public string SubInfo { get; set; }
+        public string Picture { get; set; }
+        public int Index { get; set; }
+        public bool InfoPanelVisible { get; set; }  // Parking Info Panel visibility
+
+        public CustomControls.CustomMap Map { get; set; }  // Custom Map
         public ICommand OnBookingTapped { get; set; }       // Booking button click action
+
+        public ICommand OnSearch { get; set; }
+        public string SearchText { get; set; }
 
         // SERVICES
         private readonly IGeolocatorService _geoLocatorService;
@@ -72,21 +82,19 @@ namespace NextPark.Mobile.ViewModels
             OnUserClick = new Command<object>(OnUserClickMethod);
             OnMoneyClick = new Command<object>(OnMoneyClickMethod);
             OnBookingTapped = new Command<object>(OnBookingTappedMethod);
+            OnSearch = new Command<object>(OnSearchMethod);
+
+            InfoPanelVisible = false;
+
+            Parkings = new ObservableCollection<ParkingInfo>();
+
         }
 
         public override Task InitializeAsync(object data = null)
         {
-            if (data == null)
-            {
-                return Task.FromResult(false);
-            }
-            if (data is CustomControls.CustomMap map)
-            {
-                Map = map;
-                Map.MapReady += Map_MapReady;
-                Map.Tapped += Map_Tapped;
-                Map.PinTapped += Map_PinTapped;
-            }
+            Map.MapReady += Map_MapReady;
+            Map.Tapped += Map_Tapped;
+            Map.PinTapped += Map_PinTapped;
 
             // Set User data
             UserName = AuthSettings.UserName;
@@ -96,21 +104,16 @@ namespace NextPark.Mobile.ViewModels
             base.OnPropertyChanged("UserImage");
             base.OnPropertyChanged("UserMoney");
 
-            // TODO: fill parking list and use parkingModel
-            Parkings = new ObservableCollection<ParkingInfo>
-            {
-                new ParkingInfo {
-                UID = 0,
-                Info = "Via Strada 1",
-                SubInfo = "Lugano, Ticino",
-                Picture="image_parking1.png",
-                FullPrice = "2 CHF/h",
-                FullAvailability = "08:00-12:00",
-                BookAction = OnBookingTapped},
+            InfoPanelVisible = false;
+            base.OnPropertyChanged("InfoPanelVisible");
 
-                new ParkingInfo { UID = 1, Info = "Via Strada 1.5", SubInfo = "Lugano, Ticino", Picture="image_parking1.png", FullPrice = "2 CHF/h", FullAvailability = "08:00-12:00", BookAction = OnBookingTapped},
-                new ParkingInfo { UID = 2, Info = "Via Strada 2", SubInfo = "Lugano, Ticino", Picture="image_parking1.png", FullPrice = "2 CHF/h", FullAvailability = "08:00-12:00", BookAction = OnBookingTapped}
-            };
+            if (Parkings != null) {
+                Parkings.Clear();
+            }
+
+            if (Xamarin.Forms.Device.RuntimePlatform == Xamarin.Forms.Device.iOS) {
+                Map_Ready_Handler();
+            }
 
             //DemoBackEndCalls();
 
@@ -123,7 +126,7 @@ namespace NextPark.Mobile.ViewModels
 
         private async void DemoBackEndCalls()
         {
-
+            /*
             try
             {
                 //Demo Login OK
@@ -198,6 +201,7 @@ namespace NextPark.Mobile.ViewModels
             {
 
             }
+            */
         }
 
         public async void UpdateParkingList()
@@ -206,44 +210,12 @@ namespace NextPark.Mobile.ViewModels
         }
         private async Task GetParkings()
         {
-
-            //Demo Login OK
-            //var loginResponse = await AuthService.Login("JarJar", "Jaro.001");
-            try
+            Xamarin.Forms.Device.StartTimer(TimeSpan.FromSeconds(2), () =>
             {
-                var parkingsResponse = await _parkingDataService.Get();
-                _parkingDataService.Parkings = parkingsResponse;
-
-                if (parkingsResponse.Count == 0) return;
-
-                Parkings.Clear();
-
-                foreach (ParkingModel parking in parkingsResponse)
-                {
-                    Parkings.Add(new ParkingInfo
-                    {
-                        UID = parking.Id,
-                        Info = parking.Address,
-                        SubInfo = parking.Cap.ToString() + " " + parking.City,
-                        FullAvailability = (parking.Status == ParkingStatus.Enabled) ? "disponibile" : "occupato",
-                        FullPrice = parking.PriceMin.ToString() + " CHF/h",
-                        BookAction = OnBookingTapped
-                    });
-                }
-
-
-                Xamarin.Forms.Device.StartTimer(TimeSpan.FromSeconds(2), () =>
-                {
-                    UpdateMapPins();
-                    return false;
-                });
-
-            } catch (Exception e) {
-                await _dialogService.ShowErrorAlert(e.Message);
-            }
-
-
-
+                UpdateMapPins();
+                base.OnPropertyChanged("Parkings");
+                return false;
+            });
 
             //base.OnPropertyChanged("Parkings");
 
@@ -290,16 +262,31 @@ namespace NextPark.Mobile.ViewModels
             */
         }
 
-        private void UpdateMapPins()
+        private async void UpdateMapPins()
         {
-            Map_Ready_Handler();
-
-            /*
-            // Update parkings
-            if (_parkingDataService.Parkings.Count > 0)
+            try
             {
-                foreach (ParkingModel parking in _parkingDataService.Parkings)
+                var parkingsResponse = await _parkingDataService.Get();
+                _parkingDataService.Parkings = parkingsResponse;
+
+                if (parkingsResponse.Count == 0) return;
+
+                Parkings.Clear();
+
+                foreach (ParkingModel parking in parkingsResponse)
                 {
+                    Parkings.Add(new ParkingInfo
+                    {
+                        Picture = "image_parking1.png",
+                        UID = parking.Id,
+                        Info = parking.Address,
+                        SubInfo = parking.Cap.ToString() + " " + parking.City,
+                        FullAvailability = (parking.Status == ParkingStatus.Enabled) ? "disponibile" : "occupato",
+                        FullPrice = parking.PriceMin.ToString() + " CHF/h",
+                        BookAction = OnBookingTapped
+                    });
+                    CreatePin(new Position(parking.Latitude, parking.Longitude), parking);
+                    /*
                     var pin = new CustomPin
                     {
                         Id = parking.Id,
@@ -315,21 +302,17 @@ namespace NextPark.Mobile.ViewModels
                         pin.Icon = "ic_location_black";
                     }
                     Map.Pins.Add(pin);
+                    */
                 }
-                base.OnPropertyChanged("Parkings");
+
+            } catch (Exception e) {
+                await _dialogService.ShowErrorAlert(e.Message);
             }
-            */
         }
 
         private async void Map_Tapped(object sender, CustomControls.MapTapEventArgs e)
         {
-            //throw new System.NotImplementedException();
-            // DEMO ONLY!
-            if (_authService.IsUserAuthenticated()) {
-                ParkingInfo item = Parkings[0];
-                await NavigationService.NavigateToAsync<BookingViewModel>(item);
-            }
-            _dialogService.ShowAlert("Map Tapped", string.Format("Lat {0}, Long {1}", e.Position.Latitude, e.Position.Longitude));
+            await _dialogService.ShowAlert("Map Tapped", string.Format("Lat {0}, Long {1}", e.Position.Latitude, e.Position.Longitude));
 
             Map.MoveToRegion(MapSpan.FromCenterAndRadius(e.Position, Distance.FromKilometers(1)));
 
@@ -338,6 +321,9 @@ namespace NextPark.Mobile.ViewModels
                 Id = 1,
                 Latitude = e.Position.Latitude,
                 Longitude = e.Position.Longitude,
+                Address = "Custom Pin",
+                Cap = 0,
+                City = "City"
 
             };
 
@@ -346,8 +332,28 @@ namespace NextPark.Mobile.ViewModels
 
         private void Map_PinTapped(object sender, CustomControls.PinTapEventArgs e)
         {
-            _dialogService.ShowConfirmAlert("Pin Tapped", "Marker tapped");
+            int index = 0;
+            foreach (ParkingInfo parking in Parkings) {
+                if (parking.UID == e.Parking.Id) {
+                    Index = index;
+                    break;
+                }
+                index++;
+            }
+            Picture = e.Parking.ImageUrl;
+            if ((Picture == null) || (Picture.Equals(""))) 
+            {
+                Picture = "icon_no_photo.png";
+            }
+            Info = (e.Parking.Status == ParkingStatus.Enabled) ? "Disponibile" : "Occupato";
+            SubInfo = e.Parking.PriceMin + " CHF/h";
+            InfoPanelVisible = true;
 
+            base.OnPropertyChanged("Picture");
+            base.OnPropertyChanged("Info");
+            base.OnPropertyChanged("SubInfo");
+            base.OnPropertyChanged("Index");
+            base.OnPropertyChanged("InfoPanelVisible");
         }
 
         private void Map_MapReady(object sender, System.EventArgs e)
@@ -383,7 +389,7 @@ namespace NextPark.Mobile.ViewModels
                 // _loggerService.LogVerboseException(ex, this).ShowVerboseException(ex, this).ThrowVerboseException(ex, this);
             }
 
-            Map.MoveToRegion(MapSpan.FromCenterAndRadius(position, Distance.FromKilometers(1)));
+            //Map.MoveToRegion(MapSpan.FromCenterAndRadius(position, Distance.FromKilometers(1)));
 
             /*
             Xamarin.Forms.Device.StartTimer(TimeSpan.FromSeconds(2), () =>
@@ -416,9 +422,9 @@ namespace NextPark.Mobile.ViewModels
                 Parking = parking,
                 Type = PinType.Place,
                 Position = position,
-                Label = "custom pin",
-                Address = "custom detail info",
-                Icon = "icon_coins_48"
+                Label = parking.Address,
+                Address = parking.Cap.ToString() + " " + parking.City,
+                Icon = (parking.Status == ParkingStatus.Enabled) ? "ic_location_green" : "ic_location_red"
             };
 
             Map.Pins.Add(pin);
@@ -478,6 +484,33 @@ namespace NextPark.Mobile.ViewModels
             else
             {
                 NavigationService.NavigateToAsync<LoginViewModel>();
+            }
+        }
+
+        public void OnSearchMethod(object data)
+        {
+            SearchAddress(SearchText);
+        }
+
+        public async void SearchAddress(string address)
+        {
+            try
+            {
+                var result = await _geoLocatorService.GetPositionForAddress(SearchText);
+                if (result == null)
+                {
+                    // no results found
+                    _dialogService.ShowToast("Nessun risulato trovato");
+                }
+
+                foreach (var location in result)
+                {
+                    Xamarin.Forms.Maps.Position position = location.ToXamMapPosition();
+                    Map.MoveToRegion(MapSpan.FromCenterAndRadius(position, Distance.FromKilometers(1)));
+                    return;
+                }
+            } catch (Exception e) {
+                _dialogService.ShowToast("Nessun risulato trovato");
             }
         }
     }

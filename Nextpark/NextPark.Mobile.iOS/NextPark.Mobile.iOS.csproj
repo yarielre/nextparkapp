@@ -143,6 +143,10 @@
     <BundleResource Include="Resources\image_parking1.png" />
     <BundleResource Include="Resources\icon_left_gray_128.png" />
     <BundleResource Include="Resources\icon_right_gray_128.png" />
+    <BundleResource Include="Resources\bg_logo.png" />
+    <BundleResource Include="Resources\ic_location_black.png" />
+    <BundleResource Include="Resources\ic_location_green.png" />
+    <BundleResource Include="Resources\icon_no_photo.png" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

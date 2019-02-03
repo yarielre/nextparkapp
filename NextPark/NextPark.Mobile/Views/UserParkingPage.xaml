@@ -91,9 +91,14 @@
                                                         FontSize="Small"
                                                         FontAttributes="Bold"
                                                         TextColor="Gray"/>
-                                                <Label  Text="{Binding City}"
-                                                        FontSize="Small"
-                                                        FontAttributes="None" />
+                                                <StackLayout Orientation="Horizontal" Spacing="2">
+                                                    <Label  Text="{Binding Cap}"
+                                                            FontSize="Small"
+                                                            FontAttributes="None" />
+                                                    <Label  Text="{Binding City}"
+                                                            FontSize="Small"
+                                                            FontAttributes="None" />
+                                                </StackLayout>
                                                 <Label  Text="{Binding Status}"
                                                         FontSize="Small"
                                                         FontAttributes="Bold"
