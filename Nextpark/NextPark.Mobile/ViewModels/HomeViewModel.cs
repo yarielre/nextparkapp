@@ -41,6 +41,7 @@ namespace NextPark.Mobile.ViewModels
         private readonly IDialogService _dialogService;
         private readonly ParkingDataService _parkingDataService;
         private readonly EventDataService _eventDataService;
+        private readonly InAppPurchaseService _inAppPurchaseService;
 
 
         // PRIVATE VARIABLES
@@ -56,13 +57,14 @@ namespace NextPark.Mobile.ViewModels
         // METHODS
         public HomeViewModel(IGeolocatorService geolocatorService, IDialogService dialogService,
             IApiService apiService, IAuthService authService, INavigationService navService,
-            ParkingDataService parkingDataService, EventDataService eventDataService)
+            ParkingDataService parkingDataService, EventDataService eventDataService, InAppPurchaseService inAppPurchaseService)
             : base(apiService, authService, navService)
         {
             _geoLocatorService = geolocatorService;
             _dialogService = dialogService;
             _parkingDataService = parkingDataService;
             _eventDataService = eventDataService;
+            _inAppPurchaseService = inAppPurchaseService;
 
             OnUserClick = new Command<object>(OnUserClickMethod);
             OnMoneyClick = new Command<object>(OnMoneyClickMethod);
@@ -234,12 +236,23 @@ namespace NextPark.Mobile.ViewModels
             };
 
             CreatePin(e.Position, demoParking);
-        }
 
+            TestPaymentAsync();
+           
+        }
+        private async Task TestPaymentAsync() {
+
+            var result = await _dialogService.ShowConfirmAlert("Map Tapped", "Test the payment?");
+
+            if (result) {
+               var purchaseResult = this._inAppPurchaseService.MakePurchase();
+
+
+            }
+        }
         private void Map_PinTapped(object sender, CustomControls.PinTapEventArgs e)
         {
             _dialogService.ShowConfirmAlert("Pin Tapped", "Marker tapped");
-
         }
 
         private void Map_MapReady(object sender, System.EventArgs e)

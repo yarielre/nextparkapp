@@ -22,6 +22,7 @@ namespace NextPark.Mobile.Infrastructure
             builder.RegisterType<DialogService>().As<IDialogService>();
             builder.RegisterType<GeolocatorService>().As<IGeolocatorService>();
             builder.RegisterType<LoggerService>().As<ILoggerService>();
+            builder.RegisterType<InAppPurchaseService>().As<InAppPurchaseService>();
 
             //Services - Data
             builder.RegisterType<ParkingDataService>();
