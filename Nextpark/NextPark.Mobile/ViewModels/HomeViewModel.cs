@@ -57,7 +57,8 @@ namespace NextPark.Mobile.ViewModels
         // METHODS
         public HomeViewModel(IGeolocatorService geolocatorService, IDialogService dialogService,
             IApiService apiService, IAuthService authService, INavigationService navService,
-            ParkingDataService parkingDataService, EventDataService eventDataService, InAppPurchaseService inAppPurchaseService)
+            ParkingDataService parkingDataService, EventDataService eventDataService, 
+            InAppPurchaseService inAppPurchaseService)
             : base(apiService, authService, navService)
         {
             _geoLocatorService = geolocatorService;
