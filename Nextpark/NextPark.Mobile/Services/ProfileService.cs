@@ -21,7 +21,7 @@ namespace NextPark.Mobile.Services
         public async Task<UpdateUserCoinModel> UpdateUserCoins(UpdateUserCoinModel model)
         {
             var isConneted = await _apiService.CheckConnection();
-            if (!isConneted.IsSuccess) throw new Exception("Internet correction error.");
+            if (!isConneted.IsSuccess) throw new Exception("Connessione ad internet assente");
 
             var json = JsonConvert.SerializeObject(model);
             var content = new StringContent(json, Encoding.UTF8, "application/json");

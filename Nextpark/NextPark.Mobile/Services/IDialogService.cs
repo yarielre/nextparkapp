@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 
 namespace NextPark.Mobile.Services
 {
@@ -8,5 +9,6 @@ namespace NextPark.Mobile.Services
         Task<bool> ShowConfirmAlert(string title, string message);
         Task ShowErrorAlert(string message);
         void ShowToast(string message);
+        void ShowToast(string message, TimeSpan dismissTimer);
     }
 }

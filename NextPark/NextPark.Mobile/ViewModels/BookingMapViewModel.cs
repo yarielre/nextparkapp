@@ -49,7 +49,7 @@ namespace NextPark.Mobile.ViewModels
             _dialogService = dialogService;
 
             // Header
-            UserName = AuthSettings.UserName;
+            UserName = AuthSettings.User.Name;
             UserMoney = AuthSettings.UserCoin.ToString("N0");
             base.OnPropertyChanged("UserName");
             base.OnPropertyChanged("UserMoney");
@@ -78,7 +78,7 @@ namespace NextPark.Mobile.ViewModels
 
             // Header
             BackText = "Indietro";
-            UserName = AuthSettings.UserName;
+            UserName = AuthSettings.User.Name;
             UserMoney = AuthSettings.UserCoin.ToString("N0");
             base.OnPropertyChanged("BackText");
             base.OnPropertyChanged("UserName");

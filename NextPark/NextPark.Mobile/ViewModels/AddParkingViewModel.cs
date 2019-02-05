@@ -99,7 +99,7 @@ namespace NextPark.Mobile.ViewModels
             _parkingDataService = parkingDataService;
 
             // Header
-            UserName = AuthSettings.UserName;
+            UserName = AuthSettings.User.Name;
             UserMoney = AuthSettings.UserCoin.ToString("N0");
             base.OnPropertyChanged("UserName");
             base.OnPropertyChanged("UserMoney");
@@ -157,7 +157,7 @@ namespace NextPark.Mobile.ViewModels
 
             // Header
             BackText = "Parcheggi";
-            UserName = AuthSettings.UserName;
+            UserName = AuthSettings.User.Name;
             UserMoney = AuthSettings.UserCoin.ToString("N0");
             base.OnPropertyChanged("BackText");
             base.OnPropertyChanged("UserName");

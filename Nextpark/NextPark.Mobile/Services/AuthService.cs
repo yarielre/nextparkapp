@@ -20,8 +20,8 @@ namespace NextPark.Mobile.Services
         {
             _apiService = apiService;
             Authenticated = false;
-            AuthSettings.UserName = "Accedi";
             AuthSettings.UserCoin = 0;
+            AuthSettings.User = new UserModel { Name = "Accedi" };
         }
 
         public async Task<TokenResponse> Login(string username, string password)
@@ -161,7 +161,7 @@ namespace NextPark.Mobile.Services
 
                 var http = _apiService.GetHttpClient();
                 var response = await http.PostAsync(url, content);
-                if (response.StatusCode == HttpStatusCode.BadRequest)
+                if (response.StatusCode != HttpStatusCode.OK)
                     return new Response
                     {
                         IsSuccess = false,
@@ -171,8 +171,9 @@ namespace NextPark.Mobile.Services
                 var resultJson = await response.Content.ReadAsStringAsync();
                 var result = JsonConvert.DeserializeObject<UserModel>(resultJson);
 
+                Authenticated = true;
                 AuthSettings.User = result;
-                AuthSettings.UserName = result.Name;
+                AuthSettings.UserName = result.UserName;
                 AuthSettings.UserCoin = result.Balance;
 
                 return new Response

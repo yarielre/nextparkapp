@@ -60,6 +60,11 @@ namespace NextPark.Mobile.ViewModels
             _dialogService = dialogService;
             _eventDataService = eventDataService;
 
+            UserName = AuthSettings.User.Name;
+            UserMoney = AuthSettings.UserCoin.ToString("N0");
+            base.OnPropertyChanged("UserName");
+            base.OnPropertyChanged("UserMoney");
+
             // Header actions
             OnBackClick = new Command<object>(OnBackClickMethod);
             OnUserClick = new Command<object>(OnUserClickMethod);
@@ -77,7 +82,7 @@ namespace NextPark.Mobile.ViewModels
 
                     // Header
                     BackText = "Indietro";
-                    UserName = AuthSettings.UserName;
+                    UserName = AuthSettings.User.Name;
                     UserMoney = AuthSettings.UserCoin.ToString("N0");
                     base.OnPropertyChanged("BackText");
                     base.OnPropertyChanged("UserName");

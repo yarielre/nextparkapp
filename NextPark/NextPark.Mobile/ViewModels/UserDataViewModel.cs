@@ -79,7 +79,7 @@ namespace NextPark.Mobile.ViewModels
 
             OnSaveClick = new Command<object>(OnSaveClickMethod);
 
-            UserName = AuthSettings.UserName;
+            UserName = AuthSettings.User.Name;
             UserMoney = AuthSettings.UserCoin.ToString("N0");
 
             /* Future implementation
@@ -93,7 +93,7 @@ namespace NextPark.Mobile.ViewModels
         {
             // Header
             BackText = "Profilo";
-            UserName = AuthSettings.UserName;
+            UserName = AuthSettings.User.Name;
             UserMoney = AuthSettings.UserCoin.ToString("N0");
 
             base.OnPropertyChanged("BackText");
@@ -248,7 +248,7 @@ namespace NextPark.Mobile.ViewModels
             string userAddress = this.Address + "," + this.NPA + "," + this.City;
             this.editModel = new EditProfileModel
             {
-                Username = this.UserName,
+                Username = this.Email,
                 Name = this.Name,
                 Lastname = this.Lastname,
                 Email = this.Email,

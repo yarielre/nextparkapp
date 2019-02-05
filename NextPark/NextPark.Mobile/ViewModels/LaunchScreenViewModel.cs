@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using NextPark.Mobile.Core.Settings;
 using NextPark.Mobile.Services;
 using NextPark.Mobile.Services.Data;
 using Xamarin.Forms;
@@ -42,10 +43,37 @@ namespace NextPark.Mobile.ViewModels
             return Task.FromResult(false);
         }
 
-        public void GetParkingList()
+        public async void GetParkingList()
         {
+            // Check autologin
+            await AutoLogin();
+
+            // Stop activity spinner
+            IsRunning = false;
+            base.OnPropertyChanged("IsRunning");
+
             // Read parking list and store it into a singleton
-            NavigationService.NavigateToAsync<HomeViewModel>();
+            await NavigationService.NavigateToAsync<HomeViewModel>();
+        }
+
+        public async Task<bool> AutoLogin()
+        {
+            if ((AuthSettings.UserId != null) && (AuthSettings.UserName != null))
+            {
+                try
+                {
+                    var userResponse = await AuthService.GetUserByUserName(AuthSettings.UserName);
+
+                    // Check user data response
+                    if (userResponse.IsSuccess == true)
+                    {
+                        return true;
+                    }
+                    return false;
+                }
+                catch (Exception e) { return false; }
+            }
+            return false;
         }
     }
 }

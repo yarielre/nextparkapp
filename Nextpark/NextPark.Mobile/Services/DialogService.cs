@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Acr.UserDialogs;
 
 namespace NextPark.Mobile.Services
@@ -28,6 +29,11 @@ namespace NextPark.Mobile.Services
         public void ShowToast(string message)
         {
             UserDialogs.Instance.Toast(message);
+        }
+
+        public void ShowToast(string message, TimeSpan dismissTimer)
+        {
+            UserDialogs.Instance.Toast(message, dismissTimer);
         }
     }
 }

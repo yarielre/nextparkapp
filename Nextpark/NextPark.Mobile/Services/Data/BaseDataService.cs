@@ -22,7 +22,7 @@ namespace NextPark.Mobile.Services.Data
             var isConneted = await ApiService.CheckConnection();
             if (!isConneted.IsSuccess)
             {
-                throw new Exception("Internet correction error.");
+                throw new Exception("Connessione ad internet assente");
             }
 
             try

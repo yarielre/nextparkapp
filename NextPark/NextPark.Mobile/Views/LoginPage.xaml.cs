@@ -17,7 +17,7 @@ namespace NextPark.Mobile.Views
             if (BindingContext == null) return;
             if (BindingContext is BaseViewModel bvm)
             {
-                bvm.InitializeAsync();
+                //bvm.InitializeAsync();
             }
         }
     }

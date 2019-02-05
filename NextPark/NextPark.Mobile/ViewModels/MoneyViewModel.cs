@@ -50,7 +50,7 @@ namespace NextPark.Mobile.ViewModels
             // Header
             // TODO: evaluate back text and action
             BackText = "Profilo";
-            UserName = AuthSettings.UserName;
+            UserName = AuthSettings.User.Name;
             UserMoney = AuthSettings.UserCoin.ToString("N0");
 
             // Header actions
@@ -76,7 +76,7 @@ namespace NextPark.Mobile.ViewModels
             // Header
             // TODO: evaluate back text and action
             BackText = "Profilo";
-            UserName = AuthSettings.UserName;
+            UserName = AuthSettings.User.Name;
             UserMoney = AuthSettings.UserCoin.ToString("N0");
 
             base.OnPropertyChanged("BackText");

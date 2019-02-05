@@ -68,7 +68,7 @@ namespace NextPark.Mobile.ViewModels
             OnParkingsAction = new Command(OnParkingsClickMethod);
             OnBookingsAction = new Command(OnBookingsClickMethod);
 
-            UserName = AuthSettings.UserName;
+            UserName = AuthSettings.User.Name;
             UserMoney = AuthSettings.UserCoin.ToString("N0");
 
         }
@@ -77,7 +77,7 @@ namespace NextPark.Mobile.ViewModels
         public override Task InitializeAsync(object data = null)
         {
             // Header
-            UserName = AuthSettings.UserName;
+            UserName = AuthSettings.User.Name;
             UserMoney = AuthSettings.UserCoin.ToString("N0");
             base.OnPropertyChanged("UserName");
             base.OnPropertyChanged("UserMoney");

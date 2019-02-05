@@ -17,7 +17,8 @@
             <ActivityIndicator x:Name="activityContent"
                                IsRunning="{Binding IsRunning, Mode=TwoWay}"                    
                                VerticalOptions="Center"
-                               HorizontalOptions="Center">
+                               HorizontalOptions="Center"
+                               Color="White">
             </ActivityIndicator>
         </StackLayout>
     </ContentPage.Content>

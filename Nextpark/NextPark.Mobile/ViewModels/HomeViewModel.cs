@@ -66,6 +66,7 @@ namespace NextPark.Mobile.ViewModels
             //set => SetValue(ref parkings, value); TODO: Use this.
             set { parkings = value; base.OnPropertyChanged("Parkings"); }
         }
+        private static bool connected;
 
         // METHODS
         public HomeViewModel(IGeolocatorService geolocatorService, IDialogService dialogService,
@@ -88,6 +89,8 @@ namespace NextPark.Mobile.ViewModels
 
             Parkings = new ObservableCollection<ParkingInfo>();
 
+            connected = false;
+
         }
 
         public override Task InitializeAsync(object data = null)
@@ -97,7 +100,7 @@ namespace NextPark.Mobile.ViewModels
             Map.PinTapped += Map_PinTapped;
 
             // Set User data
-            UserName = AuthSettings.UserName;
+            UserName = AuthSettings.User.Name;
             UserImage = "icon_no_user_256.png";
             UserMoney = AuthSettings.UserCoin.ToString("N0");
             base.OnPropertyChanged("UserName");
@@ -118,8 +121,6 @@ namespace NextPark.Mobile.ViewModels
             //DemoBackEndCalls();
 
             UpdateParkingList();
-
-            //base.OnPropertyChanged("Parkings");
 
             return Task.FromResult(false);
         }
@@ -206,64 +207,37 @@ namespace NextPark.Mobile.ViewModels
 
         public async void UpdateParkingList()
         {
-            await GetParkings();
-        }
-        private async Task GetParkings()
-        {
-            Xamarin.Forms.Device.StartTimer(TimeSpan.FromSeconds(2), () =>
-            {
-                UpdateMapPins();
-                base.OnPropertyChanged("Parkings");
-                return false;
-            });
+            // Check connection
+            var result = await ApiService.CheckConnection();
+            if (result.IsSuccess == false) {
+                _dialogService.ShowToast("Connessione ad internet assente", TimeSpan.FromSeconds(10));
+                Xamarin.Forms.Device.StartTimer(TimeSpan.FromSeconds(9), () => { UpdateParkingList(); return false; });
+                return;
+            }
 
-            //base.OnPropertyChanged("Parkings");
+            connected = true;
 
-            /*
-            //Demo Post Parking Working on It!
-            var parking1 = new ParkingModel
-            {
-                ImageUrl = "image_parking1.png",
-                IsRented = false,
-                ParkingEvent = new EventModel
-                {
-                    EndDate = DateTime.Now,
-                    StartDate = DateTime.Now
-                },
-                ParkingCategory = new ParkingCategoryModel
-                {
-                    Category = "Test",
-                    HourPrice = 2.0,
-                    MonthPrice = 3.0
-                },
-                ParkingType = new ParkingTypeModel
-                {
-                    Type = "Business"
+            // Check user login
+            if ((!AuthService.IsUserAuthenticated()) && (AuthSettings.UserId != null) && (AuthSettings.UserName != null)) {
+                // Update User Data
+                try {
+                    var userResult = await _authService.GetUserByUserName(AuthSettings.UserName);
+                    if (AuthService.IsUserAuthenticated()) {
+                        // Update user data
+                        UserName = AuthSettings.User.Name;
+                        UserImage = "icon_no_user_256.png";
+                        UserMoney = AuthSettings.UserCoin.ToString("N0");
+                        base.OnPropertyChanged("UserName");
+                        base.OnPropertyChanged("UserImage");
+                        base.OnPropertyChanged("UserMoney");
+                    }
+                } catch (Exception e) {
+                    _dialogService.ShowToast(e.Message, TimeSpan.FromSeconds(10));
+                    Xamarin.Forms.Device.StartTimer(TimeSpan.FromSeconds(9), () => { UpdateParkingList(); return false; });
                 }
-            };
+            }
 
-            var response = await _parkingDataService.Post(parking1);
-
-            // TODO: fill parking list and use parkingModel
-            Parkings = new ObservableCollection<ParkingInfo>
-            {
-                new ParkingInfo {
-                UID = 0,
-                Info = "Via Strada 1",
-                SubInfo = "Lugano, Ticino",
-                Picture="image_parking1.png",
-                FullPrice = "2 CHF/h",
-                FullAvailability = "08:00-12:00",
-                BookAction = OnBookingTapped},
-
-                new ParkingInfo { UID = 1, Info = "Via Strada 1.5", SubInfo = "Lugano, Ticino", Picture="image_parking1.png", FullPrice = "2 CHF/h", FullAvailability = "08:00-12:00", BookAction = OnBookingTapped},
-                new ParkingInfo { UID = 2, Info = "Via Strada 2", SubInfo = "Lugano, Ticino", Picture="image_parking1.png", FullPrice = "2 CHF/h", FullAvailability = "08:00-12:00", BookAction = OnBookingTapped}
-            };
-            */
-        }
-
-        private async void UpdateMapPins()
-        {
+            // Get Parking list
             try
             {
                 var parkingsResponse = await _parkingDataService.Get();
@@ -286,27 +260,12 @@ namespace NextPark.Mobile.ViewModels
                         BookAction = OnBookingTapped
                     });
                     CreatePin(new Position(parking.Latitude, parking.Longitude), parking);
-                    /*
-                    var pin = new CustomPin
-                    {
-                        Id = parking.Id,
-                        Parking = parking,
-                        Type = PinType.Place,
-                        Position = new Position(parking.Latitude, parking.Longitude),
-                        Label = parking.Address,
-                        Address = parking.Cap.ToString() + " " + parking.City,
-                        Icon = "ic_location_green"
-                    };
-                    if (parking.Status == ParkingStatus.Disabled)
-                    {
-                        pin.Icon = "ic_location_black";
-                    }
-                    Map.Pins.Add(pin);
-                    */
                 }
-
-            } catch (Exception e) {
-                await _dialogService.ShowErrorAlert(e.Message);
+                base.OnPropertyChanged("Parkings");
+            }
+            catch (Exception e) {
+                _dialogService.ShowToast(e.Message, TimeSpan.FromSeconds(10));
+                Xamarin.Forms.Device.StartTimer(TimeSpan.FromSeconds(9), () => { UpdateParkingList(); return false; });
             }
         }
 
@@ -437,8 +396,12 @@ namespace NextPark.Mobile.ViewModels
             {
                 NavigationService.NavigateToAsync<UserProfileViewModel>();
             }
-            else
+            else if ((AuthSettings.UserId != null) && (AuthSettings.UserName != null) && (connected == false))
             {
+                // No internet connection
+                _dialogService.ShowAlert("Attenzione","Connessione ad internet assente");
+            }
+            else {
                 NavigationService.NavigateToAsync<LoginViewModel>();
             }
         }
@@ -453,6 +416,11 @@ namespace NextPark.Mobile.ViewModels
                     //NavigationService.NavigateToAsync<MoneyViewModel>();
                     GoToMoneyPage();
                 } catch (Exception ex) {}
+            }
+            else if ((AuthSettings.UserId != null) && (AuthSettings.UserName != null) && (connected == false))
+            {
+                // No internet connection
+                _dialogService.ShowAlert("Attenzione", "Connessione ad internet assente");
             }
             else
             {
