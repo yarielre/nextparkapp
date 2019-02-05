@@ -80,11 +80,8 @@ namespace NextPark.Mobile.ViewModels
             _dialogService = dialogService;
             _parkingDataService = parkingDataService;
             _eventDataService = eventDataService;
-<<<<<<< HEAD
             _authService = authService;
-=======
             _inAppPurchaseService = inAppPurchaseService;
->>>>>>> master
 
             OnUserClick = new Command<object>(OnUserClickMethod);
             OnMoneyClick = new Command<object>(OnMoneyClickMethod);
@@ -309,7 +306,6 @@ namespace NextPark.Mobile.ViewModels
         }
         private void Map_PinTapped(object sender, CustomControls.PinTapEventArgs e)
         {
-<<<<<<< HEAD
             int index = 0;
             foreach (ParkingInfo parking in Parkings) {
                 if (parking.UID == e.Parking.Id) {
@@ -332,9 +328,6 @@ namespace NextPark.Mobile.ViewModels
             base.OnPropertyChanged("SubInfo");
             base.OnPropertyChanged("Index");
             base.OnPropertyChanged("InfoPanelVisible");
-=======
-            _dialogService.ShowConfirmAlert("Pin Tapped", "Marker tapped");
->>>>>>> master
         }
 
         private void Map_MapReady(object sender, System.EventArgs e)
