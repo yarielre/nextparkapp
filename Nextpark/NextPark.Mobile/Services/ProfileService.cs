@@ -6,12 +6,15 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using NextPark.Mobile.Core.Settings;
 using NextPark.Models;
+using Xamarin.Forms.Maps;
 
 namespace NextPark.Mobile.Services
 {
     public class ProfileService : IProfileService
     {
         private readonly IApiService _apiService;
+
+        public Position LastUserPosition { get; set; }
 
         public ProfileService(IApiService apiService)
         {

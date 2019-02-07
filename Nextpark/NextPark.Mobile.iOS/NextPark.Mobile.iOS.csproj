@@ -147,6 +147,7 @@
     <BundleResource Include="Resources\ic_location_black.png" />
     <BundleResource Include="Resources\ic_location_green.png" />
     <BundleResource Include="Resources\icon_no_photo.png" />
+    <BundleResource Include="Resources\icon_location_64.png" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

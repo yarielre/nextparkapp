@@ -48,6 +48,7 @@ namespace NextPark.Mobile.ViewModels
 
         public ICommand OnSearch { get; set; }
         public string SearchText { get; set; }
+        public ICommand OnCurrentPosition { get; set; }
 
         // SERVICES
         private readonly IGeolocatorService _geoLocatorService;
@@ -55,6 +56,7 @@ namespace NextPark.Mobile.ViewModels
         private readonly ParkingDataService _parkingDataService;
         private readonly EventDataService _eventDataService;
         private readonly InAppPurchaseService _inAppPurchaseService;
+        private readonly IProfileService _profileService;
 
         private readonly IAuthService _authService;
 
@@ -70,10 +72,15 @@ namespace NextPark.Mobile.ViewModels
         private static bool connected;
 
         // METHODS
-        public HomeViewModel(IGeolocatorService geolocatorService, IDialogService dialogService,
-            IApiService apiService, IAuthService authService, INavigationService navService,
-            ParkingDataService parkingDataService, EventDataService eventDataService, 
-            InAppPurchaseService inAppPurchaseService)
+        public HomeViewModel(IGeolocatorService geolocatorService, 
+                             IDialogService dialogService,
+                             IApiService apiService, 
+                             IAuthService authService, 
+                             INavigationService navService,
+                             ParkingDataService parkingDataService, 
+                             EventDataService eventDataService, 
+                             InAppPurchaseService inAppPurchaseService, 
+                             IProfileService profileService)
             : base(apiService, authService, navService)
         {
             _geoLocatorService = geolocatorService;
@@ -82,11 +89,13 @@ namespace NextPark.Mobile.ViewModels
             _eventDataService = eventDataService;
             _authService = authService;
             _inAppPurchaseService = inAppPurchaseService;
+            _profileService = profileService;
 
             OnUserClick = new Command<object>(OnUserClickMethod);
             OnMoneyClick = new Command<object>(OnMoneyClickMethod);
             OnBookingTapped = new Command<object>(OnBookingTappedMethod);
             OnSearch = new Command<object>(OnSearchMethod);
+            OnCurrentPosition = new Command(OnCurrentPositionMethod);
 
             InfoPanelVisible = false;
 
@@ -101,6 +110,7 @@ namespace NextPark.Mobile.ViewModels
             Map.MapReady += Map_MapReady;
             Map.Tapped += Map_Tapped;
             Map.PinTapped += Map_PinTapped;
+            Map.PropertyChanged += Map_PropertyChanged;
 
             // Set User data
             UserName = AuthSettings.User.Name;
@@ -127,6 +137,15 @@ namespace NextPark.Mobile.ViewModels
 
             return Task.FromResult(false);
         }
+
+        void Map_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            CustomMap map = sender as CustomMap;
+            if (e.PropertyName == "VisibleRegion") {
+                _profileService.LastUserPosition = map.VisibleRegion.Center;
+            }
+        }
+
 
         private async void DemoBackEndCalls()
         {
@@ -337,58 +356,30 @@ namespace NextPark.Mobile.ViewModels
             Map_Ready_Handler();
         }
 
-        private void CallMapReady()
-        {
-            Map_Ready_Handler();
-        }
-
         private async void Map_Ready_Handler()
-        {
-
-            Xamarin.Forms.Maps.Position position = new Position(0, 0);
+        {        
             try
             {
+                if ((_profileService.LastUserPosition == null) || (_profileService.LastUserPosition == new Position(0,0)))
+                {
+                    _profileService.LastUserPosition = new Position(0, 0);
 
-                var geoLocation = await _geoLocatorService.GetLocation();
+                    var geoLocation = await _geoLocatorService.GetLocation();
 
-                if (geoLocation == null) return;
+                    if (geoLocation == null) return;
 
-                position = geoLocation.ToXamMapPosition();
+                    _profileService.LastUserPosition = geoLocation.ToXamMapPosition();
+                }
 
-                Map.MoveToRegion(MapSpan.FromCenterAndRadius(position, Distance.FromKilometers(1)));
-
+                Map.MoveToRegion(MapSpan.FromCenterAndRadius(_profileService.LastUserPosition, Distance.FromKilometers(1)));
 
             }
             catch (Exception ex)
             {
                 // _loggerService.LogVerboseException(ex, this).ShowVerboseException(ex, this).ThrowVerboseException(ex, this);
             }
-
-            //Map.MoveToRegion(MapSpan.FromCenterAndRadius(position, Distance.FromKilometers(1)));
-
-            /*
-            Xamarin.Forms.Device.StartTimer(TimeSpan.FromSeconds(2), () =>
-            {
-                // Update parkings
-                if (_parkingDataService.Parkings.Count > 0)
-                {
-                    foreach (ParkingModel parking in _parkingDataService.Parkings)
-                    {
-                        Map.Pins.Add(new Pin
-                        {
-                            Position = new Position(parking.Latitude, parking.Longitude),
-                            Label = parking.Address,
-                            BindingContext = Map.BindingContext
-                        });
-                    }
-                    base.OnPropertyChanged("Parkings");
-                }
-                return false;
-            });
-            */
-
-
         }
+
         private void CreatePin(Position position, ParkingModel parking)
         {
             var pin = new CustomPin
@@ -496,6 +487,28 @@ namespace NextPark.Mobile.ViewModels
             } catch (Exception e) {
                 _dialogService.ShowToast("Nessun risulato trovato");
             }
+        }
+
+        public void OnCurrentPositionMethod()
+        {
+            MoveToCurrentPosition();
+        }
+
+        public async void MoveToCurrentPosition()
+        {
+            try
+            {
+                _profileService.LastUserPosition = new Position(0, 0);
+
+                var geoLocation = await _geoLocatorService.GetLocation();
+
+                if (geoLocation == null) return;
+
+                _profileService.LastUserPosition = geoLocation.ToXamMapPosition();
+
+                Map.MoveToRegion(MapSpan.FromCenterAndRadius(_profileService.LastUserPosition, Distance.FromKilometers(1)));
+
+            } catch (Exception e) {}
         }
     }
 }

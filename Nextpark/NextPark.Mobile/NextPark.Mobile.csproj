@@ -27,6 +27,7 @@
   <ItemGroup>
     <Folder Include="CustomControls\" />
     <Folder Include="Controls\" />
+    <Folder Include="UIModels\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="Resources.Designer.cs" />
