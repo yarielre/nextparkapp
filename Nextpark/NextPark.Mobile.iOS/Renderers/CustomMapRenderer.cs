@@ -31,7 +31,7 @@ namespace Inside.Xamarin.iOS.Renderers
     {
         private readonly UITapGestureRecognizer _tapRecogniser;
         private CustomMap _formsMap;
-
+        private static string annotationId = "NextParkAnnotation";
 
         private UIView customPinView;
 
@@ -114,18 +114,18 @@ namespace Inside.Xamarin.iOS.Renderers
                 return null;
             }
 
-            annotationView = mapView.DequeueReusableAnnotation(customPin.Id.ToString());
+            annotationView = mapView.DequeueReusableAnnotation(annotationId);
 
             if (annotationView == null)
             {
-                annotationView = new CustomMKAnnotationView(annotation, customPin.Id.ToString());
+                annotationView = new CustomMKAnnotationView(annotation, annotationId);//customPin.Id.ToString());
 
-                annotationView.Image = UIImage.FromFile("icon_add_48.png");
+                annotationView.Image = UIImage.FromFile(customPin.Icon+".png");
                 annotationView.CalloutOffset = new CGPoint(0, 0);
-                annotationView.LeftCalloutAccessoryView = new UIImageView(UIImage.FromFile("icon_add_48.png"));
+                annotationView.LeftCalloutAccessoryView = new UIImageView(UIImage.FromFile(customPin.Icon+".png"));
                 annotationView.RightCalloutAccessoryView = UIButton.FromType(UIButtonType.DetailDisclosure);
 
-                ((CustomMKAnnotationView)annotationView).Id = customPin.Id.ToString();
+                ((CustomMKAnnotationView)annotationView).Id = annotationId;
             }
 
             annotationView.CanShowCallout = true;
@@ -145,10 +145,11 @@ namespace Inside.Xamarin.iOS.Renderers
 
         void OnDidSelectAnnotationView(object sender, MKAnnotationViewEventArgs e)
         {
-            var customView = e.View as CustomMKAnnotationView;
+            //var customView = e.View as CustomMKAnnotationView;
+            var customView = (CustomMKAnnotationView)GetViewForAnnotation((MKMapView)sender, e.View.Annotation);
             customPinView = new UIView();
 
-            if (customView.Id == "Xamarin")
+            if (customView.Id == "NextParkAnnotation")
             {
                 customPinView.Frame = new CGRect(0, 0, 200, 84);
                 var image = new UIImageView(new CGRect(0, 0, 200, 84));
@@ -157,6 +158,8 @@ namespace Inside.Xamarin.iOS.Renderers
                 customPinView.Center = new CGPoint(0, -(e.View.Frame.Height + 75));
                 e.View.AddSubview(customPinView);
             }
+            var customPin = GetCustomPin(e.View.Annotation);
+            ((CustomMap)Element).OnPinTap(customPin.Parking);
         }
 
         void OnDidDeselectAnnotationView(object sender, MKAnnotationViewEventArgs e)

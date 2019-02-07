@@ -272,12 +272,13 @@ namespace NextPark.Mobile.ViewModels
             }
         }
 
-        private async void Map_Tapped(object sender, CustomControls.MapTapEventArgs e)
+        private void Map_Tapped(object sender, CustomControls.MapTapEventArgs e)
         {
-            await _dialogService.ShowAlert("Map Tapped", string.Format("Lat {0}, Long {1}", e.Position.Latitude, e.Position.Longitude));
+            //await _dialogService.ShowAlert("Map Tapped", string.Format("Lat {0}, Long {1}", e.Position.Latitude, e.Position.Longitude));
 
             Map.MoveToRegion(MapSpan.FromCenterAndRadius(e.Position, Distance.FromKilometers(1)));
 
+            /*
             var demoParking = new ParkingModel
             {
                 Id = 1,
@@ -292,7 +293,7 @@ namespace NextPark.Mobile.ViewModels
             CreatePin(e.Position, demoParking);
 
             TestPaymentAsync();
-           
+            */
         }
         private async Task TestPaymentAsync() {
 
@@ -398,7 +399,7 @@ namespace NextPark.Mobile.ViewModels
                 Position = position,
                 Label = parking.Address,
                 Address = parking.Cap.ToString() + " " + parking.City,
-                Icon = (parking.Status == ParkingStatus.Enabled) ? "ic_location_green" : "ic_location_red"
+                Icon = (parking.Status == ParkingStatus.Enabled) ? "ic_location_green" : "ic_location_black"
             };
 
             Map.Pins.Add(pin);
