@@ -6,5 +6,6 @@ namespace NextPark.Mobile.Services
     public interface IProfileService
     {
         Task<UpdateUserCoinModel> UpdateUserCoins(UpdateUserCoinModel model);
+        Task<EditProfileModel> UpdateUserData(EditProfileModel model)
     }
 }
