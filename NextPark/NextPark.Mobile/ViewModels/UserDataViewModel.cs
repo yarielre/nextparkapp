@@ -147,15 +147,13 @@ namespace NextPark.Mobile.ViewModels
         {
             UserModel userData = AuthSettings.User;
 
-            string[] addressElements = userData.Address.Split(',');
-            if (addressElements.Length > 2) {
-                Address = addressElements[0];
-                NPA = addressElements[1];
-                City = addressElements[2];
-            }
             Email = userData.Email;
             Name = userData.Name;
             Lastname = userData.Lastname;
+            Phone = userData.Phone;
+            Address = userData.Address;
+            NPA = userData.Cap.ToString();
+            City = userData.City;
             CarPlate = userData.CarPlate;
 
             base.OnPropertyChanged("Email");
@@ -245,16 +243,19 @@ namespace NextPark.Mobile.ViewModels
         public void OnSaveClickMethod(object sender)
         {
             // Prepare user model to update user data
-            string userAddress = this.Address + "," + this.NPA + "," + this.City;
+            string userAddress = this.Address + "$" + this.NPA + "$" + this.City;
             this.editModel = new EditProfileModel
             {
+                Id = AuthSettings.User.Id,
                 Username = this.Email,
                 Name = this.Name,
                 Lastname = this.Lastname,
                 Email = this.Email,
                 Address = userAddress,
                 State = "CH",
-                CarPlate = this.CarPlate   
+                CarPlate = this.CarPlate,
+                NewPassword = "Pippo.001",
+                OldPassword = "Pippo.001"
             };
 
             // Start Activity spinner
@@ -272,37 +273,9 @@ namespace NextPark.Mobile.ViewModels
                 try {
                     var response = await _profileService.UpdateUserData(editModel);
 
-                    // Check update result
-                    if (response != null)
+                    if (response == null)
                     {
-                        AuthSettings.User.CarPlate = response.CarPlate;
-                        AuthSettings.User.Address = response.Address;
-                        AuthSettings.User.Name = response.Name;
-                        AuthSettings.User.Lastname = response.Lastname;
-
-                        CarPlate = AuthSettings.User.CarPlate;
-                        Name = AuthSettings.User.Name;
-                        Lastname = AuthSettings.User.Lastname;
-
-                        string[] addressElements = AuthSettings.User.Address.Split(',');
-                        if (addressElements.Length > 2)
-                        {
-                            Address = addressElements[0];
-                            NPA = addressElements[1];
-                            City = addressElements[2];
-                        }
-
-                        base.OnPropertyChanged("Name");
-                        base.OnPropertyChanged("Lastname");
-                        //base.OnPropertyChanged("Phone");
-                        base.OnPropertyChanged("Address");
-                        base.OnPropertyChanged("NPA");
-                        base.OnPropertyChanged("City");
-                        base.OnPropertyChanged("CarPlate");
-                    }
-                    else
-                    {
-                        await _dialogService.ShowAlert("Attenzione", "Acquisto fallito");
+                        await _dialogService.ShowAlert("Attenzione", "Aggiornamento non riuscito");
                     }
 
                 } catch (Exception ex) {

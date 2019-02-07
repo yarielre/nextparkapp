@@ -50,7 +50,7 @@ namespace NextPark.Mobile.Services
             var json = JsonConvert.SerializeObject(model);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-            var endpoint = $"{ApiSettings.ProfileEndPoint}/editcoins";
+            var endpoint = $"{ApiSettings.ProfileEndPoint}/edit";
 
             var client = _apiService.GetHttpClient();
             var response = await client.PostAsync(endpoint, content);
