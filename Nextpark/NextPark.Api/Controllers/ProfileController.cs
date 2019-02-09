@@ -101,27 +101,14 @@ namespace NextPark.Api.Controllers
                 user.Address = model.Address;
                 user.CarPlate = model.CarPlate;
                 user.State = model.State;
-
-                var passwordCheckResult = await _userManager.CheckPasswordAsync(user, model.OldPassword);
-
-                if (!passwordCheckResult)
-                {
-                    return BadRequest("Invalid previous password");
-                }
-
-                var passwordChangeResult = await _userManager.ChangePasswordAsync(user, model.OldPassword, model.NewPassword);
-
-                if (!passwordChangeResult.Succeeded)
-                {
-
-                    return BadRequest("Impossible to change the password!");
-                }
+                
 
                 var result = await _userManager.UpdateAsync(user);
 
                 if (result.Succeeded)
                 {
-                    return Ok();
+                    var userVm = _mapper.Map<ApplicationUser, UserModel>(user);
+                    return Ok(userVm);
                 }
                 else
                 {
