@@ -120,7 +120,7 @@ namespace Inside.Xamarin.iOS.Renderers
             {
                 annotationView = new CustomMKAnnotationView(annotation, annotationId);//customPin.Id.ToString());
 
-                annotationView.Image = UIImage.FromFile(customPin.Icon+".png");
+                annotationView.Image = UIImage.FromFile(customPin.Icon+".png").Scale(new CGSize(50.0, 50.0));
                 annotationView.CalloutOffset = new CGPoint(0, 0);
                 annotationView.LeftCalloutAccessoryView = new UIImageView(UIImage.FromFile(customPin.Icon+".png"));
                 annotationView.RightCalloutAccessoryView = UIButton.FromType(UIButtonType.DetailDisclosure);

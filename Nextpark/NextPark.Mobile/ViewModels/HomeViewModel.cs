@@ -390,7 +390,7 @@ namespace NextPark.Mobile.ViewModels
                 Position = position,
                 Label = parking.Address,
                 Address = parking.Cap.ToString() + " " + parking.City,
-                Icon = (parking.Status == ParkingStatus.Enabled) ? "ic_location_green" : "ic_location_black"
+                Icon = (parking.Status == ParkingStatus.Enabled) ? "icon_pin_green_256" : "icon_pin_red_256"
             };
 
             Map.Pins.Add(pin);
