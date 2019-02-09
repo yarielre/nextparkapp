@@ -138,7 +138,7 @@ namespace NextPark.Mobile.ViewModels
                     Name = "User",
                     Password = "Wisegar.1",
                     State = "DemoState",
-                    Username = "demo@nextpark.ch"
+                    UserName = "demo@nextpark.ch"
                 };
 
                 var registerResponse = await AuthService.Register(demoUser);

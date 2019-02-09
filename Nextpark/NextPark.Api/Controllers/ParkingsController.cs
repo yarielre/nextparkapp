@@ -93,11 +93,14 @@ namespace NextPark.Api.Controllers
 
             try
             {
-                _mediaService.SaveParkingImage(model);
+                var imageUrl = _mediaService.SaveImage(model.ImageBinary);
+                if (!string.IsNullOrEmpty(imageUrl)) {
+                    model.ImageUrl = imageUrl;
+                }
             }
             catch (Exception e)
             {
-                return BadRequest(string.Format("{0} Exception: {1}", "Error processing Image!", e.Message));
+                //Log: return BadRequest(string.Format("{0} Exception: {1}", "Error processing Image!", e.Message));
             }
 
             try
@@ -127,7 +130,21 @@ namespace NextPark.Api.Controllers
             try
             {
                 var parking = _mapper.Map<ParkingModel, Parking>(model);
-                _mediaService.SaveParkingImage(model);
+
+
+                try
+                {
+                    var imageUrl = _mediaService.SaveImage(model.ImageBinary);
+                    if (!string.IsNullOrEmpty(imageUrl))
+                    {
+                        model.ImageUrl = imageUrl;
+                    }
+                }
+                catch (Exception e)
+                {
+                    //Log: return BadRequest(string.Format("{0} Exception: {1}", "Error processing Image!", e.Message));
+                }
+                
                 _parkingRepository.Update(parking);
                 await _unitOfWork.CommitAsync();
                 var vm = _mapper.Map<Parking, ParkingModel>(parking);

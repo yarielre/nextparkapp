@@ -1,11 +1,10 @@
 ﻿using System.IO;
-using NextPark.Models;
 
 namespace NextPark.Services
 {
     public interface IMediaService
     {
-        void SaveParkingImage(ParkingModel model);
+        string SaveImage(byte[] ImageBinary);
         bool UploadPhoto(MemoryStream stream, string folder, string name);
     }
 }
