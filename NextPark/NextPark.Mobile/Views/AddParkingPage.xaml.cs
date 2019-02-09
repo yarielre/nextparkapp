@@ -13,11 +13,21 @@ namespace NextPark.Mobile.Views
         {
             InitializeComponent();
             On<Xamarin.Forms.PlatformConfiguration.iOS>().SetUseSafeArea(true);
+        }
 
-            if (BindingContext == null) return;
-            if (BindingContext is BaseViewModel bvm)
-            {
-                bvm.InitializeAsync();
+        public void OnPriceMinChange(object sender, ValueChangedEventArgs args)
+        {
+            if (BindingContext is AddParkingViewModel) {
+                AddParkingViewModel viewModel = BindingContext as AddParkingViewModel;
+                viewModel.OnPriceMinChangedMethod(args.NewValue);
+            }
+        }
+
+        public void OnPriceMaxChange(object sender, ValueChangedEventArgs args)
+        {
+            if (BindingContext is AddParkingViewModel) {
+                AddParkingViewModel viewModel = BindingContext as AddParkingViewModel;
+                viewModel.OnPriceMaxChangedMethod(args.NewValue);
             }
         }
     }
