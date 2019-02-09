@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using NextPark.Mobile.Core.Settings;
+using NextPark.Mobile.UIModels;
 using NextPark.Models;
 using Xamarin.Forms.Maps;
 
@@ -14,7 +16,9 @@ namespace NextPark.Mobile.Services
     {
         private readonly IApiService _apiService;
 
-        public Position LastUserPosition { get; set; }
+        public Position LastMapPosition { get; set; }
+        public List<UIParkingModel> ParkingList;
+        public List<UIParkingModel> UserParkingList;
 
         public ProfileService(IApiService apiService)
         {
@@ -62,5 +66,16 @@ namespace NextPark.Mobile.Services
 
             return result == null ? new EditProfileModel() : result as EditProfileModel;
         }
+
+        public UIParkingModel GetParkingById(int searchId)
+        {
+            foreach (UIParkingModel parking in ParkingList) {
+                if (parking.Id == searchId) {
+                    return parking;
+                }
+            }
+            return null;
+        }
+
     }
 }

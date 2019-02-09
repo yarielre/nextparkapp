@@ -142,7 +142,7 @@ namespace NextPark.Mobile.ViewModels
         {
             CustomMap map = sender as CustomMap;
             if (e.PropertyName == "VisibleRegion") {
-                _profileService.LastUserPosition = map.VisibleRegion.Center;
+                _profileService.LastMapPosition = map.VisibleRegion.Center;
             }
         }
 
@@ -360,18 +360,18 @@ namespace NextPark.Mobile.ViewModels
         {        
             try
             {
-                if ((_profileService.LastUserPosition == null) || (_profileService.LastUserPosition == new Position(0,0)))
+                if ((_profileService.LastMapPosition == null) || (_profileService.LastMapPosition == new Position(0,0)))
                 {
-                    _profileService.LastUserPosition = new Position(0, 0);
+                    _profileService.LastMapPosition = new Position(0, 0);
 
                     var geoLocation = await _geoLocatorService.GetLocation();
 
                     if (geoLocation == null) return;
 
-                    _profileService.LastUserPosition = geoLocation.ToXamMapPosition();
+                    _profileService.LastMapPosition = geoLocation.ToXamMapPosition();
                 }
 
-                Map.MoveToRegion(MapSpan.FromCenterAndRadius(_profileService.LastUserPosition, Distance.FromKilometers(1)));
+                Map.MoveToRegion(MapSpan.FromCenterAndRadius(_profileService.LastMapPosition, Distance.FromKilometers(1)));
 
             }
             catch (Exception ex)
@@ -498,15 +498,15 @@ namespace NextPark.Mobile.ViewModels
         {
             try
             {
-                _profileService.LastUserPosition = new Position(0, 0);
+                _profileService.LastMapPosition = new Position(0, 0);
 
                 var geoLocation = await _geoLocatorService.GetLocation();
 
                 if (geoLocation == null) return;
 
-                _profileService.LastUserPosition = geoLocation.ToXamMapPosition();
+                _profileService.LastMapPosition = geoLocation.ToXamMapPosition();
 
-                Map.MoveToRegion(MapSpan.FromCenterAndRadius(_profileService.LastUserPosition, Distance.FromKilometers(1)));
+                Map.MoveToRegion(MapSpan.FromCenterAndRadius(_profileService.LastMapPosition, Distance.FromKilometers(1)));
 
             } catch (Exception e) {}
         }

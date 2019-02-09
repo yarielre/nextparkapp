@@ -6,7 +6,7 @@ namespace NextPark.Mobile.Services
 {
     public interface IProfileService
     {
-        Position LastUserPosition { get; set; }
+        Position LastMapPosition { get; set; }
 
         Task<UpdateUserCoinModel> UpdateUserCoins(UpdateUserCoinModel model);
         Task<EditProfileModel> UpdateUserData(EditProfileModel model);
