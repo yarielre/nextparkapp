@@ -18,16 +18,22 @@ namespace NextPark.Mobile.ViewModels
         public string UserMoney { get; set; }       // Header user money value
         public ICommand OnMoneyClick { get; set; }  // Header user money action
 
-        public string Earn { get; set; }                // User Earn value
-        public int EarnSize { get; set; }
-        public Boolean Btn05IsSelected { get; set; }    //  5 CHF button selected
+        public string Money { get; set; }               // User Money value
+        public string Profit { get; set; }              // User Profit value
         public Boolean Btn10IsSelected { get; set; }    // 10 CHF button selected
-        public Boolean Btn15IsSelected { get; set; }    // 15 CHF button selected
+        public Boolean Btn20IsSelected { get; set; }    // 20 CHF button selected
         public Boolean Btn30IsSelected { get; set; }    // 30 CHF button selected
+        public Boolean Btn50IsSelected { get; set; }    // 50 CHF button selected
         public ICommand OnButtonTapped { get; set; }    // Selection button tapped
 
         public bool IsRunning { get; set; }         // Activity spinner
-        public ICommand OnBuyClick { get; set; }    // Buy button action
+
+        public bool WithdrawalEnable { get; set; }          // Withdrawal button enable
+        public Color BtnWithdrawalBorderColor { get; set; } // Withdrawal button border color
+        public Color BtnWithdrawalBackgroundColor { get; set; } // Withdrawal button background color
+
+        public ICommand OnWithdrawalClick { get; set; } // Withdrawal button action
+        public ICommand OnBuyClick { get; set; }        // Buy button action
 
         // SERVICES
         private readonly IDialogService _dialogService;
@@ -52,6 +58,9 @@ namespace NextPark.Mobile.ViewModels
             BackText = "Profilo";
             UserName = AuthSettings.User.Name;
             UserMoney = AuthSettings.UserCoin.ToString("N0");
+            Money = AuthSettings.User.Balance.ToString("N2");
+            Profit = AuthSettings.User.Profit.ToString("N2");
+            DisableWithdrawal();
 
             // Header actions
             OnBackClick = new Command<object>(OnBackClickMethod);
@@ -61,49 +70,45 @@ namespace NextPark.Mobile.ViewModels
             // Page actions
             OnButtonTapped = new Command<string>(OnButtonTappedMethod);
             OnBuyClick = new Command<object>(OnBuyClickMethod);
+            OnWithdrawalClick = new Command<object>(OnWithdrawalClickMethod);
         }
 
         // Initialization
         public override Task InitializeAsync(object data = null)
         {
-            /*
-            if (data != null)
-            {
-                return Task.FromResult(false);
-            }
-            */
-
             // Header
             // TODO: evaluate back text and action
             BackText = "Profilo";
             UserName = AuthSettings.User.Name;
             UserMoney = AuthSettings.UserCoin.ToString("N0");
-
             base.OnPropertyChanged("BackText");
             base.OnPropertyChanged("UserName");
             base.OnPropertyChanged("UserMoney");
 
             // Budget Values
-            // User Money already updated for header
-            Earn = "0";
-            EarnSize = 44;
-            if (Earn.Length > 2) {
-                EarnSize = 34;
+            Money = AuthSettings.User.Balance.ToString("N2");
+            Profit = AuthSettings.User.Profit.ToString("N2");
+            base.OnPropertyChanged("Money");
+            base.OnPropertyChanged("Profit");
+
+            // Withdrawal enable
+            if (AuthSettings.User.Profit > 10.0) {
+                EnableWithdrawal();
+            } else {
+                DisableWithdrawal();
             }
-            base.OnPropertyChanged("EarnSize");
-            base.OnPropertyChanged("Earn");
 
             // Buttons start/default value
-            Btn05IsSelected = true;
-            Btn10IsSelected = false;
-            Btn15IsSelected = false;
+            Btn10IsSelected = true;
+            Btn20IsSelected = false;
             Btn30IsSelected = false;
-            base.OnPropertyChanged("Btn05IsSelected");
+            Btn50IsSelected = false;
             base.OnPropertyChanged("Btn10IsSelected");
-            base.OnPropertyChanged("Btn15IsSelected");
+            base.OnPropertyChanged("Btn20IsSelected");
             base.OnPropertyChanged("Btn30IsSelected");
+            base.OnPropertyChanged("Btn50IsSelected");
 
-            selectedValue = 5;
+            selectedValue = 10;
 
             return Task.FromResult(false);
         }
@@ -131,29 +136,49 @@ namespace NextPark.Mobile.ViewModels
         public void OnButtonTappedMethod(string identifier)
         {
             // Deselect all selection buttons
-            Btn05IsSelected = false;            
-            Btn10IsSelected = false;
-            Btn15IsSelected = false;
+            Btn10IsSelected = false;            
+            Btn20IsSelected = false;
             Btn30IsSelected = false;
+            Btn50IsSelected = false;
 
             // Select the tapped selection button
             selectedValue = Convert.ToUInt16(identifier);
             switch (selectedValue)
             {
-                case 10: Btn10IsSelected = true; break; 
-                case 15: Btn15IsSelected = true; break;
+                case 20: Btn20IsSelected = true; break; 
                 case 30: Btn30IsSelected = true; break;
-                case 5:
-                default: Btn05IsSelected = true; break;
+                case 50: Btn50IsSelected = true; break;
+                case 10:
+                default: Btn10IsSelected = true; break;
             }
 
             // Update Buttons
-            base.OnPropertyChanged("Btn05IsSelected");
             base.OnPropertyChanged("Btn10IsSelected");
-            base.OnPropertyChanged("Btn15IsSelected");
+            base.OnPropertyChanged("Btn20IsSelected");
             base.OnPropertyChanged("Btn30IsSelected");
+            base.OnPropertyChanged("Btn50IsSelected");
         }
     
+        private void DisableWithdrawal()
+        {
+            WithdrawalEnable = false;
+            BtnWithdrawalBorderColor = Color.Gray;
+            BtnWithdrawalBackgroundColor = Color.FromHex("#E3E3E3");
+            base.OnPropertyChanged("WithdrawalEnable");
+            base.OnPropertyChanged("BtnWithdrawalBorderColor");
+            base.OnPropertyChanged("BtnWithdrawalBackgroundColor");
+        }
+
+        private void EnableWithdrawal()
+        {
+            WithdrawalEnable = true;
+            BtnWithdrawalBorderColor = Color.FromHex("#8CC63F");
+            BtnWithdrawalBackgroundColor = Color.FromHex("#8CC63F");
+            base.OnPropertyChanged("WithdrawalEnable");
+            base.OnPropertyChanged("BtnWithdrawalBorderColor");
+            base.OnPropertyChanged("BtnWithdrawalBackgroundColor");
+        }
+
         // Buy Money button click action
         public void OnBuyClickMethod(object sender)
         {
@@ -185,13 +210,41 @@ namespace NextPark.Mobile.ViewModels
                 if (buyResponse != null) {
                     AuthSettings.UserCoin = buyResponse.Coins;
                     UserMoney = AuthSettings.UserCoin.ToString("N0");
+                    Money = AuthSettings.User.Balance.ToString("N2");
+                    Profit = AuthSettings.User.Profit.ToString("N2");
                     base.OnPropertyChanged("UserMoney");
+                    base.OnPropertyChanged("Money");
+                    base.OnPropertyChanged("Profit");
                 } else {
                     await _dialogService.ShowAlert("Attenzione", "Acquisto fallito");
                 }
             } else {
                 await _dialogService.ShowAlert("Errore", "Dati non validi");
             }
+        }
+
+        // Withdrawal button click action
+        public void OnWithdrawalClickMethod(object sender)
+        {
+            if (WithdrawalEnable == true)
+            {
+                // TODO: send withdrawal request to backend
+                _dialogService.ShowAlert("Alert", "TODO: Withdrawal operations for: " + AuthSettings.User.Profit.ToString() + " CHF");
+
+                // Start activity spinner
+                IsRunning = true;
+                base.OnPropertyChanged("IsRunning");
+
+                // Send request to backend
+                Withdrawal();
+            }
+        }
+
+        public async void Withdrawal()
+        {
+            // Stop activity spinner
+            IsRunning = false;
+            base.OnPropertyChanged("IsRunning");
         }
     }
 }
