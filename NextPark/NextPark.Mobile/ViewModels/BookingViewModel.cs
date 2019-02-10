@@ -8,6 +8,7 @@ using System;
 using NextPark.Mobile.Core.Settings;
 using NextPark.Mobile.Services.Data;
 using NextPark.Models;
+using NextPark.Mobile.UIModels;
 
 namespace NextPark.Mobile.ViewModels
 {
@@ -50,7 +51,7 @@ namespace NextPark.Mobile.ViewModels
 
         // PRIVATE VARIABLES
         private static bool activity = false;
-        private ParkingInfo parkingInfo;
+        private UIParkingModel _parking;
 
         // METHODS
         public BookingViewModel(IDialogService dialogService,
@@ -94,14 +95,14 @@ namespace NextPark.Mobile.ViewModels
             base.OnPropertyChanged("UserName");
             base.OnPropertyChanged("UserMoney");
 
-            if (data is ParkingInfo)
+            if (data is UIParkingModel)
             {
-                parkingInfo = (ParkingInfo)data;
-                Info = parkingInfo.Info;
-                SubInfo = parkingInfo.SubInfo;
-                Picture = parkingInfo.Picture;
-                FullPrice = parkingInfo.FullPrice;
-                FullAvailability = parkingInfo.FullAvailability;
+                _parking = (UIParkingModel)data;
+                Info = _parking.Address;
+                SubInfo = _parking.Cap.ToString() + " " + _parking.City;
+                Picture = _parking.ImageUrl;
+                FullPrice = _parking.PriceMin.ToString("N2") + "CHF/h";
+                FullAvailability = (_parking.isFree()) ? "Disponibile" : "Occupato";
                 base.OnPropertyChanged("Info");
                 base.OnPropertyChanged("SubInfo");
                 base.OnPropertyChanged("Picture");
@@ -161,7 +162,7 @@ namespace NextPark.Mobile.ViewModels
             // TODO: fill book data according to add book backend method
             OrderModel order = new OrderModel
             {
-                ParkingId = parkingInfo.UID,
+                ParkingId = _parking.Id,
                 StartDate = DateTime.Now,
                 EndDate = DateTime.Now + Time,
                 UserId = int.Parse(AuthSettings.UserId)

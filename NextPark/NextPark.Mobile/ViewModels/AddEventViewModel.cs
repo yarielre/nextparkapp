@@ -183,10 +183,12 @@ namespace NextPark.Mobile.ViewModels
             if (_modifying) {
                 _event.StartDate = StartDate + StartTime;
                 _event.EndDate = EndDate + EndTime;
+                _event.RepetitionEndDate = EndDate;
                 result = await _eventDataService.Put(_event, _event.Id);
             } else {
                 _event.StartDate = StartDate + StartTime;
                 _event.EndDate = EndDate + EndTime;
+                _event.RepetitionEndDate = EndDate;
                 result = await _eventDataService.Post(_event);
             }
 

@@ -138,14 +138,20 @@
                                                WidthRequest="80"/>
                                     </Frame>
                                     <StackLayout Margin="5,0,0,0" Spacing="1" Grid.Row="0" Grid.Column="1">
-                                        <Label  Text="{Binding Info}" FontAttributes="Bold"
+                                        <Label  Text="{Binding StatusText}" 
+                                                FontAttributes="Bold"                                                
+                                                FontSize="Medium"
+                                                TextColor="Gray"
+                                                Margin="0"
+                                                HorizontalTextAlignment="Start"/>                                        
+                                        <Label  Text="Prezzo:"
                                                 TextColor="Gray"
                                                 FontSize="Small"
                                                 Margin="0"
                                                 HorizontalTextAlignment="Start"/>
-                                        <Label  Text="{Binding SubInfo}" FontAttributes="None"
+                                        <Label  Text="{Binding PriceText}"
                                                 TextColor="Gray"
-                                                FontSize="Micro"
+                                                FontSize="Small"
                                                 Margin="0"
                                                 HorizontalTextAlignment="Start"/>                                                      
                                     </StackLayout>
@@ -156,7 +162,7 @@
                                         VerticalOptions="Center"
                                         HorizontalOptions="Center"
                                         Command="{Binding OnBookingTapped}"
-                                        CommandParameter="{Binding Index}"
+                                        CommandParameter="{Binding UID}"
                                         TextColor="White"
                                         BorderRadius="8"
                                         BackgroundColor="#8CC63F"
