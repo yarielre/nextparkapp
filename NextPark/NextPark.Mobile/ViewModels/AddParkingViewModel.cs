@@ -62,6 +62,7 @@ namespace NextPark.Mobile.ViewModels
         private double _maxPriceValue;
         private bool _isAuthorized;
         private bool _modify;
+        private MediaFile mediaFile;
 
         // METHODS
         public AddParkingViewModel(IDialogService dialogService,
@@ -249,6 +250,12 @@ namespace NextPark.Mobile.ViewModels
         public void OnAddParkingMethod(object sender)
         {
             if (!AddParkingDataCheck()) {
+
+                // Image converter
+
+                var memoryStream = new System.IO.MemoryStream();
+                mediaFile.GetStream().CopyTo(memoryStream);
+
                 // Create model 
                 ParkingModel model = new ParkingModel
                 {
@@ -259,7 +266,8 @@ namespace NextPark.Mobile.ViewModels
                     Longitude = Longitude,
                     UserId = AuthSettings.User.Id,
                     PriceMin = PriceMin,
-                    PriceMax = PriceMax
+                    PriceMax = PriceMax,
+                    ImageBinary = memoryStream.ToArray()
                 };
 
                 // Start activity spinner
@@ -360,7 +368,7 @@ namespace NextPark.Mobile.ViewModels
         // Take User Image
         private async void TakeParkingPhoto()
         {
-            MediaFile mediaFile;
+
             if (!CrossMedia.Current.IsCameraAvailable || !CrossMedia.Current.IsTakePhotoSupported)
             {
                 await Application.Current.MainPage.DisplayAlert(
@@ -369,6 +377,11 @@ namespace NextPark.Mobile.ViewModels
                     "OK");
 
                 // TODO: remove the following line, DEMO ONLY!
+                mediaFile = await CrossMedia.Current.PickPhotoAsync();
+                if (mediaFile == null)
+                    return;
+                ParkingImage = ImageSource.FromStream(() => { return mediaFile.GetStream(); });
+
                 _isAuthorized = await GetCurrentLocation();
 
                 return;

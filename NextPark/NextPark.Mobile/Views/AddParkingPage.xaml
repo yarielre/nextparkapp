@@ -27,7 +27,8 @@
                            HasShadow="false"
                            HeightRequest="128"
                            WidthRequest="128"
-                           HorizontalOptions="Center">
+                           HorizontalOptions="Center"
+                           Padding="0">
                         <Image Aspect="Fill" Source="{Binding ParkingImage}"/>
                         <Frame.GestureRecognizers>
                             <TapGestureRecognizer Command="{Binding OnParkingImageTap}"/>  

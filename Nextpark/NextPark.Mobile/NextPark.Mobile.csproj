@@ -35,6 +35,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NextPark.Models\NextPark.Models.csproj" />
+    <ProjectReference Include="..\NextPark.Services\NextPark.Services.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Resources\Localize.Designer.cs">
