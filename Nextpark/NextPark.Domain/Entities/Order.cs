@@ -21,6 +21,7 @@ namespace NextPark.Domain.Entities
         public virtual Parking Parking { get; set; }
         public int ParkingId { get; set; }
 
+        public virtual ApplicationUser User { get; set; }
         public int UserId { get; set; }
     }
 }
