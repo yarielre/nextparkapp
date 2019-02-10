@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using NextPark.Enums.Enums;
@@ -48,6 +49,9 @@ namespace NextPark.Mobile.ViewModels
         // SERVICES
         private readonly IDialogService _dialogService;
         private readonly EventDataService _eventDataService;
+        private ObservableCollection<string> Days;
+        private ObservableCollection<string> Hours;
+        private ObservableCollection<string> Minutes;
 
         // METHODS
         public AddEventViewModel(IDialogService dialogService,
@@ -72,6 +76,22 @@ namespace NextPark.Mobile.ViewModels
             OnAddClick = new Command<object>(OnAddClickMethod);
             OnDeleteClick = new Command<object>(OnDeleteClickMethod);
             TimeSlotVisible = false;
+
+            // Custom DateTimePicker
+            Minutes = new ObservableCollection<string> {
+                {"0" },{ "15"},{ "30"},{"45"}
+            };
+            Hours = new ObservableCollection<string>();
+            for (int i = 0; i < 24; i++) {
+                Hours.Add(i.ToString());
+            }
+            Days = new ObservableCollection<string>();
+            DateTime dt = DateTime.Now;
+            for (int i = 0; i < 365; i++)
+            {
+                Days.Add(dt.ToShortDateString());
+                dt.AddDays(1.0);
+            }
         }
 
         public override Task InitializeAsync(object data = null)

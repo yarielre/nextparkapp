@@ -97,6 +97,15 @@
                             </TimePicker>     
                         </Grid>
                     </StackLayout>
+                    
+                    
+                    <StackLayout Orientation="Horizontal" HorizontalOptions="Center">
+                        <Picker ItemsSource="{Binding Days}"></Picker>
+                        <Picker ItemsSource="{Binding Hours}"></Picker>
+                        <Picker ItemsSource="{Binding Minutes}"></Picker>
+                    </StackLayout>
+                    
+                    
                     <ActivityIndicator x:Name="activityContent"
                                        IsRunning="{Binding IsRunning, Mode=TwoWay}"                    
                                        VerticalOptions="Center">
