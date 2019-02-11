@@ -23,7 +23,7 @@ namespace NextPark.Api.Controllers
         private readonly IHostingEnvironment _appEnvironment;
         private readonly IMapper _mapper;
         private readonly IRepository<Order> _orderRepository;
-     
+
         private readonly IRepository<Event> _parkingEventRepository;
         private readonly IRepository<Parking> _parkingRepository;
         private readonly IUnitOfWork _unitOfWork;
@@ -31,7 +31,7 @@ namespace NextPark.Api.Controllers
         private readonly IMediaService _mediaService;
 
         public ParkingsController(IRepository<Parking> repository, IUnitOfWork unitOfWork, IMapper mapper,
-           IRepository<Order> orderRepository, 
+           IRepository<Order> orderRepository,
            IRepository<Event> parkingEventRepository,
            IHostingEnvironment appEnvironment,
            IEmailSender emailSender,
@@ -50,26 +50,15 @@ namespace NextPark.Api.Controllers
 
         // GET api/controller
         [HttpGet]
-        public  async Task<IActionResult> Get()
+        public async Task<IActionResult> Get()
         {
             var parkigns = await _parkingRepository.FindAllAsync(new CancellationToken());
 
-            //TODO: Quitar toda logica de negocio de los conroladores a no ser que sea estrctamente necesario. 
-            //Utilizar el backend lo mas posible como DATA CENTER!
-
-            //PROBLEMA DE LA VISUALIZACION DE PARQUEOS!
-            //if (parkigns.Count > 0)
-            //    foreach (var park in parkigns)
-            //        if (park.IsRented)
-            //        {
-            //            var rent = await _orderRepository.FirstOrDefaultWhereAsync(o =>
-            //                o.ParkingId == park.Id && o.OrderStatus == OrderStatus.Actived);
-            //        }
 
             var vm = _mapper.Map<List<Parking>, List<ParkingModel>>(parkigns);
             return Ok(vm);
         }
-       
+
         // GET api/controller/5
         [HttpGet("{id}")]
         public IActionResult Get(int id)
@@ -80,7 +69,7 @@ namespace NextPark.Api.Controllers
             var vm = _mapper.Map<Parking, ParkingModel>(entity);
             return Ok(vm);
         }
-        
+
         // POST api/controller
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] ParkingModel model)
@@ -144,7 +133,7 @@ namespace NextPark.Api.Controllers
                 {
                     //Log: return BadRequest(string.Format("{0} Exception: {1}", "Error processing Image!", e.Message));
                 }
-                
+
                 _parkingRepository.Update(parking);
                 await _unitOfWork.CommitAsync();
                 var vm = _mapper.Map<Parking, ParkingModel>(parking);
@@ -167,6 +156,65 @@ namespace NextPark.Api.Controllers
             _parkingRepository.Delete(entity);
 
             await _unitOfWork.CommitAsync();
+            return Ok(vm);
+        }
+
+        // POST api/controller/events
+        [HttpPost("{id}/events")]
+        public async Task<IActionResult> PostEvents(int id, [FromBody] EventModel model)
+        {
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            
+            try
+            {
+                var parking = _parkingRepository.Find(id);
+
+                if (parking == null) return BadRequest("Parking not found");
+
+
+                var eventParking = new Event {
+                    StartDate = model.StartDate,
+                    EndDate = model.EndDate,
+                    RepetitionId = Guid.NewGuid(),
+                    RepetitionType = Enums.Enums.RepetitionType.Dayly,
+                    RepetitionEndDate = model.EndDate
+                };
+
+                if (parking.Events == null) parking.Events = new List<Event>();
+
+                parking.Events.Add(eventParking);
+
+                _parkingRepository.Update(parking);
+
+                await _unitOfWork.CommitAsync();
+
+                var vm = _mapper.Map<Event, EventModel>(eventParking);
+
+                return Ok(vm);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(string.Format("{0} Exception: {1}", "Error saving parking model on database!", e.Message));
+            }
+        }
+
+        [HttpGet("{id}/events")]
+        public async Task<IActionResult> GetEvents(int id)
+        {
+            var parkigns = await _parkingRepository.FindAllAsync(new CancellationToken());
+
+            var parking = _parkingRepository.Find(id);
+
+            if (parking == null) return BadRequest("Parking not found");
+
+            var events = await _parkingEventRepository.FindAllWhereAsync(e => e.ParkingId == parking.Id);
+
+            var vm = _mapper.Map<List<Event>, List<EventModel>>(events);
+
             return Ok(vm);
         }
 

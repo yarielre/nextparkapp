@@ -177,10 +177,7 @@ namespace NextPark.Mobile.ViewModels
                     EndDate = DateTime.Now,
                     ParkingId = postedParking.Id,
                     RepetitionEndDate = DateTime.Now,
-                    RepetitionType = Enums.Enums.RepetitionType.Dayly,
-                    MonthRepeat = new List<Enums.MyMonthOfYear>(),
-                    WeekRepeat = new List<MyDayOfWeek>()
-
+                    RepetitionType = Enums.Enums.RepetitionType.Dayly
                 };
                 postedParking.Status = Enums.Enums.ParkingStatus.Disabled;
 
