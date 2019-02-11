@@ -222,6 +222,17 @@ namespace NextPark.Mobile.ViewModels
                         });
                     }
                 }
+                ParkingList.Add(new ParkingItem
+                {
+                    UID = 1,
+                    Index = count++,
+                    Address = "Via Industria 20",
+                    Cap = 6928,
+                    City = "Manno",
+                    Status = "libero",
+                    StatusColor = Color.Green,
+                    OnParkingTap = OnParkingTapped
+                });
                 base.OnPropertyChanged("ParkingList");
                 if (ParkingList.Count == 0)
                 {

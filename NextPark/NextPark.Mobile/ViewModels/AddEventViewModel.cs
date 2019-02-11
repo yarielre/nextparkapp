@@ -92,6 +92,7 @@ namespace NextPark.Mobile.ViewModels
                 Days.Add(dt.ToShortDateString());
                 dt.AddDays(1.0);
             }
+            base.OnPropertyChanged("Minutes");
         }
 
         public override Task InitializeAsync(object data = null)
