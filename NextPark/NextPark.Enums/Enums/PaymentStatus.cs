@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace NextPark.Enums.Enums
+﻿namespace NextPark.Enums.Enums
 {
-    public enum RepetitionType  
+    public enum PaymentStatus
     {
-        Dayly,
-        Weekly,
-        Monthly
+        Confirmed,
+        Pending,
+        Cancel
     }
 }
