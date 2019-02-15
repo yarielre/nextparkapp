@@ -5,35 +5,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\NextPark.Models\NextPark.Models.csproj" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
+    <PackageReference Include="Xam.Plugin.Connectivity" Version="3.2.0" />
+    <PackageReference Include="Xam.Plugins.Settings" Version="3.1.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Base\" />
-    <Folder Include="Resources\" />
+    <ProjectReference Include="..\NextPark.Models\NextPark.Models.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Xam.Plugin.Connectivity" Version="3.2.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
-    <PackageReference Include="Xam.Plugins.Settings" Version="3.1.1" />
-    <PackageReference Include="Acr.UserDialogs" Version="7.0.1" />
-    <PackageReference Include="Xamarin.Forms" Version="3.1.0.697729" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Remove="Services\ILocalize.cs" />
-    <Compile Remove="Resources\Resources.Designer.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Update="Resources\Localize.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Localize.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Update="Resources\Localize.Designer.cs">
-      <DependentUpon>Localize.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-    </Compile>
-  </ItemGroup>
+
 </Project>
