@@ -74,7 +74,7 @@ namespace NextPark.Mobile.ViewModels
         {
             // Header
             BackText = "Indietro";
-            UserName = "Login";
+            UserName = "Accedi";
             UserMoney = "0";
             base.OnPropertyChanged("BackText");
             base.OnPropertyChanged("UserName");
