@@ -33,10 +33,23 @@
                             </StackLayout>
                             <Label Text="{Binding Email}"
                                    FontSize="Small"/>
-                            <Label Text="{Binding Address}"
-                                   FontSize="Small"/>
-                            <Label Text="{Binding FullPlate}" 
-                                   FontSize="Small"/>
+                            <StackLayout Orientation="Horizontal" Spacing="2" HorizontalOptions="Start">
+                                <Label Text="{Binding Address}"
+                                       FontSize="Small"/>
+                                <Label Text=","
+                                       FontSize="Small"
+                                       Margin="-2,0,0,0"/>
+                                <Label Text="{Binding NPA}"
+                                       FontSize="Small"/>
+                                <Label Text="{Binding City}"
+                                       FontSize="Small"/>
+                            </StackLayout>
+                            <StackLayout Orientation="Horizontal" Spacing="2" HorizontalOptions="Start">
+                                <Label Text="Targa: " 
+                                       FontSize="Small"/>
+                                <Label Text="{Binding CarPlate}" 
+                                       FontSize="Small"/>
+                            </StackLayout>
                         </StackLayout>
                     </controls:UserProfileItem>
                     <controls:UserProfileItem Title="Il mio budget"
@@ -49,22 +62,24 @@
                             <StackLayout Orientation="Horizontal" Spacing="2" HorizontalOptions="Start">
                                 <Label Text="Saldo attuale:"
                                        FontSize="Small"
-                                       FontAttributes="None"
-                                       Grid.Row="0" Grid.Column="0"/>
-                                <Label Text="{Binding FullMoney}"
+                                       FontAttributes="None"/>
+                                <Label Text="{Binding Balance}"
                                        FontSize="Small"
-                                       FontAttributes="Bold"
-                                       Grid.Row="0" Grid.Column="1"/>
+                                       FontAttributes="Bold"/>
+                                <Label Text="CHF"
+                                       FontSize="Small"
+                                       FontAttributes="Bold"/>
                             </StackLayout>
                             <StackLayout Orientation="Horizontal" Spacing="2" HorizontalOptions="Start">
                                 <Label Text="Guadagno:"
                                        FontSize="Small"
-                                       FontAttributes="None"
-                                       Grid.Row="1" Grid.Column="0"/>
-                                <Label Text="{Binding FullEarn}"
+                                       FontAttributes="None"/>
+                                <Label Text="{Binding Profit}"
                                        FontSize="Small"
-                                       FontAttributes="Bold"
-                                       Grid.Row="1" Grid.Column="1"/>
+                                       FontAttributes="Bold"/>
+                                <Label Text="CHF"
+                                       FontSize="Small"
+                                       FontAttributes="Bold"/>
                             </StackLayout>
                         </StackLayout>
                     </controls:UserProfileItem>

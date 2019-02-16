@@ -239,15 +239,17 @@ namespace NextPark.Mobile.ViewModels
         public void OnSaveClickMethod(object sender)
         {
             // Prepare user model to update user data
-            string userAddress = this.Address + "$" + this.NPA + "$" + this.City;
-            this.editModel = new EditProfileModel
+            editModel = new EditProfileModel
             {
                 Id = AuthSettings.User.Id,
-                UserName = this.Email,
-                Name = this.Name,
-                Lastname = this.Lastname,
-                Email = this.Email,
-                Address = userAddress,
+                UserName = Email,
+                Email = Email,
+                Name = Name,
+                Lastname = Lastname,
+                Phone = Phone,
+                Address = Address,
+                Cap = int.Parse(NPA),
+                City = City,
                 State = "CH",
                 CarPlate = this.CarPlate
             };
@@ -270,10 +272,14 @@ namespace NextPark.Mobile.ViewModels
                     if (response == null)
                     {
                         await _dialogService.ShowAlert("Attenzione", "Aggiornamento non riuscito");
+                    } else {
+                        var userResponse = await AuthService.GetUserByUserName(AuthSettings.UserName);
+                        if (userResponse.IsSuccess) {
+                            await NavigationService.NavigateToAsync<UserProfileViewModel>();
+                        }
                     }
-
-                } catch (Exception ex) {
-
+                } catch (Exception e) {
+                    await _dialogService.ShowAlert("Errore", e.Message);
                 } finally {
                     // Stop activity spinner
                     IsRunning = false;

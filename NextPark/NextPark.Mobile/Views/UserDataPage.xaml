@@ -39,8 +39,8 @@
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="2*"/>
                         </Grid.ColumnDefinitions>
-                        <Entry Grid.Row="0" Grid.Column="0" Placeholder="NPA" Text="{Binding NPA}" FontSize="Small"/>
-                        <Entry Grid.Row="0" Grid.Column="1" Placeholder="Paese" Text="{Binding City}" FontSize="Small"/>
+                        <Entry Grid.Row="0" Grid.Column="0" Placeholder="NPA" Text="{Binding NPA}" Keyboard="Numeric" FontSize="Small"/>
+                        <Entry Grid.Row="0" Grid.Column="1" Placeholder="Comune" Text="{Binding City}" FontSize="Small"/>
                     </Grid>
                     <Entry Margin="0,0,0,5" Placeholder="Targa" Text="{Binding CarPlate}" FontSize="Small"/>
 

@@ -22,12 +22,15 @@ namespace NextPark.Mobile.ViewModels
         public ICommand OnMoneyClick { get; set; }  // Header money action
         // User data
         public string Lastname { get; set; }            // Lastname
-        public string Address { get; set; }             // Address, NPA and City
+        public string Address { get; set; }             // Address
+        public string NPA { get; set; }                 // Postal code
+        public string City { get; set; }                // City
         public string Email { get; set; }               // E-mail
-        public string FullPlate { get; set; }           // Plate: plate
+        public string CarPlate { get; set; }            // Car plate
         public ICommand OnUserDataAction { get; set; }  // User data selection action
         // User budget
-        public string FullMoney { get; set; }           // Money value + currency
+        public string Balance { get; set; }             // Balance value
+        public string Profit { get; set; }              // Profit value
         public ICommand OnBudgetAction { get; set; }    // User budget selection action
         // User parkings
         private int _totUserParkings { get; set; }
@@ -88,16 +91,22 @@ namespace NextPark.Mobile.ViewModels
                 Lastname = AuthSettings.User.Lastname;
                 Email = AuthSettings.User.Email;
                 Address = AuthSettings.User.Address;
-                FullPlate = "Targa: " + AuthSettings.User.CarPlate;
+                NPA = AuthSettings.User.Cap.ToString();
+                City = AuthSettings.User.City;
+                CarPlate = AuthSettings.User.CarPlate;
             }
             base.OnPropertyChanged("Lastname");
             base.OnPropertyChanged("Email");
             base.OnPropertyChanged("Address");
-            base.OnPropertyChanged("FullPlate");
+            base.OnPropertyChanged("NPA");
+            base.OnPropertyChanged("City");
+            base.OnPropertyChanged("CarPlate");
 
             // Budget
-            FullMoney = UserMoney + " CHF";
-            base.OnPropertyChanged("FullMoney");
+            Balance = AuthSettings.UserCoin.ToString("N0");
+            base.OnPropertyChanged("Balance");
+            Profit = AuthSettings.User.Profit.ToString("N0");
+            base.OnPropertyChanged("Profit");
 
             // Parkings
             ParkingsStatus = "1/1 liberi";

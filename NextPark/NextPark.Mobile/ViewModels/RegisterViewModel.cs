@@ -118,13 +118,13 @@ namespace NextPark.Mobile.ViewModels
 
             // TODO: implemet all data check
             // E-mail
-            if (!error && ((this.Email == null) || (this.Email.Length == 0) || !this.Email.Contains("@")))
+            if (!error && (string.IsNullOrEmpty(this.Email)|| !this.Email.Contains("@")))
             {
                 await _dialogService.ShowAlert("Errore e-mail", "Inserire un indirizzo e-mail valido");
                 error = true;
             }
             // Password
-            if (!error && ((this.Password == null) || (this.Password.Length == 0)))
+            if (!error && (string.IsNullOrEmpty(this.Password)))
             {
                 // TODO: add other checks
                 // No password inserted
@@ -138,25 +138,29 @@ namespace NextPark.Mobile.ViewModels
                 error = true;
             }
             // Name
-            if (!error && ((this.Name == null) || (this.Name.Length == 0)))
+            if (!error && (string.IsNullOrEmpty(this.Name)))
             {
                 await _dialogService.ShowAlert("Errore Nome utente", "Il campo Nome è obbligatorio");
                 error = true;
             }
             // Lastname
-            if (!error && ((this.Lastname == null) || (this.Lastname.Length == 0)))
+            if (!error && (string.IsNullOrEmpty(this.Lastname)))
             {
                 await _dialogService.ShowAlert("Errore Nome utente", "Il campo Cognome è obbligatorio");
                 error = true;
             }
             // Phone
-            if (!error && ((this.Phone == null) || (this.Phone.Length == 0)))
+            if (!error && (string.IsNullOrEmpty(this.Phone)))
             {
                 await _dialogService.ShowAlert("Errore Targa", "Inserire una targa valida");
                 error = true;
             }
             // Address
-            // TODO: if is mandatory
+            if (!error && (string.IsNullOrEmpty(this.Address) || string.IsNullOrEmpty(this.NPA) || string.IsNullOrEmpty(this.City)))
+            {
+                await _dialogService.ShowAlert("Errore Targa", "Inserire un'indirizzo valido");
+                error = true;
+            }
             // Plate
             if (!error && ((this.CarPlate == null) || (this.CarPlate.Length == 0)))
             {
@@ -185,25 +189,21 @@ namespace NextPark.Mobile.ViewModels
                 return;
             }
 
-            // TODO: fill user data according to register data model
-            // TODO: send registration request to backend
             try
             { 
-                // 
-
-
-                //Demo Register OK
-                string registerAddress = this.Address + "," + this.NPA + "," + this.City;
                 var demoUser = new RegisterModel
                 {
-                    Address = registerAddress,
-                    CarPlate = this.CarPlate,
-                    Email = this.Email,
-                    Lastname = this.Lastname,
-                    Name = this.Name,
-                    Password = this.Password,
+                    Address = Address,
+                    Cap = int.Parse(NPA),
+                    City = City,
+                    CarPlate = CarPlate,
+                    Email = Email,
+                    Lastname = Lastname,
+                    Name = Name,
+                    Phone = Phone,
+                    Password = Password,
                     State = "CH",
-                    UserName = this.Email
+                    UserName = Email
                 };
 
                 var registerResponse = await AuthService.Register(demoUser);
