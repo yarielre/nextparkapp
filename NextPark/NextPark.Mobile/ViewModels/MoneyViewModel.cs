@@ -208,13 +208,16 @@ namespace NextPark.Mobile.ViewModels
 
                 // Check update result
                 if (buyResponse != null) {
-                    AuthSettings.UserCoin = buyResponse.Coins;
-                    UserMoney = AuthSettings.UserCoin.ToString("N0");
-                    Money = AuthSettings.User.Balance.ToString("N2");
-                    Profit = AuthSettings.User.Profit.ToString("N2");
-                    base.OnPropertyChanged("UserMoney");
-                    base.OnPropertyChanged("Money");
-                    base.OnPropertyChanged("Profit");
+                    var userResponse = await AuthService.GetUserByUserName(AuthSettings.UserName);
+                    if (userResponse.IsSuccess)
+                    {
+                        UserMoney = AuthSettings.UserCoin.ToString("N0");
+                        Money = AuthSettings.User.Balance.ToString("N2");
+                        Profit = AuthSettings.User.Profit.ToString("N2");
+                        base.OnPropertyChanged("UserMoney");
+                        base.OnPropertyChanged("Money");
+                        base.OnPropertyChanged("Profit");
+                    }
                 } else {
                     await _dialogService.ShowAlert("Attenzione", "Acquisto fallito");
                 }
