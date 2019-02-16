@@ -58,8 +58,6 @@ namespace NextPark.Mobile.ViewModels
         private readonly ParkingDataService _parkingDataService;
 
         // PRIVATE VARIABLES
-        private double _minPriceValue;
-        private double _maxPriceValue;
         private bool _isAuthorized;
         private bool _modify;
         private MediaFile mediaFile;
@@ -267,7 +265,9 @@ namespace NextPark.Mobile.ViewModels
                     UserId = AuthSettings.User.Id,
                     PriceMin = PriceMin,
                     PriceMax = PriceMax,
-                    ImageBinary = memoryStream.ToArray()
+                    State = "CH",
+                    Status = Enums.Enums.ParkingStatus.Enabled//,
+                    //ImageBinary = memoryStream.ToArray()
                 };
 
                 // Start activity spinner
