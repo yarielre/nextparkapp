@@ -18,14 +18,15 @@ namespace NextPark.Domain.Entities
         public double Latitude { get; set; }
         public double Longitude { get; set; }
 
-        public int UserId { get; set; }
-
         public double PriceMin { get; set; }
         public double PriceMax { get; set; }
 
         public ParkingStatus Status { get; set; }
-        
-        public List<Event> ParkingEvents { get; set; }
+
+        public ApplicationUser User { get; set; }
+        public int UserId { get; set; }
+
+        public List<Event> Events { get; set; }
         public List<Order> Orders { get; set; }
     }
 }

@@ -90,7 +90,7 @@ namespace NextPark.Api.Controllers
 
                 var user = new ApplicationUser
                 {
-                    UserName = model.Username,
+                    UserName = model.UserName,
                     Name = model.Name,
                     Lastname = model.Lastname,
                     Email = model.Email,

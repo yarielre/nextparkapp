@@ -153,7 +153,7 @@ namespace NextPark.Mobile.ViewModels
                     Name = "User",
                     Password = "Wisegar.1",
                     State = "DemoState",
-                    Username = "demo@nextpark.ch"
+                    UserName = "demo@nextpark.ch"
                 };
 
                 var registerResponse = await AuthService.Register(demoUser);
@@ -192,10 +192,7 @@ namespace NextPark.Mobile.ViewModels
                     EndDate = DateTime.Now,
                     ParkingId = postedParking.Id,
                     RepetitionEndDate = DateTime.Now,
-                    RepetitionType = Enums.Enums.RepetitionType.Dayly,
-                    MonthRepeat = new List<Enums.MyMonthOfYear>(),
-                    WeekRepeat = new List<MyDayOfWeek>()
-
+                    RepetitionType = Enums.Enums.RepetitionType.Dayly
                 };
                 postedParking.Status = Enums.Enums.ParkingStatus.Disabled;
 

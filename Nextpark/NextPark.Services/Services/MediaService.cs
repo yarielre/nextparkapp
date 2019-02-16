@@ -28,23 +28,24 @@ namespace NextPark.Services
             return true;
         }
 
-        public void SaveParkingImage(ParkingModel model)
+        public string SaveImage(byte[] ImageBinary)
         {
-            if (model.ImageBinary != null && model.ImageBinary.Length > 0)
+            var imageUrl = string.Empty;
+
+            if (ImageBinary != null && ImageBinary.Length > 0)
             {
-                var stream = new MemoryStream(model.ImageBinary);
+                var stream = new MemoryStream(ImageBinary);
                 var guid = Guid.NewGuid().ToString();
                 var file = string.Format("{0}.jpg", guid);
-                var filePath = string.Format("/{0}/{1}", "Images", file);
-                var folder = Path.Combine(_appEnvironment.WebRootPath, "Images");
-
+                var filePath = string.Format("/{0}/{1}", "images", file);
+                var folder = Path.Combine(_appEnvironment.WebRootPath, "images");
+             
                 try
                 {
                     var response = UploadPhoto(stream, folder, file);
                     if (response)
                     {
-                        model.ImageUrl = filePath;
-                        return;
+                        imageUrl =  filePath;
                     }
                 }
                 catch (Exception e)
@@ -52,6 +53,7 @@ namespace NextPark.Services
                     throw e;
                 }
             }
+            return imageUrl;
         }
     }
 }

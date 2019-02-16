@@ -7,15 +7,12 @@ namespace NextPark.Models
 {
     public class EventModel : BaseModel
     {
-       
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
 
         public Guid RepetitionId { get; set; }
         public DateTime RepetitionEndDate { get; set; }
         public RepetitionType RepetitionType { get; set; }
-        public List<MyDayOfWeek> WeekRepeat { get; set; }
-        public List<MyMonthOfYear> MonthRepeat { get; set; }
 
         public int ParkingId { get; set; }
     }

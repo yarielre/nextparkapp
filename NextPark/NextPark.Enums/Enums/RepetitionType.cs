@@ -4,10 +4,11 @@ using System.Text;
 
 namespace NextPark.Enums.Enums
 {
-    public enum PaymentStatus
+    public enum RepetitionType
     {
-        Confirmed,
-        Pending,
-        Cancel
+        None,
+        Dayly,
+        Weekly,
+        Monthly
     }
 }

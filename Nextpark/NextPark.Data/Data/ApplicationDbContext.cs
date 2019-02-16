@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using NextPark.Data.Mappings;
 using NextPark.Domain.Auth;
 using NextPark.Domain.Entities;
 using System.Threading;
@@ -19,6 +20,11 @@ namespace NextPark.Data
             // Customize the ASP.NET Identity model and override the defaults if needed.
             // For example, you can rename the ASP.NET Identity table names and more.
             // Add your customizations after calling base.OnModelCreating(builder);
+
+            builder.ApplyConfiguration(new UserEntityMap());
+            builder.ApplyConfiguration(new ParkingEntityMap());
+            builder.ApplyConfiguration(new OrdersEntityMap());
+            builder.ApplyConfiguration(new EventsEntityMap());
         }
 
         #region DbSets

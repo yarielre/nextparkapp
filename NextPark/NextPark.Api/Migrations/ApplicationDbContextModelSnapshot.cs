@@ -232,8 +232,6 @@ namespace NextPark.Api.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("ApplicationUserId");
-
                     b.Property<DateTime>("EndDate");
 
                     b.Property<int>("OrderStatus");
@@ -252,9 +250,9 @@ namespace NextPark.Api.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ApplicationUserId");
-
                     b.HasIndex("ParkingId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Orders");
                 });
@@ -266,8 +264,6 @@ namespace NextPark.Api.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Address");
-
-                    b.Property<int?>("ApplicationUserId");
 
                     b.Property<int>("Cap");
 
@@ -293,7 +289,7 @@ namespace NextPark.Api.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ApplicationUserId");
+                    b.HasIndex("UserId");
 
                     b.ToTable("Parkings");
                 });
@@ -346,28 +342,30 @@ namespace NextPark.Api.Migrations
             modelBuilder.Entity("NextPark.Domain.Entities.Event", b =>
                 {
                     b.HasOne("NextPark.Domain.Entities.Parking", "Parking")
-                        .WithMany("ParkingEvents")
+                        .WithMany("Events")
                         .HasForeignKey("ParkingId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("NextPark.Domain.Entities.Order", b =>
                 {
-                    b.HasOne("NextPark.Domain.Entities.ApplicationUser")
-                        .WithMany("Orders")
-                        .HasForeignKey("ApplicationUserId");
-
                     b.HasOne("NextPark.Domain.Entities.Parking", "Parking")
                         .WithMany("Orders")
                         .HasForeignKey("ParkingId")
                         .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("NextPark.Domain.Entities.ApplicationUser", "User")
+                        .WithMany("Orders")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("NextPark.Domain.Entities.Parking", b =>
                 {
-                    b.HasOne("NextPark.Domain.Entities.ApplicationUser")
+                    b.HasOne("NextPark.Domain.Entities.ApplicationUser", "User")
                         .WithMany("Parkings")
-                        .HasForeignKey("ApplicationUserId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 #pragma warning restore 612, 618
         }

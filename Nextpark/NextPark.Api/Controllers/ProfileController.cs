@@ -26,11 +26,12 @@ namespace NextPark.Api.Controllers
         private readonly IUnitOfWork _unitOfWork;
         private readonly IRepository<ApplicationUser> _useRepository;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IMediaService _mediaService;
 
         public ProfileController(UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager, IConfiguration configuration,
             IMapper mapper, IEmailSender emailSender, IRepository<ApplicationUser> useRepository,
-            IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork, IMediaService mediaService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -39,6 +40,7 @@ namespace NextPark.Api.Controllers
             _emailSender = emailSender as EmailSender;
             _useRepository = useRepository;
             _unitOfWork = unitOfWork;
+            _mediaService = mediaService;
         }
 
         [HttpPost("editpass")]
@@ -94,34 +96,35 @@ namespace NextPark.Api.Controllers
 
             try
             {
-                user.UserName = model.Username;
                 user.Name = model.Name;
                 user.Lastname = model.Lastname;
                 user.Email = model.Email;
                 user.Address = model.Address;
                 user.CarPlate = model.CarPlate;
                 user.State = model.State;
+                user.Phone = model.Phone;
+                user.Cap = model.Cap;
+                user.City = model.City;
 
-                var passwordCheckResult = await _userManager.CheckPasswordAsync(user, model.OldPassword);
-
-                if (!passwordCheckResult)
+                try
                 {
-                    return BadRequest("Invalid previous password");
+                   var imageUrl = _mediaService.SaveImage(model.ImageBinary);
+                    if (!string.IsNullOrEmpty(imageUrl)) {
+                        user.ImageUrl = imageUrl;
+                    }
+                      
                 }
-
-                var passwordChangeResult = await _userManager.ChangePasswordAsync(user, model.OldPassword, model.NewPassword);
-
-                if (!passwordChangeResult.Succeeded)
+                catch (Exception e)
                 {
-
-                    return BadRequest("Impossible to change the password!");
+                    //Log: return string.Format("{0} Exception: {1}", "Error processing Image!", e.Message)
                 }
 
                 var result = await _userManager.UpdateAsync(user);
 
                 if (result.Succeeded)
                 {
-                    return Ok();
+                    var userVm = _mapper.Map<ApplicationUser, UserModel>(user);
+                    return Ok(userVm);
                 }
                 else
                 {
