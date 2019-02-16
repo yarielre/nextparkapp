@@ -22,89 +22,132 @@
                            FontAttributes="Bold" 
                            TextColor="#333333"
                            Margin="0,0,0,10"/>
-                    <StackLayout Orientation="Horizontal" HorizontalOptions="Center">
-                        <Label Text="Tutto il giorno"
-                               TextColor="{Binding AllDayTextColor}"
-                               FontSize="Small" 
-                               FontAttributes="None" 
-                               VerticalOptions="Center"
-                               HorizontalOptions="End"
-                               Margin="0"/>
-                        <Switch BackgroundColor="White"
-                                OnColor="#8CC63F"
-                                IsToggled="{Binding AllDaySwitchToggled}"
-                                Margin="10,0,0,0"
-                                VerticalOptions="Start"/>
-                    </StackLayout>
                     <Grid>
                         <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
                             <RowDefinition Height="*"/>
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="2*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
                         <Label Text="Inizio" 
                                FontSize="Small" 
                                HorizontalOptions="Start" VerticalOptions="Center"
                                Grid.Row="0" Grid.Column="0"/>
-                        <DatePicker HorizontalOptions="Start" FontSize="Small"
+                        <DatePicker HorizontalOptions="Center" FontSize="Small"
                                     Grid.Row="0" Grid.Column="1"
-                                    Date="{Binding StartDate}">
+                                    Date="{Binding StartDate}"
+                                    MinimumDate="{Binding MinStartDate}">
                             <DatePicker.Format>dd/MM/yyyy</DatePicker.Format>
                         </DatePicker>
+                        <TimePicker FontSize="Small"
+                                    HorizontalOptions="End"
+                                    Grid.Row="0" Grid.Column="2"
+                                    Time="{Binding StartTime}">
+                            <TimePicker.Format>HH:mm</TimePicker.Format>
+                        </TimePicker>
                         <Label Text="Fine" 
                                FontSize="Small" 
                                HorizontalOptions="Start" VerticalOptions="Center"
                                Grid.Row="1" Grid.Column="0"/>
-                        <DatePicker HorizontalOptions="Start" FontSize="Small"
-                                    Grid.Row="1" Grid.Column="1"
-                                    Date="{Binding EndDate}">
+                        <TimePicker FontSize="Small"
+                                    HorizontalOptions="End"
+                                    Grid.Row="1" Grid.Column="2"
+                                    Time="{Binding EndTime}"/>
+
+                        <Label Text="Ripetizione"
+                               FontSize="Small"
+                               HorizontalOptions="Start" VerticalOptions="Center"
+                               Grid.Row="2" Grid.Column="0"/>
+                        <Picker FontSize="Small"
+                                HorizontalOptions="End"
+                                Title="Frequenza"
+                                SelectedIndex="{Binding RepetitionIndex}"
+                                x:Name="repetitionPicker"
+                                Grid.Row="2" Grid.Column="2">
+                            <Picker.ItemsSource>
+                                 <x:Array Type="{x:Type x:String}">
+                                  <x:String>Mai</x:String>
+                                  <x:String>Ogni giorno</x:String>
+                                  <x:String>Settimanale</x:String>
+                                </x:Array>
+                            </Picker.ItemsSource>
+                        </Picker>
+                        
+                        <Label Text="Fine ripetizione" 
+                               FontSize="Small" 
+                               HorizontalOptions="Start" VerticalOptions="Center"
+                               IsVisible="{Binding RepetitionEndVisible}"
+                               Grid.Row="3" Grid.Column="0"/>
+                        <DatePicker HorizontalOptions="Center" FontSize="Small"
+                                    IsVisible="{Binding RepetitionEndVisible}"
+                                    Grid.Row="3" Grid.Column="1"
+                                    Date="{Binding RepetitionEndDate}"
+                                    MinimumDate="{Binding RepetitionMinEndDate}">
                             <DatePicker.Format>dd/MM/yyyy</DatePicker.Format>
                         </DatePicker>
                     </Grid>
-
-                    <StackLayout Orientation="Vertical"
-                                 IsVisible="{Binding TimeSlotVisible}"
-                                 HorizontalOptions="CenterAndExpand" Margin="0,10,0,0">
-                        <Label Text="Fascia oraria" HorizontalTextAlignment="Start" HorizontalOptions="Start" FontSize="Small"/>
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="*"/>
-                                <RowDefinition Height="*"/>
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="2*"/>
-                            </Grid.ColumnDefinitions>
-                        
-                            <Label Text="Dalle ore" FontSize="Small" 
-                                   HorizontalOptions="Start" VerticalOptions="Center"
-                                   Grid.Row="0" Grid.Column="0"/>
-                            <TimePicker FontSize="Small" HorizontalOptions="Start"
-                                        Grid.Row="0" Grid.Column="1"
-                                        Time="{Binding StartTime}">
-                                <TimePicker.Format>HH:mm</TimePicker.Format>
-                            </TimePicker>     
-                            <Label Text="Alle ore" FontSize="Small" 
-                                   HorizontalOptions="Start" VerticalOptions="Center"
-                                   Grid.Row="1" Grid.Column="0"/>
-                            <TimePicker FontSize="Small" HorizontalOptions="Start"
-                                        Grid.Row="1" Grid.Column="1"
-                                        Time="{Binding EndTime}">
-                                <TimePicker.Format>HH:mm</TimePicker.Format>
-                            </TimePicker>     
-                        </Grid>
+                    
+                    <StackLayout Orientation="Vertical" Spacing="0" HorizontalOptions="FillAndExpand" IsVisible="{Binding WeekDayVisible}">
+                    <ListView x:Name="weekDayList"
+                              HasUnevenRows="true"
+                              ItemsSource="{Binding WeekDays}"
+                              ItemTapped="OnWeekDayTapped"
+                              SelectionMode="None"
+                              SeparatorVisibility="None"
+                              IsPullToRefreshEnabled="false"
+                               
+                              RowHeight="35"
+                              HeightRequest="245"
+                              HorizontalOptions="FillAndExpand"
+                              Margin="0">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>                                
+                                <ViewCell Height="35" >
+                                        <StackLayout Orientation="Vertical" Spacing="0" Margin="0" Padding="0">
+                                        <Grid Margin="0" VerticalOptions="Start">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="2*"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="34"/>
+                                            </Grid.RowDefinitions>
+                                            <Label Text="{Binding Text}"
+                                                   FontSize="Small"
+                                                   HorizontalOptions="Start"
+                                                   VerticalOptions="Center"
+                                                   Grid.Row="0" Grid.Column="0"/>
+                                            <Frame BorderColor="Transparent"
+                                                   HasShadow="false"
+                                                   IsClippedToBounds="true"
+                                                   CornerRadius="0"
+                                                   HeightRequest="24"
+                                                   WidthRequest="24"
+                                                   Margin="0"
+                                                   Padding="0"
+                                                   IsVisible="{Binding Selected}"
+                                                   HorizontalOptions="End"
+                                                   VerticalOptions="Center"
+                                                   Grid.Row="0" Grid.Column="1">
+                                                <Image Source="icon_check_48.png"
+                                                       Aspect="AspectFit"/>
+                                            </Frame>                                            
+                                        </Grid>
+                                        <BoxView Color="Gray" 
+                                                 HorizontalOptions="Fill"
+                                                 VerticalOptions="End"
+                                                 HeightRequest="1"/>
+                                    </StackLayout> 
+                                </ViewCell>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
                     </StackLayout>
-                    
-                    
-                    <StackLayout Orientation="Horizontal" HorizontalOptions="Center">
-                        <Picker ItemsSource="{Binding Days}"></Picker>
-                        <Picker ItemsSource="{Binding Hours}"></Picker>
-                        <Picker ItemsSource="{Binding Minutes}"></Picker>
-                    </StackLayout>
-                    
                     
                     <ActivityIndicator x:Name="activityContent"
                                        IsRunning="{Binding IsRunning, Mode=TwoWay}"                    

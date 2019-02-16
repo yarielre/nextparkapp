@@ -1,16 +1,21 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using NextPark.Enums;
 using NextPark.Enums.Enums;
 using NextPark.Mobile.Core.Settings;
 using NextPark.Mobile.Services;
 using NextPark.Mobile.Services.Data;
+using NextPark.Mobile.UIModels;
 using NextPark.Models;
 using Xamarin.Forms;
 
 namespace NextPark.Mobile.ViewModels
 {
+
     public class AddEventViewModel : BaseViewModel
     {
         // PROPERTIES
@@ -21,10 +26,33 @@ namespace NextPark.Mobile.ViewModels
         public string UserMoney { get; set; }       // Header money value
         public ICommand OnMoneyClick { get; set; }  // Header money action
 
-        public DateTime StartDate { get; set; }     // Event start date
+        private DateTime _startDate { get; set; }
+        public DateTime StartDate                   // Event start date
+        {
+            get { return _startDate; }
+            set 
+            {   _startDate = value;
+                if (_startDate > RepetitionEndDate) { 
+                    RepetitionEndDate = StartDate;
+                    base.OnPropertyChanged("RepetitionEndDate");
+                }
+                RepetitionMinEndDate = StartDate;
+                base.OnPropertyChanged("RepetitionMinEndDate");
+            } 
+        }
+        public DateTime MinStartDate { get; set; }  // Minimum event start date
         public DateTime EndDate { get; set; }       // Event end date
+        public DateTime RepetitionEndDate { get; set; }
+        public DateTime RepetitionMinEndDate { get; set; }
         public TimeSpan StartTime { get; set; }     // Event timeslot start
         public TimeSpan EndTime { get; set; }       // Event timeslot end
+        public int RepetitionIndex                  // Repetition Selected Index
+        {
+            get { return _repetitionIndex; }
+            set { _repetitionIndex = value; OnRepetitionChangedMethod(_repetitionIndex); } 
+        }
+        public bool RepetitionEndVisible { get; set; }  // Repetition end visibility
+
         public bool TimeSlotVisible { get; set; }   // Timeslot visible
         public bool DeleteButtonVisible { get; set; }   // Delete button visible
 
@@ -42,16 +70,21 @@ namespace NextPark.Mobile.ViewModels
             set { _allDaySwitchToggled = value; AllDaySwitchToggledMethod(value); }
         }
 
+        private ObservableCollection<UISelectionItem> _weekDays;
+        public ObservableCollection<UISelectionItem> WeekDays {
+            get { return _weekDays; }
+            set { _weekDays = value; base.OnPropertyChanged("WeekDays"); }
+        }
+        public bool WeekDayVisible { get; set; }
+
+        // PRIVATE VARIABLES
         private EventModel _event { get; set; }
         private bool _modifying { get; set; }
-
+        private int _repetitionIndex { get; set; }
 
         // SERVICES
         private readonly IDialogService _dialogService;
         private readonly EventDataService _eventDataService;
-        private ObservableCollection<string> Days;
-        private ObservableCollection<string> Hours;
-        private ObservableCollection<string> Minutes;
 
         // METHODS
         public AddEventViewModel(IDialogService dialogService,
@@ -75,24 +108,14 @@ namespace NextPark.Mobile.ViewModels
             OnMoneyClick = new Command<object>(OnMoneyClickMethod);
             OnAddClick = new Command<object>(OnAddClickMethod);
             OnDeleteClick = new Command<object>(OnDeleteClickMethod);
+
             TimeSlotVisible = false;
 
-            // Custom DateTimePicker
-            Minutes = new ObservableCollection<string> {
-                {"0" },{ "15"},{ "30"},{"45"}
-            };
-            Hours = new ObservableCollection<string>();
-            for (int i = 0; i < 24; i++) {
-                Hours.Add(i.ToString());
-            }
-            Days = new ObservableCollection<string>();
-            DateTime dt = DateTime.Now;
-            for (int i = 0; i < 365; i++)
-            {
-                Days.Add(dt.ToShortDateString());
-                dt.AddDays(1.0);
-            }
-            base.OnPropertyChanged("Minutes");
+            RepetitionIndex = 0;
+            RepetitionEndVisible = false;
+            WeekDayVisible = false;
+
+            WeekDays = new ObservableCollection<UISelectionItem>();
         }
 
         public override Task InitializeAsync(object data = null)
@@ -118,7 +141,13 @@ namespace NextPark.Mobile.ViewModels
                         StartTime = DateTime.Now.TimeOfDay;
                         EndDate = DateTime.Now.Date;
                         EndTime = DateTime.Now.TimeOfDay;
-
+                        RepetitionEndDate = StartDate;
+                        _event.RepetitionType = RepetitionType.Dayly;
+                        _event.WeekRepeat = new List<MyDayOfWeek>
+                        {
+                            (MyDayOfWeek)(DateTime.Now.DayOfWeek)
+                        };
+                        RepetitionIndex = 0;
                         DeleteButtonVisible = false;
                         AddButtonText = "Aggiungi";
                         _modifying = false;
@@ -129,25 +158,58 @@ namespace NextPark.Mobile.ViewModels
                         StartTime = _event.StartDate.TimeOfDay;
                         EndDate = _event.EndDate.Date;
                         EndTime = _event.EndDate.TimeOfDay;
-
-                        if (_event.RepetitionType == RepetitionType.Dayly)
-                        {
-                            AllDaySwitchToggled = true;
-                            AllDayTextColor = Color.Black;
+                        RepetitionEndDate = _event.RepetitionEndDate;
+                        if (_event.WeekRepeat == null) {
+                            _event.WeekRepeat = new List<MyDayOfWeek>
+                            {
+                                (MyDayOfWeek)(DateTime.Now.DayOfWeek)
+                            };
                         }
                         DeleteButtonVisible = true;
                         AddButtonText = "Salva";
                         _modifying = true;
                     }
+                    MinStartDate = DateTime.Now;
+                    RepetitionMinEndDate = StartDate;
+
+                    if ((_event.RepetitionType == RepetitionType.Dayly) && (RepetitionEndDate != StartDate))
+                    {
+                        RepetitionIndex = 1;
+                        RepetitionEndVisible = true;
+                    }
+                    else if (_event.RepetitionType == RepetitionType.Weekly)
+                    {
+                        WeekDayVisible = true;
+                        RepetitionIndex = 2;
+                    }
 
                     base.OnPropertyChanged("AllDaySwitchToggled");
                     base.OnPropertyChanged("AllDayTextColor");
                     base.OnPropertyChanged("StartDate");
+                    base.OnPropertyChanged("MinStartDate");
                     base.OnPropertyChanged("StartTime");
                     base.OnPropertyChanged("EndDate");
                     base.OnPropertyChanged("EndTime");
+                    base.OnPropertyChanged("RepetitionEndVisible");
+                    base.OnPropertyChanged("RepetitionIndex");
+                    base.OnPropertyChanged("RepetitionEndDate");
+                    base.OnPropertyChanged("RepetitionMinEndDate");
+                    base.OnPropertyChanged("WeekDaysVisible");
                     base.OnPropertyChanged("DeleteButtonVisible");
                     base.OnPropertyChanged("AddButtonText");
+
+                    WeekDays.Add(new UISelectionItem { Text = "Lunedì", Selected = false, Id = 0});
+                    WeekDays.Add(new UISelectionItem { Text = "Martedì", Selected = false, Id = 1});
+                    WeekDays.Add(new UISelectionItem { Text = "Mercoledì", Selected = false, Id = 2 });
+                    WeekDays.Add(new UISelectionItem { Text = "Giovedì", Selected = false, Id = 3 });
+                    WeekDays.Add(new UISelectionItem { Text = "Venerdì", Selected = false, Id = 4 });
+                    WeekDays.Add(new UISelectionItem { Text = "Sabato", Selected = false, Id = 5 });
+                    WeekDays.Add(new UISelectionItem { Text = "Domenica", Selected = false, Id = 6 });
+
+                    foreach (MyDayOfWeek dayOfWeek in _event.WeekRepeat) {
+                        int index = GetIdFromDayOfWeek(dayOfWeek);
+                        WeekDays[index].Selected = true;
+                    }
 
                 }
             }
@@ -182,6 +244,74 @@ namespace NextPark.Mobile.ViewModels
             AddEvent();
         }
 
+        // Add event button action
+        public void OnRepetitionChangedMethod(int data)
+        {
+            int index = RepetitionIndex;
+            switch (index) {
+                default:
+                case 0: // Never
+                    RepetitionEndVisible = false;
+                    WeekDayVisible = false;
+                    break;
+                case 1: // Daily
+                    RepetitionEndVisible = true;
+                    WeekDayVisible = false;
+                    break;
+                case 2: // Weekly
+                    RepetitionEndVisible = true;
+                    WeekDayVisible = true;
+                    break;
+            }
+            base.OnPropertyChanged("RepetitionEndVisible");
+            base.OnPropertyChanged("WeekDayVisible");
+        }
+
+        private MyDayOfWeek GetDayOfWeek(int id)
+        {
+            switch (id) 
+            {
+                default:
+                case 0: return MyDayOfWeek.Monday;
+                case 1: return MyDayOfWeek.Tuesday;
+                case 2: return MyDayOfWeek.Wednesday;
+                case 3: return MyDayOfWeek.Thursday;
+                case 4: return MyDayOfWeek.Friday;
+                case 5: return MyDayOfWeek.Saturday;
+                case 6: return MyDayOfWeek.Sunday;
+            }
+        }
+
+        private int GetIdFromDayOfWeek(MyDayOfWeek dayOfWeek)
+        {
+            switch (dayOfWeek)
+            {
+                default:
+                case MyDayOfWeek.Monday: return 0;
+                case MyDayOfWeek.Tuesday: return 1;
+                case MyDayOfWeek.Wednesday: return 2;
+                case MyDayOfWeek.Thursday: return 3;
+                case MyDayOfWeek.Friday: return 4;
+                case MyDayOfWeek.Saturday: return 5;
+                case MyDayOfWeek.Sunday: return 6;
+            }
+        }
+
+        // Week Day Selected
+        public void OnWeekDaySelected(object item)
+        {
+            UISelectionItem selItem = item as UISelectionItem;
+            int index = selItem.Id;
+            if (selItem.Selected == true) {
+                selItem.Selected = false;
+                _event.WeekRepeat.Remove(GetDayOfWeek(selItem.Id));
+            } else {
+                selItem.Selected = true;
+                _event.WeekRepeat.Add(GetDayOfWeek(selItem.Id));
+            }
+            base.OnPropertyChanged("WeekDays");
+        }
+
         // Delete event button action
         public void OnDeleteClickMethod(object sender)
         {
@@ -201,15 +331,36 @@ namespace NextPark.Mobile.ViewModels
 
             EventModel result;
 
+            // Check Data
+            if (StartTime > EndTime) {
+                await _dialogService.ShowAlert("Errore", "L'orario di fine deve essere maggiore a quello di inizio");
+                return;
+            }
+
+            switch (RepetitionIndex)
+            {
+                default:
+                case 0: // Never
+                    _event.RepetitionType = RepetitionType.Dayly;
+                    RepetitionEndDate = StartDate;
+                    break;
+                case 1: // Daily
+                    _event.RepetitionType = RepetitionType.Dayly;
+                    break;
+                case 2: // Weekly
+                    _event.RepetitionType = RepetitionType.Weekly;
+                    break;
+            }
+
             if (_modifying) {
                 _event.StartDate = StartDate + StartTime;
-                _event.EndDate = EndDate + EndTime;
-                _event.RepetitionEndDate = EndDate;
+                _event.EndDate = StartDate + EndTime;
+                _event.RepetitionEndDate = RepetitionEndDate;
                 result = await _eventDataService.Put(_event, _event.Id);
             } else {
                 _event.StartDate = StartDate + StartTime;
-                _event.EndDate = EndDate + EndTime;
-                _event.RepetitionEndDate = EndDate;
+                _event.EndDate = StartDate + EndTime;
+                _event.RepetitionEndDate = RepetitionEndDate;
                 result = await _eventDataService.Post(_event);
             }
 
