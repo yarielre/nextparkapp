@@ -59,6 +59,16 @@
                             BackgroundColor="#8CC63F"
                             WidthRequest="191"
                             Margin="0,5,0,5"/>                            
+                    <Button Text="Disconnessione"
+                            FontAttributes="Bold"
+                            VerticalOptions="CenterAndExpand"
+                            HorizontalOptions="Center"
+                            Command="{Binding OnLogoutClick}"
+                            TextColor="White"
+                            BorderRadius="8"
+                            BackgroundColor="Teal"
+                            WidthRequest="191"
+                            Margin="0,5,0,5"/>
                 </StackLayout>
             </controls:DetailPage>
         </ContentView>

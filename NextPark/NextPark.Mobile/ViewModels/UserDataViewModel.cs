@@ -48,15 +48,14 @@ namespace NextPark.Mobile.ViewModels
 
         public bool IsRunning { get; set; }         // Activity spinner
         public ICommand OnSaveClick { get; set; }   // Save button click action
+        public ICommand OnLogoutClick { get; set; } // Logout button click
 
+        // PRIVATE VARIABLES
         private EditProfileModel editModel { get; set; }
 
         // SERVICES
         private readonly IDialogService _dialogService;
         private readonly IProfileService _profileService;
-
-        // PRIVATE VARIABLES
-        private static bool activity = false;
 
         // METHODS
         public UserDataViewModel(IDialogService dialogService,
@@ -74,6 +73,7 @@ namespace NextPark.Mobile.ViewModels
             OnMoneyClick = new Command<object>(OnMoneyClickMethod);
 
             OnSaveClick = new Command<object>(OnSaveClickMethod);
+            OnLogoutClick = new Command<object>(OnLogoutClickMethod);
 
             UserName = AuthSettings.User.Name;
             UserMoney = AuthSettings.UserCoin.ToString("N0");
@@ -281,5 +281,24 @@ namespace NextPark.Mobile.ViewModels
                 }
             }
         }
+
+        // Logout button click action
+        public void OnLogoutClickMethod(object sender)
+        {
+            UserLogout();
+        }
+
+        public async void UserLogout()
+        {
+            try {
+                var result = await AuthService.Logout();
+                if (result.IsSuccess == true) {
+                    await NavigationService.NavigateToAsync<HomeViewModel>();
+                }
+            } catch (Exception e) {
+                await _dialogService.ShowAlert("Errore", e.Message);
+            }
+        }
+
     }
 }
