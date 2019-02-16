@@ -1,4 +1,4 @@
-﻿using NextPark.Mobile.Core.Settings;
+﻿using NextPark.Mobile.Settings;
 using NextPark.Models;
 using System;
 using System.Collections.Generic;

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Xamarin.Forms;
 using Plugin.Media.Abstractions;
 using Plugin.Media;
-using NextPark.Mobile.Core.Settings;
+using NextPark.Mobile.Settings;
 using NextPark.Mobile.Services.Data;
 using NextPark.Models;
 

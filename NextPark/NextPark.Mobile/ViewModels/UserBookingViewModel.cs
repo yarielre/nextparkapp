@@ -6,7 +6,7 @@ using NextPark.Mobile.Extensions;
 using NextPark.Mobile.Services;
 using System.Threading.Tasks;
 using Xamarin.Forms;
-using NextPark.Mobile.Core.Settings;
+using NextPark.Mobile.Settings;
 using NextPark.Mobile.Services.Data;
 using NextPark.Models;
 

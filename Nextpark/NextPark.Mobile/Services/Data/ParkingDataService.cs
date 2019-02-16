@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using NextPark.Mobile.Core.Settings;
+using NextPark.Mobile.Settings;
 using NextPark.Models;
 
 namespace NextPark.Mobile.Services.Data

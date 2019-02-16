@@ -10,7 +10,7 @@ using NextPark.Mobile.Services.Data;
 using NextPark.Models;
 using System.Collections.Generic;
 using NextPark.Enums;
-using NextPark.Mobile.Core.Settings;
+using NextPark.Mobile.Settings;
 using NextPark.Enums.Enums;
 using NextPark.Mobile.CustomControls;
 using Xamarin.Forms.PlatformConfiguration.iOSSpecific;

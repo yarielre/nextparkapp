@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using Xamarin.Forms.Maps;
 using Xamarin.Forms;
 using System;
-using NextPark.Mobile.Core.Settings;
+using NextPark.Mobile.Settings;
 
 namespace NextPark.Mobile.ViewModels
 {

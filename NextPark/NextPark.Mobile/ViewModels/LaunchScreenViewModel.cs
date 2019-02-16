@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-using NextPark.Mobile.Core.Settings;
+using NextPark.Mobile.Settings;
 using NextPark.Mobile.Services;
 using NextPark.Mobile.Services.Data;
 using Xamarin.Forms;

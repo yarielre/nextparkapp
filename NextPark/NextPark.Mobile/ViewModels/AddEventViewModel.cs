@@ -1,16 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using NextPark.Enums;
 using NextPark.Enums.Enums;
-using NextPark.Mobile.Core.Settings;
 using NextPark.Mobile.Services;
 using NextPark.Mobile.Services.Data;
 using NextPark.Mobile.UIModels;
 using NextPark.Models;
+using NextPark.Mobile.Settings;
 using Xamarin.Forms;
 
 namespace NextPark.Mobile.ViewModels
@@ -143,10 +141,12 @@ namespace NextPark.Mobile.ViewModels
                         EndTime = DateTime.Now.TimeOfDay;
                         RepetitionEndDate = StartDate;
                         _event.RepetitionType = RepetitionType.Dayly;
+                        /*
                         _event.WeekRepeat = new List<MyDayOfWeek>
                         {
                             (MyDayOfWeek)(DateTime.Now.DayOfWeek)
                         };
+                        */
                         RepetitionIndex = 0;
                         DeleteButtonVisible = false;
                         AddButtonText = "Aggiungi";
@@ -159,12 +159,14 @@ namespace NextPark.Mobile.ViewModels
                         EndDate = _event.EndDate.Date;
                         EndTime = _event.EndDate.TimeOfDay;
                         RepetitionEndDate = _event.RepetitionEndDate;
+                        /*
                         if (_event.WeekRepeat == null) {
                             _event.WeekRepeat = new List<MyDayOfWeek>
                             {
                                 (MyDayOfWeek)(DateTime.Now.DayOfWeek)
                             };
                         }
+                        */
                         DeleteButtonVisible = true;
                         AddButtonText = "Salva";
                         _modifying = true;
@@ -205,11 +207,12 @@ namespace NextPark.Mobile.ViewModels
                     WeekDays.Add(new UISelectionItem { Text = "Venerdì", Selected = false, Id = 4 });
                     WeekDays.Add(new UISelectionItem { Text = "Sabato", Selected = false, Id = 5 });
                     WeekDays.Add(new UISelectionItem { Text = "Domenica", Selected = false, Id = 6 });
-
+                    /*
                     foreach (MyDayOfWeek dayOfWeek in _event.WeekRepeat) {
                         int index = GetIdFromDayOfWeek(dayOfWeek);
                         WeekDays[index].Selected = true;
                     }
+                    */
 
                 }
             }
@@ -304,10 +307,10 @@ namespace NextPark.Mobile.ViewModels
             int index = selItem.Id;
             if (selItem.Selected == true) {
                 selItem.Selected = false;
-                _event.WeekRepeat.Remove(GetDayOfWeek(selItem.Id));
+                //_event.WeekRepeat.Remove(GetDayOfWeek(selItem.Id));
             } else {
                 selItem.Selected = true;
-                _event.WeekRepeat.Add(GetDayOfWeek(selItem.Id));
+                //_event.WeekRepeat.Add(GetDayOfWeek(selItem.Id));
             }
             base.OnPropertyChanged("WeekDays");
         }

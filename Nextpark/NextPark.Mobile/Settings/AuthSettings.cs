@@ -3,7 +3,7 @@ using NextPark.Models;
 using Plugin.Settings;
 using Plugin.Settings.Abstractions;
 
-namespace NextPark.Mobile.Core.Settings
+namespace NextPark.Mobile.Settings
 {
     public static class AuthSettings
     {

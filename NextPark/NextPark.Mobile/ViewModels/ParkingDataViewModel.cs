@@ -3,8 +3,7 @@ using System.Windows.Input;
 using NextPark.Mobile.Services;
 using System.Threading.Tasks;
 using Xamarin.Forms;
-using NextPark.Mobile.Core.Settings;
-using System.Collections.Generic;
+using NextPark.Mobile.Settings;
 using System.Collections.ObjectModel;
 using NextPark.Models;
 

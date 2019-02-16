@@ -4,7 +4,7 @@ using NextPark.Mobile.Services;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 using NextPark.Models;
-using NextPark.Mobile.Core.Settings;
+using NextPark.Mobile.Settings;
 
 namespace NextPark.Mobile.ViewModels
 {

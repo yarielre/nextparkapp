@@ -203,7 +203,7 @@ namespace NextPark.Mobile.ViewModels
                     Name = this.Name,
                     Password = this.Password,
                     State = "CH",
-                    Username = this.Email
+                    UserName = this.Email
                 };
 
                 var registerResponse = await AuthService.Register(demoUser);

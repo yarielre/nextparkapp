@@ -1,5 +1,5 @@
 using System;
-namespace NextPark.Mobile.Core.Settings
+namespace NextPark.Mobile.Settings
 {
     public static class ApiSettings
     {

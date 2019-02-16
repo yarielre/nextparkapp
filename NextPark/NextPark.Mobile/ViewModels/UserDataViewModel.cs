@@ -1,14 +1,10 @@
 ﻿using System;
 using System.Windows.Input;
-using NextPark.Mobile.Extensions;
 using NextPark.Mobile.Services;
 using System.Threading.Tasks;
 using Xamarin.Forms;
-using Plugin.Media;
-using Plugin.Media.Abstractions;
-using NextPark.Mobile.Core.Settings;
+using NextPark.Mobile.Settings;
 using NextPark.Models;
-using System.Collections.Generic;
 
 namespace NextPark.Mobile.ViewModels
 {
@@ -247,15 +243,13 @@ namespace NextPark.Mobile.ViewModels
             this.editModel = new EditProfileModel
             {
                 Id = AuthSettings.User.Id,
-                Username = this.Email,
+                UserName = this.Email,
                 Name = this.Name,
                 Lastname = this.Lastname,
                 Email = this.Email,
                 Address = userAddress,
                 State = "CH",
-                CarPlate = this.CarPlate,
-                NewPassword = "Pippo.001",
-                OldPassword = "Pippo.001"
+                CarPlate = this.CarPlate
             };
 
             // Start Activity spinner

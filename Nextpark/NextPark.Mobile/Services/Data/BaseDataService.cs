@@ -1,4 +1,4 @@
-﻿using NextPark.Mobile.Core.Settings;
+﻿using NextPark.Mobile.Settings;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
