@@ -200,16 +200,16 @@ namespace NextPark.Mobile.ViewModels
                     base.OnPropertyChanged("DeleteButtonVisible");
                     base.OnPropertyChanged("AddButtonText");
 
-                    WeekDays.Add(new UISelectionItem { Text = "Lunedì", Selected = false, Id = 0});
-                    WeekDays.Add(new UISelectionItem { Text = "Martedì", Selected = false, Id = 1});
-                    WeekDays.Add(new UISelectionItem { Text = "Mercoledì", Selected = false, Id = 2 });
-                    WeekDays.Add(new UISelectionItem { Text = "Giovedì", Selected = false, Id = 3 });
-                    WeekDays.Add(new UISelectionItem { Text = "Venerdì", Selected = false, Id = 4 });
-                    WeekDays.Add(new UISelectionItem { Text = "Sabato", Selected = false, Id = 5 });
-                    WeekDays.Add(new UISelectionItem { Text = "Domenica", Selected = false, Id = 6 });
+                    WeekDays.Add(new UISelectionItem { Text = "Lunedì", Selected = false, Id = 1});
+                    WeekDays.Add(new UISelectionItem { Text = "Martedì", Selected = false, Id = 2});
+                    WeekDays.Add(new UISelectionItem { Text = "Mercoledì", Selected = false, Id = 3 });
+                    WeekDays.Add(new UISelectionItem { Text = "Giovedì", Selected = false, Id = 4 });
+                    WeekDays.Add(new UISelectionItem { Text = "Venerdì", Selected = false, Id = 5 });
+                    WeekDays.Add(new UISelectionItem { Text = "Sabato", Selected = false, Id = 6 });
+                    WeekDays.Add(new UISelectionItem { Text = "Domenica", Selected = false, Id = 0 });
                     /*
                     foreach (MyDayOfWeek dayOfWeek in _event.WeekRepeat) {
-                        int index = GetIdFromDayOfWeek(dayOfWeek);
+                        int index = ((int)dayOfWeek + 6) % 7;
                         WeekDays[index].Selected = true;
                     }
                     */
@@ -270,47 +270,20 @@ namespace NextPark.Mobile.ViewModels
             base.OnPropertyChanged("WeekDayVisible");
         }
 
-        private MyDayOfWeek GetDayOfWeek(int id)
-        {
-            switch (id) 
-            {
-                default:
-                case 0: return MyDayOfWeek.Monday;
-                case 1: return MyDayOfWeek.Tuesday;
-                case 2: return MyDayOfWeek.Wednesday;
-                case 3: return MyDayOfWeek.Thursday;
-                case 4: return MyDayOfWeek.Friday;
-                case 5: return MyDayOfWeek.Saturday;
-                case 6: return MyDayOfWeek.Sunday;
-            }
-        }
-
-        private int GetIdFromDayOfWeek(MyDayOfWeek dayOfWeek)
-        {
-            switch (dayOfWeek)
-            {
-                default:
-                case MyDayOfWeek.Monday: return 0;
-                case MyDayOfWeek.Tuesday: return 1;
-                case MyDayOfWeek.Wednesday: return 2;
-                case MyDayOfWeek.Thursday: return 3;
-                case MyDayOfWeek.Friday: return 4;
-                case MyDayOfWeek.Saturday: return 5;
-                case MyDayOfWeek.Sunday: return 6;
-            }
-        }
-
         // Week Day Selected
         public void OnWeekDaySelected(object item)
         {
             UISelectionItem selItem = item as UISelectionItem;
-            int index = selItem.Id;
             if (selItem.Selected == true) {
                 selItem.Selected = false;
-                //_event.WeekRepeat.Remove(GetDayOfWeek(selItem.Id));
+                MyDayOfWeek day = (MyDayOfWeek)selItem.Id;
+                int index = (selItem.Id + 6) % 7;
+                //_event.WeekRepeat.Remove((MyDayOfWeek)selItem.Id);
             } else {
                 selItem.Selected = true;
-                //_event.WeekRepeat.Add(GetDayOfWeek(selItem.Id));
+                MyDayOfWeek day = (MyDayOfWeek)selItem.Id;
+
+                //_event.WeekRepeat.Add((MyDayOfWeek)selItem.Id);
             }
             base.OnPropertyChanged("WeekDays");
         }
