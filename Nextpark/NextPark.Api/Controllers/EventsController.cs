@@ -7,13 +7,13 @@ using NextPark.Domain.Entities;
 using NextPark.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace NextPark.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
     public class EventsController : ControllerBase
     {
         private readonly IRepository<Event> _repository;
@@ -63,14 +63,14 @@ namespace NextPark.Api.Controllers
                 return BadRequest("adding null entity");
             }
 
-            var parking = _repositoryParking.Find(model.ParkingId);
+            //var parking = _repositoryParking.Find(model.ParkingId);
 
-            if (parking == null)
-            {
-                return BadRequest("Parking not found");
-            }
+            //if (parking == null)
+            //{
+            //    return BadRequest("Parking not found");
+            //}
 
-            var eventsToCreate = CreateEvent(model, parking);
+            var eventsToCreate = CreateEvent(model);
 
             if (eventsToCreate == null) {
 
@@ -127,26 +127,21 @@ namespace NextPark.Api.Controllers
 
             _repository.Delete(entity);
 
-            await _unitOfWork.CommitAsync();
+            await _unitOfWork.CommitAsync().ConfigureAwait(false);
 
             return Ok(vm);
         }
 
-        private List<Event> CreateEvent(EventModel model, Parking parking)
+        private List<Event> CreateEvent(EventModel model)
         {
-            if (model == null || parking == null)
-            {
-                return null;
-            }
-
             switch (model.RepetitionType)
             {
                 case Enums.Enums.RepetitionType.Dayly:
-                    return GenerateDaylyRepetition(model, parking);
+                    return GenerateDaylyRepetition(model);
                 case Enums.Enums.RepetitionType.Weekly:
-                    return null;
+                    return GenerateWeeklyRepetition(model);
                 case Enums.Enums.RepetitionType.Monthly:
-                    return null;
+                   return GenerateMonthlyRepetition(model);
                 default:
 
                     return new List<Event>
@@ -157,20 +152,19 @@ namespace NextPark.Api.Controllers
                             EndDate = model.EndDate,
                             RepetitionEndDate = model.EndDate,
                             RepetitionType = Enums.Enums.RepetitionType.None,
-                            ParkingId = parking.Id
+                            ParkingId = model.ParkingId
                         }
                     };
             }
 
         }
-        private List<Event> GenerateDaylyRepetition(EventModel model, Parking parking)
+        private List<Event> GenerateDaylyRepetition(EventModel model)
         {
             var result = new List<Event>();
 
-            var repetitionId = Guid.NewGuid();
-
             var currentDate = model.StartDate;
             var diffDays = (model.EndDate - currentDate).Days;
+            var repetitionId = Guid.NewGuid();
 
             while (diffDays >= 0)
             {
@@ -180,9 +174,9 @@ namespace NextPark.Api.Controllers
                     StartDate = currentDate,
                     EndDate = currentDate,
                     RepetitionEndDate = model.EndDate,
-                    RepetitionType = Enums.Enums.RepetitionType.Dayly,
                     RepetitionId = repetitionId,
-                    ParkingId = parking.Id
+                    RepetitionType = Enums.Enums.RepetitionType.Dayly,
+                ParkingId = model.ParkingId
                 };
 
                 result.Add(newEvent);
@@ -191,6 +185,67 @@ namespace NextPark.Api.Controllers
             }
 
             return result;
+        }
+
+        private List<Event> GenerateWeeklyRepetition(EventModel model)
+        {
+            var result = new List<Event>();
+            if (model.WeeklyRepeDayOfWeeks.Count>0)
+            {
+                var endDate = model.EndDate;
+                var repetitionId = Guid.NewGuid();
+
+                for (var date = model.StartDate; date <= model.EndDate; date = date.AddDays(1))
+                {
+                    var currentDayOfWeek = date.DayOfWeek;
+
+                    if (model.WeeklyRepeDayOfWeeks.Any(dayRepeated => dayRepeated == currentDayOfWeek))
+                    {
+                        var newEvent = new Event
+                        {
+                            StartDate = date,
+                            EndDate = new DateTime(date.Year, date.Month, date.Day, endDate.Hour, endDate.Minute, endDate.Second),
+                            RepetitionEndDate = endDate,
+                            RepetitionType = Enums.Enums.RepetitionType.Weekly,
+                            RepetitionId = repetitionId,
+                            ParkingId = model.ParkingId
+                        };
+                        result.Add(newEvent);
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        private List<Event> GenerateMonthlyRepetition(EventModel model)
+        {
+            var result = new List<Event>();
+            if (model.MonthlyRepeatDay.Count>0)
+            {
+                var endDate = model.EndDate;
+                var startDate = model.StartDate;
+                var repetitionId = Guid.NewGuid();
+
+                foreach (var dayNumber in model.MonthlyRepeatDay)
+                {
+                    var newDate = new DateTime(startDate.Year,startDate.Month,dayNumber,startDate.Hour,startDate.Minute,startDate.Second);
+                    for (var date  = newDate; date <= model.EndDate; date = date.AddMonths(1))
+                    {
+                        var newEvent = new Event
+                        {
+                            StartDate = date,
+                            EndDate = new DateTime(date.Year, date.Month, date.Day, endDate.Hour, endDate.Minute, endDate.Second),
+                            RepetitionEndDate = endDate,
+                            RepetitionType = Enums.Enums.RepetitionType.Monthly,
+                            RepetitionId = repetitionId,
+                            ParkingId = model.ParkingId
+                        };
+                        result.Add(newEvent);
+                    }
+                }
+            }
+            return result.OrderBy(e=>e.StartDate).ToList();
         }
     }
 }

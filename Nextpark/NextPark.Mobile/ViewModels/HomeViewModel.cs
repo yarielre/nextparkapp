@@ -65,14 +65,14 @@ namespace NextPark.Mobile.ViewModels
         private static bool connected;
 
         // METHODS
-        public HomeViewModel(IGeolocatorService geolocatorService, 
+        public HomeViewModel(IGeolocatorService geolocatorService,
                              IDialogService dialogService,
-                             IApiService apiService, 
-                             IAuthService authService, 
+                             IApiService apiService,
+                             IAuthService authService,
                              INavigationService navService,
-                             ParkingDataService parkingDataService, 
-                             EventDataService eventDataService, 
-                             InAppPurchaseService inAppPurchaseService, 
+                             ParkingDataService parkingDataService,
+                             EventDataService eventDataService,
+                             InAppPurchaseService inAppPurchaseService,
                              IProfileService profileService)
             : base(apiService, authService, navService)
         {
@@ -159,11 +159,11 @@ namespace NextPark.Mobile.ViewModels
                 var registerResponse = await AuthService.Register(demoUser);
 
                 //Demo Get Parkings OK
-                var parkingList = await _parkingDataService.Get();
+                var parkings = await _parkingDataService.GetAllParkingsAsync();
 
 
                 if (parkings.Count > 0) {
-                    await _parkingDataService.Delete(parkings[0].Id);
+                    await _parkingDataService.DeleteParkingsAsync(parkings[0].Id);
                 }
 
                 //Demo Posting Parking
@@ -184,7 +184,7 @@ namespace NextPark.Mobile.ViewModels
                 };
 
                 //Demo Posting Parking
-                var postedParking = await _parkingDataService.Post(parking1);
+                var postedParking = await _parkingDataService.CreateParkingAsync(parking1);
 
                 var eventParking = new EventModel
                 {
@@ -196,13 +196,13 @@ namespace NextPark.Mobile.ViewModels
                 };
                 postedParking.Status = Enums.Enums.ParkingStatus.Disabled;
 
-                var result = await _eventDataService.Post(eventParking);
+                var result = await _eventDataService.CreateEventAsync(eventParking);
 
                 //Demo Puting Parking
-                var parkingResult = await _parkingDataService.Put(postedParking, postedParking.Id);
+                var parkingResult = await _parkingDataService.EditParkingAsync(postedParking.Id, postedParking);
 
                 //Demo Deleting Parking
-                var deletedParking = await _parkingDataService.Delete(parkingResult.Id);
+                var deletedParking = await _parkingDataService.DeleteParkingsAsync(parkingResult.Id);
 
             }
             catch (Exception e)
@@ -248,6 +248,7 @@ namespace NextPark.Mobile.ViewModels
                     Xamarin.Forms.Device.StartTimer(TimeSpan.FromSeconds(9), () => { UpdateParkingList(); return false; });
                 }
             }
+            var parkings = await _parkingDataService.GetAllParkingsAsync();
 
             // Get Parking list
             try
@@ -300,12 +301,12 @@ namespace NextPark.Mobile.ViewModels
 
                 var eventsResult = await _eventDataService.Get();
                 if (eventsResult.Count == 0) return;
-                foreach(EventModel availability in eventsResult) 
+                foreach(EventModel availability in eventsResult)
                 {
                     UIParkingModel parkingModel = _profileService.GetParkingById(availability.ParkingId);
                     if (parkingModel != null) {
                         parkingModel.Events.Add(availability);
-                    }                
+                    }
                 }
                 UIParkingModel debugParking = _profileService.GetParkingById(2);
             }
@@ -381,7 +382,7 @@ namespace NextPark.Mobile.ViewModels
         }
 
         private async void Map_Ready_Handler()
-        {        
+        {
             try
             {
                 if ((_profileService.LastMapPosition == null) || (_profileService.LastMapPosition == new Position(0,0)))

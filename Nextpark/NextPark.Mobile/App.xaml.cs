@@ -3,6 +3,7 @@ using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using NextPark.Mobile.Views;
 using NextPark.Mobile.Infrastructure;
+using NextPark.Mobile.Settings;
 
 [assembly: XamlCompilation(XamlCompilationOptions.Compile)]
 namespace NextPark.Mobile

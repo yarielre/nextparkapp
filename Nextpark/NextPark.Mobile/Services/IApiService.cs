@@ -14,6 +14,7 @@ namespace NextPark.Mobile.Services
         Task<Response> Get<TVm>(string endpoint);
         HttpClient GetHttpClient();
         Task<Response> Post<TVm>(string endpoint, TVm tvm);
+        Task<Response> Post<TParam, TVm>(string endpoint, TParam tvm);
         Task<Response> Put<TVm>(string endpoint, int id, TVm tvm);
     }
 }

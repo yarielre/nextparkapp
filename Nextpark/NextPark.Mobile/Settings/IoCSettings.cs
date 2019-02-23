@@ -1,10 +1,12 @@
 ﻿using System;
 using Autofac;
+using NextPark.Mobile.Infrastructure;
 using NextPark.Mobile.Services;
 using NextPark.Mobile.Services.Data;
+using NextPark.Mobile.Services.DataInterface;
 using NextPark.Mobile.ViewModels;
 
-namespace NextPark.Mobile.Infrastructure
+namespace NextPark.Mobile.Settings
 {
     public class IoCSettings
     {
@@ -26,9 +28,9 @@ namespace NextPark.Mobile.Infrastructure
             builder.RegisterType<InAppPurchaseService>().As<InAppPurchaseService>();
 
             //Services - Data
-            builder.RegisterType<ParkingDataService>();
-            builder.RegisterType<EventDataService>();
-            builder.RegisterType<OrderDataService>();
+            builder.RegisterType<ParkingDataService>().As<IParkingDataService>();
+            builder.RegisterType<EventDataService>().As<IEventDataService>(); 
+            builder.RegisterType<OrderDataService>().As<IOrderDataService>();
 
             //Register ViewModels
             builder.RegisterType<LocatorViewModel>();
@@ -47,6 +49,10 @@ namespace NextPark.Mobile.Infrastructure
             builder.RegisterType<UserDataViewModel>();
             builder.RegisterType<UserParkingViewModel>();
             builder.RegisterType<UserProfileViewModel>();
+
+
+            //Only for test 
+            builder.RegisterType<TestViewModel>();
 
             _container = builder.Build();
         }
