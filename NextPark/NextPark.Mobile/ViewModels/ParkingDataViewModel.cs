@@ -6,26 +6,11 @@ using Xamarin.Forms;
 using NextPark.Mobile.Settings;
 using System.Collections.ObjectModel;
 using NextPark.Models;
+using NextPark.Mobile.UIModels;
+using NextPark.Enums.Enums;
 
 namespace NextPark.Mobile.ViewModels
 {
-    public class Event {
-        public string Text { get; set; }
-        public Color TextColor { get; set; }
-        public int StartSeconds { get; set; }
-        public int DurationSeconds { get; set; }
-        public Color EventColor { get; set; }
-        public Constraint yConstPosition { get; set; }
-        public Constraint xConstPosition { get; set; }
-    }
-
-    public class Order
-    {
-        public string Text { get; set; }
-        public int StartSeconds { get; set; }
-        public int DurationSeconds { get; set; }
-        public Constraint yConstPosition { get; set; }
-    }
 
     public class ParkingDataViewModel : BaseViewModel
     {
@@ -90,34 +75,32 @@ namespace NextPark.Mobile.ViewModels
         public Color Day7BackgroundColor { get; set; }  // Sunday number background color
         public DateTime Day7DateTime { get; set; }      // Sunday date/time
 
+        public ICommand OnEventTapAction { get; set; }
+
         // SERVICES
         private readonly IDialogService _dialogService;
+        private readonly IProfileService _profileService;
 
         // PRIVATE VARIABLES
         private ParkingItem parking;
         private bool activeSwitchToggled;
-        private ObservableCollection<Event> events;
-        public ObservableCollection<Event> Events
+        private ObservableCollection<UICalendarEventModel> calendarEvents;
+        public ObservableCollection<UICalendarEventModel> CalendarEvents
         {
-            get { return events; }
-            set { events = value; base.OnPropertyChanged("Events"); }
+            get { return calendarEvents; }
+            set { calendarEvents = value; base.OnPropertyChanged("CalendarEvents"); }
         }
-        private ObservableCollection<Order> orders;
-        public ObservableCollection<Order> Orders
-        {
-            get { return orders; }
-            set { orders = value; base.OnPropertyChanged("Orders"); }
-        }
-
 
         // METHODS
         public ParkingDataViewModel(IDialogService dialogService,
                                     IApiService apiService,
                                     IAuthService authService,
-                                    INavigationService navService)
+                                    INavigationService navService,
+                                    IProfileService profileService)
                                     : base(apiService, authService, navService)
         {
             _dialogService = dialogService;
+            _profileService = profileService;
 
             // Header
             UserName = AuthSettings.User.Name;
@@ -139,7 +122,7 @@ namespace NextPark.Mobile.ViewModels
             OnPreviousWeek = new Command<object>(OnPreviousWeekMethod);
             OnNextWeek = new Command<object>(OnNextWeekMethod);
             OnDaySelected = new Command<object>(OnDaySelectedMethod);
-            //OnDateSelected = new Command<object>(OnDateSelected);
+            OnEventTapAction = new Command<int>(OnEventTapMethod);
         }
 
         // Initialization
@@ -153,6 +136,7 @@ namespace NextPark.Mobile.ViewModels
             if (data is ParkingItem)
             {
                 parking = (ParkingItem)data;
+                _profileService.LastEditingParking = parking;
 
                 // Header
                 BackText = "Parcheggi";
@@ -360,15 +344,47 @@ namespace NextPark.Mobile.ViewModels
 
         public void RefreshEvents(DateTime dateTime) 
         {
-            // Clear all previous events
-            if (Events != null) Events.Clear();
-
-            Events = new ObservableCollection<Event>
+            EventModel myEvent = new EventModel
             {
-                new Event { Text = "Disponibile", StartSeconds=7, DurationSeconds=60, EventColor=Color.FromHex("#8CC63F"), TextColor=Color.DarkGreen, yConstPosition=Constraint.RelativeToParent((parent) => {return parent.Y + 7 + 0;}), xConstPosition=Constraint.RelativeToParent((parent) => {return parent.Width*0.025;})},
-                new Event { Text = "Disponibile", StartSeconds=187, DurationSeconds=30, EventColor=Color.FromHex("#8CC63F"), TextColor=Color.DarkGreen, yConstPosition=Constraint.RelativeToParent((parent) => {return parent.Y + 7 + 180;}), xConstPosition=Constraint.RelativeToParent((parent) => {return parent.Width*0.025;})},
-                new Event { Text = "TI 12345", StartSeconds=37, DurationSeconds=30, EventColor=Color.LightSteelBlue, TextColor=Color.DarkBlue, yConstPosition=Constraint.RelativeToParent((parent) => {return parent.Y + 7 + 30;}), xConstPosition=Constraint.RelativeToParent((parent) => {return parent.Width*0.525;})}
+                StartDate = DateTime.Now,
+                EndDate = DateTime.Now.AddHours(2.5),
+                RepetitionType = RepetitionType.Dayly,
+                Id = 2
             };
+
+            OrderModel myOrder = new OrderModel
+            {
+                StartDate = DateTime.Now,
+                EndDate = DateTime.Now.AddHours(2.5)
+            };
+
+            // Clear all previous events
+            if (CalendarEvents != null) CalendarEvents.Clear();
+
+            CalendarEvents = new ObservableCollection<UICalendarEventModel>
+            {
+                new UICalendarEventModel { Index=0, Text = "Disponibile", StartSeconds=7, DurationSeconds=60, EventColor=Color.FromHex("#8CC63F"), TextColor=Color.DarkGreen, yConstPosition=Constraint.RelativeToParent((parent) => {return parent.Y + 7 + 0;}), xConstPosition=Constraint.RelativeToParent((parent) => {return parent.Width*0.025;}), OnEventTap=OnEventTapAction, Event=myEvent},
+                new UICalendarEventModel { Index=1, Text = "Disponibile", StartSeconds=187, DurationSeconds=30, EventColor=Color.FromHex("#8CC63F"), TextColor=Color.DarkGreen, yConstPosition=Constraint.RelativeToParent((parent) => {return parent.Y + 7 + 180;}), xConstPosition=Constraint.RelativeToParent((parent) => {return parent.Width*0.025;}), OnEventTap=OnEventTapAction, Event=myEvent},
+                new UICalendarEventModel { Index=2, Text = "TI 12345", StartSeconds=37, DurationSeconds=30, EventColor=Color.LightSteelBlue, TextColor=Color.DarkBlue, yConstPosition=Constraint.RelativeToParent((parent) => {return parent.Y + 7 + 30;}), xConstPosition=Constraint.RelativeToParent((parent) => {return parent.Width*0.525;}), OnEventTap=OnEventTapAction, Order=myOrder}
+            };
+        }
+
+        // Calendar event tapped
+        public void OnEventTapMethod(int index)
+        {
+            // Check data
+            if (index > CalendarEvents.Count) return;
+
+            // Get calendar event
+            UICalendarEventModel myCalendarEvent = CalendarEvents[index];
+
+            if (myCalendarEvent.Event != null) {
+                // Calendar event is an Availability event
+                NavigationService.NavigateToAsync<AddEventViewModel>(myCalendarEvent.Event);
+            } else if (myCalendarEvent.Order != null) {
+                // Calendar event is 
+                _dialogService.ShowAlert("Riservazione", "Dalle ore: " + myCalendarEvent.Order.StartDate.ToShortTimeString() + "\nAlle ore: " + myCalendarEvent.Order.EndDate.ToShortTimeString());
+            }
         }
 
     }

@@ -327,7 +327,7 @@
                     <controls:DayView HeightRequest="300" Padding="0" Margin="0,-5,0,0" VerticalOptions="Fill">
                         
                         <!-- Events and Orders -->
-                        <repeater:RelRepeaterView  HorizontalOptions="FillAndExpand" ItemsSource="{Binding Events}">
+                        <repeater:RelRepeaterView  HorizontalOptions="FillAndExpand" ItemsSource="{Binding CalendarEvents}">
                             <repeater:RelRepeaterView.ItemTemplate>
                                 <DataTemplate>
                                     <ViewCell>
@@ -346,6 +346,9 @@
                                                    Opacity="1"
                                                    HorizontalTextAlignment="Start"
                                                    VerticalTextAlignment="Start"/> 
+                                            <Frame.GestureRecognizers>
+                                                <TapGestureRecognizer Command="{Binding OnEventTap}" CommandParameter="{Binding Index}"/>                                                           
+                                            </Frame.GestureRecognizers>
                                         </Frame>
                                     </ViewCell>
                                 </DataTemplate>

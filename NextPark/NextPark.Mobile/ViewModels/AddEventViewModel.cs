@@ -83,17 +83,20 @@ namespace NextPark.Mobile.ViewModels
         // SERVICES
         private readonly IDialogService _dialogService;
         private readonly EventDataService _eventDataService;
+        private readonly IProfileService _profileService;
 
         // METHODS
         public AddEventViewModel(IDialogService dialogService,
                                  IApiService apiService,
                                  IAuthService authService,
                                  INavigationService navService,
-                                 EventDataService eventDataService)
+                                 EventDataService eventDataService,
+                                 IProfileService profileService)
                                  : base(apiService, authService, navService)
         {
             _dialogService = dialogService;
             _eventDataService = eventDataService;
+            _profileService = profileService;
 
             UserName = AuthSettings.User.Name;
             UserMoney = AuthSettings.UserCoin.ToString("N0");
@@ -222,7 +225,8 @@ namespace NextPark.Mobile.ViewModels
         // Back Click action
         public void OnBackClickMethod(object sender)
         {
-            NavigationService.NavigateToAsync<UserParkingViewModel>();
+            //NavigationService.NavigateToAsync<UserParkingViewModel>();
+            NavigationService.NavigateToAsync<ParkingDataViewModel>(_profileService.LastEditingParking);
         }
 
         // User Click action
@@ -337,7 +341,7 @@ namespace NextPark.Mobile.ViewModels
             }
 
             if (result != null) {
-                //NavigationService.NavigateToAsync<ParkingDataViewModel>();
+                await NavigationService.NavigateToAsync<ParkingDataViewModel>(_profileService.LastEditingParking);
             }
         }
 
@@ -345,6 +349,7 @@ namespace NextPark.Mobile.ViewModels
         {
             // await oderRemove
             var result = await _eventDataService.Delete(_event.Id);
+            await NavigationService.NavigateToAsync<ParkingDataViewModel>(_profileService.LastEditingParking);
         }
 
         // Activate/Deactivate Parking toggle switch action

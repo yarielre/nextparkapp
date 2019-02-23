@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using NextPark.Mobile.Settings;
 using NextPark.Mobile.UIModels;
+using NextPark.Mobile.ViewModels;
 using NextPark.Models;
 using Xamarin.Forms.Maps;
 
@@ -17,6 +18,8 @@ namespace NextPark.Mobile.Services
         private readonly IApiService _apiService;
 
         public Position LastMapPosition { get; set; }
+        public ParkingItem LastEditingParking { get; set; }
+
         public List<UIParkingModel> ParkingList { get; set; }
         public List<UIParkingModel> UserParkingList { get; set; }
         public List<OrderModel> UserOrderList { get; set; }
