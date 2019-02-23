@@ -9,13 +9,17 @@ using Xamarin.Forms.Maps;
 using Xamarin.Forms;
 using System;
 using NextPark.Mobile.Settings;
+using NextPark.Mobile.UIModels;
+using NextPark.Models;
+using NextPark.Mobile.Services.Data;
+using NextPark.Mobile.CustomControls;
 
 namespace NextPark.Mobile.ViewModels
 {
     public class BookingMapParams
     {
         public CustomControls.CustomMap Map { get; set; }
-        public BookingItem Booking { get; set; }
+        public UIBookingModel Booking { get; set; }
     }
 
     public class BookingMapViewModel : BaseViewModel
@@ -28,25 +32,35 @@ namespace NextPark.Mobile.ViewModels
         public string UserMoney { get; set; }       // Header money value
         public ICommand OnMoneyClick { get; set; }  // Header money action
 
-        private CustomControls.CustomMap Map { get; set; }  // Custom Map
-        public ICommand OnArrived { get; set; }             // Arrived button click action
+        public string ActionText { get; set; }      // Action button text
+        public bool ActionVisible { get; set; }     // Action button visibity
+        public string DeleteText { get; set; }      // Delete button text
+
+        public CustomControls.CustomMap Map { get; set; }  // Custom Map
+        public ICommand OnAction { get; set; }             // Arrived button click action
         public ICommand OnNavigate { get; set; }            // Navigate button click action
         public ICommand OnBookDel { get; set; }             // Delete button click action
+
+        private UIBookingModel order;
+        private ParkingModel parking;
 
         // SERVICES
         private readonly IGeolocatorService _geoLocatorService;
         private readonly IDialogService _dialogService;
+        private readonly ParkingDataService _parkingDataService;
 
         // METHODS
         public BookingMapViewModel(IGeolocatorService geolocatorService, 
                                    IDialogService dialogService,
                                    IApiService apiService, 
                                    IAuthService authService, 
-                                   INavigationService navService)
+                                   INavigationService navService,
+                                   ParkingDataService parkingDataService)
                                    : base(apiService, authService, navService)
         {
             _geoLocatorService = geolocatorService;
             _dialogService = dialogService;
+            _parkingDataService = parkingDataService;
 
             // Header
             UserName = AuthSettings.User.Name;
@@ -54,10 +68,17 @@ namespace NextPark.Mobile.ViewModels
             base.OnPropertyChanged("UserName");
             base.OnPropertyChanged("UserMoney");
 
+            ActionText = "";
+            ActionVisible = false;
+            base.OnPropertyChanged("ActionText");
+            base.OnPropertyChanged("ActionVisible");
+            DeleteText = "Elimina";
+            base.OnPropertyChanged("DeleteText");
+
             OnBackClick = new Command<object>(OnBackClickMethod);
             OnUserClick = new Command<object>(OnUserClickMethod);
             OnMoneyClick = new Command<object>(OnMoneyClickMethod);
-            OnArrived = new Command<object>(OnArrivedMethod);
+            OnAction = new Command<object>(OnActionMethod);
             OnNavigate = new Command<object>(OnNavigateMethod);
             OnBookDel = new Command<object>(OnBookDelMethod);
         }
@@ -68,13 +89,10 @@ namespace NextPark.Mobile.ViewModels
             {
                 return Task.FromResult(false);
             }
-            if (data is BookingMapParams parameter)
-            {
-                Map = parameter.Map;
-                Map.MapReady += Map_MapReady;
-                Map.Tapped += Map_Tapped;
-                Map.PinTapped += Map_PinTapped;
-            }
+
+            Map.MapReady += Map_MapReady;
+            Map.Tapped += Map_Tapped;
+            Map.PinTapped += Map_PinTapped;
 
             // Header
             BackText = "Indietro";
@@ -84,44 +102,67 @@ namespace NextPark.Mobile.ViewModels
             base.OnPropertyChanged("UserName");
             base.OnPropertyChanged("UserMoney");
 
+            if (data is UIBookingModel parameter)
+            {
+                order = parameter;
+
+                if (DateTime.Now < order.StartDate) {
+                    // Early start
+                    ActionText = "Arrivato";
+                    ActionVisible = true;
+                    base.OnPropertyChanged("ActionText");
+                    base.OnPropertyChanged("ActionVisible");
+                } else {
+                    // Renovate
+                    ActionText = "Aggiorna";
+                    ActionVisible = true;
+                    base.OnPropertyChanged("ActionText");
+                    base.OnPropertyChanged("ActionVisible");
+                }
+
+                if (DateTime.Now < order.StartDate) {
+                    // Delete
+                    DeleteText = "Elimina";
+                    base.OnPropertyChanged("DeleteText");
+                } else {
+                    // Terminate
+                    DeleteText = "Termina";
+                    base.OnPropertyChanged("DeleteText");
+                }
+            }
+
             return Task.FromResult(false);
         }
 
         private void Map_Tapped(object sender, CustomControls.MapTapEventArgs e)
         {
-            throw new System.NotImplementedException();
+            //throw new System.NotImplementedException();
         }
 
         private void Map_PinTapped(object sender, CustomControls.PinTapEventArgs e)
         {
-            throw new System.NotImplementedException();
+            //throw new System.NotImplementedException();
         }
 
         private void Map_MapReady(object sender, System.EventArgs e)
         {
+            // Get parking position
+            Xamarin.Forms.Maps.Position position = new Position(order.Parking.Latitude, order.Parking.Longitude);
 
-            Map_Ready_Handler();
-        }
-
-        private async void Map_Ready_Handler()
-        {
-
-            Xamarin.Forms.Maps.Position position = new Position(0, 0);
-            try
+            // Add Map Pin of parking
+            var pin = new CustomPin
             {
-                var permissionGaranted = await _geoLocatorService.IsPermissionGaranted();
+                Id = parking.Id,
+                Parking = parking,
+                Type = PinType.Place,
+                Position = position,
+                Label = parking.Address,
+                Address = parking.Cap.ToString() + " " + parking.City,
+                Icon = "icon_pin_green_256"
+            };
+            Map.Pins.Add(pin);
 
-                if (!permissionGaranted) return;
-
-                var getLocation = await _geoLocatorService.GetLocation();
-
-                position = getLocation.ToXamMapPosition();
-            }
-            catch (Exception ex)
-            {
-                // _loggerService.LogVerboseException(ex, this).ShowVerboseException(ex, this).ThrowVerboseException(ex, this);
-            }
-
+            // Move to parking position
             Map.MoveToRegion(MapSpan.FromCenterAndRadius(position, Distance.FromKilometers(1)));
         }
 
@@ -144,10 +185,21 @@ namespace NextPark.Mobile.ViewModels
         }
 
         // Arrived button click action
-        public void OnArrivedMethod(object sender)
+        public void OnActionMethod(object sender)
         {
-            // TODO: manage user arrived
-            _dialogService.ShowAlert("Alert", "TODO: manage user arrived");
+            if (DateTime.Now < order.StartDate)
+            {
+                // Early start
+                // TODO: manage user arrived
+                _dialogService.ShowAlert("Alert", "TODO: manage user arrived");
+            }
+            else
+            {
+                // Renovate
+                // TODO: manage user arrived
+                _dialogService.ShowAlert("Alert", "TODO: manage renovate order");
+            }
+
         }
 
         // Navigate button click action
@@ -160,8 +212,18 @@ namespace NextPark.Mobile.ViewModels
         // Delete button click action
         public void OnBookDelMethod(object sender)
         {
-            // TODO: manage booking delete action
-            _dialogService.ShowAlert("Alert", "TODO: manage booking delete action");
+            if (DateTime.Now < order.StartDate)
+            {
+                // Delete
+                // TODO: manage booking delete action
+                _dialogService.ShowAlert("Alert", "TODO: manage booking delete action");
+            }
+            else
+            {
+                // Terminate
+                // TODO: manage booking delete action
+                _dialogService.ShowAlert("Alert", "TODO: manage terminate oreder");
+            }
         }
     }
 }

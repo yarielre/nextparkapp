@@ -9,69 +9,10 @@ using Xamarin.Forms;
 using NextPark.Mobile.Settings;
 using NextPark.Mobile.Services.Data;
 using NextPark.Models;
+using NextPark.Mobile.UIModels;
 
 namespace NextPark.Mobile.ViewModels
 {
-    public class BookingItem
-    {
-        private int uid;
-        public int UID
-        {
-            get { return uid; }
-            set { uid = value; }
-        }
-
-        private int index;
-        public int Index
-        {
-            get { return index; }
-            set { index = value; }
-        }
-
-        private string address;
-        public string Address
-        {
-            get { return address; }
-            set { address = value; }
-        }
-
-        private string city;
-        public string City
-        {
-            get { return city; }
-            set { city = value; }
-        }
-
-        private string time;
-        public string Time
-        {
-            get { return time; }
-            set { time = value; }
-        }
-
-        private ICommand onBookingTap;
-        public ICommand OnBookingTap
-        {
-            get { return onBookingTap; }
-            set { onBookingTap = value; }
-        }
-
-        private ICommand onBookingDel;
-        public ICommand OnBookingDel
-        {
-            get { return onBookingDel; }
-            set { onBookingDel = value; }
-        }
-        /*
-        private ICommand onBookingSwipe;
-        public ICommand OnBookingSwipe
-        {
-            get { return onBookingSwipe; }
-            set { onBookingSwipe = value; }
-        }
-        */
-    }
-
     public class UserBookingViewModel : BaseViewModel
     {
         // PROPERTIES
@@ -95,9 +36,9 @@ namespace NextPark.Mobile.ViewModels
         private readonly OrderDataService _orderDataService;
 
         // PRIVATE VARIABLES
-        private ObservableCollection<BookingItem> bookingList;
+        private ObservableCollection<UIBookingModel> bookingList;
 
-        public ObservableCollection<BookingItem> BookingList
+        public ObservableCollection<UIBookingModel> BookingList
         {
             get { return bookingList; }
             set { bookingList = value; base.OnPropertyChanged("BookingList"); }
@@ -131,7 +72,7 @@ namespace NextPark.Mobile.ViewModels
             //OnBookingSwiped = new Command<object>(OnBookingSwipedMethod);
 
             // Example starting values
-            BookingList = new ObservableCollection<BookingItem>();
+            BookingList = new ObservableCollection<UIBookingModel>();
 
             NoElementFound = false;
         }
@@ -178,18 +119,20 @@ namespace NextPark.Mobile.ViewModels
             {
                 if (order.UserId == int.Parse(AuthSettings.UserId))
                 {
-                    var parkingResponse = await _parkingDataService.Get(order.ParkingId);
+                    var parking = await _parkingDataService.Get(order.ParkingId);
 
-                    if (parkingResponse != null) {
+                    if (parking != null) {
 
                         TimeSpan remainingTime = order.EndDate - DateTime.Now;
 
-                        BookingList.Add(new BookingItem
+                        BookingList.Add(new UIBookingModel
                         {
                             UID = order.Id,
                             Index = count++,
-                            Address = parkingResponse.Address, // get parking descrption from order.ParkingId
-                            City = parkingResponse.Cap.ToString() + " " + parkingResponse.City, // get parking city order.ParkingId
+                            Address = parking.Address,
+                            Cap = parking.Cap.ToString(),
+                            City = parking.City,
+                            Parking = parking,
                             Time = string.Format("{0}:{1}", remainingTime.Hours.ToString(), remainingTime.Minutes.ToString()),
                             OnBookingDel = OnBookingDelete,
                             OnBookingTap = OnBookingTapped
@@ -239,7 +182,7 @@ namespace NextPark.Mobile.ViewModels
             // TODO: Evaluate using UID or index of booking list (currently using UID as index)
             if (sender is int)
             {
-                BookingItem item = BookingList[(int)sender];
+                UIBookingModel item = BookingList[(int)sender];
                 // TODO: pass booking item to booking map page
                 NavigationService.NavigateToAsync<BookingMapViewModel>(item);
                 _dialogService.ShowAlert("Alert", "Booking data: " + item.Address);
@@ -252,9 +195,20 @@ namespace NextPark.Mobile.ViewModels
             // TODO: Evaluate using UID or index of booking list (currently using UID as index)
             if (sender is int)
             {
-                BookingItem item = BookingList[(int)sender];
-                // TODO: pass booking item to backend delete booking method
-                _dialogService.ShowAlert("Alert", "Delete booking: " + item.Address);
+                UIBookingModel item = BookingList[(int)sender];
+
+                if (DateTime.Now < item.StartDate)
+                {
+                    // Delete
+                    // TODO: manage booking delete action
+                    _dialogService.ShowAlert("Alert", "TODO: manage booking delete action");
+                }
+                else
+                {
+                    // Terminate
+                    // TODO: manage booking delete action
+                    _dialogService.ShowAlert("Alert", "TODO: manage terminate oreder");
+                }
             }
         }
 

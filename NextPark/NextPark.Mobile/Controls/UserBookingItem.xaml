@@ -47,11 +47,16 @@
                                        FontAttributes="Bold"
                                        TextColor="Gray"
                                        HorizontalTextAlignment="Start"/>
-                                <Label Text="{TemplateBinding City}"
-                                       FontSize="Small"
-                                       FontAttributes="None"
-                                       TextColor="Gray"
-                                       HorizontalTextAlignment="Start"/>
+                                <StackLayout Orientation="Horizontal" Spacing="2" HorizontalOptions="Start">
+                                    <Label  Text="{Binding Cap}"
+                                            FontSize="Small"
+                                            FontAttributes="None"
+                                            TextColor="Gray"/>
+                                    <Label  Text="{Binding City}"
+                                            FontSize="Small"
+                                            FontAttributes="None"
+                                            TextColor="Gray"/>
+                                </StackLayout>
                             </StackLayout>
                             <!-- Booking remaining time -->
                             <StackLayout Spacing="0"

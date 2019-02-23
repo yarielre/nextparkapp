@@ -15,10 +15,11 @@ namespace NextPark.Mobile.Views
             On<Xamarin.Forms.PlatformConfiguration.iOS>().SetUseSafeArea(true);
 
             if (BindingContext == null) return;
-            if (BindingContext is BaseViewModel bvm)
+            if (BindingContext is BookingMapViewModel bvm)
             {
-                BookingMapParams parameters = new BookingMapParams { Map = MyMap, Booking = null };
-                bvm.InitializeAsync(parameters);
+                MyMap.IsShowingUser = true;
+                MyMap.MapType = Xamarin.Forms.Maps.MapType.Street;
+                bvm.Map = MyMap;
             }
         }
     }
