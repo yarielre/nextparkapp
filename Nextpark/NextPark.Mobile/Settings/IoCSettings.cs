@@ -31,6 +31,7 @@ namespace NextPark.Mobile.Settings
             builder.RegisterType<ParkingDataService>().As<IParkingDataService>();
             builder.RegisterType<EventDataService>().As<IEventDataService>(); 
             builder.RegisterType<OrderDataService>().As<IOrderDataService>();
+            builder.RegisterType<PurchaseDataService>();
 
             //Register ViewModels
             builder.RegisterType<LocatorViewModel>();

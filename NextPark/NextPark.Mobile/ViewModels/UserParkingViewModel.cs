@@ -10,6 +10,7 @@ using NextPark.Mobile.Settings;
 using NextPark.Mobile.Services.Data;
 using NextPark.Models;
 using NextPark.Enums.Enums;
+using NextPark.Mobile.Services.DataInterface;
 
 namespace NextPark.Mobile.ViewModels
 {
@@ -90,7 +91,7 @@ namespace NextPark.Mobile.ViewModels
 
         // SERVICES
         private readonly IDialogService _dialogService;
-        private readonly ParkingDataService _parkingDataService;
+        private readonly IParkingDataService _parkingDataService;
 
         // PRIVATE VARIABLES
         private ObservableCollection<ParkingItem> _parkingList;
@@ -106,7 +107,7 @@ namespace NextPark.Mobile.ViewModels
                                     IApiService apiService,
                                     IAuthService authService,
                                     INavigationService navService,
-                                    ParkingDataService parkingDataService)
+                                    IParkingDataService parkingDataService)
                                     : base(apiService, authService, navService)
         {
             _dialogService = dialogService;
@@ -222,6 +223,7 @@ namespace NextPark.Mobile.ViewModels
                         });
                     }
                 }
+                /* DEBUG CODE
                 ParkingList.Add(new ParkingItem
                 {
                     UID = 1,
@@ -234,6 +236,7 @@ namespace NextPark.Mobile.ViewModels
                     OnParkingTap = OnParkingTapped
                 });
                 base.OnPropertyChanged("ParkingList");
+                */
                 if (ParkingList.Count == 0)
                 {
                     NoElementFound = true;

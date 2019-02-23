@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Xamarin.Forms;
 using NextPark.Models;
 using NextPark.Mobile.Settings;
+using NextPark.Mobile.Services.Data;
 
 namespace NextPark.Mobile.ViewModels
 {
@@ -38,6 +39,7 @@ namespace NextPark.Mobile.ViewModels
         // SERVICES
         private readonly IDialogService _dialogService;
         private readonly IProfileService _profileService;
+		private readonly PurchaseDataService _purchaseService; 
 
         // PRIVATE VARIABLES
         protected static UInt16 selectedValue;
@@ -47,11 +49,13 @@ namespace NextPark.Mobile.ViewModels
         public MoneyViewModel(IDialogService dialogService,
                               IApiService apiService,
                               IAuthService authService,
-                              INavigationService navService)
+                              INavigationService navService,
+		                      PurchaseDataService purchaseService)
                               : base(apiService, authService, navService)
         {
             _dialogService = dialogService;
             _profileService = new ProfileService(apiService);
+			_purchaseService = purchaseService;
 
             // Header
             // TODO: evaluate back text and action
@@ -200,7 +204,7 @@ namespace NextPark.Mobile.ViewModels
         {
             if (UpdateUserCoin != null)
             {
-                var buyResponse = await _profileService.UpdateUserCoins(UpdateUserCoin);
+				Response buyResponse = null;// await _profileService.(UpdateUserCoin);
 
                 // Stop activity spinner
                 IsRunning = false;

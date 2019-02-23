@@ -27,11 +27,11 @@
   <ItemGroup>
     <Folder Include="CustomControls\" />
     <Folder Include="Controls\" />
-    <Folder Include="UIModels\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="Resources.Designer.cs" />
     <Compile Remove="Params\HomeInitParams.cs" />
+    <Compile Remove="Extensions\EnumerablesExt.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NextPark.Models\NextPark.Models.csproj" />

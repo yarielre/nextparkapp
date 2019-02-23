@@ -8,6 +8,7 @@ using Plugin.Media;
 using NextPark.Mobile.Settings;
 using NextPark.Mobile.Services.Data;
 using NextPark.Models;
+using NextPark.Mobile.Services.DataInterface;
 
 namespace NextPark.Mobile.ViewModels
 {
@@ -55,7 +56,7 @@ namespace NextPark.Mobile.ViewModels
         // SERVICES
         private readonly IDialogService _dialogService;
         private readonly IGeolocatorService _geoLocatorService;
-        private readonly ParkingDataService _parkingDataService;
+        private readonly IParkingDataService _parkingDataService;
 
         // PRIVATE VARIABLES
         private bool _isAuthorized;
@@ -68,7 +69,7 @@ namespace NextPark.Mobile.ViewModels
                                    IApiService apiService,
                                    IAuthService authService,
                                    INavigationService navService,
-                                   ParkingDataService parkingDataService)
+                                   IParkingDataService parkingDataService)
                                    : base(apiService, authService, navService)
         {
             _dialogService = dialogService;
@@ -287,7 +288,7 @@ namespace NextPark.Mobile.ViewModels
         public async void AddParkingMethod(ParkingModel model)
         {
             try {
-                var addResponse = await _parkingDataService.Post(model);
+                var addResponse = await _parkingDataService.CreateParkingAsync(model);
 
                 if (addResponse != null) {
                     await NavigationService.NavigateToAsync<UserParkingViewModel>();

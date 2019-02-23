@@ -15,6 +15,7 @@ using NextPark.Enums.Enums;
 using NextPark.Mobile.CustomControls;
 using Xamarin.Forms.PlatformConfiguration.iOSSpecific;
 using NextPark.Mobile.UIModels;
+using NextPark.Mobile.Services.DataInterface;
 
 namespace NextPark.Mobile.ViewModels
 {
@@ -44,8 +45,8 @@ namespace NextPark.Mobile.ViewModels
         // SERVICES
         private readonly IGeolocatorService _geoLocatorService;
         private readonly IDialogService _dialogService;
-        private readonly ParkingDataService _parkingDataService;
-        private readonly EventDataService _eventDataService;
+        private readonly IParkingDataService _parkingDataService;
+        private readonly IEventDataService _eventDataService;
         private readonly InAppPurchaseService _inAppPurchaseService;
         private readonly IProfileService _profileService;
 
@@ -70,8 +71,8 @@ namespace NextPark.Mobile.ViewModels
                              IApiService apiService,
                              IAuthService authService,
                              INavigationService navService,
-                             ParkingDataService parkingDataService,
-                             EventDataService eventDataService,
+                             IParkingDataService parkingDataService,
+                             IEventDataService eventDataService,
                              InAppPurchaseService inAppPurchaseService,
                              IProfileService profileService)
             : base(apiService, authService, navService)
@@ -281,7 +282,9 @@ namespace NextPark.Mobile.ViewModels
                         PriceMin = parking.PriceMin,
                         PriceMax = parking.PriceMax,
                         Status = parking.Status,
-                        UserId = parking.UserId
+                        UserId = parking.UserId,
+                        Events = new List<EventModel>(),
+                        Orders = new List<OrderModel>()
                     };
 
                     /* FUTURE IMPLEMENTATION
@@ -308,7 +311,6 @@ namespace NextPark.Mobile.ViewModels
                         parkingModel.Events.Add(availability);
                     }
                 }
-                UIParkingModel debugParking = _profileService.GetParkingById(2);
             }
             catch (Exception e) {
                 _dialogService.ShowToast(e.Message, TimeSpan.FromSeconds(10));

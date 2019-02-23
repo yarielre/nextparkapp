@@ -13,6 +13,7 @@ using NextPark.Mobile.UIModels;
 using NextPark.Models;
 using NextPark.Mobile.Services.Data;
 using NextPark.Mobile.CustomControls;
+using NextPark.Mobile.Services.DataInterface;
 
 namespace NextPark.Mobile.ViewModels
 {
@@ -47,7 +48,7 @@ namespace NextPark.Mobile.ViewModels
         // SERVICES
         private readonly IGeolocatorService _geoLocatorService;
         private readonly IDialogService _dialogService;
-        private readonly ParkingDataService _parkingDataService;
+        private readonly IParkingDataService _parkingDataService;
 
         // METHODS
         public BookingMapViewModel(IGeolocatorService geolocatorService, 
@@ -55,7 +56,7 @@ namespace NextPark.Mobile.ViewModels
                                    IApiService apiService, 
                                    IAuthService authService, 
                                    INavigationService navService,
-                                   ParkingDataService parkingDataService)
+                                   IParkingDataService parkingDataService)
                                    : base(apiService, authService, navService)
         {
             _geoLocatorService = geolocatorService;

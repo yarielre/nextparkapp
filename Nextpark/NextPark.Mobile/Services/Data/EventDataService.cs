@@ -24,11 +24,15 @@ namespace NextPark.Mobile.Services.Data
                 throw new Exception("Internet correction error.");
             }
                 var url = ApiSettings.EventsEndPoint;
-                var response = await _apiService.Post<EventModel,List<EventModel>>(url, model).ConfigureAwait(false);
+                var response = await _apiService.Post<EventModel,EventModel>(url, model).ConfigureAwait(false);
 
                 if (response.IsSuccess)
                 {
-                    return response.Result as List<EventModel>;
+                    EventModel myModel = response.Result as EventModel;
+                    return new List<EventModel>
+                    {
+                        myModel
+                    };
                 }
                 return null;
             }

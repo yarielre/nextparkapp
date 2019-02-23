@@ -4,18 +4,32 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using NextPark.Mobile.Core.Settings;
 using NextPark.Models;
+using NextPark.Mobile.UIModels;
+using NextPark.Mobile.ViewModels;
+using Xamarin.Forms.Maps;
+using System.Collections.Generic;
+using NextPark.Mobile.Settings;
 
 namespace NextPark.Mobile.Services
 {
-    public class ProfileService
+    public class ProfileService : IProfileService
     {
-        private readonly ApiService _apiService;
+        private readonly IApiService _apiService;
 
-        public ProfileService(ApiService apiService)
+        public Position LastMapPosition { get; set; }
+        public ParkingItem LastEditingParking { get; set; }
+
+        public List<UIParkingModel> ParkingList { get; set; }
+        public List<UIParkingModel> UserParkingList { get; set; }
+        public List<OrderModel> UserOrderList { get; set; }
+
+        public ProfileService(IApiService apiService)
         {
             _apiService = apiService;
+            ParkingList = new List<UIParkingModel>();
+            UserParkingList = new List<UIParkingModel>();
+            UserOrderList = new List<OrderModel>(); 
         }
 
         public async Task<bool> ChangePassword(ChangePasswordModel model)
@@ -88,6 +102,42 @@ namespace NextPark.Mobile.Services
             var result = JsonConvert.DeserializeObject<EditProfileModel>(resultJson);
 
             return result == null ? new EditProfileModel() : result as EditProfileModel;
+        }
+
+        public UIParkingModel GetParkingById(int searchId)
+        {
+            foreach (UIParkingModel parking in ParkingList)
+            {
+                if (parking.Id == searchId)
+                {
+                    return parking;
+                }
+            }
+            return null;
+        }
+
+        public UIParkingModel GetUserParkingById(int searchId)
+        {
+            foreach (UIParkingModel parking in UserParkingList)
+            {
+                if (parking.Id == searchId)
+                {
+                    return parking;
+                }
+            }
+            return null;
+        }
+
+        public OrderModel GetUserOrderById(int searchId)
+        {
+            foreach (OrderModel order in UserOrderList)
+            {
+                if (order.Id == searchId)
+                {
+                    return order;
+                }
+            }
+            return null;
         }
     }
 }

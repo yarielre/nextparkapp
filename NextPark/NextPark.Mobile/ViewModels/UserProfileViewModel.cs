@@ -9,6 +9,7 @@ using NextPark.Models;
 using Xamarin.Forms;
 using NextPark.Mobile.Services.Data;
 using NextPark.Enums.Enums;
+using NextPark.Mobile.Services.DataInterface;
 
 namespace NextPark.Mobile.ViewModels
 {
@@ -44,16 +45,16 @@ namespace NextPark.Mobile.ViewModels
 
         // SERVICES
         private readonly IDialogService _dialogService;
-        private readonly ParkingDataService _parkingDataService;
-        private readonly OrderDataService _orderDataService;
+        private readonly IParkingDataService _parkingDataService;
+        private readonly IOrderDataService _orderDataService;
 
         // METHODS
         public UserProfileViewModel(IDialogService dialogService,
                                     IApiService apiService, 
                                     IAuthService authService, 
                                     INavigationService navService,
-                                    ParkingDataService parkingDataService,
-                                    OrderDataService orderDataService
+                                    IParkingDataService parkingDataService,
+                                    IOrderDataService orderDataService
                                    )
                                     : base(apiService, authService, navService)
         {

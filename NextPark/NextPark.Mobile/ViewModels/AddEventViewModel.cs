@@ -11,6 +11,7 @@ using NextPark.Models;
 using NextPark.Mobile.Settings;
 using Xamarin.Forms;
 using System.Collections.Generic;
+using NextPark.Mobile.Services.DataInterface;
 
 namespace NextPark.Mobile.ViewModels
 {
@@ -83,7 +84,7 @@ namespace NextPark.Mobile.ViewModels
 
         // SERVICES
         private readonly IDialogService _dialogService;
-        private readonly EventDataService _eventDataService;
+        private readonly IEventDataService _eventDataService;
         private readonly IProfileService _profileService;
 
         // METHODS
@@ -91,7 +92,7 @@ namespace NextPark.Mobile.ViewModels
                                  IApiService apiService,
                                  IAuthService authService,
                                  INavigationService navService,
-                                 EventDataService eventDataService,
+                                 IEventDataService eventDataService,
                                  IProfileService profileService)
                                  : base(apiService, authService, navService)
         {
@@ -145,12 +146,10 @@ namespace NextPark.Mobile.ViewModels
                         EndTime = DateTime.Now.TimeOfDay;
                         RepetitionEndDate = StartDate;
                         _event.RepetitionType = RepetitionType.Dayly;
-                        /*
-                        _event.WeekRepeat = new List<MyDayOfWeek>
+                        _event.WeeklyRepeDayOfWeeks = new List<DayOfWeek>
                         {
-                            (MyDayOfWeek)(DateTime.Now.DayOfWeek)
+                            (DayOfWeek)(DateTime.Now.DayOfWeek)
                         };
-                        */
                         RepetitionIndex = 0;
                         DeleteButtonVisible = false;
                         AddButtonText = "Aggiungi";
@@ -163,14 +162,12 @@ namespace NextPark.Mobile.ViewModels
                         EndDate = _event.EndDate.Date;
                         EndTime = _event.EndDate.TimeOfDay;
                         RepetitionEndDate = _event.RepetitionEndDate;
-                        /*
-                        if (_event.WeekRepeat == null) {
-                            _event.WeekRepeat = new List<MyDayOfWeek>
+                        if (_event.WeeklyRepeDayOfWeeks == null) {
+                            _event.WeeklyRepeDayOfWeeks = new List<DayOfWeek>
                             {
-                                (MyDayOfWeek)(DateTime.Now.DayOfWeek)
+                                (DayOfWeek)(DateTime.Now.DayOfWeek)
                             };
                         }
-                        */
                         DeleteButtonVisible = true;
                         AddButtonText = "Salva";
                         _modifying = true;
@@ -329,15 +326,20 @@ namespace NextPark.Mobile.ViewModels
             _event.EndDate = StartDate + EndTime;
             _event.RepetitionEndDate = RepetitionEndDate;
 
-            List<EventModel> result = new List<EventModel>();
+            EventModel result = null;
 
             if (_modifying) {
-                result = await _eventDataService.EditEventsAsync(_event);
+
+                result = await _eventDataService.EditEventsAsync(_event.Id, _event);
             } else {
-                result = await _eventDataService.CreateEventAsync(_event);
+                var resultList = await _eventDataService.CreateEventAsync(_event);
+                foreach (EventModel eventModel in resultList) {
+                    result = eventModel;
+                    break;
+                }
             }
 
-            if (result.Count > 0) {
+            if (result != null) {
                 await NavigationService.NavigateToAsync<ParkingDataViewModel>(_profileService.LastEditingParking);
             }
         }

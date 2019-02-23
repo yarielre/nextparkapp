@@ -9,6 +9,7 @@ using NextPark.Mobile.Settings;
 using NextPark.Mobile.Services.Data;
 using NextPark.Models;
 using NextPark.Mobile.UIModels;
+using NextPark.Mobile.Services.DataInterface;
 
 namespace NextPark.Mobile.ViewModels
 {
@@ -47,7 +48,7 @@ namespace NextPark.Mobile.ViewModels
 
         // SERVICES
         private readonly IDialogService _dialogService;
-        private readonly OrderDataService _orderDataService;
+        private readonly IOrderDataService _orderDataService;
 
         // PRIVATE VARIABLES
         private static bool activity = false;
@@ -58,7 +59,7 @@ namespace NextPark.Mobile.ViewModels
                                 IApiService apiService,
                                 IAuthService authService,
                                 INavigationService navService,
-                                OrderDataService orderDataService)
+                                IOrderDataService orderDataService)
                                 : base(apiService, authService, navService)
         {
             _dialogService = dialogService;

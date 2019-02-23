@@ -16,11 +16,11 @@ namespace NextPark.Mobile.Services
         List<UIParkingModel> UserParkingList { get; set; }
         List<OrderModel> UserOrderList { get; set; }
 
-        Task<UpdateUserCoinModel> UpdateUserCoins(UpdateUserCoinModel model);
-        Task<EditProfileModel> UpdateUserData(EditProfileModel model);
-
+        Task<bool> ChangePassword(ChangePasswordModel model);
+        Task<UserModel> EditProfile(EditProfileModel model);
         UIParkingModel GetParkingById(int searchId);
-        UIParkingModel GetUserParkingById(int searchId);
         OrderModel GetUserOrderById(int searchId);
+        UIParkingModel GetUserParkingById(int searchId);
+        Task<EditProfileModel> UpdateUserData(EditProfileModel model);
     }
 }

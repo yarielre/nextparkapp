@@ -4,6 +4,7 @@ using NextPark.Mobile.Settings;
 using NextPark.Mobile.Services;
 using NextPark.Mobile.Services.Data;
 using Xamarin.Forms;
+using NextPark.Mobile.Services.DataInterface;
 
 namespace NextPark.Mobile.ViewModels
 {
@@ -14,13 +15,13 @@ namespace NextPark.Mobile.ViewModels
 
         // SERVICES
         private readonly IDialogService _dialogService;
-        private readonly ParkingDataService _parkingDataService;
+        private readonly IParkingDataService _parkingDataService;
 
         // METHODS
         public LaunchScreenViewModel(IDialogService dialogService,
                                      IApiService apiService,
                                      IAuthService authService,
-                                     ParkingDataService parkingDataService,
+                                     IParkingDataService parkingDataService,
                                      INavigationService navService)
         : base(apiService, authService, navService)
         {
