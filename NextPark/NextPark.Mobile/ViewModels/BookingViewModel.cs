@@ -230,7 +230,7 @@ namespace NextPark.Mobile.ViewModels
         public async void SendOrder(OrderModel order)
         {
             try {
-                var result = await _orderDataService.Post(order);
+                var result = await _orderDataService.CreateOrderAsync(order);
 
                 IsRunning = false;
                 base.OnPropertyChanged("IsRunning");

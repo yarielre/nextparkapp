@@ -102,7 +102,7 @@ namespace NextPark.Mobile.ViewModels
 
         private async Task GetUserBookings()
         {
-            var ordersResponse = await _orderDataService.Get();
+            var ordersResponse = await _orderDataService.GetAllOrdersAsync();
 
             /*
             {
@@ -117,9 +117,10 @@ namespace NextPark.Mobile.ViewModels
 
             foreach (OrderModel order in ordersResponse)
             {
+                order.
                 if (order.UserId == int.Parse(AuthSettings.UserId))
                 {
-                    var parking = await _parkingDataService.Get(order.ParkingId);
+                    var parking = await _parkingDataService.GetParkingAsync(order.ParkingId);
 
                     if (parking != null) {
 

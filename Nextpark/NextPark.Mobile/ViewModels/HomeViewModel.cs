@@ -253,8 +253,8 @@ namespace NextPark.Mobile.ViewModels
             // Get Parking list
             try
             {
-                var parkingsResponse = await _parkingDataService.Get();
-                _parkingDataService.Parkings = parkingsResponse;
+                var parkingsResponse = await _parkingDataService.GetAllParkingsAsync();
+                //_parkingDataService.Parkings = parkingsResponse;
 
                 if (parkingsResponse.Count == 0) return;
 
@@ -299,7 +299,7 @@ namespace NextPark.Mobile.ViewModels
                 }
                 base.OnPropertyChanged("Parkings");
 
-                var eventsResult = await _eventDataService.Get();
+                var eventsResult = await _eventDataService.GetAllEventsAsync();
                 if (eventsResult.Count == 0) return;
                 foreach(EventModel availability in eventsResult)
                 {

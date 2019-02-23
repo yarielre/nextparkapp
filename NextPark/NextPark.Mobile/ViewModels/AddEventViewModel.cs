@@ -10,6 +10,7 @@ using NextPark.Mobile.UIModels;
 using NextPark.Models;
 using NextPark.Mobile.Settings;
 using Xamarin.Forms;
+using System.Collections.Generic;
 
 namespace NextPark.Mobile.ViewModels
 {
@@ -210,13 +211,11 @@ namespace NextPark.Mobile.ViewModels
                     WeekDays.Add(new UISelectionItem { Text = "Venerdì", Selected = false, Id = 5 });
                     WeekDays.Add(new UISelectionItem { Text = "Sabato", Selected = false, Id = 6 });
                     WeekDays.Add(new UISelectionItem { Text = "Domenica", Selected = false, Id = 0 });
-                    /*
-                    foreach (MyDayOfWeek dayOfWeek in _event.WeekRepeat) {
+
+                    foreach (DayOfWeek dayOfWeek in _event.WeeklyRepeDayOfWeeks) {
                         int index = ((int)dayOfWeek + 6) % 7;
                         WeekDays[index].Selected = true;
                     }
-                    */
-
                 }
             }
             return Task.FromResult(false);
@@ -280,10 +279,10 @@ namespace NextPark.Mobile.ViewModels
             UISelectionItem selItem = item as UISelectionItem;
             if (selItem.Selected == true) {
                 selItem.Selected = false;
-                //_event.WeekRepeat.Remove((MyDayOfWeek)selItem.Id);
+                _event.WeeklyRepeDayOfWeeks.Remove((DayOfWeek)selItem.Id);
             } else {
                 selItem.Selected = true;
-                //_event.WeekRepeat.Add((MyDayOfWeek)selItem.Id);
+                _event.WeeklyRepeDayOfWeeks.Add((DayOfWeek)selItem.Id);
             }
             base.OnPropertyChanged("WeekDays");
         }
@@ -304,8 +303,6 @@ namespace NextPark.Mobile.ViewModels
                 StartTime = TimeSpan.FromHours(0.0);
                 EndTime = TimeSpan.FromHours(23.0);
             }
-
-            EventModel result;
 
             // Check Data
             if (StartTime > EndTime) {
@@ -328,19 +325,19 @@ namespace NextPark.Mobile.ViewModels
                     break;
             }
 
+            _event.StartDate = StartDate + StartTime;
+            _event.EndDate = StartDate + EndTime;
+            _event.RepetitionEndDate = RepetitionEndDate;
+
+            List<EventModel> result = new List<EventModel>();
+
             if (_modifying) {
-                _event.StartDate = StartDate + StartTime;
-                _event.EndDate = StartDate + EndTime;
-                _event.RepetitionEndDate = RepetitionEndDate;
-                result = await _eventDataService.Put(_event, _event.Id);
+                result = await _eventDataService.EditEventsAsync(_event);
             } else {
-                _event.StartDate = StartDate + StartTime;
-                _event.EndDate = StartDate + EndTime;
-                _event.RepetitionEndDate = RepetitionEndDate;
-                result = await _eventDataService.Post(_event);
+                result = await _eventDataService.CreateEventAsync(_event);
             }
 
-            if (result != null) {
+            if (result.Count > 0) {
                 await NavigationService.NavigateToAsync<ParkingDataViewModel>(_profileService.LastEditingParking);
             }
         }
@@ -348,7 +345,7 @@ namespace NextPark.Mobile.ViewModels
         public async void DeleteEvent()
         {
             // await oderRemove
-            var result = await _eventDataService.Delete(_event.Id);
+            var result = await _eventDataService.DeleteEventsAsync(_event.Id);
             await NavigationService.NavigateToAsync<ParkingDataViewModel>(_profileService.LastEditingParking);
         }
 

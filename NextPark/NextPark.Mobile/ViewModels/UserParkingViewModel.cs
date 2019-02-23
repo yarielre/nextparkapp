@@ -190,7 +190,7 @@ namespace NextPark.Mobile.ViewModels
 
         private async Task GetUserParkings()
         {
-            var parkingList = await _parkingDataService.Get();
+            var parkingList = await _parkingDataService.GetAllParkingsAsync();
 
             ParkingList.Clear();
 

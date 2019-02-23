@@ -305,11 +305,11 @@ namespace NextPark.Mobile.ViewModels
             }
         }
 
-        public async void EditParkingMethod(ParkingModel model)
+        public async void EditParkingMethod(ParkingModel parking)
         {
             try
             {
-                var addResponse = await _parkingDataService.Put(model, model.Id);
+                var addResponse = await _parkingDataService.EditParkingAsync(parking.Id, parking);
 
                 if (addResponse != null)
                 {
@@ -346,7 +346,7 @@ namespace NextPark.Mobile.ViewModels
         {
             try
             {
-                var delResponse = await _parkingDataService.Delete(parkingId);
+                var delResponse = await _parkingDataService.DeleteParkingsAsync(parkingId);
 
                 if (delResponse != null)
                 {

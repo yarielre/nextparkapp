@@ -173,9 +173,9 @@ namespace NextPark.Mobile.ViewModels
         private async Task GetUserParkings()
         {
         
-            var parkingList = await _parkingDataService.Get();
+            var parkingList = await _parkingDataService.GetAllParkingsAsync();
 
-            if (parkingList.Count > 0) _parkingDataService.Parkings = parkingList;
+            //if (parkingList.Count > 0) _parkingDataService.Parkings = parkingList;
 
             // Reset counters
             _totUserParkings = 0;
@@ -183,9 +183,9 @@ namespace NextPark.Mobile.ViewModels
 
             // Search user parkings 
             // TODO: use a filter on Parkings
-            if (_parkingDataService.Parkings != null)
+            if (parkingList != null)
             {
-                foreach (ParkingModel parking in _parkingDataService.Parkings)
+                foreach (ParkingModel parking in parkingList)
                 {
                     if (parking.UserId == int.Parse(AuthSettings.UserId))
                     {
@@ -216,16 +216,15 @@ namespace NextPark.Mobile.ViewModels
         public async Task<bool> GetBookings()
         {
             try {
-                var orderList = await _orderDataService.Get();
+                var orderList = await _orderDataService.GetAllOrdersAsync();
                 if (orderList != null)
                 {
                     if (orderList.Count > 0)
                     {
-                        _orderDataService.Orders = orderList;
 
                         OrderModel nextOrder = null;
 
-                        foreach (OrderModel order in _orderDataService.Orders) 
+                        foreach (OrderModel order in orderList) 
                         {
                             if (order.UserId == int.Parse(AuthSettings.UserId))
                             {
@@ -252,7 +251,8 @@ namespace NextPark.Mobile.ViewModels
                 }
             } catch (Exception e)
             {
-
+                // TODO: manage exception
+                return false;
             }
             return false;
         }
