@@ -7,7 +7,7 @@ using NextPark.Models;
 
 namespace NextPark.Mobile.Services.Data
 {
-    public class ParkingDataService : IParkingDataService
+    public class ParkingDataService
     {
         private readonly IApiService _apiService;
 
@@ -102,7 +102,7 @@ namespace NextPark.Mobile.Services.Data
             try
             {
                 var url = ApiSettings.ParkingsEndPoint;
-                var response = await _apiService.Put(url, parkingModel).ConfigureAwait(false);
+                var response = await _apiService.Put(url, parkingModel.Id,  parkingModel).ConfigureAwait(false);
 
                 if (response.IsSuccess)
                 {

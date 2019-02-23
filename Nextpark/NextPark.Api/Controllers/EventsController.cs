@@ -70,19 +70,13 @@ namespace NextPark.Api.Controllers
                 return  NotFound("Parking not found");
             }
 
-            var eventsToCreate = CreateEvent(model);
+            var entity = _mapper.Map<EventModel, Event>(model);
 
-            if (eventsToCreate == null) {
-
-                return BadRequest("Any event has been generated");
-            }
-            foreach (var ev in eventsToCreate) {
-                _repository.Add(ev);
-            }
+            _repository.Add(entity);
 
             await _unitOfWork.CommitAsync();
 
-            var vm = _mapper.Map<List<Event>, List<EventModel>>(eventsToCreate);
+            var vm = _mapper.Map<Event, EventModel>(entity);
 
             return Ok(vm);
         }
@@ -103,11 +97,13 @@ namespace NextPark.Api.Controllers
                 return NotFound("Event not found");
             }
 
-            _repository.Update(entityEvent);
+            var updatedEntity = _mapper.Map<EventModel, Event>(model);
 
-            var vm = _mapper.Map<Event, EventModel>(entityEvent);
+            _repository.Update(updatedEntity);
 
             await _unitOfWork.CommitAsync();
+
+            var vm = _mapper.Map<Event, EventModel>(entityEvent);
 
             return Ok(vm);
         }

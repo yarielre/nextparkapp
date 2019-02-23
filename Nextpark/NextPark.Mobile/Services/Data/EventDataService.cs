@@ -69,7 +69,7 @@ namespace NextPark.Mobile.Services.Data
                 return null;
         }
 
-        public async Task<EventModel> EditEventsAsync(int id,EventModel eventModel)
+        public async Task<EventModel> EditEventsAsync(int id, EventModel eventModel)
         {
             var isConneted = await _apiService.CheckConnection().ConfigureAwait(false);
             if (!isConneted.IsSuccess)
