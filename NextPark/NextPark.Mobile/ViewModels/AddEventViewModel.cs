@@ -276,13 +276,9 @@ namespace NextPark.Mobile.ViewModels
             UISelectionItem selItem = item as UISelectionItem;
             if (selItem.Selected == true) {
                 selItem.Selected = false;
-                MyDayOfWeek day = (MyDayOfWeek)selItem.Id;
-                int index = (selItem.Id + 6) % 7;
                 //_event.WeekRepeat.Remove((MyDayOfWeek)selItem.Id);
             } else {
                 selItem.Selected = true;
-                MyDayOfWeek day = (MyDayOfWeek)selItem.Id;
-
                 //_event.WeekRepeat.Add((MyDayOfWeek)selItem.Id);
             }
             base.OnPropertyChanged("WeekDays");

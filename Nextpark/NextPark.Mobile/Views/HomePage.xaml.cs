@@ -23,7 +23,6 @@ namespace NextPark.Mobile.Views
                 MyMap.IsShowingUser = true;
                 MyMap.MapType = Xamarin.Forms.Maps.MapType.Street;
                 bvm.Map = MyMap;
-                //bvm.InitializeAsync();
             }
         }
     }

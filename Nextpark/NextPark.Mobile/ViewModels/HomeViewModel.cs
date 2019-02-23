@@ -229,6 +229,11 @@ namespace NextPark.Mobile.ViewModels
                 // Update User Data
                 try {
                     var userResult = await _authService.GetUserByUserName(AuthSettings.UserName);
+                    if (userResult.IsSuccess == false) {
+                        _dialogService.ShowToast("Manutenzione in corso", TimeSpan.FromSeconds(10));
+                        Xamarin.Forms.Device.StartTimer(TimeSpan.FromSeconds(9), () => { UpdateParkingList(); return false; });
+                        return;
+                    }
                     if (AuthService.IsUserAuthenticated()) {
                         // Update user data
                         UserName = AuthSettings.User.Name;
