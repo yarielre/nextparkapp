@@ -91,7 +91,7 @@ namespace NextPark.Mobile.Services.Data
             }
         }
 
-        public async Task<ParkingModel> EditParkingAsync(int id, ParkingModel parkingModel)
+        public async Task<ParkingModel> EditParkingAsync(ParkingModel parkingModel)
         {
             var isConneted = await _apiService.CheckConnection().ConfigureAwait(false);
             if (!isConneted.IsSuccess)
@@ -102,7 +102,7 @@ namespace NextPark.Mobile.Services.Data
             try
             {
                 var url = ApiSettings.ParkingsEndPoint;
-                var response = await _apiService.Put(url, id, parkingModel).ConfigureAwait(false);
+                var response = await _apiService.Put(url, parkingModel).ConfigureAwait(false);
 
                 if (response.IsSuccess)
                 {
