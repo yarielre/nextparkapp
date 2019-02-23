@@ -199,7 +199,7 @@ namespace NextPark.Mobile.ViewModels
                 var result = await _eventDataService.CreateEventAsync(eventParking);
 
                 //Demo Puting Parking
-                var parkingResult = await _parkingDataService.EditParkingAsync(postedParking.Id, postedParking);
+                var parkingResult = await _parkingDataService.EditParkingAsync(postedParking);
 
                 //Demo Deleting Parking
                 var deletedParking = await _parkingDataService.DeleteParkingsAsync(parkingResult.Id);

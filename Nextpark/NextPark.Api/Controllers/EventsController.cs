@@ -63,26 +63,20 @@ namespace NextPark.Api.Controllers
                 return BadRequest("adding null entity");
             }
 
-            //var parking = _repositoryParking.Find(model.ParkingId);
+            var parking = _repositoryParking.Find(model.ParkingId);
 
-            //if (parking == null)
-            //{
-            //    return BadRequest("Parking not found");
-            //}
-
-            var eventsToCreate = CreateEvent(model);
-
-            if (eventsToCreate == null) {
-
-                return BadRequest("Any event has been generated");
+            if (parking == null)
+            {
+                return  NotFound("Parking not found");
             }
-            foreach (var ev in eventsToCreate) {
-                _repository.Add(ev);
-            }
+
+            var entity = _mapper.Map<EventModel, Event>(model);
+
+            _repository.Add(entity);
 
             await _unitOfWork.CommitAsync();
 
-            var vm = _mapper.Map<List<Event>, List<EventModel>>(eventsToCreate);
+            var vm = _mapper.Map<Event, EventModel>(entity);
 
             return Ok(vm);
         }
@@ -100,14 +94,16 @@ namespace NextPark.Api.Controllers
 
             if (entityEvent == null)
             {
-                return BadRequest("Event not found");
+                return NotFound("Event not found");
             }
 
-            _repository.Update(entityEvent);
+            var updatedEntity = _mapper.Map<EventModel, Event>(model);
 
-            var vm = _mapper.Map<Event, EventModel>(entityEvent);
+            _repository.Update(updatedEntity);
 
             await _unitOfWork.CommitAsync();
+
+            var vm = _mapper.Map<Event, EventModel>(entityEvent);
 
             return Ok(vm);
         }
@@ -120,7 +116,7 @@ namespace NextPark.Api.Controllers
 
             if (entity == null)
             {
-                return BadRequest("Can't deleted, entity not found.");
+                return NotFound("Can't deleted, entity not found.");
             }
 
             var vm = _mapper.Map<Event, EventModel>(entity);

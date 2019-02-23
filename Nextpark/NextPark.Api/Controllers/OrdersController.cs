@@ -40,8 +40,13 @@ namespace NextPark.Api.Controllers
         }
 
         [HttpPost("renew")]
+        [Obsolete]
         public async Task<IActionResult> RenovateOrder([FromBody] RenovateOrder model)
         {
+
+            //TODO: Remove
+            //
+
             if (model == null)
                 return BadRequest("Invalid RenovateOrder parameter");
 
@@ -51,8 +56,12 @@ namespace NextPark.Api.Controllers
             try
             {
                 var order = _mapper.Map<OrderModel, Order>(model.Order);
+
+
+
                 _orderRepository.Update(order);
                 var user = _useRepository.Find(model.User.Id);
+
                 user.Balance = model.User.Balance;
                 _useRepository.Update(user);
                 await _unitOfWork.CommitAsync().ConfigureAwait(false);
@@ -70,17 +79,26 @@ namespace NextPark.Api.Controllers
         {
             try
             {
+                //Logic terminate
+                //Change order state  completed
+                //Scale user balance
+                //Change parking state to available
+
                 var order = _orderRepository.Find(id);
 
                 if (order == null)
                     return BadRequest("Order not found.");
 
-                _orderRepository.Delete(order);
+
                 var parking = await _parkingRepository
                     .FirstWhereAsync(p => p.Id == order.ParkingId).ConfigureAwait(false);
+
                 _parkingRepository.Update(parking);
+
                 await _unitOfWork.CommitAsync().ConfigureAwait(false);
+
                 var vm = _mapper.Map<Parking, ParkingModel>(parking);
+
                 return Ok(vm);
             }
             catch (Exception e)
@@ -157,16 +175,22 @@ namespace NextPark.Api.Controllers
 
         // PUT api/controller/5
         [HttpPut("{id}")]
-        public async Task<ActionResult> Put(int id, [FromBody] Order entity)
+        public async Task<ActionResult> Put(int id, [FromBody] OrderModel model)
         {
-            if (ModelState.IsValid)
-            {
-                _orderRepository.Update(entity);
-                var vm = _mapper.Map<Order, OrderModel>(entity);
-                await _unitOfWork.CommitAsync().ConfigureAwait(false);
-                return Ok(vm);
-            }
-            return BadRequest(ModelState);
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
+
+            var entity = _mapper.Map<OrderModel, Order>(model);
+
+            _orderRepository.Update(entity);
+
+
+            var vm = _mapper.Map<Order, OrderModel>(entity);
+
+            await _unitOfWork.CommitAsync().ConfigureAwait(false);
+
+            return Ok(vm);
+
         }
 
         // DELETE api/controller/5
