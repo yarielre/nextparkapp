@@ -48,7 +48,7 @@ namespace NextPark.Mobile.Services
             }
             var isReachable = await _crossConnectivity.IsReachable("www.google.com", 1000);
             //var isReachable = await _crossConnectivity.IsRemoteReachable(ApiSettings.BaseUri, ApiSettings.BasePort, 1000);
-        
+
             if (!isReachable)
             {
                 return new Response
@@ -162,6 +162,46 @@ namespace NextPark.Mobile.Services
                         IsSuccess = false,
                         Message = response.ReasonPhrase
                     };
+
+                var resultJson = await response.Content.ReadAsStringAsync();
+                var result = JsonConvert.DeserializeObject<TVm>(resultJson);
+
+                return new Response
+                {
+                    IsSuccess = true,
+                    Result = result
+                };
+            }
+            catch (Exception ex)
+            {
+                return new Response
+                {
+                    IsSuccess = false,
+                    Message = ex.Message
+                };
+            }
+        }
+
+        public async Task<Response> Post<TParam, TVm>(string endpoint, TParam tvm)
+        {
+            var isConneted = await CheckConnection();
+            if (!isConneted.IsSuccess) return isConneted;
+
+            try
+            {
+                var json = JsonConvert.SerializeObject(tvm);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                var client = GetHttpClient();
+                var response = await client.PostAsync(endpoint, content);
+
+                if (response.StatusCode == HttpStatusCode.BadRequest || response.StatusCode == HttpStatusCode.NotFound)
+                    return new Response
+                    {
+                        IsSuccess = false,
+                        Message = response.Content.ReadAsStringAsync().Result
+                    };
+
 
                 var resultJson = await response.Content.ReadAsStringAsync();
                 var result = JsonConvert.DeserializeObject<TVm>(resultJson);

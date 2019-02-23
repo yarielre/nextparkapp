@@ -144,11 +144,11 @@ namespace NextPark.Mobile.ViewModels
                 var registerResponse = await AuthService.Register(demoUser);
 
                 //Demo Get Parkings OK
-                var parkings = await _parkingDataService.Get();
+                var parkings = await _parkingDataService.GetAllParkingsAsync();
 
 
                 if (parkings.Count > 0) {
-                    await _parkingDataService.Delete(parkings[0].Id);
+                    await _parkingDataService.DeleteParkingsAsync(parkings[0].Id);
                 }
 
                 //Demo Posting Parking
@@ -169,7 +169,7 @@ namespace NextPark.Mobile.ViewModels
                 };
 
                 //Demo Posting Parking
-                var postedParking = await _parkingDataService.Post(parking1);
+                var postedParking = await _parkingDataService.CreateParkingAsync(parking1);
 
                 var eventParking = new EventModel
                 {
@@ -181,13 +181,13 @@ namespace NextPark.Mobile.ViewModels
                 };
                 postedParking.Status = Enums.Enums.ParkingStatus.Disabled;
 
-                var result = await _eventDataService.Post(eventParking);
+                var result = await _eventDataService.CreateEventAsync(eventParking);
 
                 //Demo Puting Parking
-                var parkingResult = await _parkingDataService.Put(postedParking, postedParking.Id);
+                var parkingResult = await _parkingDataService.EditParkingAsync(postedParking.Id, postedParking);
 
                 //Demo Deleting Parking
-                var deletedParking = await _parkingDataService.Delete(parkingResult.Id);
+                var deletedParking = await _parkingDataService.DeleteParkingsAsync(parkingResult.Id);
 
             }
             catch (Exception e)
@@ -200,7 +200,7 @@ namespace NextPark.Mobile.ViewModels
         private async Task GetParkings()
         {
 
-            var parkings = await _parkingDataService.Get();
+            var parkings = await _parkingDataService.GetAllParkingsAsync();
 
             // TODO: fill parking list and use parkingModel
             Parkings = new ObservableCollection<ParkingInfo>

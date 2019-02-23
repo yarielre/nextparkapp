@@ -33,7 +33,6 @@
     <Compile Remove="Params\HomeInitParams.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\NextPark.Mobile.Core\NextPark.Mobile.Core.csproj" />
     <ProjectReference Include="..\NextPark.Models\NextPark.Models.csproj" />
   </ItemGroup>
   <ItemGroup>
@@ -47,6 +46,9 @@
     <EmbeddedResource Update="Resources\Localize.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Localize.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Views\TestPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
   </ItemGroup>
 </Project>

@@ -52,6 +52,8 @@ namespace NextPark.Api.Controllers
                 return BadRequest("Invalid ChangePasswordModel parameter");
             }
 
+
+
             var user = _userManager.Users.FirstOrDefault(u => u.Id == model.Id);
 
             if (user == null)
@@ -89,9 +91,20 @@ namespace NextPark.Api.Controllers
 
             var user = _userManager.Users.SingleOrDefault(r => r.Id == model.Id);
 
+
             if (user == null)
             {
                 return BadRequest("User not found.");
+            }
+
+            try
+            {
+                var imageUrl = _mediaService.SaveImage(model.ImageBinary);
+                if (!string.IsNullOrEmpty(imageUrl)) model.ImageUrl = imageUrl;
+            }
+            catch (Exception e)
+            {
+                //Log: return BadRequest(string.Format("{0} Exception: {1}", "Error processing Image!", e.Message));
             }
 
             try
@@ -105,19 +118,7 @@ namespace NextPark.Api.Controllers
                 user.Phone = model.Phone;
                 user.Cap = model.Cap;
                 user.City = model.City;
-
-                try
-                {
-                   var imageUrl = _mediaService.SaveImage(model.ImageBinary);
-                    if (!string.IsNullOrEmpty(imageUrl)) {
-                        user.ImageUrl = imageUrl;
-                    }
-                      
-                }
-                catch (Exception e)
-                {
-                    //Log: return string.Format("{0} Exception: {1}", "Error processing Image!", e.Message)
-                }
+                user.ImageUrl = model.ImageUrl;
 
                 var result = await _userManager.UpdateAsync(user);
 
@@ -138,34 +139,5 @@ namespace NextPark.Api.Controllers
             }
         }
 
-        [HttpPost("editcoins")]
-        public async Task<ActionResult> UpdateCoin([FromBody] UpdateUserCoinModel model)
-        {
-            if (model == null)
-            {
-                return BadRequest("Invalid UpdateUserCoinModel parameter");
-            }
-
-            var user = _useRepository.Find(model.UserId);
-
-            if (user == null)
-            {
-                return BadRequest("User not found.");
-            }
-            try
-            {
-                user.Balance = model.Coins;
-                _useRepository.Update(user);
-                await _unitOfWork.CommitAsync();
-                var vm = _mapper.Map<ApplicationUser, UserModel>(user);
-                return Ok(vm);
-
-            }
-            catch (Exception e)
-            {
-                return BadRequest(string.Format("Server error: {0}", e));
-            }
-
-        }
     }
 }

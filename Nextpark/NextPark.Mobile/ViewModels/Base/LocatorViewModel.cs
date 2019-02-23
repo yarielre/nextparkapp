@@ -1,6 +1,7 @@
 ﻿using NextPark.Mobile.Services;
 using NextPark.Mobile.ViewModels;
 using System;
+using NextPark.Mobile.Settings;
 
 namespace NextPark.Mobile.Infrastructure
 {
@@ -18,6 +19,11 @@ namespace NextPark.Mobile.Infrastructure
         public UserDataViewModel UserData { get { return (UserDataViewModel)IoCSettings.Resolve<UserDataViewModel>(); } }
         public UserParkingViewModel UserParking { get { return (UserParkingViewModel)IoCSettings.Resolve<UserParkingViewModel>(); } }
         public UserProfileViewModel Profile { get { return (UserProfileViewModel)IoCSettings.Resolve<UserProfileViewModel>(); } }
+
+        //Only for test
+        public TestViewModel Test { get { return (TestViewModel)IoCSettings.Resolve<TestViewModel>(); } }
+
+
 
         public HomeViewModel Home
         {

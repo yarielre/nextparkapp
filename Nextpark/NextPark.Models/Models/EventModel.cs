@@ -14,6 +14,10 @@ namespace NextPark.Models
         public DateTime RepetitionEndDate { get; set; }
         public RepetitionType RepetitionType { get; set; }
 
+        //Repeatitions
+        public List<DayOfWeek> WeeklyRepeDayOfWeeks { get; set; }              //List of days of week for weekly repeat
+        public List<int> MonthlyRepeatDay { get; set; }                       //List of number day for monthly repeat
+
         public int ParkingId { get; set; }
     }
 }
