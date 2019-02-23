@@ -280,7 +280,9 @@ namespace NextPark.Mobile.ViewModels
                         PriceMin = parking.PriceMin,
                         PriceMax = parking.PriceMax,
                         Status = parking.Status,
-                        UserId = parking.UserId
+                        UserId = parking.UserId,
+                        Events = new List<EventModel>(),
+                        Orders = new List<OrderModel>()
                     };
 
                     /* FUTURE IMPLEMENTATION
@@ -307,7 +309,7 @@ namespace NextPark.Mobile.ViewModels
                         parkingModel.Events.Add(availability);
                     }                
                 }
-                UIParkingModel debugParking = _profileService.GetParkingById(2);
+                //UIParkingModel debugParking = _profileService.GetParkingById(2);
             }
             catch (Exception e) {
                 _dialogService.ShowToast(e.Message, TimeSpan.FromSeconds(10));
@@ -318,8 +320,10 @@ namespace NextPark.Mobile.ViewModels
         private void Map_Tapped(object sender, CustomControls.MapTapEventArgs e)
         {
             //await _dialogService.ShowAlert("Map Tapped", string.Format("Lat {0}, Long {1}", e.Position.Latitude, e.Position.Longitude));
-
-            Map.MoveToRegion(MapSpan.FromCenterAndRadius(e.Position, Distance.FromKilometers(1)));
+            if (e.Position != null)
+            {
+                Map.MoveToRegion(MapSpan.FromCenterAndRadius(e.Position, Distance.FromKilometers(1)));
+            }
 
             /*
             var demoParking = new ParkingModel

@@ -222,6 +222,7 @@ namespace NextPark.Mobile.ViewModels
                         });
                     }
                 }
+                /*
                 ParkingList.Add(new ParkingItem
                 {
                     UID = 1,
@@ -233,6 +234,7 @@ namespace NextPark.Mobile.ViewModels
                     StatusColor = Color.Green,
                     OnParkingTap = OnParkingTapped
                 });
+                */
                 base.OnPropertyChanged("ParkingList");
                 if (ParkingList.Count == 0)
                 {
