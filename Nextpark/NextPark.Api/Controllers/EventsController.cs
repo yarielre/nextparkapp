@@ -63,12 +63,12 @@ namespace NextPark.Api.Controllers
                 return BadRequest("adding null entity");
             }
 
-            //var parking = _repositoryParking.Find(model.ParkingId);
+            var parking = _repositoryParking.Find(model.ParkingId);
 
-            //if (parking == null)
-            //{
-            //    return BadRequest("Parking not found");
-            //}
+            if (parking == null)
+            {
+                return  NotFound("Parking not found");
+            }
 
             var eventsToCreate = CreateEvent(model);
 
@@ -100,7 +100,7 @@ namespace NextPark.Api.Controllers
 
             if (entityEvent == null)
             {
-                return BadRequest("Event not found");
+                return NotFound("Event not found");
             }
 
             _repository.Update(entityEvent);
@@ -120,7 +120,7 @@ namespace NextPark.Api.Controllers
 
             if (entity == null)
             {
-                return BadRequest("Can't deleted, entity not found.");
+                return NotFound("Can't deleted, entity not found.");
             }
 
             var vm = _mapper.Map<Event, EventModel>(entity);
