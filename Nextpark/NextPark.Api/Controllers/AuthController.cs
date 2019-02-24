@@ -116,12 +116,14 @@ namespace NextPark.Api.Controllers
             }
 
         }
+
         [HttpGet("logout")]
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();
             return Ok();
         }
+
         [HttpPost("userbyname")]
         public IActionResult GetUserByUserName([FromBody] string username)
         {

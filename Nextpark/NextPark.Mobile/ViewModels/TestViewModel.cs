@@ -148,18 +148,32 @@ namespace NextPark.Mobile.ViewModels
 
         private async void AuthControllerTest() {
 
-            AddLineToConsole("Login Testing Login...");
+            AddLineToConsole("Testing Login...");
 
             //Demo Login OK
             var loginResponse = await AuthService.Login("info@nextpark.ch", "NextPark.1");
 
-            if (loginResponse.IsSuccess) {
+            if (loginResponse.IsSuccess)
+            {
                 AddLineToConsole("Login success");
-                AddLineToConsole($"User token: {loginResponse.AuthToken}");
                 AddLineToConsole($"User id: {loginResponse.UserId}");
+                AddLineToConsole($"User name: {loginResponse.UserName}");
 
+                AddLineToConsole("Getting full user information...");
+
+                var userData = await AuthService.GetUserByUserName(loginResponse.UserName);
+
+                if (userData.IsSuccess)
+                {
+                    AddLineToConsole("Full user information success");
+                }
+                else
+                {
+                    AddLineToConsole("Full user information failure");
+                }
             }
-            else {
+            else
+            {
                 AddLineToConsole("Login failure");
             }
 

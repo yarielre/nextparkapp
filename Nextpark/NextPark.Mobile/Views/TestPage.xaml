@@ -5,7 +5,8 @@
             <Label VerticalOptions="Center" HorizontalOptions="Center" TextColor="Black" FontSize="Medium" FontAttributes="Bold" Text="Demo Testing Console" />
             <ScrollView VerticalOptions="FillAndExpand">
                  <Label VerticalOptions="FillAndExpand"
-                        HorizontalOptions="StartAndExpand" FontSize="Small" Text="{Binding ResultConsole}"> </Label>
+                        HorizontalOptions="StartAndExpand" FontSize="Small" Text="{Binding ResultConsole}"> 
+                 </Label>
             </ScrollView>
                
             <StackLayout Orientation="Horizontal">
