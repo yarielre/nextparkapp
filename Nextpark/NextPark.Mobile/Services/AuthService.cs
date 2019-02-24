@@ -85,24 +85,30 @@ namespace NextPark.Mobile.Services
                 var http = _apiService.GetHttpClient();
                 var response = await http.GetAsync(url);
 
-                if (response.StatusCode != HttpStatusCode.OK)
+                if (response.StatusCode != HttpStatusCode.OK) {
                     return new TokenResponse
                     {
                         IsSuccess = false
                     };
-                var resultJson = await response.Content.ReadAsStringAsync();
-                var result = JsonConvert.DeserializeObject<TokenResponse>(
-                    resultJson);
-                if (result == null) {
-                    result = new TokenResponse();
                 }
-                result.IsSuccess = true;
+                
+                var resultJson = await response.Content.ReadAsStringAsync();
+
+                var result = JsonConvert.DeserializeObject<TokenResponse>(resultJson);
+
+                if (result == null) {
+                    return new TokenResponse
+                    {
+                        IsSuccess = false
+                    };
+                }
 
                 AuthSettings.Token = null;
                 AuthSettings.UserId = null;
                 AuthSettings.UserName = "Accedi";
                 AuthSettings.UserCoin = 0;
                 AuthSettings.User = new UserModel { Name = "Accedi" };
+
                 Authenticated = false;
 
                 return result;

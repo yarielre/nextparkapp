@@ -121,7 +121,7 @@ namespace NextPark.Api.Controllers
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();
-            return Ok();
+            return Ok( new TokenResponse { IsSuccess = true });
         }
 
         [HttpPost("userbyname")]
