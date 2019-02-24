@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Newtonsoft.Json.Linq;
@@ -17,8 +18,9 @@ namespace NextPark.Mobile.ViewModels
         private readonly IEventDataService _eventDataService;
 
         private readonly IParkingDataService _parkingDataService;
-        private string _resultEventMonthly;
-        private string _resultEventWeekly;
+
+        private string _resultConsole;
+        private StringBuilder _consoleBuffer;
 
         public TestViewModel(IApiService apiService, IAuthService authService, INavigationService navService,
             IEventDataService eventDataService, IParkingDataService parkingDataService) : base(apiService, authService,
@@ -26,18 +28,41 @@ namespace NextPark.Mobile.ViewModels
         {
             _eventDataService = eventDataService;
             _parkingDataService = parkingDataService;
-            CreateOrder();
+
+            _consoleBuffer = new StringBuilder();
+            _consoleBuffer.Append("Starting demo testing");
+            _consoleBuffer.AppendLine();
+            _consoleBuffer.AppendLine();
+            ResultConsole = _consoleBuffer.ToString();
+
         }
 
         //Commands
-        public ICommand CreteEventWeeklyCommand => new Command(CreteEventWeeklyAsync);
-        public ICommand CreteEventMonthtlyCommand => new Command(CreteEventMonthtlyAsync);
-        public ICommand EditEventCommand => new Command(EditEventAsync().Wait);
 
-        private async  Task EditEventAsync()
+        public ICommand StartTesting => new Command(StartTestingAsync);
+        public ICommand CloseTesting => new Command(CloseTestingAsync);
+
+        private async void StartTestingAsync()
+        {
+
+            AuthControllerTest();
+        }
+
+        private async void CloseTestingAsync()
+        {
+          
+        }
+
+        private void AddLineToConsole(string data) {
+            _consoleBuffer.AppendLine(data);
+            ResultConsole = string.Empty;
+            ResultConsole = _consoleBuffer.ToString();
+        }
+
+        private async Task EditEventAsync()
         {
             var ev = _eventDataService.GetEventAsync(1);    //check if event with id=1 exist
-            if (ev!=null)
+            if (ev != null)
             {
                 //TODO
             }
@@ -45,18 +70,13 @@ namespace NextPark.Mobile.ViewModels
 
 
         //Properties
-        public string ResultEventWeekly
+        public string ResultConsole
         {
-            get => _resultEventWeekly;
-            set => SetValue(ref _resultEventWeekly, value);
+            get => _resultConsole;
+            set => SetValue(ref _resultConsole, value);
         }
 
-        public string ResultEventMonthly
-        {
-            get => _resultEventMonthly;
-            set => SetValue(ref _resultEventMonthly, value);
-        }
-
+       
         private async void CreteEventMonthtlyAsync()
         {
             var newEvent = new EventModel
@@ -76,9 +96,10 @@ namespace NextPark.Mobile.ViewModels
 
             var result = await _eventDataService.CreateEventAsync(newEvent).ConfigureAwait(false);
             if (result == null)
-                ResultEventMonthly = "Failure";
+                AddLineToConsole("Failure");
             if (result != null)
-                ResultEventMonthly = $"Success: {result.Count} items";
+                AddLineToConsole($"Success: {result.Count} items Failure");
+
         }
 
         private async void CreteEventWeeklyAsync()
@@ -102,9 +123,9 @@ namespace NextPark.Mobile.ViewModels
             //Json = o.ToString();
             var result = await _eventDataService.CreateEventAsync(newEvent).ConfigureAwait(false);
             if (result == null)
-                ResultEventWeekly = "Failure";
+                AddLineToConsole("Failure");
             if (result != null)
-                ResultEventWeekly = $"Success: {result.Count} items";
+                AddLineToConsole($"Success: {result.Count} items Failure");
         }
 
         #region Order
@@ -120,36 +141,63 @@ namespace NextPark.Mobile.ViewModels
                 Price = 20,
                 PaymentCode = "drtrtrt"
             };
-            JObject o = (JObject)JToken.FromObject(order);
-            var jj = o.ToString();
         }
         #endregion
 
         #region Parking Test
+
+        private async void AuthControllerTest() {
+
+            AddLineToConsole("Login Testing Login...");
+
+            //Demo Login OK
+            var loginResponse = await AuthService.Login("info@nextpark.ch", "NextPark.1");
+
+            if (loginResponse.IsSuccess) {
+                AddLineToConsole("Login success");
+                AddLineToConsole($"User token: {loginResponse.AuthToken}");
+                AddLineToConsole($"User id: {loginResponse.UserId}");
+
+            }
+            else {
+                AddLineToConsole("Login failure");
+            }
+
+            AddLineToConsole("Testing Register...");
+            //Demo Register OK
+            var demoUser = new RegisterModel
+            {
+                Address = "Via Demo User",
+                CarPlate = "TI 00DEMO00",
+                Email = "demo@nextpark.ch",
+                Lastname = "Demo",
+                Name = "User",
+                Password = "Wisegar.1",
+                State = "DemoState",
+                UserName = "demo@nextpark.ch"
+            };
+
+            var registerResponse = await AuthService.Register(demoUser);
+
+
+            if (registerResponse.IsSuccess)
+            {
+                AddLineToConsole("Register success");
+                AddLineToConsole($"User token: {registerResponse.AuthToken}");
+                AddLineToConsole($"User id: {registerResponse.UserId}");
+            }
+            else
+            {
+                AddLineToConsole("Register failure");
+            }
+        }
 
         private async void DemoBackEndCalls()
         {
             /*
             try
             {
-                //Demo Login OK
-                var loginResponse = await AuthService.Login("demo@nextpark.ch", "Wisegar.1");
-
-                //Demo Register OK
-                var demoUser = new RegisterModel
-                {
-                    Address = "Via Demo User",
-                    CarPlate = "TI 00DEMO00",
-                    Email = "demo@nextpark.ch",
-                    Lastname = "Demo",
-                    Name = "User",
-                    Password = "Wisegar.1",
-                    State = "DemoState",
-                    UserName = "demo@nextpark.ch"
-                };
-
-                var registerResponse = await AuthService.Register(demoUser);
-
+               
                 //Demo Get Parkings OK
                 var parkings = await _parkingDataService.GetAllParkingsAsync();
 

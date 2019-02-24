@@ -52,7 +52,7 @@ namespace NextPark.Mobile.Settings
 
 
             //Only for test 
-            //builder.RegisterType<TestViewModel>();
+            builder.RegisterType<TestViewModel>();
 
             _container = builder.Build();
         }
