@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace NextPark.Api.Migrations
 {
-    public partial class changes : Migration
+    public partial class Changes : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -167,6 +167,26 @@ namespace NextPark.Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "CarPlates",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    Plate = table.Column<string>(nullable: true),
+                    UserId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CarPlates", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_CarPlates_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Parkings",
                 columns: table => new
                 {
@@ -292,6 +312,11 @@ namespace NextPark.Api.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_CarPlates_UserId",
+                table: "CarPlates",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Events_ParkingId",
                 table: "Events",
                 column: "ParkingId");
@@ -328,6 +353,9 @@ namespace NextPark.Api.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUserTokens");
+
+            migrationBuilder.DropTable(
+                name: "CarPlates");
 
             migrationBuilder.DropTable(
                 name: "Events");

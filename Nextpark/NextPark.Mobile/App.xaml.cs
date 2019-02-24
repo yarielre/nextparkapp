@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using NextPark.Mobile.Views;
@@ -17,6 +17,7 @@ namespace NextPark.Mobile
             InitializeApp();
 
             MainPage = new LaunchScreen();
+
         }
 
         private void InitializeApp()

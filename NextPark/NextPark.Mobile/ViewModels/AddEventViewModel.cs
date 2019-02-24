@@ -329,10 +329,12 @@ namespace NextPark.Mobile.ViewModels
             _event.EndDate = StartDate + EndTime;
             _event.RepetitionEndDate = RepetitionEndDate;
 
-            List<EventModel> result = new List<EventModel>();
+            var result = new List<EventModel>();
 
             if (_modifying) {
-                result = await _eventDataService.EditEventsAsync(_event);
+               var resultEdit = await _eventDataService.EditEventsAsync(_event.Id, _event);
+                result.Add(resultEdit);
+
             } else {
                 result = await _eventDataService.CreateEventAsync(_event);
             }

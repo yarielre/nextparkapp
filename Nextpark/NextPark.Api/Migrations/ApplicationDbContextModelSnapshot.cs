@@ -201,6 +201,23 @@ namespace NextPark.Api.Migrations
                     b.ToTable("AspNetUsers");
                 });
 
+            modelBuilder.Entity("NextPark.Domain.Entities.CarPlate", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Plate");
+
+                    b.Property<int>("UserId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("CarPlates");
+                });
+
             modelBuilder.Entity("NextPark.Domain.Entities.Event", b =>
                 {
                     b.Property<int>("Id")
@@ -335,6 +352,14 @@ namespace NextPark.Api.Migrations
                 {
                     b.HasOne("NextPark.Domain.Entities.ApplicationUser")
                         .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("NextPark.Domain.Entities.CarPlate", b =>
+                {
+                    b.HasOne("NextPark.Domain.Entities.ApplicationUser", "User")
+                        .WithMany("CarPlates")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });

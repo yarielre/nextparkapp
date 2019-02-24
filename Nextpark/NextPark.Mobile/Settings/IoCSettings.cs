@@ -3,7 +3,6 @@ using Autofac;
 using NextPark.Mobile.Infrastructure;
 using NextPark.Mobile.Services;
 using NextPark.Mobile.Services.Data;
-using NextPark.Mobile.Services.DataInterface;
 using NextPark.Mobile.ViewModels;
 
 namespace NextPark.Mobile.Settings
@@ -31,6 +30,7 @@ namespace NextPark.Mobile.Settings
             builder.RegisterType<ParkingDataService>().As<IParkingDataService>();
             builder.RegisterType<EventDataService>().As<IEventDataService>(); 
             builder.RegisterType<OrderDataService>().As<IOrderDataService>();
+            builder.RegisterType<PurchaseDataService>().As<IPurchaseDataService>();
 
             //Register ViewModels
             builder.RegisterType<LocatorViewModel>();
@@ -52,7 +52,7 @@ namespace NextPark.Mobile.Settings
 
 
             //Only for test 
-            builder.RegisterType<TestViewModel>();
+            //builder.RegisterType<TestViewModel>();
 
             _container = builder.Build();
         }

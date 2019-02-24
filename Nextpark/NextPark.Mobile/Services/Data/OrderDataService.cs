@@ -1,9 +1,8 @@
-﻿using NextPark.Mobile.Settings;
-using NextPark.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using NextPark.Mobile.Services.DataInterface;
+using NextPark.Mobile.Settings;
+using NextPark.Models;
 
 namespace NextPark.Mobile.Services.Data
 {

@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using NextPark.Mobile.Core.Settings;
-using NextPark.Mobile.Services.DataInterface;
+using NextPark.Mobile.Settings;
 using NextPark.Models;
 
 namespace NextPark.Mobile.Services.Data
 {
-    public class ParkingDataService
+    public class ParkingDataService : IParkingDataService
     {
         private readonly IApiService _apiService;
 

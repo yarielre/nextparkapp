@@ -32,8 +32,8 @@ namespace NextPark.Mobile.ViewModels
 
         // SERVICES
         private readonly IDialogService _dialogService;
-        private readonly ParkingDataService _parkingDataService;
-        private readonly OrderDataService _orderDataService;
+        private readonly IParkingDataService _parkingDataService;
+        private readonly IOrderDataService _orderDataService;
 
         // PRIVATE VARIABLES
         private ObservableCollection<UIBookingModel> bookingList;
@@ -49,8 +49,8 @@ namespace NextPark.Mobile.ViewModels
                                     IApiService apiService,
                                     IAuthService authService,
                                     INavigationService navService,
-                                    ParkingDataService parkingDataService,
-                                    OrderDataService orderDataService)
+                                    IParkingDataService parkingDataService,
+                                    IOrderDataService orderDataService)
                                     : base(apiService, authService, navService)
         {
             _dialogService = dialogService;
@@ -117,7 +117,7 @@ namespace NextPark.Mobile.ViewModels
 
             foreach (OrderModel order in ordersResponse)
             {
-                order.
+
                 if (order.UserId == int.Parse(AuthSettings.UserId))
                 {
                     var parking = await _parkingDataService.GetParkingAsync(order.ParkingId);

@@ -25,6 +25,7 @@ namespace NextPark.Data
             builder.ApplyConfiguration(new ParkingEntityMap());
             builder.ApplyConfiguration(new OrdersEntityMap());
             builder.ApplyConfiguration(new EventsEntityMap());
+            builder.ApplyConfiguration(new CarPlatesEntityMap());
         }
 
         #region DbSets
@@ -32,6 +33,7 @@ namespace NextPark.Data
         public DbSet<Parking> Parkings { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<Event> Events { get; set; }
+        public DbSet<CarPlate> CarPlates { get; set; }
         #endregion
 
         public virtual void Commit()
