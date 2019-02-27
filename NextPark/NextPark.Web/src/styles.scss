@@ -1,0 +1,100 @@
+/* You can add global styles to this file, and also import other style files */
+@import '~@angular/material/theming';
+
+html, body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+.normal-form {
+  margin: 10px;
+}
+
+.wrap-controls {
+  width: 100%;
+  padding: 5%;
+}
+
+.wrap-controls > * {
+  width: 100%;
+}
+
+.container-button {
+  margin: 5px;
+}
+
+.snackbar-success {
+  background-color: mat-color($mat-green, 300) !important;
+  color: white !important;
+}
+
+.snackbar-error {
+  background-color: mat-color($mat-red, 300) !important;
+  color: white !important;
+}
+
+.mat-simple-snackbar-action {
+  color: white !important;
+}
+
+.mat-snack-bar-container {
+  margin-top: 17% !important;
+}
+
+table {
+  width: 100%;
+}
+
+.wip-table {
+  margin: 5% 2%;
+}
+
+.hide {
+  display: none;
+}
+
+mat-footer-row mat-footer-cell {
+  justify-content: center;
+  font-style: italic;
+}
+
+.container-button > button {
+  margin-right: 1%;
+}
+
+.create-column-table {
+  text-align: right !important;
+}
+
+.form-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-container > * {
+  width: 80%;
+}
+
+.vertical-center {
+  min-height: 90%; /* Fallback for browsers do NOT support vh unit */
+  min-height: 90vh; /* These two lines are counted as one :-)       */
+
+  display: flex;
+  align-items: center;
+}
+
+.full-width {
+  width: 100% !important;
+}
+
+.spiner-table {
+  margin: 10% 48%;
+}
+
+.textarea-form {
+  height: 148px;
+}
