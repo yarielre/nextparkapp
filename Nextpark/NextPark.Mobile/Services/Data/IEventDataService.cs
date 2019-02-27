@@ -8,7 +8,9 @@ namespace NextPark.Mobile.Services.Data
     {
         Task<List<EventModel>> CreateEventAsync(EventModel model);
         Task<EventModel> DeleteEventsAsync(int id);
+        Task<List<EventModel>> DeleteSerieEventsAsync(int id);
         Task<EventModel> EditEventsAsync(int id, EventModel eventModel);
+        Task<List<EventModel>> EditSerieEventsAsync(EventModel eventModel);
         Task<List<EventModel>> GetAllEventsAsync();
         Task<EventModel> GetEventAsync(int eventId);
     }

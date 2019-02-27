@@ -150,60 +150,47 @@ namespace NextPark.Api.Controllers
             return Ok(vm);
         }
 
-        // POST api/controller/events
-        [HttpPost("{id}/events")]
-        public async Task<IActionResult> PostEvents(int id, [FromBody] EventModel model)
-        {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            try
-            {
-                var parking = _parkingRepository.Find(id);
-
-                if (parking == null) return BadRequest("Parking not found");
-
-
-                var eventParking = new Event
-                {
-                    StartDate = model.StartDate,
-                    EndDate = model.EndDate,
-                    RepetitionId = Guid.NewGuid(),
-                    RepetitionType = RepetitionType.Dayly,
-                    RepetitionEndDate = model.EndDate
-                };
-
-                if (parking.Events == null) parking.Events = new List<Event>();
-
-                parking.Events.Add(eventParking);
-
-                _parkingRepository.Update(parking);
-
-                await _unitOfWork.CommitAsync();
-
-                var vm = _mapper.Map<Event, EventModel>(eventParking);
-
-                return Ok(vm);
-            }
-            catch (Exception e)
-            {
-                return BadRequest(string.Format("{0} Exception: {1}", "Error saving parking model on database!",
-                    e.Message));
-            }
-        }
-
         [HttpGet("{id}/events")]
         public async Task<IActionResult> GetEvents(int id)
         {
-            var parkigns = await _parkingRepository.FindAllAsync();
-
             var parking = _parkingRepository.Find(id);
 
-            if (parking == null) return BadRequest("Parking not found");
+            if (parking == null) return NotFound("Parking not found");
 
-            var events = await _parkingEventRepository.FindAllWhereAsync(e => e.ParkingId == parking.Id);
+            var parkingEvents = await _parkingRepository.FirstWhereAsync(p => p.Id == id
+                                       && p.Events.Any(e => e.StartDate >= DateTime.Now), new CancellationToken(),
+                                       p => p.Events);
 
-            var vm = _mapper.Map<List<Event>, List<EventModel>>(events);
+            if (parking.Events == null && parking.Events.Count == 0) {
+                return NotFound("Not event found");
+            }
+         
+            var vm = _mapper.Map<List<Event>, List<EventModel>>(parking.Events);
+
+            return Ok(vm);
+        }
+
+        [HttpDelete("{id}/events")]
+        public async Task<IActionResult> DeleteEvents(int id)
+        {
+            var parking = await _parkingRepository.FirstWhereAsync(p => p.Id == id, new CancellationToken(),
+                                       p => p.Events);
+
+            if (parking == null) return NotFound("Parking not found");
+
+            if (parking.Events == null && parking.Events.Count == 0)
+            {
+                return NotFound("Not event found");
+            }
+
+            var vm = _mapper.Map<List<Event>, List<EventModel>>(parking.Events);
+           
+            foreach (var ev in parking.Events) {
+                _parkingEventRepository.Delete(ev);
+            }
+
+            await _unitOfWork.CommitAsync();
+
 
             return Ok(vm);
         }

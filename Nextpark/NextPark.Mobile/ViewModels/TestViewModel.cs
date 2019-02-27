@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -59,6 +60,9 @@ namespace NextPark.Mobile.ViewModels
 
             await AuthServiceTest();
             await ParkingServiceTest();
+            await EventServiceTest();
+            OrderServiceTest();
+            PurchaseServiceTest();
 
             await LogoutTest();
 
@@ -84,26 +88,7 @@ namespace NextPark.Mobile.ViewModels
             ResultConsole = _consoleBuffer.ToString();
         }
 
-
-        #region Parking Test
-
-        private async Task LogoutTest() {
-
-            AddLineToConsole("-------------------------------------------");
-            AddLineToConsole("TESTING LOGOUT...");
-
-            //Demo Login OK
-            var loginResponse = await AuthService.Logout();
-            if (loginResponse.IsSuccess)
-            {
-                AddLineToConsole("Logout OK");
-            }
-            else {
-                AddLineToConsole("Logout FAILED");
-            }
-          
-        }
-
+        #region Auth Testing
         private async Task AuthServiceTest()
         {
             AddLineToConsole("-------------------------------------------");
@@ -164,7 +149,13 @@ namespace NextPark.Mobile.ViewModels
                 AddLineToConsole("Register FAILED");
             }
         }
+        #endregion
 
+        #region Parking Test
+
+       
+
+      
         private async Task ParkingServiceTest()
         {
             AddLineToConsole("-------------------------------------------");
@@ -207,7 +198,7 @@ namespace NextPark.Mobile.ViewModels
             var eventParking = new EventModel
             {
                 StartDate = DateTime.Now,
-                EndDate = DateTime.Now,
+                EndDate = (DateTime.Now).AddDays(5),
                 ParkingId = postedParking.Id,
                 RepetitionEndDate = DateTime.Now,
                 RepetitionType = Enums.Enums.RepetitionType.Dayly
@@ -244,83 +235,228 @@ namespace NextPark.Mobile.ViewModels
 
         #endregion
 
-        //#region Event Testing
-        //private async Task EditEventAsync()
-        //{
-        //    var ev = _eventDataService.GetEventAsync(1);    //check if event with id=1 exist
-        //    if (ev != null)
-        //    {
-        //        //TODO
-        //    }
-        //}
+        #region Event Testing
+        private async Task EventServiceTest()
+        {
 
-        //private async void CreteEventMonthtlyAsync()
-        //{
-        //    var newEvent = new EventModel
-        //    {
-        //        StartDate = new DateTime(2019, 2, 1, 1, 0, 0), //start date 01/02/2019 01:00:00
-        //        EndDate = new DateTime(2019, 2, 28, 3, 0, 0), //end date   28/02/2019 03:00:00
-        //        ParkingId = 1,
-        //        RepetitionEndDate = new DateTime(2019, 2, 28, 3, 0, 0),
-        //        RepetitionType = RepetitionType.Monthly,
-        //        MonthlyRepeatDay = new List<int>
-        //        {
-        //            10,
-        //            15,
-        //            23
-        //        }
-        //    };
+            AddLineToConsole("-------------------------------------------");
+            AddLineToConsole("TESTING EVENTS...");
 
-        //    var result = await _eventDataService.CreateEventAsync(newEvent).ConfigureAwait(false);
-        //    if (result == null)
-        //        AddLineToConsole("Failure");
-        //    if (result != null)
-        //        AddLineToConsole($"Success: {result.Count} items Failure");
+            AddLineToConsole("Selecting one parking");
+            var parkings = await _parkingDataService.GetAllParkingsAsync();
 
-        //}
+            AddLineToConsole($"Found: {parkings.Count} parkings");
 
-        //private async void CreteEventWeeklyAsync()
-        //{
-        //    var newEvent = new EventModel
-        //    {
-        //        StartDate = new DateTime(2019, 2, 1, 1, 0, 0), //start date 01/02/2019 01:00:00
-        //        EndDate = new DateTime(2019, 2, 28, 3, 0, 0), //end date   28/02/2019 03:00:00
-        //        ParkingId = 1,
-        //        RepetitionEndDate = new DateTime(2019, 2, 28, 3, 0, 0),
-        //        RepetitionType = RepetitionType.Weekly,
-        //        WeeklyRepeDayOfWeeks = new List<DayOfWeek>
-        //        {
-        //            DayOfWeek.Monday,
-        //            DayOfWeek.Wednesday,
-        //            DayOfWeek.Friday
-        //        }
-        //    };
+            var selectedPArking = parkings.FirstOrDefault();
+            if (selectedPArking != null)
+            {
+                AddLineToConsole("Selecting one parking OK");
+            }
+            else
+            {
+                AddLineToConsole("Selecting one parking FAILED");
+                AddLineToConsole("Events testing FAILED");
+                return;
+            }
 
-        //    //JObject o = (JObject)JToken.FromObject(newEvent);
-        //    //Json = o.ToString();
-        //    var result = await _eventDataService.CreateEventAsync(newEvent).ConfigureAwait(false);
-        //    if (result == null)
-        //        AddLineToConsole("Failure");
-        //    if (result != null)
-        //        AddLineToConsole($"Success: {result.Count} items Failure");
-        //}
-        //#endregion
+            AddLineToConsole("Creating monthly event for the selected parking");
+
+            var newMonthlyEvent = new EventModel
+            {
+                StartDate = DateTime.Now,
+                EndDate = (DateTime.Now).AddDays(3),
+                ParkingId = selectedPArking.Id,
+                RepetitionEndDate = new DateTime(2019, 2, 28, 3, 0, 0),
+                RepetitionType = RepetitionType.Monthly,
+                MonthlyRepeatDay = new List<int>
+                {
+                    10,
+                    15,
+                    23
+                }
+            };
+
+            var createdMonthlyEvents = await _eventDataService.CreateEventAsync(newMonthlyEvent);
+
+            if (createdMonthlyEvents != null)
+            {
+                AddLineToConsole($"Created: {createdMonthlyEvents.Count} monthly events for the selected parking");
+                AddLineToConsole("Creating monthly events OK");
+            }
+            else
+            {
+                AddLineToConsole("Creating monthly events FAILED");
+            }
+
+            AddLineToConsole("Creating weekly event for the selected parking");
+
+            var newWeklyEvent = new EventModel
+            {
+                StartDate = DateTime.Now,
+                EndDate = (DateTime.Now).AddDays(4),
+                ParkingId = selectedPArking.Id,
+                RepetitionEndDate = (DateTime.Now).AddDays(4),
+                RepetitionType = RepetitionType.Weekly,
+                WeeklyRepeDayOfWeeks = new List<DayOfWeek>
+                {
+                    DayOfWeek.Monday,
+                    DayOfWeek.Wednesday,
+                    DayOfWeek.Friday
+                }
+            };
+
+            var createdWeeklyEvents = await _eventDataService.CreateEventAsync(newWeklyEvent);
+
+            if (createdWeeklyEvents != null)
+            {
+                AddLineToConsole($"Created: {createdWeeklyEvents.Count} weekly events for the selected parking");
+                AddLineToConsole("Creating weekly events OK");
+            }
+            else
+            {
+                AddLineToConsole("Creating newWeklyEvent events FAILED");
+            }
+
+            AddLineToConsole("Creating dayly event for the selected parking");
+
+            var newDaylyEvent = new EventModel
+            {
+                StartDate = DateTime.Now,
+                EndDate = (DateTime.Now).AddDays(4),
+                ParkingId = selectedPArking.Id,
+                RepetitionEndDate = (DateTime.Now).AddDays(4),
+                RepetitionType = RepetitionType.Dayly,
+            };
+
+            var createdDaylyEvents = await _eventDataService.CreateEventAsync(newDaylyEvent);
+
+            if (createdDaylyEvents != null)
+            {
+                AddLineToConsole($"Created: {createdWeeklyEvents.Count} dayly events for the selected parking");
+                AddLineToConsole("Creating dayly events OK");
+            }
+            else
+            {
+                AddLineToConsole("Creating dayly events FAILED");
+            }
+
+            AddLineToConsole("Getting all events of the selected parking");
+            var parkingEvents = await _parkingDataService.GetParkingEventsAsync(selectedPArking.Id);
+
+            if (parkingEvents != null)
+            {
+                AddLineToConsole($"Fount: {parkingEvents.Count} events for the selected parking");
+                AddLineToConsole("Getting parking events OK");
+            }
+            else
+            {
+                AddLineToConsole("Getting parking events FAILED");
+            }
+         
+            var firstRepitedEvent = parkingEvents.FirstOrDefault(e => e.RepetitionId != Guid.Empty);
+            if (firstRepitedEvent != null) {
+                AddLineToConsole("Editing all events of the selected parking by series");
+                AddLineToConsole("Editing all events repetition end date to more 5 days");
+                firstRepitedEvent.RepetitionEndDate = firstRepitedEvent.RepetitionEndDate.AddDays(5);
+
+                var editedEvents = await _eventDataService.EditSerieEventsAsync(firstRepitedEvent);
+
+                if (editedEvents != null)
+                {
+                   
+                    AddLineToConsole("Editing parking events by series OK");
+                }
+                else
+                {
+                    AddLineToConsole("Editing parking events by series FAILED");
+                }
+
+                AddLineToConsole("Deleting all events of the selected parking  by series ");
+                var deletedSeriesParkingEvents = await _eventDataService.DeleteSerieEventsAsync(firstRepitedEvent.Id);
+
+                if (deletedSeriesParkingEvents != null)
+                {
+                    AddLineToConsole($"Deleted: {deletedSeriesParkingEvents.Count} events for the selected parking  by series");
+
+                    AddLineToConsole("Getting parking events  by series OK");
+                }
+                else
+                {
+                    AddLineToConsole("Getting parking events by series FAILED");
+                }
+
+            }
+
+            AddLineToConsole("Deleting all events of the selected parking");
+            var deletedParkingEvents = await _parkingDataService.DeleteParkingsEventsAsync(selectedPArking.Id);
+
+            if (deletedParkingEvents != null)
+            {
+                AddLineToConsole($"Deleted: {deletedParkingEvents.Count} events for the selected parking");
+
+                AddLineToConsole("Getting parking events OK");
+            }
+            else
+            {
+                AddLineToConsole("Getting parking events FAILED");
+            }
+
+        }
+        #endregion
+
+        #region Order Service
+        private void OrderServiceTest()
+        {
+
+            AddLineToConsole("-------------------------------------------");
+            AddLineToConsole("TESTING ORDER SERVICE...");
+            AddLineToConsole("Working on it...");
+
+            var order = new OrderModel
+            {
+                StartDate = DateTime.Now,
+                EndDate = DateTime.Now,
+                ParkingId = 1,
+                UserId = 1,
+                Price = 20,
+                PaymentCode = "drtrtrt"
+            };
+        }
+        #endregion
+
+        #region Purchase Service
+        private void PurchaseServiceTest()
+        {
+            AddLineToConsole("-------------------------------------------");
+            AddLineToConsole("TESTING PURCHASE SERVICE...");
+            AddLineToConsole("Working on it...");
+        }
+        #endregion
+
+        #region Logout testing
+        private async Task LogoutTest()
+        {
+
+            AddLineToConsole("-------------------------------------------");
+            AddLineToConsole("TESTING LOGOUT...");
+
+            //Demo Login OK
+            var loginResponse = await AuthService.Logout();
+            if (loginResponse.IsSuccess)
+            {
+                AddLineToConsole("Logout OK");
+            }
+            else
+            {
+                AddLineToConsole("Logout FAILED");
+            }
+
+        }
+
+        #endregion
 
 
-        //#region Order
-        //private async Task CreateOrder()
-        //{
-        //    var order = new OrderModel
-        //    {
-        //        StartDate = new DateTime(2019, 2, 1, 1, 0, 0), //start date 01/02/2019 01:00:00
-        //        EndDate = new DateTime(2019, 2, 1, 2, 0, 0), //end date   28/02/2019 03:00:00
-        //        ParkingId = 1,
-        //        UserId = 1,
-        //        Price = 20,
-        //        PaymentCode = "drtrtrt"
-        //    };
-        //}
-        //#endregion
+
 
 
     }

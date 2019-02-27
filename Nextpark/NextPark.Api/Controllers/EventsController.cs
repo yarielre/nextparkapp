@@ -69,14 +69,17 @@ namespace NextPark.Api.Controllers
             {
                 return  NotFound("Parking not found");
             }
-
-            var entity = _mapper.Map<EventModel, Event>(model);
-
-            _repository.Add(entity);
-
+            
+            var events = CreateEvent(model);
+           
+            
+            foreach (var ev in events) {
+                _repository.Add(ev);
+            }
+            
             await _unitOfWork.CommitAsync();
 
-            var vm = _mapper.Map<Event, EventModel>(entity);
+            var vm = _mapper.Map<List<Event>, List<EventModel>>(events);
 
             return Ok(vm);
         }
@@ -108,6 +111,43 @@ namespace NextPark.Api.Controllers
             return Ok(vm);
         }
 
+        [HttpPut("{id}/serie")]
+        public async Task<ActionResult> PutSerie(int id, [FromBody]EventModel model)
+        {
+            if (model == null)
+            {
+                return BadRequest("model is null");
+            }
+
+            var entityEvent = _repository.Find(id);
+
+            if (entityEvent == null)
+            {
+                return NotFound("Event not found");
+            }
+
+            var eventSerie = await _repository.FindAllWhereAsync(ev => ev.RepetitionId == entityEvent.RepetitionId);
+
+            var updatedSerie = new List<Event>();
+
+            foreach (var ev in eventSerie) {
+
+                ev.StartDate = model.StartDate;
+                ev.EndDate = model.EndDate;
+                ev.RepetitionEndDate = model.RepetitionEndDate;
+
+                _repository.Update(ev);
+                updatedSerie.Add(ev);
+            }
+
+            await _unitOfWork.CommitAsync();
+
+
+            var vm = _mapper.Map<List<Event>, List<EventModel>>(updatedSerie);
+
+            return Ok(vm);
+        }
+
         // DELETE api/controller/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
@@ -124,6 +164,27 @@ namespace NextPark.Api.Controllers
             _repository.Delete(entity);
 
             await _unitOfWork.CommitAsync().ConfigureAwait(false);
+
+            return Ok(vm);
+        }
+
+        [HttpDelete("{id}/serie")]
+        public async Task<IActionResult> DeleteSerie(int id)
+        {
+            var entity = _repository.Find(id);
+
+            if (entity == null)
+            {
+                return NotFound("Can't deleted, entity not found.");
+            }
+
+            var eventSerie = await _repository.FindAllWhereAsync(ev => ev.RepetitionId == entity.RepetitionId);
+            
+            _repository.Delete(eventSerie);
+
+            await _unitOfWork.CommitAsync().ConfigureAwait(false);
+
+            var vm = _mapper.Map<List<Event>, List<EventModel>>(eventSerie);
 
             return Ok(vm);
         }
@@ -147,6 +208,7 @@ namespace NextPark.Api.Controllers
                             StartDate = model.StartDate,
                             EndDate = model.EndDate,
                             RepetitionEndDate = model.EndDate,
+                            RepetitionId = Guid.Empty,
                             RepetitionType = Enums.Enums.RepetitionType.None,
                             ParkingId = model.ParkingId
                         }
@@ -154,12 +216,13 @@ namespace NextPark.Api.Controllers
             }
 
         }
+
         private List<Event> GenerateDaylyRepetition(EventModel model)
         {
             var result = new List<Event>();
 
             var currentDate = model.StartDate;
-            var diffDays = (model.EndDate - currentDate).Days;
+            var diffDays = (model.EndDate - currentDate).TotalDays;
             var repetitionId = Guid.NewGuid();
 
             while (diffDays >= 0)
@@ -176,8 +239,8 @@ namespace NextPark.Api.Controllers
                 };
 
                 result.Add(newEvent);
-                currentDate.AddDays(1);
-                diffDays = (model.EndDate - currentDate).Days;
+                currentDate = currentDate.AddDays(1);
+                diffDays = (model.EndDate - currentDate).TotalDays;
             }
 
             return result;

@@ -32,7 +32,6 @@ namespace NextPark.Mobile.Services.Data
                 return null;
             }
         
-
         public async Task<EventModel> GetEventAsync(int eventId)
         {
             var isConneted = await _apiService.CheckConnection().ConfigureAwait(false);
@@ -85,6 +84,23 @@ namespace NextPark.Mobile.Services.Data
                 return null;
         }
 
+        public async Task<List<EventModel>> EditSerieEventsAsync(EventModel eventModel)
+        {
+            var isConneted = await _apiService.CheckConnection().ConfigureAwait(false);
+            if (!isConneted.IsSuccess)
+            {
+                throw new Exception("Internet correction error.");
+            }
+            var url = $"{ApiSettings.EventsEndPoint}/{eventModel.Id}/serie";
+            var response = await _apiService.Put(url, eventModel).ConfigureAwait(false);
+
+            if (response.IsSuccess)
+            {
+                return response.Result as List<EventModel>;
+            }
+            return null;
+        }
+
         public async Task<EventModel> DeleteEventsAsync(int id)
         {
             var isConneted = await _apiService.CheckConnection().ConfigureAwait(false);
@@ -101,5 +117,23 @@ namespace NextPark.Mobile.Services.Data
                 }
                 return null;
         }
+
+        public async Task<List<EventModel>> DeleteSerieEventsAsync(int id)
+        {
+            var isConneted = await _apiService.CheckConnection().ConfigureAwait(false);
+            if (!isConneted.IsSuccess)
+            {
+                throw new Exception("Internet correction error.");
+            }
+            var url = $"{ApiSettings.EventsEndPoint}/{id}/serie";
+            var response = await _apiService.Delete<EventModel>(url).ConfigureAwait(false);
+
+            if (response.IsSuccess)
+            {
+                return response.Result as List<EventModel>;
+            }
+            return null;
+        }
+
     }
 }
