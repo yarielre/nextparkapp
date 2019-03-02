@@ -22,6 +22,11 @@ namespace NextPark.Data.Mappings
                .HasForeignKey(uo => uo.UserId)
                .OnDelete(DeleteBehavior.Restrict);
 
+            builder.HasMany(u => u.Transactions)
+                .WithOne(t=>t.User)
+                .HasForeignKey(t => t.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
         }
     }
 }

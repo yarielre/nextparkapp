@@ -20,6 +20,9 @@ namespace NextPark.Data.Seeder
                 CreateUserAsync(serviceProvider).Wait();
                 context.Parkings.AddRange(CreateParkings());
                 context.SaveChanges();
+                context.Events.AddRange(CreateEvent());
+                context.Feeds.AddRange(CreateFeeds());
+                context.SaveChanges();
             }
         }
 
@@ -67,9 +70,48 @@ namespace NextPark.Data.Seeder
                     State = "Ticino",
                     Status = ParkingStatus.Enabled,
                     UserId = 1,
-                    ImageUrl = "image_parking1.png"
+                    ImageUrl = "image_parking1.png",
+                    //Events = new List<Event>
+                    //{
+                    //    new Event
+                    //    {
+                    //        StartDate = DateTime.Now,
+                    //        EndDate = DateTime.Now.AddYears(1),
+                    //        RepetitionEndDate = DateTime.Now.AddYears(1),
+                    //        RepetitionType = RepetitionType.Dayly,
+                    //        RepetitionId = new Guid()
+                    //    }
+                    //}
                 }
             };
         }
+        private static List<Feed> CreateFeeds()
+        {
+            return new List<Feed>
+            {
+                new Feed
+                {
+                  Name = "RentEarningPercent",
+                  Tax = 19
+                }
+            };
+        }
+
+        private static List<Event> CreateEvent()
+        {
+            return new List<Event>
+            {
+                new Event
+                    {
+                        StartDate = DateTime.Now,
+                        ParkingId = 1,
+                        EndDate = DateTime.Now.AddYears(1),
+                        RepetitionEndDate = DateTime.Now.AddYears(1),
+                        RepetitionType = RepetitionType.Dayly,
+                        RepetitionId = new Guid()
+                    }
+            };
+        }
+
     }
 }

@@ -34,6 +34,8 @@ namespace NextPark.Data
         public DbSet<Order> Orders { get; set; }
         public DbSet<Event> Events { get; set; }
         public DbSet<CarPlate> CarPlates { get; set; }
+        public DbSet<Transaction> Transactions { get; set; }
+        public DbSet<Feed> Feeds { get; set; }
         #endregion
 
         public virtual void Commit()
