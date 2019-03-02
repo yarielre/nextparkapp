@@ -67,16 +67,17 @@ namespace NextPark.Api.Controllers
 
             if (parking == null)
             {
-                return  NotFound("Parking not found");
+                return NotFound("Parking not found");
             }
-            
+
             var events = CreateEvent(model);
-           
-            
-            foreach (var ev in events) {
+
+
+            foreach (var ev in events)
+            {
                 _repository.Add(ev);
             }
-            
+
             await _unitOfWork.CommitAsync();
 
             var vm = _mapper.Map<List<Event>, List<EventModel>>(events);
@@ -92,23 +93,24 @@ namespace NextPark.Api.Controllers
             {
                 return BadRequest("model is null");
             }
-
-            var entityEvent = _repository.Find(id);
-
-            if (entityEvent == null)
+            
+            try
             {
-                return NotFound("Event not found");
+                var updatedEntity = _mapper.Map<EventModel, Event>(model);
+
+                _repository.Update(updatedEntity);
+
+                await _unitOfWork.CommitAsync();
+
+                var vm = _mapper.Map<Event, EventModel>(updatedEntity);
+
+                return Ok(vm);
             }
-
-            var updatedEntity = _mapper.Map<EventModel, Event>(model);
-
-            _repository.Update(updatedEntity);
-
-            await _unitOfWork.CommitAsync();
-
-            var vm = _mapper.Map<Event, EventModel>(entityEvent);
-
-            return Ok(vm);
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+            
         }
 
         [HttpPut("{id}/serie")]
@@ -130,8 +132,8 @@ namespace NextPark.Api.Controllers
 
             var updatedSerie = new List<Event>();
 
-            foreach (var ev in eventSerie) {
-
+            foreach (var ev in eventSerie)
+            {
                 ev.StartDate = model.StartDate;
                 ev.EndDate = model.EndDate;
                 ev.RepetitionEndDate = model.RepetitionEndDate;
@@ -141,8 +143,7 @@ namespace NextPark.Api.Controllers
             }
 
             await _unitOfWork.CommitAsync();
-
-
+            
             var vm = _mapper.Map<List<Event>, List<EventModel>>(updatedSerie);
 
             return Ok(vm);
@@ -179,7 +180,7 @@ namespace NextPark.Api.Controllers
             }
 
             var eventSerie = await _repository.FindAllWhereAsync(ev => ev.RepetitionId == entity.RepetitionId);
-            
+
             _repository.Delete(eventSerie);
 
             await _unitOfWork.CommitAsync().ConfigureAwait(false);
@@ -198,7 +199,7 @@ namespace NextPark.Api.Controllers
                 case Enums.Enums.RepetitionType.Weekly:
                     return GenerateWeeklyRepetition(model);
                 case Enums.Enums.RepetitionType.Monthly:
-                   return GenerateMonthlyRepetition(model);
+                    return GenerateMonthlyRepetition(model);
                 default:
 
                     return new List<Event>
@@ -222,7 +223,9 @@ namespace NextPark.Api.Controllers
             var result = new List<Event>();
 
             var currentDate = model.StartDate;
-            var diffDays = (model.EndDate - currentDate).TotalDays;
+            
+            var diffDays = (model.RepetitionEndDate - model.StartDate).TotalDays;
+
             var repetitionId = Guid.NewGuid();
 
             while (diffDays >= 0)
@@ -230,17 +233,17 @@ namespace NextPark.Api.Controllers
 
                 var newEvent = new Event
                 {
-                    StartDate = currentDate,
-                    EndDate = currentDate,
-                    RepetitionEndDate = model.EndDate,
+                    StartDate = new DateTime(currentDate.Year, currentDate.Month, currentDate.Day, model.StartDate.Hour, model.StartDate.Minute, model.StartDate.Minute),
+                    EndDate = new DateTime(currentDate.Year, currentDate.Month, currentDate.Day, model.EndDate.Hour, model.EndDate.Minute, model.EndDate.Minute),
+                    RepetitionEndDate = model.RepetitionEndDate,
                     RepetitionId = repetitionId,
                     RepetitionType = Enums.Enums.RepetitionType.Dayly,
-                ParkingId = model.ParkingId
+                    ParkingId = model.ParkingId
                 };
 
                 result.Add(newEvent);
                 currentDate = currentDate.AddDays(1);
-                diffDays = (model.EndDate - currentDate).TotalDays;
+                diffDays = (model.RepetitionEndDate - currentDate).TotalDays;
             }
 
             return result;
@@ -249,12 +252,12 @@ namespace NextPark.Api.Controllers
         private List<Event> GenerateWeeklyRepetition(EventModel model)
         {
             var result = new List<Event>();
-            if (model.WeeklyRepeDayOfWeeks.Count>0)
+            if (model.WeeklyRepeDayOfWeeks.Count > 0)
             {
-                var endDate = model.EndDate;
+                var endDate = model.RepetitionEndDate;
                 var repetitionId = Guid.NewGuid();
 
-                for (var date = model.StartDate; date <= model.EndDate; date = date.AddDays(1))
+                for (var date = model.StartDate; date <= model.RepetitionEndDate; date = date.AddDays(1))
                 {
                     var currentDayOfWeek = date.DayOfWeek;
 
@@ -280,7 +283,7 @@ namespace NextPark.Api.Controllers
         private List<Event> GenerateMonthlyRepetition(EventModel model)
         {
             var result = new List<Event>();
-            if (model.MonthlyRepeatDay.Count>0)
+            if (model.MonthlyRepeatDay.Count > 0)
             {
                 var endDate = model.EndDate;
                 var startDate = model.StartDate;
@@ -288,8 +291,8 @@ namespace NextPark.Api.Controllers
 
                 foreach (var dayNumber in model.MonthlyRepeatDay)
                 {
-                    var newDate = new DateTime(startDate.Year,startDate.Month,dayNumber,startDate.Hour,startDate.Minute,startDate.Second);
-                    for (var date  = newDate; date <= model.EndDate; date = date.AddMonths(1))
+                    var newDate = new DateTime(startDate.Year, startDate.Month, dayNumber, startDate.Hour, startDate.Minute, startDate.Second);
+                    for (var date = newDate; date <= model.EndDate; date = date.AddMonths(1))
                     {
                         var newEvent = new Event
                         {
@@ -304,7 +307,7 @@ namespace NextPark.Api.Controllers
                     }
                 }
             }
-            return result.OrderBy(e=>e.StartDate).ToList();
+            return result.OrderBy(e => e.StartDate).ToList();
         }
     }
 }
