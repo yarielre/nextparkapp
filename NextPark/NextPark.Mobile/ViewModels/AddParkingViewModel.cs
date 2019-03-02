@@ -59,8 +59,9 @@ namespace NextPark.Mobile.ViewModels
 
         // PRIVATE VARIABLES
         private bool _isAuthorized;
-        private bool _modify;
+        private bool _editing;
         private MediaFile mediaFile;
+        private ParkingModel _parking;
 
         // METHODS
         public AddParkingViewModel(IDialogService dialogService,
@@ -97,7 +98,7 @@ namespace NextPark.Mobile.ViewModels
             PriceMaxText = PriceMax.ToString("N2");
             PriceMaxMinimum = PriceMin;
 
-            ParkingImage = "icon_add_photo_256.png";
+            //ParkingImage = "icon_add_photo_256.png";
         }
 
         // Initialization
@@ -107,6 +108,7 @@ namespace NextPark.Mobile.ViewModels
             if ((data != null) && (data is ParkingModel parking))
             {
                 // Edit Parking
+                _parking = parking;
                 Title = "Modifica Parcheggio";
                 Address = parking.Address;
                 City = parking.City;
@@ -114,14 +116,24 @@ namespace NextPark.Mobile.ViewModels
                 Cap = parking.Cap.ToString();
                 PriceMin = parking.PriceMin;
                 PriceMax = parking.PriceMax;
+                if (string.IsNullOrEmpty(parking.ImageUrl))
+                {
+                    ParkingImage = "icon_no_photo.png";
+                }
+                else
+                {
+                    ParkingImage = ApiSettings.BaseUrl + parking.ImageUrl;
+                }
+
                 base.OnPropertyChanged("Title");
                 base.OnPropertyChanged("Address");
                 base.OnPropertyChanged("Cap");
                 base.OnPropertyChanged("City");
                 base.OnPropertyChanged("PriceMin");
                 base.OnPropertyChanged("PriceMax");
+
                 _isAuthorized = true;
-                _modify = true;
+                _editing = true;
                 AddBtnText = "Modifica";
                 base.OnPropertyChanged("AddBtnText");
                 DelBtnVisible = true;
@@ -130,8 +142,9 @@ namespace NextPark.Mobile.ViewModels
                 // New Parking
                 Title = "Nuovo Parcheggio";
                 base.OnPropertyChanged("Title");
+                ParkingImage = "icon_add_photo_256.png";
                 _isAuthorized = false;
-                _modify = false;
+                _editing = false;
                 AddBtnText = "Aggiungi";
                 base.OnPropertyChanged("AddBtnText");
                 DelBtnVisible = false;
@@ -249,11 +262,6 @@ namespace NextPark.Mobile.ViewModels
         {
             if (!AddParkingDataCheck()) {
 
-                // Image converter
-
-                var memoryStream = new System.IO.MemoryStream();
-                mediaFile.GetStream().CopyTo(memoryStream);
-
                 // Create model 
                 ParkingModel model = new ParkingModel
                 {
@@ -266,16 +274,28 @@ namespace NextPark.Mobile.ViewModels
                     PriceMin = PriceMin,
                     PriceMax = PriceMax,
                     State = "CH",
-                    Status = Enums.Enums.ParkingStatus.Enabled//,
+                    Status = Enums.Enums.ParkingStatus.Enabled,
                     //ImageBinary = memoryStream.ToArray()
                 };
+
+                // Image converter
+                if (mediaFile != null)
+                {
+                    var memoryStream = new System.IO.MemoryStream();
+                    mediaFile.GetStream().CopyTo(memoryStream);
+                    model.ImageBinary = memoryStream.ToArray();
+                    model.ImageUrl = null;
+                } else if (_parking != null) {
+                    model.ImageBinary = null;
+                    model.ImageUrl = _parking.ImageUrl;
+                }
 
                 // Start activity spinner
                 IsRunning = true;
                 base.OnPropertyChanged("IsRunning");
 
                 // Send request to back-end
-                if (_modify == true) {
+                if (_editing == true) {
                     model.Id = UID;
                     EditParkingMethod(model);
                 } else {
@@ -309,9 +329,9 @@ namespace NextPark.Mobile.ViewModels
         {
             try
             {
-                var addResponse = await _parkingDataService.EditParkingAsync(parking);
+                var result = await _parkingDataService.EditParkingAsync(parking);
 
-                if (addResponse != null)
+                if (result != null)
                 {
                     await NavigationService.NavigateToAsync<UserParkingViewModel>();
                 }

@@ -43,6 +43,7 @@ namespace NextPark.Mobile.ViewModels
         public DateTime EndDate { get; set; }       // Event end date
         public DateTime RepetitionEndDate { get; set; }
         public DateTime RepetitionMinEndDate { get; set; }
+        public DateTime RepetitionMaxEndDate { get; set; }
         public TimeSpan StartTime { get; set; }     // Event timeslot start
         public TimeSpan EndTime { get; set; }       // Event timeslot end
         public int RepetitionIndex                  // Repetition Selected Index
@@ -83,7 +84,7 @@ namespace NextPark.Mobile.ViewModels
 
         // SERVICES
         private readonly IDialogService _dialogService;
-        private readonly EventDataService _eventDataService;
+        private readonly IEventDataService _eventDataService;
         private readonly IProfileService _profileService;
 
         // METHODS
@@ -91,7 +92,7 @@ namespace NextPark.Mobile.ViewModels
                                  IApiService apiService,
                                  IAuthService authService,
                                  INavigationService navService,
-                                 EventDataService eventDataService,
+                                 IEventDataService eventDataService,
                                  IProfileService profileService)
                                  : base(apiService, authService, navService)
         {
@@ -112,6 +113,10 @@ namespace NextPark.Mobile.ViewModels
             OnDeleteClick = new Command<object>(OnDeleteClickMethod);
 
             TimeSlotVisible = false;
+
+            MinStartDate = DateTime.Now;
+            RepetitionMinEndDate = DateTime.Now.Date;
+            RepetitionMaxEndDate = DateTime.Now.AddYears(1).Date;
 
             RepetitionIndex = 0;
             RepetitionEndVisible = false;
@@ -144,13 +149,11 @@ namespace NextPark.Mobile.ViewModels
                         EndDate = DateTime.Now.Date;
                         EndTime = DateTime.Now.TimeOfDay;
                         RepetitionEndDate = StartDate;
-                        _event.RepetitionType = RepetitionType.Dayly;
-                        /*
-                        _event.WeekRepeat = new List<MyDayOfWeek>
+                        _event.RepetitionType = RepetitionType.None;
+                        _event.WeeklyRepeDayOfWeeks = new List<DayOfWeek>
                         {
-                            (MyDayOfWeek)(DateTime.Now.DayOfWeek)
+                            (DayOfWeek)(DateTime.Now.DayOfWeek)
                         };
-                        */
                         RepetitionIndex = 0;
                         DeleteButtonVisible = false;
                         AddButtonText = "Aggiungi";
@@ -163,30 +166,36 @@ namespace NextPark.Mobile.ViewModels
                         EndDate = _event.EndDate.Date;
                         EndTime = _event.EndDate.TimeOfDay;
                         RepetitionEndDate = _event.RepetitionEndDate;
-                        /*
-                        if (_event.WeekRepeat == null) {
-                            _event.WeekRepeat = new List<MyDayOfWeek>
+                        if (_event.WeeklyRepeDayOfWeeks == null) {
+                            _event.WeeklyRepeDayOfWeeks = new List<DayOfWeek>
                             {
-                                (MyDayOfWeek)(DateTime.Now.DayOfWeek)
+                                (DayOfWeek)(DateTime.Now.DayOfWeek)
                             };
                         }
-                        */
                         DeleteButtonVisible = true;
                         AddButtonText = "Salva";
                         _modifying = true;
                     }
                     MinStartDate = DateTime.Now;
                     RepetitionMinEndDate = StartDate;
-
-                    if ((_event.RepetitionType == RepetitionType.Dayly) && (RepetitionEndDate != StartDate))
+                    switch (_event.RepetitionType) 
                     {
-                        RepetitionIndex = 1;
-                        RepetitionEndVisible = true;
-                    }
-                    else if (_event.RepetitionType == RepetitionType.Weekly)
-                    {
-                        WeekDayVisible = true;
-                        RepetitionIndex = 2;
+                        default:
+                        case RepetitionType.None:
+                            RepetitionIndex = 0;
+                            RepetitionEndVisible = false;
+                            WeekDayVisible = false;
+                            break;
+                        case RepetitionType.Dayly:
+                            RepetitionIndex = 1;
+                            RepetitionEndVisible = true;
+                            WeekDayVisible = false;
+                            break;
+                        case RepetitionType.Weekly:
+                            RepetitionIndex = 2;
+                            RepetitionEndVisible = true;
+                            WeekDayVisible = true;
+                            break;
                     }
 
                     base.OnPropertyChanged("AllDaySwitchToggled");
@@ -299,11 +308,6 @@ namespace NextPark.Mobile.ViewModels
 
         public async void AddEvent()
         {
-            if (AllDaySwitchToggled) {
-                StartTime = TimeSpan.FromHours(0.0);
-                EndTime = TimeSpan.FromHours(23.0);
-            }
-
             // Check Data
             if (StartTime > EndTime) {
                 await _dialogService.ShowAlert("Errore", "L'orario di fine deve essere maggiore a quello di inizio");
@@ -314,7 +318,7 @@ namespace NextPark.Mobile.ViewModels
             {
                 default:
                 case 0: // Never
-                    _event.RepetitionType = RepetitionType.Dayly;
+                    _event.RepetitionType = RepetitionType.None;
                     RepetitionEndDate = StartDate;
                     break;
                 case 1: // Daily

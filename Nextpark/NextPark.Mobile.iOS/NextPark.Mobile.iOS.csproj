@@ -127,7 +127,6 @@
     <BundleResource Include="Resources\xamarin_logo%403x.png" />
     <InterfaceDefinition Include="Resources\LaunchScreen.storyboard" />
     <BundleResource Include="Resources\icon_add_48.png" />
-    <BundleResource Include="Resources\icon_add_photo_256.png" />
     <BundleResource Include="Resources\icon_back_blue_48.png" />
     <BundleResource Include="Resources\icon_bookings_256.png" />
     <BundleResource Include="Resources\icon_calendar_90.png" />
@@ -146,9 +145,10 @@
     <BundleResource Include="Resources\bg_logo.png" />
     <BundleResource Include="Resources\icon_no_photo.png" />
     <BundleResource Include="Resources\icon_location_64.png" />
+    <BundleResource Include="Resources\icon_check_48.png" />
     <BundleResource Include="Resources\icon_pin_green_256.png" />
     <BundleResource Include="Resources\icon_pin_red_256.png" />
-    <BundleResource Include="Resources\icon_check_48.png" />
+    <BundleResource Include="Resources\icon_add_photo_256.png" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

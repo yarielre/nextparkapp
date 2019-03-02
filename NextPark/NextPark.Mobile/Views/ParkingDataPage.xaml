@@ -38,7 +38,7 @@
                                 Padding="0"
                                 Margin="0"
                                 Grid.Row="0" Grid.Column="0">
-                            <Image Source="image_parking1.png" 
+                            <Image Source="{Binding Picture}" 
                                    HeightRequest="80" 
                                    WidthRequest="80"
                                    Aspect="AspectFill"/>

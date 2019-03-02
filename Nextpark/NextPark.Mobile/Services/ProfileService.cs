@@ -124,7 +124,7 @@ namespace NextPark.Mobile.Services
 
             return result == null ? new UpdateUserCoinModel() : result as UpdateUserCoinModel;
         }
-          
+
         public UIParkingModel GetParkingById(int searchId)
         {
             foreach (UIParkingModel parking in ParkingList) {

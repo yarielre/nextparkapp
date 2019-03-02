@@ -10,10 +10,11 @@ using NextPark.Mobile.Settings;
 using NextPark.Mobile.Services.Data;
 using NextPark.Models;
 using NextPark.Enums.Enums;
+using System.ComponentModel;
 
 namespace NextPark.Mobile.ViewModels
 {
-    public class ParkingItem
+    public class ParkingItem : INotifyPropertyChanged
     {
         private int uid;
         public int UID
@@ -64,11 +65,28 @@ namespace NextPark.Mobile.ViewModels
             set { statusColor = value; } 
         }
 
+        private string picture;
+        public string Picture
+        {
+            get { return picture; }
+            set { picture = value; }
+        }
+
         private ICommand onParkingTap;
         public ICommand OnParkingTap
         {
             get { return onParkingTap; }
             set { onParkingTap = value; }
+        }
+
+        public ParkingModel ParkingModel { get; set; }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        // METHODS
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 
@@ -209,6 +227,16 @@ namespace NextPark.Mobile.ViewModels
                         {
                             free = true;
                         }
+
+                        // Set Image
+                        string imageUrl = "";
+                        if (string.IsNullOrEmpty(parking.ImageUrl))
+                        {
+                            imageUrl = "icon_no_photo.png";
+                        } else {
+                            imageUrl = ApiSettings.BaseUrl + parking.ImageUrl;
+                        }
+
                         ParkingList.Add(new ParkingItem
                         {
                             UID = parking.Id,
@@ -218,10 +246,13 @@ namespace NextPark.Mobile.ViewModels
                             City = parking.City,
                             Status = (free) ? "libero" : "occupato",
                             StatusColor = (free) ? Color.Green : Color.Red,
-                            OnParkingTap = OnParkingTapped
+                            Picture = imageUrl,
+                            OnParkingTap = OnParkingTapped,
+                            ParkingModel = parking
                         });
                     }
                 }
+                /*
                 ParkingList.Add(new ParkingItem
                 {
                     UID = 1,
@@ -233,6 +264,7 @@ namespace NextPark.Mobile.ViewModels
                     StatusColor = Color.Green,
                     OnParkingTap = OnParkingTapped
                 });
+                */
                 base.OnPropertyChanged("ParkingList");
                 if (ParkingList.Count == 0)
                 {

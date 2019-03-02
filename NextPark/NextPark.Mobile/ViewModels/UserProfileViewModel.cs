@@ -172,39 +172,43 @@ namespace NextPark.Mobile.ViewModels
 
         private async Task GetUserParkings()
         {
-        
-            var parkingList = await _parkingDataService.GetAllParkingsAsync();
-
-            //if (parkingList.Count > 0) _parkingDataService.Parkings = parkingList;
-
-            // Reset counters
-            _totUserParkings = 0;
-            _activeUserParkings = 0;
-
-            // Search user parkings 
-            // TODO: use a filter on Parkings
-            if (parkingList != null)
+            try
             {
-                foreach (ParkingModel parking in parkingList)
+                // TODO: evaluate the use of profileService.UserParkingList or add a filter to parkingDataService.GetUserParkings()
+
+                // Get parkings
+                var parkingList = await _parkingDataService.GetAllParkingsAsync();
+
+                // Reset counters
+                _totUserParkings = 0;
+                _activeUserParkings = 0;
+
+                // Search user parkings 
+                if (parkingList != null)
                 {
-                    if (parking.UserId == int.Parse(AuthSettings.UserId))
+                    foreach (ParkingModel parking in parkingList)
                     {
-                        _totUserParkings++;
-                        if (parking.Status == ParkingStatus.Enabled)
+                        if (parking.UserId == int.Parse(AuthSettings.UserId))
                         {
-                            _activeUserParkings++;
+                            _totUserParkings++;
+                            if (parking.Status == ParkingStatus.Enabled)
+                            {
+                                _activeUserParkings++;
+                            }
                         }
                     }
                 }
+
+                // Update status on page
+                ParkingsStatus = _totUserParkings.ToString() + "/" + _totUserParkings.ToString() + " liberi";
+                ParkingsAvailability = _activeUserParkings.ToString() + "/" + _totUserParkings.ToString() + " disponibili";
+                base.OnPropertyChanged("ParkingsStatus");
+                base.OnPropertyChanged("ParkingsAvailability");
+
+                UpdateUserBookingsData();
+            } catch (Exception e) {
+                return;
             }
-
-            // Update status on page
-            ParkingsStatus = _totUserParkings.ToString() + "/" + _totUserParkings.ToString() + " liberi";
-            ParkingsAvailability = _activeUserParkings.ToString() + "/" + _totUserParkings.ToString() + " disponibili";
-            base.OnPropertyChanged("ParkingsStatus");
-            base.OnPropertyChanged("ParkingsAvailability");
-
-            UpdateUserBookingsData();
         }
 
         public async void UpdateUserBookingsData()
