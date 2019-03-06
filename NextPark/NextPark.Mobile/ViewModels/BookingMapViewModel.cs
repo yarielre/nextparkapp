@@ -166,6 +166,12 @@ namespace NextPark.Mobile.ViewModels
             Map.MoveToRegion(MapSpan.FromCenterAndRadius(position, Distance.FromKilometers(1)));
         }
 
+        public override bool BackButtonPressed()
+        {
+            OnBackClickMethod(null);
+            return false; // Do not propagate back button pressed
+        }
+
         // Back Click action
         public void OnBackClickMethod(object sender)
         {

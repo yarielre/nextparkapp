@@ -159,6 +159,12 @@ namespace NextPark.Mobile.ViewModels
             base.OnPropertyChanged("BookingListHeight");
         }
 
+        public override bool BackButtonPressed()
+        {
+            OnBackClickMethod(null);
+            return false; // Do not propagate back button pressed
+        }
+
         // Back Click Action
         public void OnBackClickMethod(object sender)
         {

@@ -13,7 +13,6 @@ namespace NextPark.Mobile.Views
         {
             InitializeComponent();
             On<Xamarin.Forms.PlatformConfiguration.iOS>().SetUseSafeArea(true);
-
             if (BindingContext == null) return;
         }
     }

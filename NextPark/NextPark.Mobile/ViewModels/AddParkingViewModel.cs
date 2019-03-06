@@ -171,6 +171,12 @@ namespace NextPark.Mobile.ViewModels
             base.OnPropertyChanged(v);
         }
 
+        public override bool BackButtonPressed()
+        {
+            OnBackClickMethod(null);
+            return false; // Do not propagate back button pressed
+        }
+
         // Back Click action
         public void OnBackClickMethod(object sender)
         {
