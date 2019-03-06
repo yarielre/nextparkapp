@@ -13,6 +13,9 @@ namespace NextPark.Mobile.ViewModels
 {
     public class AddParkingViewModel : BaseViewModel
     {
+        private const double PRICE_MIN = 1.50;
+        private const double PRICE_MAX = 6.00;
+
         // PROPERTIES
         public string BackText { get; set; }        // Header back text
         public ICommand OnBackClick { get; set; }   // Header back action
@@ -32,6 +35,13 @@ namespace NextPark.Mobile.ViewModels
 
         public string PriceMinText { get; set; }
         public double PriceMin { get; set; }
+        public Color PriceMinDownBorderColor { get; set; }
+        public bool PriceMinDownEnable { get; set; }
+        public ICommand OnPriceMinDown { get; set; }
+        public Color PriceMinUpBorderColor { get; set; }
+        public bool PriceMinUpEnable { get; set; }
+        public ICommand OnPriceMinUp { get; set; }
+
         public string PriceMaxText { get; set; }
         public double PriceMax { get; set; }
         public double PriceMaxMinimum { get; set; }
@@ -91,14 +101,8 @@ namespace NextPark.Mobile.ViewModels
             OnParkingImageTap = new Command<object>(OnParkingImageTapMethod);
             OnAddParking = new Command<object>(OnAddParkingMethod);
             OnDelParking = new Command<object>(OnDelParkingMethod);
-
-            PriceMin = 1.50;
-            PriceMax = 3.0;
-            PriceMinText = PriceMin.ToString("N2");
-            PriceMaxText = PriceMax.ToString("N2");
-            PriceMaxMinimum = PriceMin;
-
-            //ParkingImage = "icon_add_photo_256.png";
+            OnPriceMinDown = new Command(OnPriceMinDownMethod);
+            OnPriceMinUp = new Command(OnPriceMinUpMethod);
         }
 
         // Initialization
@@ -114,7 +118,7 @@ namespace NextPark.Mobile.ViewModels
                 City = parking.City;
                 UID = parking.Id;
                 Cap = parking.Cap.ToString();
-                PriceMin = parking.PriceMin;
+                OnPriceMinChangedMethod(parking.PriceMin);
                 PriceMax = parking.PriceMax;
                 if (string.IsNullOrEmpty(parking.ImageUrl))
                 {
@@ -129,8 +133,6 @@ namespace NextPark.Mobile.ViewModels
                 base.OnPropertyChanged("Address");
                 base.OnPropertyChanged("Cap");
                 base.OnPropertyChanged("City");
-                base.OnPropertyChanged("PriceMin");
-                base.OnPropertyChanged("PriceMax");
 
                 _isAuthorized = true;
                 _editing = true;
@@ -149,6 +151,7 @@ namespace NextPark.Mobile.ViewModels
                 base.OnPropertyChanged("AddBtnText");
                 DelBtnVisible = false;
                 base.OnPropertyChanged("DelBtnVisible");
+                OnPriceMinChangedMethod(1.50);
             }
 
             // Header
@@ -186,13 +189,57 @@ namespace NextPark.Mobile.ViewModels
             NavigationService.NavigateToAsync<MoneyViewModel>();
         }
 
+        public void OnPriceMinDownMethod()
+        {
+            PriceMin = PriceMin - 0.5;
+            if (PriceMin < PRICE_MIN)
+            {
+                PriceMin = PRICE_MIN;
+            }
+            OnPriceMinChangedMethod(PriceMin);
+        }
+
+        public void OnPriceMinUpMethod()
+        {
+            PriceMin = PriceMin + 0.5;
+            if (PriceMin > PRICE_MAX)
+            {
+                PriceMin = PRICE_MAX;
+            }
+            OnPriceMinChangedMethod(PriceMin);
+        }
+
         // On Minimum price value changed action
         public void OnPriceMinChangedMethod(double value)
         {
             PriceMin = value;
             PriceMinText = PriceMin.ToString("N2");
+            if (PriceMin <= PRICE_MIN) {
+                // Disable PriceMinDown button
+                PriceMinDownBorderColor = Color.LightGray;
+                PriceMinDownEnable = false;
+            } else {
+                // Enable PriceMinDown button
+                PriceMinDownBorderColor = Color.FromHex("#8CC63F");
+                PriceMinDownEnable = true;
+            }
+            if (PriceMin >= PRICE_MAX) {
+                // Disable PriceMinUp button
+                PriceMinUpBorderColor = Color.LightGray;
+                PriceMinUpEnable = false;
+            } else {
+                // Enable PriceMinUp button
+                PriceMinUpBorderColor = Color.FromHex("#8CC63F");
+                PriceMinUpEnable = true;
+            }
             base.OnPropertyChanged("PriceMin");
             base.OnPropertyChanged("PriceMinText");
+            base.OnPropertyChanged("PriceMinDownBorderColor");
+            base.OnPropertyChanged("PriceMinDownEnable");
+            base.OnPropertyChanged("PriceMinUpBorderColor");
+            base.OnPropertyChanged("PriceMinUpEnable");
+
+            /* FUTURE FEATURE
             if (PriceMax < PriceMin) {
                 PriceMax = PriceMin;
                 PriceMaxText = PriceMax.ToString("N2");
@@ -201,6 +248,7 @@ namespace NextPark.Mobile.ViewModels
             }
             PriceMaxMinimum = PriceMin;
             base.OnPropertyChanged("PriceMaxMinimum");
+            */
         }
 
         // On Maximum price value changed action
