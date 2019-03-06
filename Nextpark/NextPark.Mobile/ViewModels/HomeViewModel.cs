@@ -201,8 +201,6 @@ namespace NextPark.Mobile.ViewModels
                     if (AuthService.IsUserAuthenticated() && (uiParking.UserId == AuthSettings.User.Id)) {
                         _profileService.UserParkingList.Add(uiParking);
                     }
-                    // Add Map Pin
-                    CreatePin(new Position(parking.Latitude, parking.Longitude), uiParking);
                 }
 
                 // Get Events
@@ -218,14 +216,22 @@ namespace NextPark.Mobile.ViewModels
 
                 // Get orders
                 var ordersResult = await _orderDataService.GetAllOrdersAsync();
-                if ((ordersResult == null) || (ordersResult.Count == 0)) return;
-                foreach (OrderModel order in ordersResult)
+                if ((ordersResult != null) && (ordersResult.Count != 0))
                 {
-                    UIParkingModel parkingModel = _profileService.GetParkingById(order.ParkingId);
-                    if (parkingModel != null)
+                    foreach (OrderModel order in ordersResult)
                     {
-                        parkingModel.Orders.Add(order);
+                        UIParkingModel parkingModel = _profileService.GetParkingById(order.ParkingId);
+                        if (parkingModel != null)
+                        {
+                            parkingModel.Orders.Add(order);
+                        }
                     }
+                }
+
+                foreach (UIParkingModel parking in _profileService.ParkingList)
+                {
+                    // Add Map Pin
+                    CreatePin(new Position(parking.Latitude, parking.Longitude), parking);
                 }
             }
             catch (Exception e) {
