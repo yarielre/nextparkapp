@@ -25,6 +25,7 @@ namespace NextPark.Mobile.ViewModels
         public string UserMoney { get; set; }       // Header money value
         public ICommand OnMoneyClick { get; set; }  // Header money action
 
+        public string Title { get; set; }           // Page Title
         private DateTime _startDate { get; set; }
         public DateTime StartDate                   // Event start date
         {
@@ -140,7 +141,8 @@ namespace NextPark.Mobile.ViewModels
                     base.OnPropertyChanged("UserMoney");
 
                     if (_event.Id == 0) {
-                        // new event
+                        // New Event
+                        Title = "Aggiungi disponibilità";
                         AllDaySwitchToggled = true;
                         AllDayTextColor = Color.Black;
 
@@ -160,7 +162,8 @@ namespace NextPark.Mobile.ViewModels
                         _modifying = false;
 
                     } else {
-                        // modify an event
+                        // Modify an Event
+                        Title = "Modifica disponibilità";
                         StartDate = _event.StartDate.Date;
                         StartTime = _event.StartDate.TimeOfDay;
                         EndDate = _event.EndDate.Date;
@@ -198,6 +201,7 @@ namespace NextPark.Mobile.ViewModels
                             break;
                     }
 
+                    base.OnPropertyChanged("Title");
                     base.OnPropertyChanged("AllDaySwitchToggled");
                     base.OnPropertyChanged("AllDayTextColor");
                     base.OnPropertyChanged("StartDate");
@@ -319,7 +323,7 @@ namespace NextPark.Mobile.ViewModels
                 default:
                 case 0: // Never
                     _event.RepetitionType = RepetitionType.None;
-                    RepetitionEndDate = StartDate;
+                    RepetitionEndDate = StartDate + EndTime;
                     break;
                 case 1: // Daily
                     _event.RepetitionType = RepetitionType.Dayly;
@@ -331,7 +335,7 @@ namespace NextPark.Mobile.ViewModels
 
             _event.StartDate = StartDate + StartTime;
             _event.EndDate = StartDate + EndTime;
-            _event.RepetitionEndDate = RepetitionEndDate;
+            _event.RepetitionEndDate = RepetitionEndDate + EndTime;
 
             var result = new List<EventModel>();
 
@@ -343,7 +347,7 @@ namespace NextPark.Mobile.ViewModels
                 result = await _eventDataService.CreateEventAsync(_event);
             }
 
-            if (result.Count > 0) {
+            if ((result != null) && (result.Count > 0)) {
                 await NavigationService.NavigateToAsync<ParkingDataViewModel>(_profileService.LastEditingParking);
             }
         }
