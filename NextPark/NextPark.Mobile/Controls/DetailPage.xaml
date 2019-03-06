@@ -60,7 +60,7 @@
                     <!-- Removed -->
         
                     <!-- Page Container Frame -->
-                    <ScrollView HorizontalOptions="Fill"
+                    <ScrollView HorizontalOptions="FillAndExpand"
                                 VerticalOptions="Start"
                                 Orientation="Vertical"
                                 RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=1}"

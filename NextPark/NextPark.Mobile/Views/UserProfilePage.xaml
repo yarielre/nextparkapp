@@ -22,18 +22,20 @@
                                               Icon="icon_user_256.png"
                                               x:Name="liUserData"
                                               ClickAction="{Binding Path=OnUserDataAction}">
-                        <StackLayout Spacing="0" HorizontalOptions="StartAndExpand">
-                            <StackLayout Orientation="Horizontal" Spacing="2" HorizontalOptions="Start">
+                        <StackLayout Spacing="0" HorizontalOptions="StartAndExpand" VerticalOptions="Center">
+                            <StackLayout Orientation="Horizontal" Spacing="2" HorizontalOptions="Start" VerticalOptions="Center">
                                 <Label Text="{Binding UserName}"
-                                   FontSize="Small"
-                                   FontAttributes="Bold"/>
+                                       FontSize="Small"
+                                       FontAttributes="Bold"
+                                       VerticalTextAlignment="Center"/>
                                 <Label Text="{Binding Lastname}"
                                        FontSize="Small"
-                                       FontAttributes="None" />
+                                       FontAttributes="None"
+                                       VerticalTextAlignment="Center"/>
                             </StackLayout>
                             <Label Text="{Binding Email}"
                                    FontSize="Small"/>
-                            <StackLayout Orientation="Horizontal" Spacing="2" HorizontalOptions="Start">
+                            <StackLayout Orientation="Horizontal" Spacing="2" HorizontalOptions="Start" VerticalOptions="Center">
                                 <Label Text="{Binding Address}"
                                        FontSize="Small"/>
                                 <Label Text=","
@@ -44,7 +46,7 @@
                                 <Label Text="{Binding City}"
                                        FontSize="Small"/>
                             </StackLayout>
-                            <StackLayout Orientation="Horizontal" Spacing="2" HorizontalOptions="Start">
+                            <StackLayout Orientation="Horizontal" Spacing="2" HorizontalOptions="Start" VerticalOptions="Center">
                                 <Label Text="Targa: " 
                                        FontSize="Small"/>
                                 <Label Text="{Binding CarPlate}" 
@@ -62,24 +64,30 @@
                             <StackLayout Orientation="Horizontal" Spacing="2" HorizontalOptions="Start">
                                 <Label Text="Saldo attuale:"
                                        FontSize="Small"
-                                       FontAttributes="None"/>
+                                       FontAttributes="None"
+                                       VerticalTextAlignment="Center"/>
                                 <Label Text="{Binding Balance}"
                                        FontSize="Small"
-                                       FontAttributes="Bold"/>
+                                       FontAttributes="Bold"
+                                       VerticalTextAlignment="Center"/>
                                 <Label Text="CHF"
                                        FontSize="Small"
-                                       FontAttributes="Bold"/>
+                                       FontAttributes="Bold"
+                                       VerticalTextAlignment="Center"/>
                             </StackLayout>
                             <StackLayout Orientation="Horizontal" Spacing="2" HorizontalOptions="Start">
                                 <Label Text="Guadagno:"
                                        FontSize="Small"
-                                       FontAttributes="None"/>
+                                       FontAttributes="None"
+                                       VerticalTextAlignment="Center"/>
                                 <Label Text="{Binding Profit}"
                                        FontSize="Small"
-                                       FontAttributes="Bold"/>
+                                       FontAttributes="Bold"
+                                       VerticalTextAlignment="Center"/>
                                 <Label Text="CHF"
                                        FontSize="Small"
-                                       FontAttributes="Bold"/>
+                                       FontAttributes="Bold"
+                                       VerticalTextAlignment="Center"/>
                             </StackLayout>
                         </StackLayout>
                     </controls:UserProfileItem>
