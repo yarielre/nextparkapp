@@ -96,7 +96,10 @@ namespace NextPark.Api.Controllers
                     Email = model.Email,
                     Address = model.Address,
                     CarPlate = model.CarPlate,
-                    State = model.State
+                    State = model.State,
+                    Cap = model.Cap,
+                    City = model.City,
+                    Phone = model.Phone
                 };
 
                 var result = await _userManager.CreateAsync(user, model.Password);

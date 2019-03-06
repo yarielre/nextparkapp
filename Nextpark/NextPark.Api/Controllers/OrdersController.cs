@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using NextPark.Data.Infrastructure;
 using NextPark.Data.Repositories;
 using NextPark.Domain.Entities;
+using NextPark.Enums;
 using NextPark.Enums.Enums;
 using NextPark.Models;
 
@@ -20,50 +21,48 @@ namespace NextPark.Api.Controllers
         private readonly IMapper _mapper;
         private readonly IRepository<Order> _orderRepository;
         private readonly IRepository<Parking> _parkingRepository;
+        private readonly IRepository<Feed> _feedRepository;
+        private readonly IRepository<Transaction> _transactionRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IRepository<ApplicationUser> _useRepository;
 
         public OrdersController(IRepository<Order> repository,
             IUnitOfWork unitOfWork,
             IMapper mapper,
-            IUnitOfWork unitOfWork1,
             IRepository<Parking> parkingRepository,
             IRepository<Order> orderRepository,
-            IMapper mapper1,
-            IRepository<ApplicationUser> useRepository)
+            IRepository<ApplicationUser> useRepository,
+            IRepository<Feed> feedRepository,
+            IRepository<Transaction> transactionRepository)
         {
-            _unitOfWork = unitOfWork1;
+            _unitOfWork = unitOfWork;
             _parkingRepository = parkingRepository;
             _orderRepository = orderRepository;
-            _mapper = mapper1;
+            _mapper = mapper;
             _useRepository = useRepository;
+            _feedRepository = feedRepository;
+            _transactionRepository = transactionRepository;
         }
 
-        [HttpPost("renew")]
-        [Obsolete]
-        public async Task<IActionResult> RenovateOrder([FromBody] RenovateOrder model)
+        [HttpPut("{id}/renew")]
+        public async Task<IActionResult> RenovateOrder(int id,[FromBody] OrderModel model)
         {
-
-            //TODO: Remove
-            //
-
-            if (model == null)
-                return BadRequest("Invalid RenovateOrder parameter");
 
             if (!ModelState.IsValid)
                 return BadRequest("Invalid Model State parameter");
 
             try
             {
-                var order = _mapper.Map<OrderModel, Order>(model.Order);
-
-
-
+                var user = await _useRepository.FirstOrDefaultWhereAsync(u => u.Id == model.UserId).ConfigureAwait(false);
+                if (user == null)
+                {
+                    return NotFound("User not found");
+                }
+                
+                 if (user.Balance < model.Price)
+                 return BadRequest("Not enough money");
+                 var order = _mapper.Map<OrderModel, Order>(model);
                 _orderRepository.Update(order);
-                var user = _useRepository.Find(model.User.Id);
-
-                user.Balance = model.User.Balance;
-                _useRepository.Update(user);
                 await _unitOfWork.CommitAsync().ConfigureAwait(false);
                 var vm = _mapper.Map<Order, OrderModel>(order);
                 return Ok(vm);
@@ -88,22 +87,84 @@ namespace NextPark.Api.Controllers
 
                 if (order == null)
                     return BadRequest("Order not found.");
+                var parking = _parkingRepository.Find(order.ParkingId);
+                if (parking == null)
+                {
+                    return BadRequest("Parking not found.");
+                }
+                //Parking's owned user
+                var parkingOwnedUser = _useRepository.Find(parking.UserId);
+                if (parkingOwnedUser == null)
+                {
+                    return BadRequest("Parking's owned user not found.");
+                }
+                var tax = await _feedRepository.FirstOrDefaultWhereAsync(f => f.Name == "RentEarningPercent").ConfigureAwait(false);
+                if (tax == null)
+                {
+                    return BadRequest("Rent earning tax not found.");
+                }
+                //User who created the order
+                var userOrder = _useRepository.Find(order.UserId);
+                if (userOrder == null)
+                {
+                    return BadRequest("User who rented the order not found");
+                }
 
+                var rentEraningTax = CalCulateTax(order.Price, tax.Tax);
+                order.OrderStatus = OrderStatus.Finished;
+                parking.Status = ParkingStatus.Enabled;
 
-                var parking = await _parkingRepository
-                    .FirstWhereAsync(p => p.Id == order.ParkingId).ConfigureAwait(false);
+                var renTransaction = new Transaction
+                {
+                    CashMoved = rentEraningTax,
+                    UserId = parking.UserId,
+                    CreationDate = DateTime.Now,
+                    CompletationDate = DateTime.Now,
+                    Status = TransactionStatus.Completed,
+                    TransactionId = new Guid(),
+                    Type = TransactionType.RentTrasaction
+                };
 
-                _parkingRepository.Update(parking);
-
+                var feedTransaction = new Transaction
+                {
+                    CashMoved = rentEraningTax,
+                    UserId = parking.UserId,
+                    CreationDate = DateTime.Now,
+                    CompletationDate = DateTime.Now,
+                    Status = TransactionStatus.Completed,
+                    TransactionId = new Guid(),
+                    Type = TransactionType.FeedTransaction
+                };
+               
+                //Saving rent and feed transactions
+                _transactionRepository.Add(renTransaction);
+                _transactionRepository.Add(feedTransaction);
                 await _unitOfWork.CommitAsync().ConfigureAwait(false);
 
-                var vm = _mapper.Map<Parking, ParkingModel>(parking);
+                //Update user balance when rent is finished
+                userOrder.Balance = userOrder.Balance - order.Price;
+                _useRepository.Update(userOrder);
+                await _unitOfWork.CommitAsync().ConfigureAwait(false);
 
+                //Update user profit when rent is finished
+                parkingOwnedUser.Profit = parkingOwnedUser.Profit + rentEraningTax;
+                _useRepository.Update(parkingOwnedUser);
+                await _unitOfWork.CommitAsync().ConfigureAwait(false);
+
+                //Update parking after status change
+                _parkingRepository.Update(parking);
+                await _unitOfWork.CommitAsync().ConfigureAwait(false);
+
+                //Update order after status change
+                _orderRepository.Update(order);
+                await _unitOfWork.CommitAsync().ConfigureAwait(false);
+
+                var vm = _mapper.Map<Order, OrderModel>(order);
                 return Ok(vm);
             }
             catch (Exception e)
             {
-                return BadRequest(string.Format("Server error: {0}", e));
+                return BadRequest($"Server error: {e}");
             }
         }
 
@@ -147,21 +208,6 @@ namespace NextPark.Api.Controllers
             {
                 var order = _mapper.Map<OrderModel, Order>(orderModel);
                 _orderRepository.Add(order);
-                await _unitOfWork.CommitAsync().ConfigureAwait(false);
-                try
-                {
-                    user.Balance = user.Balance - orderModel.Price;
-                    _useRepository.Update(user);
-                    await _unitOfWork.CommitAsync().ConfigureAwait(false);
-                }
-                // if fail the user update after substarct the order's price form user's balance then the order 
-                // will be erased.
-                catch (Exception e)
-                {
-                    _orderRepository.Delete(order);
-                    await _unitOfWork.CommitAsync().ConfigureAwait(false);
-                    return BadRequest(e.Message);
-                }
                 await _unitOfWork.CommitAsync().ConfigureAwait(false);
                 var vm = _mapper.Map<Order, OrderModel>(order);
                 return Ok(vm);
@@ -212,6 +258,11 @@ namespace NextPark.Api.Controllers
             //If parking have events, is enable and the date of the last event y bigger than order end date
             return parking.Events.Count > 0 && parking.Status == ParkingStatus.Enabled
                    && order.EndDate <= parking.Events.OrderBy(e => e.EndDate).Last().EndDate;
+        }
+
+        private double CalCulateTax(double price,double taxPorcent)
+        {
+            return (price * taxPorcent) / 100;
         }
     }
 }

@@ -14,7 +14,7 @@ namespace NextPark.Mobile.Services.Data
         {
             _apiService = apiService;
         }
-        public async Task<ParkingModel> TerminateOrder(int id)
+        public async Task<OrderModel> TerminateOrderAsync(int id)
         {
             var isConneted = await _apiService.CheckConnection().ConfigureAwait(false);
             if (!isConneted.IsSuccess)
@@ -29,7 +29,7 @@ namespace NextPark.Mobile.Services.Data
 
                 if (response.IsSuccess)
                 {
-                    return response.Result as ParkingModel;
+                    return response.Result as OrderModel;
                 }
                 else
                 {
@@ -38,10 +38,10 @@ namespace NextPark.Mobile.Services.Data
             }
             catch (Exception ex)
             {
-                throw new Exception(string.Format("Error setting model on server: {0}", ex.Message));
+                throw new Exception($"Error setting model on server: {ex.Message}");
             }
         }
-        public async Task<OrderModel> RenovateOrder(RenovateOrder model)
+        public async Task<OrderModel> RenovateOrderAsync(int id,OrderModel order)
         {
             var isConneted = await _apiService.CheckConnection().ConfigureAwait(false);
             if (!isConneted.IsSuccess)
@@ -51,8 +51,8 @@ namespace NextPark.Mobile.Services.Data
 
             try
             {
-                var url = $"{ApiSettings.OrdersEndPoint}/renew";
-                var response = await _apiService.Post(url, model).ConfigureAwait(false);
+                var url = $"{ApiSettings.OrdersEndPoint}/{id}/renew";
+                var response = await _apiService.Put(url, order).ConfigureAwait(false);
 
                 if (response.IsSuccess)
                 {
@@ -65,7 +65,7 @@ namespace NextPark.Mobile.Services.Data
             }
             catch (Exception ex)
             {
-                throw new Exception(string.Format("Error setting model on server: {0}", ex.Message));
+                throw new Exception($"Error setting model on server: {ex.Message}");
             }
         }
 

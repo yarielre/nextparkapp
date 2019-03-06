@@ -19,17 +19,19 @@ namespace NextPark.Mobile.ViewModels
         //fields
         private readonly IEventDataService _eventDataService;
         private readonly IParkingDataService _parkingDataService;
+        private readonly IOrderDataService _orderDataService;
 
         private bool _startButtonEnabled;
         private string _resultConsole;
         private StringBuilder _consoleBuffer;
 
         public TestViewModel(IApiService apiService, IAuthService authService, INavigationService navService,
-            IEventDataService eventDataService, IParkingDataService parkingDataService) : base(apiService, authService,
+            IEventDataService eventDataService, IParkingDataService parkingDataService, IOrderDataService orderDataService) : base(apiService, authService,
             navService)
         {
             _eventDataService = eventDataService;
             _parkingDataService = parkingDataService;
+            _orderDataService = orderDataService;
 
             CleanConsoleAsync();
 
@@ -59,9 +61,10 @@ namespace NextPark.Mobile.ViewModels
             StartButtonEnabled = false;
 
             await AuthServiceTest();
+
             await ParkingServiceTest();
+            await OrderServiceTest().ConfigureAwait(false);
             await EventServiceTest();
-            OrderServiceTest();
             PurchaseServiceTest();
 
             await LogoutTest();
@@ -132,11 +135,13 @@ namespace NextPark.Mobile.ViewModels
                 Name = "User",
                 Password = "Wisegar.1",
                 State = "DemoState",
-                UserName = "demo@nextpark.ch"
+                UserName = "demo@nextpark.ch",
+                Phone = "00410000000",
+                Cap = 11111,
+                City = "Vezia"
             };
 
             var registerResponse = await AuthService.Register(demoUser);
-
 
             if (registerResponse.IsSuccess)
             {
@@ -204,7 +209,7 @@ namespace NextPark.Mobile.ViewModels
                 RepetitionType = Enums.Enums.RepetitionType.Dayly
             };
 
-            postedParking.Status = Enums.Enums.ParkingStatus.Disabled;
+           // postedParking.Status = Enums.Enums.ParkingStatus.Disabled;
 
             var result = await _eventDataService.CreateEventAsync(eventParking);
 
@@ -405,7 +410,7 @@ namespace NextPark.Mobile.ViewModels
         #endregion
 
         #region Order Service
-        private void OrderServiceTest()
+        private async Task OrderServiceTest()
         {
 
             AddLineToConsole("-------------------------------------------");
@@ -421,6 +426,19 @@ namespace NextPark.Mobile.ViewModels
                 Price = 20,
                 PaymentCode = "drtrtrt"
             };
+            AddLineToConsole("Creating one order...");
+            var postedOrder = await _orderDataService.CreateOrderAsync(order).ConfigureAwait(false);
+            AddLineToConsole(postedOrder != null ? "Creating the order OK" : "Creating the order FAILED");
+            if (postedOrder != null)
+            {
+                AddLineToConsole("Editing the order...");
+                postedOrder.PaymentStatus = PaymentStatus.Cancel;
+                var editedOrder = _orderDataService.EditOrderAsync(postedOrder.Id, postedOrder);
+                AddLineToConsole(editedOrder != null ? "Editing the order OK" : "Editing the order FAILED");
+                AddLineToConsole("Terminate the order...");
+                var finishedOrder = _orderDataService.TerminateOrderAsync(postedOrder.Id);
+                AddLineToConsole(finishedOrder != null ? "Terminate the order OK" : "Terminate the order FAILED");
+            }
         }
         #endregion
 
@@ -454,10 +472,6 @@ namespace NextPark.Mobile.ViewModels
         }
 
         #endregion
-
-
-
-
-
+        
     }
 }
