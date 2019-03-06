@@ -154,7 +154,7 @@ namespace NextPark.Mobile.ViewModels
                 _profileService.LastEditingParking = _parking;
 
                 // Header
-                BackText = "Parcheggi";
+                BackText = "Indietro";
                 UserName = AuthSettings.User.Name;
                 UserMoney = AuthSettings.UserCoin.ToString("N0");
                 base.OnPropertyChanged("BackText");
@@ -180,6 +180,12 @@ namespace NextPark.Mobile.ViewModels
             ChangeSelectedDay(DateTime.Now);
 
             return Task.FromResult(false);
+        }
+
+        public override bool BackButtonPressed()
+        {
+            OnBackClickMethod(null);
+            return false; // Do not propagate back button pressed
         }
 
         // Back Click action
