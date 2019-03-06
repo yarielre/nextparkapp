@@ -148,6 +148,11 @@ namespace NextPark.Mobile.Services
                 var result = JsonConvert.DeserializeObject<TokenResponse>(
                     resultJson);
                 result.IsSuccess = true;
+
+                Authenticated = true;
+                AuthSettings.Token = result.AuthToken;
+                AuthSettings.UserId = result.UserId.ToString();
+
                 return result;
             }
             catch(Exception)

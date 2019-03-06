@@ -46,6 +46,7 @@ namespace NextPark.Mobile.ViewModels
         // SERVICES
         private readonly IDialogService _dialogService;
 
+
         // PRIVATE VARIBLES
         private bool dataCheckError;
 
@@ -212,7 +213,12 @@ namespace NextPark.Mobile.ViewModels
                 base.OnPropertyChanged("IsRunning");
                 if ((registerResponse != null) && (registerResponse.IsSuccess)) {
 
-
+                    var userResult = await AuthService.GetUserByUserName(registerResponse.UserName);
+                    if (userResult.IsSuccess == false)
+                    {
+                        await _dialogService.ShowAlert("Errore", "Accesso fallito");
+                        return;
+                    }
 
                     await NavigationService.NavigateToAsync<HomeViewModel>();
                 } else {
