@@ -16,7 +16,7 @@
                                 HeaderMoneyAction="{Binding OnMoneyClick}">
                 
                 <StackLayout Orientation="Vertical" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
-                    <Label Text="Aggiungi disponibilità" 
+                    <Label Text="{Binding Title}" 
                            FontFamily="Thaoma Bold" 
                            FontSize="Large" 
                            FontAttributes="Bold" 
