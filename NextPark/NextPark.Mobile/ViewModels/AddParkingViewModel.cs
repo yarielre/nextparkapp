@@ -8,6 +8,7 @@ using Plugin.Media;
 using NextPark.Mobile.Settings;
 using NextPark.Mobile.Services.Data;
 using NextPark.Models;
+using Plugin.Geolocator.Abstractions;
 
 namespace NextPark.Mobile.ViewModels
 {
@@ -502,7 +503,7 @@ namespace NextPark.Mobile.ViewModels
                 foreach (var address in result)
                 {
                     Cap = address.PostalCode;
-                    Address = address.FeatureName;
+                    Address = address.Thoroughfare + " " + address.SubThoroughfare;
                     City = address.Locality;
                     base.OnPropertyChanged("Cap");
                     base.OnPropertyChanged("Address");
