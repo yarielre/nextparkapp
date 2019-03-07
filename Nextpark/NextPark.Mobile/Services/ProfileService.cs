@@ -19,6 +19,9 @@ namespace NextPark.Mobile.Services
 
         public Position LastMapPosition { get; set; }
         public ParkingItem LastEditingParking { get; set; }
+        public bool UserReserveMode { get; set; }
+        public DateTime UserStartDate { get; set; }
+        public DateTime UserEndDate { get; set; }
 
         public List<UIParkingModel> ParkingList { get; set; }
         public List<UIParkingModel> UserParkingList { get; set; }
@@ -30,6 +33,7 @@ namespace NextPark.Mobile.Services
             ParkingList = new List<UIParkingModel>();
             UserParkingList = new List<UIParkingModel>();
             UserOrderList = new List<OrderModel>();
+            UserReserveMode = false;
         }
 
         public async Task<bool> ChangePassword(ChangePasswordModel model)

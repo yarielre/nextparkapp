@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using NextPark.Mobile.UIModels;
 using NextPark.Mobile.ViewModels;
@@ -11,6 +12,9 @@ namespace NextPark.Mobile.Services
     {
         Position LastMapPosition { get; set; }
         ParkingItem LastEditingParking { get; set; }
+        bool UserReserveMode { get; set; }
+        DateTime UserStartDate { get; set; }
+        DateTime UserEndDate { get; set; }
 
         List<UIParkingModel> ParkingList { get; set; }
         List<UIParkingModel> UserParkingList { get; set; }

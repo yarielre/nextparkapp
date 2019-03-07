@@ -14,6 +14,7 @@
                            HeaderMoney="{Binding UserMoney}"
                            HeaderMoneyAction="{Binding OnMoneyClick}">
             <RelativeLayout>
+               
                 <!-- Map -->
                 <StackLayout VerticalOptions="FillAndExpand"
                              HorizontalOptions="FillAndExpand"
@@ -28,9 +29,60 @@
                     />
                 </StackLayout>
                 
+                <!-- Book now or future reservation choice -->
+                <ContentView HeightRequest="32"
+                             BackgroundColor="White"
+                             Margin="0"
+                             RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}"
+                         >
+                    <Frame HeightRequest="30"
+                           Margin="0,0,0,5"
+                           HorizontalOptions="Center"
+                           VerticalOptions="Start"
+                           Padding="0"
+                           IsClippedToBounds="true"
+                           CornerRadius="8"
+                           HasShadow="false"
+                           BorderColor="Gray">                                    
+                        <Grid>
+                            <Grid.RowDefinitions>
+                               <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                               <ColumnDefinition Width="*" />
+                               <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <ContentView BackgroundColor="{Binding BookModeBackColor}"
+                                         Grid.Row="0" Grid.Column="0">
+                                <Label Text=" Parcheggia ora "
+                                       FontSize="Small"
+                                       TextColor="{Binding BookModeTextColor}"
+                                       HorizontalTextAlignment="Center"
+                                       VerticalTextAlignment="Center"
+                                       Margin="5,0"/>
+                                <ContentView.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding OnBookMode}"/>                            
+                                </ContentView.GestureRecognizers>
+                            </ContentView>
+                            <ContentView BackgroundColor="{Binding ReserveModeBackColor}"
+                                         Grid.Row="0" Grid.Column="1">
+                                <Label Text=" Riservazione futura "
+                                       FontSize="Small"
+                                       TextColor="{Binding ReserveModeTextColor}"
+                                       HorizontalTextAlignment="Center"
+                                       VerticalTextAlignment="Center"
+                                       Margin="5,0"/>
+                                <ContentView.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding OnReserveMode}"/>                            
+                                </ContentView.GestureRecognizers>
+                            </ContentView>     
+                        </Grid>
+                    </Frame>
+                </ContentView> 
+                
                 <!-- Search Entry -->
                 <StackLayout Margin="0" Padding="0"
-                           RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=0, Constant=10}"
+                           RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=0, Constant=35}"
                            RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}"
                            HorizontalOptions="Center">
                                  
@@ -45,15 +97,41 @@
                            HorizontalOptions="Center"
                            CornerRadius="8"
                            >
-                        <SearchBar BackgroundColor="White"
-                                   Placeholder="Cerca indirizzo"
-                                   SearchCommand="{Binding OnSearch}"
-                                   Text="{Binding SearchText}"
-                                   Opacity="0.9"
-                                   HorizontalOptions="Center"
-                                   Margin="0"
-                                   FontSize="Small"
-                                   HeightRequest="40"/>
+                        <StackLayout Spacing="0">
+                            <SearchBar BackgroundColor="White"
+                                       Placeholder="Cerca indirizzo"
+                                       SearchCommand="{Binding OnSearch}"
+                                       Text="{Binding SearchText}"
+                                       Opacity="0.9"
+                                       HorizontalOptions="Center"
+                                       Margin="0"
+                                       FontSize="Small"
+                                       HeightRequest="40"/>
+                            <ContentView BackgroundColor="White"
+                                         Opacity="0.9" IsVisible="{Binding ReserveDatesVisible}" HorizontalOptions="CenterAndExpand">
+                                <Grid HorizontalOptions="FillAndExpand">
+                                    <Grid.RowDefinitions>
+                                       <RowDefinition Height="*"/>
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                       <ColumnDefinition Width="*" />
+                                       <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                
+                                    <StackLayout Orientation="Vertical" HorizontalOptions="Center" Spacing="2" Grid.Row="0" Grid.Column="0">
+                                        <Label Text="Arriva il" FontSize="Micro" TextColor="Gray" HorizontalTextAlignment="Center" Margin="0,2"/>
+                                        <Label Text="{Binding ResStartText}" TextColor="Gray" FontSize="Small" HorizontalTextAlignment="Center" Margin="0,0,0,2"/>
+                                    </StackLayout>
+                                    <StackLayout Orientation="Vertical" HorizontalOptions="Center" Spacing="2" Grid.Row="0" Grid.Column="1">
+                                        <Label Text="Stai fino al" FontSize="Micro" TextColor="Gray" HorizontalTextAlignment="Center" Margin="0,2"/>
+                                        <Label Text="{Binding ResEndText}" TextColor="Gray" FontSize="Small" HorizontalTextAlignment="Center" Margin="0,0,0,2"/>
+                                    </StackLayout>
+                                </Grid>
+                                <ContentView.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding OnReserveDatesTap}"/>                            
+                                </ContentView.GestureRecognizers>
+                            </ContentView>
+                        </StackLayout>
                     </Frame>
                 </StackLayout>
                 
@@ -173,7 +251,107 @@
                             </StackLayout>
                         </Frame>
                     </ContentView>
-                </Frame>                
+                </Frame>
+             
+                <ContentView x:Name="popupReserveDetail" 
+                             BackgroundColor="#C0606060" 
+                             Padding="10, 0" 
+                             IsVisible="{Binding ReserveDatesPopupVisible}" 
+                             RelativeLayout.XConstraint="0"
+                             RelativeLayout.YConstraint="30"
+                             RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=1, Constant=-30}"
+                             RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}">
+                        <StackLayout VerticalOptions="Center" HorizontalOptions="Center" Spacing="0">
+                            <Frame BorderColor="#8CC63F"
+                                   CornerRadius="16"
+                                   HasShadow="false"
+                                   IsClippedToBounds="true"
+                                   HeightRequest="200"
+                                   WidthRequest="300"
+                                   Padding="10,20"
+                                   Margin="0">
+                            <StackLayout Orientation="Vertical" 
+                                         HeightRequest="200" 
+                                         WidthRequest="300" 
+                                         BackgroundColor="White" 
+                                         Spacing="10" 
+                                         Padding="0" Margin="0">
+                                <Label Text="Selezione delle date" 
+                                       FontSize="Medium"
+                                       FontAttributes="Bold"
+                                       HorizontalOptions="Start" VerticalOptions="Center"
+                                       Margin="0"/>
+                                <Grid Padding="10,10">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*"/>
+                                        <RowDefinition Height="*"/>
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Label Text="Arrivo" 
+                                           FontSize="Small" 
+                                           HorizontalOptions="Start" VerticalOptions="Center"
+                                           Grid.Row="0" Grid.Column="0"/>
+                                    <DatePicker HorizontalOptions="Center" FontSize="Small"
+                                                Grid.Row="0" Grid.Column="1"
+                                                Date="{Binding ResStartDate}"
+                                                MinimumDate="{Binding MinResStartDate}">
+                                        <DatePicker.Format>dd/MM/yy</DatePicker.Format>
+                                    </DatePicker>
+                                    <TimePicker FontSize="Small"
+                                                HorizontalOptions="End"
+                                                Grid.Row="0" Grid.Column="2"
+                                                Time="{Binding ResStartTime}">
+                                        <TimePicker.Format>HH:mm</TimePicker.Format>
+                                    </TimePicker>
+                                    <Label Text="Partenza" 
+                                           FontSize="Small" 
+                                           HorizontalOptions="Start" VerticalOptions="Center"
+                                           Grid.Row="1" Grid.Column="0"/>
+                                    <DatePicker HorizontalOptions="Center" FontSize="Small"
+                                                Grid.Row="1" Grid.Column="1"
+                                                Date="{Binding ResEndDate}"
+                                                MinimumDate="{Binding MinResEndDate}">
+                                        <DatePicker.Format>dd/MM/yy</DatePicker.Format>
+                                    </DatePicker>
+                                    <TimePicker FontSize="Small"
+                                                HorizontalOptions="End"
+                                                Grid.Row="1" Grid.Column="2"
+                                                Time="{Binding ResEndTime}"/>
+                                    
+                                </Grid>
+                                <StackLayout Orientation="Vertical" HorizontalOptions="CenterAndExpand" Spacing="5">
+                                <!-- Confirm button -->
+                                <Button Text="Conferma"
+                                        FontAttributes="Bold"
+                                        HorizontalOptions="Center"
+                                        Command="{Binding OnConfirmReserveDates}"
+                                        TextColor="White"
+                                        BorderRadius="8"
+                                        BackgroundColor="#8CC63F"
+                                        WidthRequest="191"
+                                        Margin="0"/>
+                                <!-- Cancel button -->
+                                <Button Text="Annulla"
+                                        FontAttributes="Bold"
+                                        HorizontalOptions="Center"
+                                        Command="{Binding OnHideReserveDatesPopup}"
+                                        TextColor="#8CC63F"
+                                        BorderRadius="8"
+                                        BorderColor="#8CC63F"
+                                        BorderWidth="1"
+                                        BackgroundColor="White"
+                                        WidthRequest="191"
+                                        Margin="0"/> 
+                                 </StackLayout>
+                            </StackLayout>
+                            </Frame>
+                        </StackLayout>
+                    </ContentView>
+                
             </RelativeLayout>
         </controls:BasePage>
     </ContentPage.Content>

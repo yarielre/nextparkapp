@@ -41,6 +41,32 @@ namespace NextPark.Mobile.ViewModels
         public string SearchText { get; set; }
         public ICommand OnCurrentPosition { get; set; }
 
+        // Book or Reserve Mode
+        public Color BookModeBackColor { get; set; }
+        public Color BookModeTextColor { get; set; }
+        public ICommand OnBookMode { get; set; }
+        public Color ReserveModeBackColor { get; set; }
+        public Color ReserveModeTextColor { get; set; }
+        public ICommand OnReserveMode { get; set; }
+        public bool ReserveDatesVisible { get; set; }
+        public string ResStartText { get; set; }
+        public string ResEndText { get; set; }
+        public ICommand OnReserveDatesTap { get; set; }
+        public bool ReserveDatesPopupVisible { get; set; }
+        public ICommand OnConfirmReserveDates { get; set; }
+        public ICommand OnHideReserveDatesPopup { get; set; }
+        private DateTime _resStartDate { get; set; }
+        public DateTime ResStartDate 
+        {
+            get { return _resStartDate; }
+            set { _resStartDate = value; OnResStartDateChanged(); } 
+        }
+        public TimeSpan ResStartTime { get; set; }
+        public DateTime MinResStartDate { get; set; }
+        public DateTime ResEndDate { get; set; }
+        public TimeSpan ResEndTime { get; set; }
+        public DateTime MinResEndDate { get; set; }
+
         // SERVICES
         private readonly IGeolocatorService _geoLocatorService;
         private readonly IDialogService _dialogService;
@@ -96,6 +122,14 @@ namespace NextPark.Mobile.ViewModels
             // Map action
             OnSearch = new Command<object>(OnSearchMethod);
             OnCurrentPosition = new Command(OnCurrentPositionMethod);
+
+            // Book now or Reserve choice
+            OnBookMode = new Command(OnBookModeMethod);
+            OnReserveMode = new Command(OnReserveModeMethod);
+            OnReserveDatesTap = new Command(OnReserveDatesTapMethod);
+            OnConfirmReserveDates = new Command(OnConfirmReserveDatesMethod);
+            OnHideReserveDatesPopup = new Command(OnHideReserveDatesPopupMethod);
+            OnBookModeChanged();
 
             InfoPanelVisible = false;
             connected = false;
@@ -281,7 +315,6 @@ namespace NextPark.Mobile.ViewModels
 
         private void Map_MapReady(object sender, System.EventArgs e)
         {
-
             Map_Ready_Handler();
         }
 
@@ -348,11 +381,7 @@ namespace NextPark.Mobile.ViewModels
         {
             if (_authService.IsUserAuthenticated())
             {
-                try
-                {
-                    //NavigationService.NavigateToAsync<MoneyViewModel>();
-                    GoToMoneyPage();
-                } catch (Exception ex) {}
+                NavigationService.NavigateToAsync<MoneyViewModel>();
             }
             else if ((AuthSettings.UserId != null) && (AuthSettings.UserName != null) && (connected == false))
             {
@@ -366,38 +395,34 @@ namespace NextPark.Mobile.ViewModels
 
         }
 
-        public async void GoToMoneyPage()
-        {
-            try
-            {
-                await NavigationService.NavigateToAsync<MoneyViewModel>();
-            } catch (Exception ex){}
-        }
-
         // Booking Tap action
         public void OnBookingTappedMethod(object id)
         {
             if (_authService.IsUserAuthenticated())
             {
-                // Reservation
-                UIBookingModel booking = new UIBookingModel {
-                    StartDate = DateTime.Now.AddHours(1),
-                    EndDate = DateTime.Now.AddHours(2),
-                    ParkingId = (int)id
-                };
-                if (booking != null) 
+                if (_profileService.UserReserveMode)
                 {
-                    NavigationService.NavigateToAsync<ReservationViewModel>(booking);
+                    // Reservation
+                    UIBookingModel booking = new UIBookingModel
+                    {
+                        StartDate = ResStartDate + ResStartTime,
+                        EndDate = ResEndDate + ResEndTime,
+                        ParkingId = (int)id
+                    };
+                    if (booking != null)
+                    {
+                        NavigationService.NavigateToAsync<ReservationViewModel>(booking);
+                    }
                 }
-
-            // Book Now
-            /*
-            UIParkingModel parking = _profileService.GetParkingById((int)id);
-            if (parking != null) {
-                NavigationService.NavigateToAsync<BookingViewModel>(parking);
+                else
+                {
+                    UIParkingModel parking = _profileService.GetParkingById((int)id);
+                    if (parking != null)
+                    {
+                        NavigationService.NavigateToAsync<BookingViewModel>(parking);
+                    }
+                }
             }
-            */
-        }
             else
             {
                 NavigationService.NavigateToAsync<LoginViewModel>();
@@ -464,6 +489,99 @@ namespace NextPark.Mobile.ViewModels
 
 
             }
+        }
+
+        public void OnReserveModeMethod()
+        {
+            _profileService.UserReserveMode = true;
+            OnBookModeChanged();
+        }
+
+        public void OnBookModeMethod()
+        {
+            _profileService.UserReserveMode = false;
+            OnBookModeChanged();
+        }
+
+        public void OnBookModeChanged()
+        {
+            if (_profileService.UserReserveMode) {
+                BookModeBackColor = Color.White;
+                BookModeTextColor = Color.Gray;
+                ReserveModeBackColor = Color.Gray;
+                ReserveModeTextColor = Color.White;
+                ReserveDatesVisible = true;
+                MinResStartDate = DateTime.Now.Date;
+                MinResEndDate = MinResStartDate;
+                base.OnPropertyChanged("MinResStartDate");
+                base.OnPropertyChanged("MinResEndDate");
+                if (_profileService.UserStartDate < DateTime.Now.Date) {
+                    _profileService.UserStartDate = DateTime.Now;
+                    _profileService.UserEndDate = DateTime.Now.AddHours(1);
+                }
+                ResStartDate = _profileService.UserStartDate.Date;
+                ResStartTime = _profileService.UserStartDate.TimeOfDay;
+                ResEndDate = _profileService.UserEndDate.Date;
+                ResEndTime = _profileService.UserEndDate.TimeOfDay;
+                base.OnPropertyChanged("ResStartDate");
+                base.OnPropertyChanged("ResStartTime");
+                base.OnPropertyChanged("ResEndDate");
+                base.OnPropertyChanged("ResEndTime");
+
+                ResStartText = ResStartDate.ToString("ddd d MMM ") + ResStartTime.ToString(@"hh\:mm");
+                ResEndText = ResEndDate.ToString("ddd d MMM ") + ResEndTime.ToString(@"hh\:mm");
+                base.OnPropertyChanged("ResStartText");
+                base.OnPropertyChanged("ResEndText");
+            } else {
+                BookModeBackColor = Color.Gray;
+                BookModeTextColor = Color.White;
+                ReserveModeBackColor = Color.White;
+                ReserveModeTextColor = Color.Gray;
+                ReserveDatesVisible = false;
+                ReserveDatesPopupVisible = false;
+                base.OnPropertyChanged("ReserveDatesPopupVisible");
+            }
+
+            base.OnPropertyChanged("BookModeBackColor");
+            base.OnPropertyChanged("BookModeTextColor");
+            base.OnPropertyChanged("ReserveModeBackColor");
+            base.OnPropertyChanged("ReserveModeTextColor");
+            base.OnPropertyChanged("ReserveDatesVisible");
+        }
+
+        public void OnReserveDatesTapMethod()
+        {
+            ReserveDatesPopupVisible = true;
+            base.OnPropertyChanged("ReserveDatesPopupVisible");
+        }
+
+        public void OnConfirmReserveDatesMethod()
+        {
+            ReserveDatesPopupVisible = false;
+            base.OnPropertyChanged("ReserveDatesPopupVisible");
+            ResStartText = ResStartDate.ToString("ddd d MMM ") + ResStartTime.ToString(@"hh\:mm");
+            ResEndText = ResEndDate.ToString("ddd d MMM ") + ResEndTime.ToString(@"hh\:mm");
+            base.OnPropertyChanged("ResStartText");
+            base.OnPropertyChanged("ResEndText");
+            _profileService.UserStartDate = ResStartDate + ResStartTime;
+            _profileService.UserEndDate = ResEndDate + ResEndTime;
+        }
+
+        public void OnHideReserveDatesPopupMethod()
+        {
+            ReserveDatesPopupVisible = false;
+            base.OnPropertyChanged("ReserveDatesPopupVisible");
+        }
+
+        private void OnResStartDateChanged()
+        {
+            MinResEndDate = _resStartDate;
+            if (ResEndDate < _resStartDate)
+            {
+                ResEndDate = _resStartDate;
+                base.OnPropertyChanged("ResEndDate");
+            }
+            base.OnPropertyChanged("MinResEndDate");
         }
     }
 }
