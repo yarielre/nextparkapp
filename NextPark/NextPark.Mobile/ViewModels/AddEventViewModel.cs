@@ -329,7 +329,7 @@ namespace NextPark.Mobile.ViewModels
                 default:
                 case 0: // Never
                     _event.RepetitionType = RepetitionType.None;
-                    RepetitionEndDate = StartDate + EndTime;
+                    RepetitionEndDate = StartDate;
                     break;
                 case 1: // Daily
                     _event.RepetitionType = RepetitionType.Dayly;
