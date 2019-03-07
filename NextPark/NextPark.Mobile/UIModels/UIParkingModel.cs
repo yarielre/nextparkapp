@@ -38,6 +38,10 @@ namespace NextPark.Mobile.UIModels
 
         public bool isFree()
         {
+            if (Status == Enums.Enums.ParkingStatus.Disabled) {
+                return false;
+            }
+
             foreach (EventModel availability in Events) {
                 if ((availability.StartDate <= DateTime.Now) && (availability.EndDate > DateTime.Now)) {
                     foreach (OrderModel order in Orders) {
