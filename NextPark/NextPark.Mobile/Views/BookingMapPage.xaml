@@ -15,7 +15,7 @@
                            HeaderUserAction="{Binding OnUserClick}"
                            HeaderMoney="{Binding UserMoney}"
                            HeaderMoneyAction="{Binding OnMoneyClick}">
-    
+            
                 <RelativeLayout>
                     <!-- Map -->
                     <StackLayout VerticalOptions="FillAndExpand"
@@ -81,7 +81,83 @@
                                 </StackLayout>
                           </StackLayout>
                       </StackLayout>
+                    
+                    <ContentView x:Name="popupRenew" 
+                                 BackgroundColor="#C0606060" 
+                                 Padding="10, 0" 
+                                 IsVisible="{Binding RenewVisible}" 
+                                 RelativeLayout.XConstraint="0"
+                                 RelativeLayout.YConstraint="0"
+                                 RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=1}"
+                                 RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}">
+                        <StackLayout VerticalOptions="Center" HorizontalOptions="Center" Spacing="0">
+                            <Frame BorderColor="#8CC63F"
+                                   CornerRadius="16"
+                                   HasShadow="false"
+                                   IsClippedToBounds="true"
+                                   HeightRequest="250"
+                                   WidthRequest="300"
+                                   Padding="0"
+                                   Margin="0">
+                            <StackLayout Orientation="Vertical" 
+                                         HeightRequest="250" 
+                                         WidthRequest="300" 
+                                         BackgroundColor="White" 
+                                         Spacing="10" 
+                                         Padding="0" Margin="0">
+                                <Label Text="Rinnova la prenotazione"
+                                       FontSize="Medium"
+                                       FontAttributes="Bold"
+                                       HorizontalOptions="Center"
+                                       Margin="20,20,20,10"/>
+                                <StackLayout Orientation="Horizontal" Spacing="5" HorizontalOptions="CenterAndExpand">
+                                    <Label Text="Stai ancora per:"
+                                           FontSize="Default"
+                                           HorizontalOptions="Center"
+                                           VerticalTextAlignment="Center"/>
+                                    <TimePicker Time="{Binding RenewTime}"
+                                                Format="HH:mm"
+                                                HorizontalOptions="Center"
+                                                Margin="5,0,0,0">
+                                        <TimePicker.Format>HH:mm</TimePicker.Format>
+                                    </TimePicker>
+                                </StackLayout>
+                                <!-- Activity indicator, active when buying -->
+                                <ActivityIndicator
+                                    IsRunning="{Binding RenewIsRunning, Mode=TwoWay}"                    
+                                    VerticalOptions="Center"
+                                    Margin="0">
+                                </ActivityIndicator>
+                                <!-- Renew button -->
+                                <Button Text="Conferma"
+                                        FontAttributes="Bold"
+                                        HorizontalOptions="Center"
+                                        Command="{Binding OnRenew}"
+                                        TextColor="White"
+                                        BorderRadius="8"
+                                        BackgroundColor="#8CC63F"
+                                        WidthRequest="191"
+                                        Margin="0"/>
+                                <!-- Cancel renew button -->
+                                <Button Text="Annulla"
+                                        FontAttributes="Bold"
+                                        HorizontalOptions="Center"
+                                        Command="{Binding OnCancelRenew}"
+                                        TextColor="#8CC63F"
+                                        BorderRadius="8"
+                                        BorderColor="#8CC63F"
+                                        BorderWidth="1"
+                                        BackgroundColor="White"
+                                        WidthRequest="191"
+                                        Margin="0"/> 
+                            </StackLayout>
+                            </Frame>
+                        </StackLayout>
+                    </ContentView>
+                    
                 </RelativeLayout>
+                
+
             </controls:BasePage>
         </ContentView>
     </ContentPage.Content>

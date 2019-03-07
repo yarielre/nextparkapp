@@ -32,6 +32,7 @@ namespace NextPark.Mobile.ViewModels
 
         // SERVICES
         private readonly IDialogService _dialogService;
+        private readonly IProfileService _profileService;
         private readonly IParkingDataService _parkingDataService;
         private readonly IOrderDataService _orderDataService;
 
@@ -49,11 +50,13 @@ namespace NextPark.Mobile.ViewModels
                                     IApiService apiService,
                                     IAuthService authService,
                                     INavigationService navService,
+                                    IProfileService profileService,
                                     IParkingDataService parkingDataService,
                                     IOrderDataService orderDataService)
                                     : base(apiService, authService, navService)
         {
             _dialogService = dialogService;
+            _profileService = profileService;
             _parkingDataService = parkingDataService;
             _orderDataService = orderDataService;
 
@@ -115,13 +118,24 @@ namespace NextPark.Mobile.ViewModels
             int count = 0;
             BookingList.Clear();
 
+            ordersResponse = new List<OrderModel>();
+            ordersResponse.Add(new OrderModel
+            {
+                StartDate = DateTime.Now,
+                EndDate = DateTime.Now.AddHours(2),
+                OrderStatus = Enums.OrderStatus.Actived,
+                ParkingId = 10,
+                Price = 2.0,
+                UserId = 5
+            });
+
             foreach (OrderModel order in ordersResponse)
             {
 
                 if (order.UserId == int.Parse(AuthSettings.UserId))
                 {
-                    var parking = await _parkingDataService.GetParkingAsync(order.ParkingId);
-
+                    //var parking = await _parkingDataService.GetParkingAsync(order.ParkingId);
+                    var parking = _profileService.GetParkingById(order.ParkingId);
                     if (parking != null) {
 
                         TimeSpan remainingTime = order.EndDate - DateTime.Now;
@@ -133,7 +147,7 @@ namespace NextPark.Mobile.ViewModels
                             Address = parking.Address,
                             Cap = parking.Cap.ToString(),
                             City = parking.City,
-                            Parking = parking,
+                            Parking = (ParkingModel)parking,
                             Time = string.Format("{0}:{1}", remainingTime.Hours.ToString(), remainingTime.Minutes.ToString()),
                             OnBookingDel = OnBookingDelete,
                             OnBookingTap = OnBookingTapped
@@ -192,7 +206,6 @@ namespace NextPark.Mobile.ViewModels
                 UIBookingModel item = BookingList[(int)sender];
                 // TODO: pass booking item to booking map page
                 NavigationService.NavigateToAsync<BookingMapViewModel>(item);
-                _dialogService.ShowAlert("Alert", "Booking data: " + item.Address);
             }
         }
 
