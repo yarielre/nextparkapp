@@ -53,6 +53,7 @@ namespace NextPark.Services
             var tokenResponse = new TokenResponse
             {
                 UserId = user.Id,
+                UserName = user .UserName,
                 AuthToken = new JwtSecurityTokenHandler().WriteToken(token),
                 IsSuccess = true
             };

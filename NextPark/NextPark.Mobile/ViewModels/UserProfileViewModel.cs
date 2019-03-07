@@ -44,16 +44,16 @@ namespace NextPark.Mobile.ViewModels
 
         // SERVICES
         private readonly IDialogService _dialogService;
-        private readonly ParkingDataService _parkingDataService;
-        private readonly OrderDataService _orderDataService;
+        private readonly IParkingDataService _parkingDataService;
+        private readonly IOrderDataService _orderDataService;
 
         // METHODS
         public UserProfileViewModel(IDialogService dialogService,
                                     IApiService apiService, 
                                     IAuthService authService, 
                                     INavigationService navService,
-                                    ParkingDataService parkingDataService,
-                                    OrderDataService orderDataService
+                                    IParkingDataService parkingDataService,
+                                    IOrderDataService orderDataService
                                    )
                                     : base(apiService, authService, navService)
         {
@@ -123,6 +123,12 @@ namespace NextPark.Mobile.ViewModels
             return Task.FromResult(false);
         }
 
+        public override bool BackButtonPressed()
+        {
+            OnBackClickMethod(null);
+            return false; // Do not propagate back button pressed
+        }
+
         // Back Click Action
         public void OnBackClickMethod(object sender)
         {
@@ -172,39 +178,43 @@ namespace NextPark.Mobile.ViewModels
 
         private async Task GetUserParkings()
         {
-        
-            var parkingList = await _parkingDataService.Get();
-
-            if (parkingList.Count > 0) _parkingDataService.Parkings = parkingList;
-
-            // Reset counters
-            _totUserParkings = 0;
-            _activeUserParkings = 0;
-
-            // Search user parkings 
-            // TODO: use a filter on Parkings
-            if (_parkingDataService.Parkings != null)
+            try
             {
-                foreach (ParkingModel parking in _parkingDataService.Parkings)
+                // TODO: evaluate the use of profileService.UserParkingList or add a filter to parkingDataService.GetUserParkings()
+
+                // Get parkings
+                var parkingList = await _parkingDataService.GetAllParkingsAsync();
+
+                // Reset counters
+                _totUserParkings = 0;
+                _activeUserParkings = 0;
+
+                // Search user parkings 
+                if (parkingList != null)
                 {
-                    if (parking.UserId == int.Parse(AuthSettings.UserId))
+                    foreach (ParkingModel parking in parkingList)
                     {
-                        _totUserParkings++;
-                        if (parking.Status == ParkingStatus.Enabled)
+                        if (parking.UserId == int.Parse(AuthSettings.UserId))
                         {
-                            _activeUserParkings++;
+                            _totUserParkings++;
+                            if (parking.Status == ParkingStatus.Enabled)
+                            {
+                                _activeUserParkings++;
+                            }
                         }
                     }
                 }
+
+                // Update status on page
+                ParkingsStatus = _totUserParkings.ToString() + "/" + _totUserParkings.ToString() + " liberi";
+                ParkingsAvailability = _activeUserParkings.ToString() + "/" + _totUserParkings.ToString() + " disponibili";
+                base.OnPropertyChanged("ParkingsStatus");
+                base.OnPropertyChanged("ParkingsAvailability");
+
+                UpdateUserBookingsData();
+            } catch (Exception e) {
+                return;
             }
-
-            // Update status on page
-            ParkingsStatus = _totUserParkings.ToString() + "/" + _totUserParkings.ToString() + " liberi";
-            ParkingsAvailability = _activeUserParkings.ToString() + "/" + _totUserParkings.ToString() + " disponibili";
-            base.OnPropertyChanged("ParkingsStatus");
-            base.OnPropertyChanged("ParkingsAvailability");
-
-            UpdateUserBookingsData();
         }
 
         public async void UpdateUserBookingsData()
@@ -216,16 +226,15 @@ namespace NextPark.Mobile.ViewModels
         public async Task<bool> GetBookings()
         {
             try {
-                var orderList = await _orderDataService.Get();
+                var orderList = await _orderDataService.GetAllOrdersAsync();
                 if (orderList != null)
                 {
                     if (orderList.Count > 0)
                     {
-                        _orderDataService.Orders = orderList;
 
                         OrderModel nextOrder = null;
 
-                        foreach (OrderModel order in _orderDataService.Orders) 
+                        foreach (OrderModel order in orderList) 
                         {
                             if (order.UserId == int.Parse(AuthSettings.UserId))
                             {
@@ -252,7 +261,8 @@ namespace NextPark.Mobile.ViewModels
                 }
             } catch (Exception e)
             {
-
+                // TODO: manage exception
+                return false;
             }
             return false;
         }

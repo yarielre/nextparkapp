@@ -8,11 +8,15 @@ using Plugin.Media;
 using NextPark.Mobile.Settings;
 using NextPark.Mobile.Services.Data;
 using NextPark.Models;
+using Plugin.Geolocator.Abstractions;
 
 namespace NextPark.Mobile.ViewModels
 {
     public class AddParkingViewModel : BaseViewModel
     {
+        private const double PRICE_MIN = 1.50;
+        private const double PRICE_MAX = 6.00;
+
         // PROPERTIES
         public string BackText { get; set; }        // Header back text
         public ICommand OnBackClick { get; set; }   // Header back action
@@ -32,6 +36,13 @@ namespace NextPark.Mobile.ViewModels
 
         public string PriceMinText { get; set; }
         public double PriceMin { get; set; }
+        public Color PriceMinDownBorderColor { get; set; }
+        public bool PriceMinDownEnable { get; set; }
+        public ICommand OnPriceMinDown { get; set; }
+        public Color PriceMinUpBorderColor { get; set; }
+        public bool PriceMinUpEnable { get; set; }
+        public ICommand OnPriceMinUp { get; set; }
+
         public string PriceMaxText { get; set; }
         public double PriceMax { get; set; }
         public double PriceMaxMinimum { get; set; }
@@ -55,12 +66,13 @@ namespace NextPark.Mobile.ViewModels
         // SERVICES
         private readonly IDialogService _dialogService;
         private readonly IGeolocatorService _geoLocatorService;
-        private readonly ParkingDataService _parkingDataService;
+        private readonly IParkingDataService _parkingDataService;
 
         // PRIVATE VARIABLES
         private bool _isAuthorized;
-        private bool _modify;
+        private bool _editing;
         private MediaFile mediaFile;
+        private ParkingModel _parking;
 
         // METHODS
         public AddParkingViewModel(IDialogService dialogService,
@@ -68,7 +80,7 @@ namespace NextPark.Mobile.ViewModels
                                    IApiService apiService,
                                    IAuthService authService,
                                    INavigationService navService,
-                                   ParkingDataService parkingDataService)
+                                   IParkingDataService parkingDataService)
                                    : base(apiService, authService, navService)
         {
             _dialogService = dialogService;
@@ -90,14 +102,8 @@ namespace NextPark.Mobile.ViewModels
             OnParkingImageTap = new Command<object>(OnParkingImageTapMethod);
             OnAddParking = new Command<object>(OnAddParkingMethod);
             OnDelParking = new Command<object>(OnDelParkingMethod);
-
-            PriceMin = 1.50;
-            PriceMax = 3.0;
-            PriceMinText = PriceMin.ToString("N2");
-            PriceMaxText = PriceMax.ToString("N2");
-            PriceMaxMinimum = PriceMin;
-
-            ParkingImage = "icon_add_photo_256.png";
+            OnPriceMinDown = new Command(OnPriceMinDownMethod);
+            OnPriceMinUp = new Command(OnPriceMinUpMethod);
         }
 
         // Initialization
@@ -107,21 +113,30 @@ namespace NextPark.Mobile.ViewModels
             if ((data != null) && (data is ParkingModel parking))
             {
                 // Edit Parking
+                _parking = parking;
                 Title = "Modifica Parcheggio";
                 Address = parking.Address;
                 City = parking.City;
                 UID = parking.Id;
                 Cap = parking.Cap.ToString();
-                PriceMin = parking.PriceMin;
+                OnPriceMinChangedMethod(parking.PriceMin);
                 PriceMax = parking.PriceMax;
+                if (string.IsNullOrEmpty(parking.ImageUrl))
+                {
+                    ParkingImage = "icon_no_photo.png";
+                }
+                else
+                {
+                    ParkingImage = ApiSettings.BaseUrl + parking.ImageUrl;
+                }
+
                 base.OnPropertyChanged("Title");
                 base.OnPropertyChanged("Address");
                 base.OnPropertyChanged("Cap");
                 base.OnPropertyChanged("City");
-                base.OnPropertyChanged("PriceMin");
-                base.OnPropertyChanged("PriceMax");
+
                 _isAuthorized = true;
-                _modify = true;
+                _editing = true;
                 AddBtnText = "Modifica";
                 base.OnPropertyChanged("AddBtnText");
                 DelBtnVisible = true;
@@ -130,12 +145,14 @@ namespace NextPark.Mobile.ViewModels
                 // New Parking
                 Title = "Nuovo Parcheggio";
                 base.OnPropertyChanged("Title");
+                ParkingImage = "icon_add_photo_256.png";
                 _isAuthorized = false;
-                _modify = false;
+                _editing = false;
                 AddBtnText = "Aggiungi";
                 base.OnPropertyChanged("AddBtnText");
                 DelBtnVisible = false;
                 base.OnPropertyChanged("DelBtnVisible");
+                OnPriceMinChangedMethod(1.50);
             }
 
             // Header
@@ -153,6 +170,12 @@ namespace NextPark.Mobile.ViewModels
         private void NotifyPropertyChanged(string v)
         {
             base.OnPropertyChanged(v);
+        }
+
+        public override bool BackButtonPressed()
+        {
+            OnBackClickMethod(null);
+            return false; // Do not propagate back button pressed
         }
 
         // Back Click action
@@ -173,13 +196,57 @@ namespace NextPark.Mobile.ViewModels
             NavigationService.NavigateToAsync<MoneyViewModel>();
         }
 
+        public void OnPriceMinDownMethod()
+        {
+            PriceMin = PriceMin - 0.5;
+            if (PriceMin < PRICE_MIN)
+            {
+                PriceMin = PRICE_MIN;
+            }
+            OnPriceMinChangedMethod(PriceMin);
+        }
+
+        public void OnPriceMinUpMethod()
+        {
+            PriceMin = PriceMin + 0.5;
+            if (PriceMin > PRICE_MAX)
+            {
+                PriceMin = PRICE_MAX;
+            }
+            OnPriceMinChangedMethod(PriceMin);
+        }
+
         // On Minimum price value changed action
         public void OnPriceMinChangedMethod(double value)
         {
             PriceMin = value;
             PriceMinText = PriceMin.ToString("N2");
+            if (PriceMin <= PRICE_MIN) {
+                // Disable PriceMinDown button
+                PriceMinDownBorderColor = Color.LightGray;
+                PriceMinDownEnable = false;
+            } else {
+                // Enable PriceMinDown button
+                PriceMinDownBorderColor = Color.FromHex("#8CC63F");
+                PriceMinDownEnable = true;
+            }
+            if (PriceMin >= PRICE_MAX) {
+                // Disable PriceMinUp button
+                PriceMinUpBorderColor = Color.LightGray;
+                PriceMinUpEnable = false;
+            } else {
+                // Enable PriceMinUp button
+                PriceMinUpBorderColor = Color.FromHex("#8CC63F");
+                PriceMinUpEnable = true;
+            }
             base.OnPropertyChanged("PriceMin");
             base.OnPropertyChanged("PriceMinText");
+            base.OnPropertyChanged("PriceMinDownBorderColor");
+            base.OnPropertyChanged("PriceMinDownEnable");
+            base.OnPropertyChanged("PriceMinUpBorderColor");
+            base.OnPropertyChanged("PriceMinUpEnable");
+
+            /* FUTURE FEATURE
             if (PriceMax < PriceMin) {
                 PriceMax = PriceMin;
                 PriceMaxText = PriceMax.ToString("N2");
@@ -188,6 +255,7 @@ namespace NextPark.Mobile.ViewModels
             }
             PriceMaxMinimum = PriceMin;
             base.OnPropertyChanged("PriceMaxMinimum");
+            */
         }
 
         // On Maximum price value changed action
@@ -249,11 +317,6 @@ namespace NextPark.Mobile.ViewModels
         {
             if (!AddParkingDataCheck()) {
 
-                // Image converter
-
-                var memoryStream = new System.IO.MemoryStream();
-                mediaFile.GetStream().CopyTo(memoryStream);
-
                 // Create model 
                 ParkingModel model = new ParkingModel
                 {
@@ -266,16 +329,28 @@ namespace NextPark.Mobile.ViewModels
                     PriceMin = PriceMin,
                     PriceMax = PriceMax,
                     State = "CH",
-                    Status = Enums.Enums.ParkingStatus.Enabled//,
+                    Status = Enums.Enums.ParkingStatus.Enabled,
                     //ImageBinary = memoryStream.ToArray()
                 };
+
+                // Image converter
+                if (mediaFile != null)
+                {
+                    var memoryStream = new System.IO.MemoryStream();
+                    mediaFile.GetStream().CopyTo(memoryStream);
+                    model.ImageBinary = memoryStream.ToArray();
+                    model.ImageUrl = null;
+                } else if (_parking != null) {
+                    model.ImageBinary = null;
+                    model.ImageUrl = _parking.ImageUrl;
+                }
 
                 // Start activity spinner
                 IsRunning = true;
                 base.OnPropertyChanged("IsRunning");
 
                 // Send request to back-end
-                if (_modify == true) {
+                if (_editing == true) {
                     model.Id = UID;
                     EditParkingMethod(model);
                 } else {
@@ -287,7 +362,7 @@ namespace NextPark.Mobile.ViewModels
         public async void AddParkingMethod(ParkingModel model)
         {
             try {
-                var addResponse = await _parkingDataService.Post(model);
+                var addResponse = await _parkingDataService.CreateParkingAsync(model);
 
                 if (addResponse != null) {
                     await NavigationService.NavigateToAsync<UserParkingViewModel>();
@@ -305,13 +380,13 @@ namespace NextPark.Mobile.ViewModels
             }
         }
 
-        public async void EditParkingMethod(ParkingModel model)
+        public async void EditParkingMethod(ParkingModel parking)
         {
             try
             {
-                var addResponse = await _parkingDataService.Put(model, model.Id);
+                var result = await _parkingDataService.EditParkingAsync(parking);
 
-                if (addResponse != null)
+                if (result != null)
                 {
                     await NavigationService.NavigateToAsync<UserParkingViewModel>();
                 }
@@ -346,7 +421,7 @@ namespace NextPark.Mobile.ViewModels
         {
             try
             {
-                var delResponse = await _parkingDataService.Delete(parkingId);
+                var delResponse = await _parkingDataService.DeleteParkingsAsync(parkingId);
 
                 if (delResponse != null)
                 {
@@ -428,7 +503,7 @@ namespace NextPark.Mobile.ViewModels
                 foreach (var address in result)
                 {
                     Cap = address.PostalCode;
-                    Address = address.FeatureName;
+                    Address = address.Thoroughfare + " " + address.SubThoroughfare;
                     City = address.Locality;
                     base.OnPropertyChanged("Cap");
                     base.OnPropertyChanged("Address");

@@ -87,9 +87,9 @@ namespace NextPark.Mobile.Droid.Renderers
             marker.SetSnippet(pin.Address);
 
             var resourceId = Resources.GetIdentifier(customPin.Icon, "drawable", "com.wisegar.nextpark");
-            var bitmapResource = BitmapDescriptorFactory.FromResource(resourceId);
+            Bitmap image = Bitmap.CreateScaledBitmap(BitmapFactory.DecodeResource(Resources, resourceId), 200, 200, false);
+            BitmapDescriptor bitmapResource = BitmapDescriptorFactory.FromBitmap(image);
             marker.SetIcon(bitmapResource);
-
 
             return marker;
         }

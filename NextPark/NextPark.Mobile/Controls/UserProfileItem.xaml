@@ -7,7 +7,7 @@
     <ContentView.ControlTemplate>
         <ControlTemplate>    
             <RelativeLayout HorizontalOptions="FillAndExpand">
-                <StackLayout Padding="0" Margin="0" 
+                <StackLayout Padding="0" Margin="0" VerticalOptions="FillAndExpand"
                     RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}">
 
                     <!-- External Frame container -->
@@ -18,7 +18,6 @@
                             BackgroundColor="White" 
                             HasShadow="false"
                             Padding="6"
-                            HeightRequest="110"
                             MinimumHeightRequest="110"
                             IsClippedToBounds="true"
                             HorizontalOptions="FillAndExpand">
@@ -26,9 +25,9 @@
                             <TapGestureRecognizer Command="{TemplateBinding ClickAction}"/>                            
                         </Frame.GestureRecognizers>
                             
-                        <Grid>
+                        <Grid VerticalOptions="FillAndExpand">
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="110" />
+                                <RowDefinition Height="*" />
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
@@ -43,7 +42,7 @@
                                    HorizontalOptions="Center"
                                    Grid.Row="0" Grid.Column="1"/>
                             <!-- Item content -->
-                            <StackLayout HorizontalOptions="CenterAndExpand"
+                            <StackLayout HorizontalOptions="Center"
                                          VerticalOptions="Center"
                                          Orientation="Vertical"
                                          Spacing="2"

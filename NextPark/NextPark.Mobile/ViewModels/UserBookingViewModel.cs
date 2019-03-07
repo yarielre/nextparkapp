@@ -32,8 +32,9 @@ namespace NextPark.Mobile.ViewModels
 
         // SERVICES
         private readonly IDialogService _dialogService;
-        private readonly ParkingDataService _parkingDataService;
-        private readonly OrderDataService _orderDataService;
+        private readonly IProfileService _profileService;
+        private readonly IParkingDataService _parkingDataService;
+        private readonly IOrderDataService _orderDataService;
 
         // PRIVATE VARIABLES
         private ObservableCollection<UIBookingModel> bookingList;
@@ -49,11 +50,13 @@ namespace NextPark.Mobile.ViewModels
                                     IApiService apiService,
                                     IAuthService authService,
                                     INavigationService navService,
-                                    ParkingDataService parkingDataService,
-                                    OrderDataService orderDataService)
+                                    IProfileService profileService,
+                                    IParkingDataService parkingDataService,
+                                    IOrderDataService orderDataService)
                                     : base(apiService, authService, navService)
         {
             _dialogService = dialogService;
+            _profileService = profileService;
             _parkingDataService = parkingDataService;
             _orderDataService = orderDataService;
 
@@ -102,7 +105,7 @@ namespace NextPark.Mobile.ViewModels
 
         private async Task GetUserBookings()
         {
-            var ordersResponse = await _orderDataService.Get();
+            var ordersResponse = await _orderDataService.GetAllOrdersAsync();
 
             /*
             {
@@ -115,12 +118,24 @@ namespace NextPark.Mobile.ViewModels
             int count = 0;
             BookingList.Clear();
 
+            ordersResponse = new List<OrderModel>();
+            ordersResponse.Add(new OrderModel
+            {
+                StartDate = DateTime.Now,
+                EndDate = DateTime.Now.AddHours(2),
+                OrderStatus = Enums.OrderStatus.Actived,
+                ParkingId = 10,
+                Price = 2.0,
+                UserId = 5
+            });
+
             foreach (OrderModel order in ordersResponse)
             {
+
                 if (order.UserId == int.Parse(AuthSettings.UserId))
                 {
-                    var parking = await _parkingDataService.Get(order.ParkingId);
-
+                    //var parking = await _parkingDataService.GetParkingAsync(order.ParkingId);
+                    var parking = _profileService.GetParkingById(order.ParkingId);
                     if (parking != null) {
 
                         TimeSpan remainingTime = order.EndDate - DateTime.Now;
@@ -132,7 +147,7 @@ namespace NextPark.Mobile.ViewModels
                             Address = parking.Address,
                             Cap = parking.Cap.ToString(),
                             City = parking.City,
-                            Parking = parking,
+                            Parking = (ParkingModel)parking,
                             Time = string.Format("{0}:{1}", remainingTime.Hours.ToString(), remainingTime.Minutes.ToString()),
                             OnBookingDel = OnBookingDelete,
                             OnBookingTap = OnBookingTapped
@@ -156,6 +171,12 @@ namespace NextPark.Mobile.ViewModels
 
             BookingListHeight = BookingList.Count * 50.0;
             base.OnPropertyChanged("BookingListHeight");
+        }
+
+        public override bool BackButtonPressed()
+        {
+            OnBackClickMethod(null);
+            return false; // Do not propagate back button pressed
         }
 
         // Back Click Action
@@ -185,7 +206,6 @@ namespace NextPark.Mobile.ViewModels
                 UIBookingModel item = BookingList[(int)sender];
                 // TODO: pass booking item to booking map page
                 NavigationService.NavigateToAsync<BookingMapViewModel>(item);
-                _dialogService.ShowAlert("Alert", "Booking data: " + item.Address);
             }
         }
 

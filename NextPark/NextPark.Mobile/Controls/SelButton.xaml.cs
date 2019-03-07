@@ -81,12 +81,7 @@ namespace NextPark.Mobile.Controls
 
         public SelButton()
         {
-            try
-            {
-                InitializeComponent();
-            } catch (Exception ex) {
-
-            }
+            InitializeComponent();
         }
 
         public bool Selected

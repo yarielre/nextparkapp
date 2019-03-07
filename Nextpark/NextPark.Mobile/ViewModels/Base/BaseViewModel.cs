@@ -53,6 +53,10 @@ namespace NextPark.Mobile.ViewModels
             return Task.FromResult(false);
         }
 
+        public virtual bool BackButtonPressed()
+        {
+            return true; // Propagate BackButtonPressed
+        }
 
         protected virtual void CurrentPageOnAppearing(object sender, System.EventArgs eventArgs) { }
 

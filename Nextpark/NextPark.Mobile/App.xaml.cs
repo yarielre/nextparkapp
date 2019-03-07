@@ -1,8 +1,9 @@
-﻿using System;
+using System;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using NextPark.Mobile.Views;
 using NextPark.Mobile.Infrastructure;
+using NextPark.Mobile.Settings;
 
 [assembly: XamlCompilation(XamlCompilationOptions.Compile)]
 namespace NextPark.Mobile
@@ -16,6 +17,10 @@ namespace NextPark.Mobile
             InitializeApp();
 
             MainPage = new LaunchScreen();
+
+            //Change to the test page for api services testing. 
+            //MainPage = new TestPage();
+
         }
 
         private void InitializeApp()

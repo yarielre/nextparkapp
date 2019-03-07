@@ -30,7 +30,7 @@
                         
                             <Image Source="{Binding Picture}" 
                                    HeightRequest="170"
-                                   Aspect="AspectFill"/>
+                                   Aspect="{Binding PictureAspect}"/>
 
                         </Frame>  
                     </StackLayout>
@@ -130,25 +130,25 @@
                                 <StackLayout Orientation="Horizontal" Spacing="10" HorizontalOptions="Center" Margin="5,10,0,0">
                                     <controls:SelButton x:Name="Btn05"
                                                         Info="0.5 h"
-                                                        SubInfo="1 CHF"
+                                                        SubInfo="{Binding Btn1SubInfo}"
                                                         ID="1"
                                                         Selected="{Binding Btn1IsSelected}"
                                                         TapAction="{Binding OnButtonTapped}"/>
                                     <controls:SelButton x:Name="Btn1"
                                                         Info="1 h"
-                                                        SubInfo="2 CHF"
+                                                        SubInfo="{Binding Btn2SubInfo}"
                                                         ID="2"
                                                         Selected="{Binding Btn2IsSelected}"
                                                         TapAction="{Binding OnButtonTapped}"/>
                                     <controls:SelButton x:Name="Btn2"
                                                         Info="2 h"
-                                                        SubInfo="4 CHF"
+                                                        SubInfo="{Binding Btn3SubInfo}"
                                                         ID="3"
                                                         Selected="{Binding Btn3IsSelected}"
                                                         TapAction="{Binding OnButtonTapped}"/>
                                     <controls:SelButton x:Name="Btn3"
                                                         Info="3 h"
-                                                        SubInfo="6 CHF"
+                                                        SubInfo="{Binding Btn4SubInfo}"
                                                         ID="4"
                                                         Selected="{Binding Btn4IsSelected}"
                                                         TapAction="{Binding OnButtonTapped}"/>
@@ -156,25 +156,25 @@
                                 <StackLayout Orientation="Horizontal" Spacing="10" HorizontalOptions="Center" Margin="5,10,0,0">
                                     <controls:SelButton x:Name="Btn4"
                                                         Info="4 h"
-                                                        SubInfo="8 CHF"
+                                                        SubInfo="{Binding Btn5SubInfo}"
                                                         ID="5"
                                                         Selected="{Binding Btn5IsSelected}"
                                                         TapAction="{Binding OnButtonTapped}"/>
                                     <controls:SelButton x:Name="Btn5"
                                                         Info="5 h"
-                                                        SubInfo="10 CHF"
+                                                        SubInfo="{Binding Btn6SubInfo}"
                                                         ID="6"
                                                         Selected="{Binding Btn6IsSelected}"
                                                         TapAction="{Binding OnButtonTapped}"/>
                                     <controls:SelButton x:Name="Btn6"
                                                         Info="6 h"
-                                                        SubInfo="12 CHF"
+                                                        SubInfo="{Binding Btn7SubInfo}"
                                                         ID="7"
                                                         Selected="{Binding Btn7IsSelected}"
                                                         TapAction="{Binding OnButtonTapped}"/>
                                     <controls:SelButton x:Name="Btn8"
                                                         Info="8 h"
-                                                        SubInfo="16 CHF"
+                                                        SubInfo="{Binding Btn8SubInfo}"
                                                         ID="8"
                                                         Selected="{Binding Btn8IsSelected}"
                                                         TapAction="{Binding OnButtonTapped}"/>

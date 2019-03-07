@@ -83,7 +83,7 @@
                                     <DataTemplate>
                                     <ViewCell Height="70">
                                         <controls:UserParkingItem BorderColor="Gray"
-                                                  Picture="image_parking1.png"
+                                                  Picture="{Binding Picture}"
                                                   Identifier="{Binding Index}"
                                                   TapAction="{Binding OnParkingTap}">
                                             <StackLayout Spacing="1" HorizontalOptions="StartAndExpand">

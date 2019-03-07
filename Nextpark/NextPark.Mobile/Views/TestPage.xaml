@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" x:Class="NextPark.Mobile.Views.TestPage" BindingContext="{Binding Test, Source={StaticResource Locator}}">
+    <ContentPage.Content>
+        <StackLayout>
+            <Label VerticalOptions="Center" HorizontalOptions="Center" TextColor="Black" FontSize="Medium" FontAttributes="Bold" Text="TESTING CONSOLE" />
+            <ScrollView VerticalOptions="FillAndExpand">
+                 <Label VerticalOptions="FillAndExpand"
+                        HorizontalOptions="StartAndExpand" FontSize="Small" Text="{Binding ResultConsole}"> 
+                 </Label>
+            </ScrollView>
+               
+            <StackLayout Orientation="Horizontal">
+                <Button VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" FontSize="Medium" Text="Start" IsEnabled="{Binding StartButtonEnabled}" Command="{Binding StartTesting}" />
+                <Button VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" FontSize="Medium" Text="Clean"  Command="{Binding CleanConsole}" />
+            </StackLayout>
+           
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

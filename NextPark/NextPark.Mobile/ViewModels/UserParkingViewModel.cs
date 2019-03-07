@@ -10,10 +10,11 @@ using NextPark.Mobile.Settings;
 using NextPark.Mobile.Services.Data;
 using NextPark.Models;
 using NextPark.Enums.Enums;
+using System.ComponentModel;
 
 namespace NextPark.Mobile.ViewModels
 {
-    public class ParkingItem
+    public class ParkingItem : INotifyPropertyChanged
     {
         private int uid;
         public int UID
@@ -64,11 +65,28 @@ namespace NextPark.Mobile.ViewModels
             set { statusColor = value; } 
         }
 
+        private string picture;
+        public string Picture
+        {
+            get { return picture; }
+            set { picture = value; }
+        }
+
         private ICommand onParkingTap;
         public ICommand OnParkingTap
         {
             get { return onParkingTap; }
             set { onParkingTap = value; }
+        }
+
+        public ParkingModel ParkingModel { get; set; }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        // METHODS
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 
@@ -90,7 +108,7 @@ namespace NextPark.Mobile.ViewModels
 
         // SERVICES
         private readonly IDialogService _dialogService;
-        private readonly ParkingDataService _parkingDataService;
+        private readonly IParkingDataService _parkingDataService;
 
         // PRIVATE VARIABLES
         private ObservableCollection<ParkingItem> _parkingList;
@@ -106,7 +124,7 @@ namespace NextPark.Mobile.ViewModels
                                     IApiService apiService,
                                     IAuthService authService,
                                     INavigationService navService,
-                                    ParkingDataService parkingDataService)
+                                    IParkingDataService parkingDataService)
                                     : base(apiService, authService, navService)
         {
             _dialogService = dialogService;
@@ -142,6 +160,12 @@ namespace NextPark.Mobile.ViewModels
             UpdateUserParkingData();
 
             return Task.FromResult(false);
+        }
+
+        public override bool BackButtonPressed()
+        {
+            OnBackClickMethod(null);
+            return false; // Do not propagate back button pressed
         }
 
         // Back Click Action
@@ -190,7 +214,7 @@ namespace NextPark.Mobile.ViewModels
 
         private async Task GetUserParkings()
         {
-            var parkingList = await _parkingDataService.Get();
+            var parkingList = await _parkingDataService.GetAllParkingsAsync();
 
             ParkingList.Clear();
 
@@ -209,6 +233,16 @@ namespace NextPark.Mobile.ViewModels
                         {
                             free = true;
                         }
+
+                        // Set Image
+                        string imageUrl = "";
+                        if (string.IsNullOrEmpty(parking.ImageUrl))
+                        {
+                            imageUrl = "icon_no_photo.png";
+                        } else {
+                            imageUrl = ApiSettings.BaseUrl + parking.ImageUrl;
+                        }
+
                         ParkingList.Add(new ParkingItem
                         {
                             UID = parking.Id,
@@ -218,7 +252,9 @@ namespace NextPark.Mobile.ViewModels
                             City = parking.City,
                             Status = (free) ? "libero" : "occupato",
                             StatusColor = (free) ? Color.Green : Color.Red,
-                            OnParkingTap = OnParkingTapped
+                            Picture = imageUrl,
+                            OnParkingTap = OnParkingTapped,
+                            ParkingModel = parking
                         });
                     }
                 }

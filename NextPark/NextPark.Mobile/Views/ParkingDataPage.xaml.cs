@@ -16,15 +16,9 @@ namespace NextPark.Mobile.Views
             On<Xamarin.Forms.PlatformConfiguration.iOS>().SetUseSafeArea(true);
 
             if (BindingContext == null) return;
-            if (BindingContext is BaseViewModel bvm)
-            {
-                bvm.InitializeAsync();
-            }
-        }
 
-        void OnDateSelected(object sender, DateChangedEventArgs args)
-        {
-            int i = 0;
+            ParkingDataViewModel bvm = BindingContext as ParkingDataViewModel;
+            bvm.MyDayContent = dayView;
         }
     }
 }

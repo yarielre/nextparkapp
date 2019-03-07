@@ -122,8 +122,8 @@ namespace Inside.Xamarin.iOS.Renderers
 
                 annotationView.Image = UIImage.FromFile(customPin.Icon+".png").Scale(new CGSize(50.0, 50.0));
                 annotationView.CalloutOffset = new CGPoint(0, 0);
-                annotationView.LeftCalloutAccessoryView = new UIImageView(UIImage.FromFile(customPin.Icon+".png"));
-                annotationView.RightCalloutAccessoryView = UIButton.FromType(UIButtonType.DetailDisclosure);
+                //annotationView.LeftCalloutAccessoryView = new UIImageView(UIImage.FromFile(customPin.Icon+".png"));
+                //annotationView.LeftCalloutAccessoryView = UIButton.FromType(UIButtonType.DetailDisclosure);
 
                 ((CustomMKAnnotationView)annotationView).Id = annotationId;
             }
@@ -152,9 +152,9 @@ namespace Inside.Xamarin.iOS.Renderers
             if (customView.Id == "NextParkAnnotation")
             {
                 customPinView.Frame = new CGRect(0, 0, 200, 84);
-                var image = new UIImageView(new CGRect(0, 0, 200, 84));
-                image.Image = UIImage.FromFile("xamarin.png");
-                customPinView.AddSubview(image);
+                //var image = new UIImageView(new CGRect(0, 0, 200, 84));
+                //image.Image = UIImage.FromFile("xamarin.png");
+                //customPinView.AddSubview(image);
                 customPinView.Center = new CGPoint(0, -(e.View.Frame.Height + 75));
                 e.View.AddSubview(customPinView);
             }
@@ -164,7 +164,7 @@ namespace Inside.Xamarin.iOS.Renderers
 
         void OnDidDeselectAnnotationView(object sender, MKAnnotationViewEventArgs e)
         {
-            if (!e.View.Selected)
+            if ((!e.View.Selected) && (customPinView!= null))
             {
                 customPinView.RemoveFromSuperview();
                 customPinView.Dispose();

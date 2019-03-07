@@ -16,7 +16,7 @@
                                 HeaderMoneyAction="{Binding OnMoneyClick}">
                 
                 <StackLayout Orientation="Vertical" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
-                    <Label Text="Aggiungi disponibilità" 
+                    <Label Text="{Binding Title}" 
                            FontFamily="Thaoma Bold" 
                            FontSize="Large" 
                            FontAttributes="Bold" 
@@ -87,7 +87,8 @@
                                     IsVisible="{Binding RepetitionEndVisible}"
                                     Grid.Row="3" Grid.Column="1"
                                     Date="{Binding RepetitionEndDate}"
-                                    MinimumDate="{Binding RepetitionMinEndDate}">
+                                    MinimumDate="{Binding RepetitionMinEndDate}"
+                                    MaximumDate="{Binding RepetitionMaxEndDate}">
                             <DatePicker.Format>dd/MM/yyyy</DatePicker.Format>
                         </DatePicker>
                     </Grid>

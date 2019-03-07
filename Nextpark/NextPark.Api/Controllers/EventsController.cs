@@ -7,13 +7,13 @@ using NextPark.Domain.Entities;
 using NextPark.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace NextPark.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
     public class EventsController : ControllerBase
     {
         private readonly IRepository<Event> _repository;
@@ -67,22 +67,20 @@ namespace NextPark.Api.Controllers
 
             if (parking == null)
             {
-                return BadRequest("Parking not found");
+                return NotFound("Parking not found");
             }
 
-            var eventsToCreate = CreateEvent(model, parking);
+            var events = CreateEvent(model);
 
-            if (eventsToCreate == null) {
 
-                return BadRequest("Any event has been generated");
-            }
-            foreach (var ev in eventsToCreate) {
+            foreach (var ev in events)
+            {
                 _repository.Add(ev);
             }
 
             await _unitOfWork.CommitAsync();
 
-            var vm = _mapper.Map<List<Event>, List<EventModel>>(eventsToCreate);
+            var vm = _mapper.Map<List<Event>, List<EventModel>>(events);
 
             return Ok(vm);
         }
@@ -95,19 +93,58 @@ namespace NextPark.Api.Controllers
             {
                 return BadRequest("model is null");
             }
+            
+            try
+            {
+                var updatedEntity = _mapper.Map<EventModel, Event>(model);
+
+                _repository.Update(updatedEntity);
+
+                await _unitOfWork.CommitAsync();
+
+                var vm = _mapper.Map<Event, EventModel>(updatedEntity);
+
+                return Ok(vm);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+            
+        }
+
+        [HttpPut("{id}/serie")]
+        public async Task<ActionResult> PutSerie(int id, [FromBody]EventModel model)
+        {
+            if (model == null)
+            {
+                return BadRequest("model is null");
+            }
 
             var entityEvent = _repository.Find(id);
 
             if (entityEvent == null)
             {
-                return BadRequest("Event not found");
+                return NotFound("Event not found");
             }
 
-            _repository.Update(entityEvent);
+            var eventSerie = await _repository.FindAllWhereAsync(ev => ev.RepetitionId == entityEvent.RepetitionId);
 
-            var vm = _mapper.Map<Event, EventModel>(entityEvent);
+            var updatedSerie = new List<Event>();
+
+            foreach (var ev in eventSerie)
+            {
+                ev.StartDate = model.StartDate;
+                ev.EndDate = model.EndDate;
+                ev.RepetitionEndDate = model.RepetitionEndDate;
+
+                _repository.Update(ev);
+                updatedSerie.Add(ev);
+            }
 
             await _unitOfWork.CommitAsync();
+            
+            var vm = _mapper.Map<List<Event>, List<EventModel>>(updatedSerie);
 
             return Ok(vm);
         }
@@ -120,33 +157,49 @@ namespace NextPark.Api.Controllers
 
             if (entity == null)
             {
-                return BadRequest("Can't deleted, entity not found.");
+                return NotFound("Can't deleted, entity not found.");
             }
 
             var vm = _mapper.Map<Event, EventModel>(entity);
 
             _repository.Delete(entity);
 
-            await _unitOfWork.CommitAsync();
+            await _unitOfWork.CommitAsync().ConfigureAwait(false);
 
             return Ok(vm);
         }
 
-        private List<Event> CreateEvent(EventModel model, Parking parking)
+        [HttpDelete("{id}/serie")]
+        public async Task<IActionResult> DeleteSerie(int id)
         {
-            if (model == null || parking == null)
+            var entity = _repository.Find(id);
+
+            if (entity == null)
             {
-                return null;
+                return NotFound("Can't deleted, entity not found.");
             }
 
+            var eventSerie = await _repository.FindAllWhereAsync(ev => ev.RepetitionId == entity.RepetitionId);
+
+            _repository.Delete(eventSerie);
+
+            await _unitOfWork.CommitAsync().ConfigureAwait(false);
+
+            var vm = _mapper.Map<List<Event>, List<EventModel>>(eventSerie);
+
+            return Ok(vm);
+        }
+
+        private List<Event> CreateEvent(EventModel model)
+        {
             switch (model.RepetitionType)
             {
                 case Enums.Enums.RepetitionType.Dayly:
-                    return GenerateDaylyRepetition(model, parking);
+                    return GenerateDaylyRepetition(model);
                 case Enums.Enums.RepetitionType.Weekly:
-                    return null;
+                    return GenerateWeeklyRepetition(model);
                 case Enums.Enums.RepetitionType.Monthly:
-                    return null;
+                    return GenerateMonthlyRepetition(model);
                 default:
 
                     return new List<Event>
@@ -156,41 +209,105 @@ namespace NextPark.Api.Controllers
                             StartDate = model.StartDate,
                             EndDate = model.EndDate,
                             RepetitionEndDate = model.EndDate,
+                            RepetitionId = Guid.Empty,
                             RepetitionType = Enums.Enums.RepetitionType.None,
-                            ParkingId = parking.Id
+                            ParkingId = model.ParkingId
                         }
                     };
             }
 
         }
-        private List<Event> GenerateDaylyRepetition(EventModel model, Parking parking)
+
+        private List<Event> GenerateDaylyRepetition(EventModel model)
         {
             var result = new List<Event>();
 
-            var repetitionId = Guid.NewGuid();
-
             var currentDate = model.StartDate;
-            var diffDays = (model.EndDate - currentDate).Days;
+            
+            var diffDays = (model.RepetitionEndDate - model.StartDate).TotalDays;
+
+            var repetitionId = Guid.NewGuid();
 
             while (diffDays >= 0)
             {
 
                 var newEvent = new Event
                 {
-                    StartDate = currentDate,
-                    EndDate = currentDate,
-                    RepetitionEndDate = model.EndDate,
-                    RepetitionType = Enums.Enums.RepetitionType.Dayly,
+                    StartDate = new DateTime(currentDate.Year, currentDate.Month, currentDate.Day, model.StartDate.Hour, model.StartDate.Minute, model.StartDate.Minute),
+                    EndDate = new DateTime(currentDate.Year, currentDate.Month, currentDate.Day, model.EndDate.Hour, model.EndDate.Minute, model.EndDate.Minute),
+                    RepetitionEndDate = model.RepetitionEndDate,
                     RepetitionId = repetitionId,
-                    ParkingId = parking.Id
+                    RepetitionType = Enums.Enums.RepetitionType.Dayly,
+                    ParkingId = model.ParkingId
                 };
 
                 result.Add(newEvent);
-                currentDate.AddDays(1);
-                diffDays = (model.EndDate - currentDate).Days;
+                currentDate = currentDate.AddDays(1);
+                diffDays = (model.RepetitionEndDate - currentDate).TotalDays;
             }
 
             return result;
+        }
+
+        private List<Event> GenerateWeeklyRepetition(EventModel model)
+        {
+            var result = new List<Event>();
+            if (model.WeeklyRepeDayOfWeeks.Count > 0)
+            {
+                var endDate = model.RepetitionEndDate;
+                var repetitionId = Guid.NewGuid();
+
+                for (var date = model.StartDate; date <= model.RepetitionEndDate; date = date.AddDays(1))
+                {
+                    var currentDayOfWeek = date.DayOfWeek;
+
+                    if (model.WeeklyRepeDayOfWeeks.Any(dayRepeated => dayRepeated == currentDayOfWeek))
+                    {
+                        var newEvent = new Event
+                        {
+                            StartDate = date,
+                            EndDate = new DateTime(date.Year, date.Month, date.Day, endDate.Hour, endDate.Minute, endDate.Second),
+                            RepetitionEndDate = endDate,
+                            RepetitionType = Enums.Enums.RepetitionType.Weekly,
+                            RepetitionId = repetitionId,
+                            ParkingId = model.ParkingId
+                        };
+                        result.Add(newEvent);
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        private List<Event> GenerateMonthlyRepetition(EventModel model)
+        {
+            var result = new List<Event>();
+            if (model.MonthlyRepeatDay.Count > 0)
+            {
+                var endDate = model.EndDate;
+                var startDate = model.StartDate;
+                var repetitionId = Guid.NewGuid();
+
+                foreach (var dayNumber in model.MonthlyRepeatDay)
+                {
+                    var newDate = new DateTime(startDate.Year, startDate.Month, dayNumber, startDate.Hour, startDate.Minute, startDate.Second);
+                    for (var date = newDate; date <= model.EndDate; date = date.AddMonths(1))
+                    {
+                        var newEvent = new Event
+                        {
+                            StartDate = date,
+                            EndDate = new DateTime(date.Year, date.Month, date.Day, endDate.Hour, endDate.Minute, endDate.Second),
+                            RepetitionEndDate = endDate,
+                            RepetitionType = Enums.Enums.RepetitionType.Monthly,
+                            RepetitionId = repetitionId,
+                            ParkingId = model.ParkingId
+                        };
+                        result.Add(newEvent);
+                    }
+                }
+            }
+            return result.OrderBy(e => e.StartDate).ToList();
         }
     }
 }

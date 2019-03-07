@@ -25,6 +25,7 @@ namespace NextPark.Mobile.ViewModels
         public string Info { get; set; }                // Parking info text
         public string SubInfo { get; set; }             // Parking subInfo text
         public string Picture { get; set; }             // Parking picture source text
+        public Aspect PictureAspect { get; set; }       // Parking picture aspect
         public string FullPrice { get; set; }           // Parking price full text (2 CHF/h)
         public string FullAvailability { get; set; }    // Parking availability full text (08:00-10:00)
         public TimeSpan Time { get; set; }                // Booking time text
@@ -36,18 +37,26 @@ namespace NextPark.Mobile.ViewModels
 
         // Buttons
         public Boolean Btn1IsSelected { get; set; }     // 0.5h button selected
+        public string Btn1SubInfo { get; set; }         // 0.5h button price
         public Boolean Btn2IsSelected { get; set; }     // 1.0h button selected
+        public string Btn2SubInfo { get; set; }         // 1.0h button price
         public Boolean Btn3IsSelected { get; set; }     // 2.0h button selected
+        public string Btn3SubInfo { get; set; }         // 2.0h button price
         public Boolean Btn4IsSelected { get; set; }     // 3.0h button selected
+        public string Btn4SubInfo { get; set; }         // 3.0h button price
         public Boolean Btn5IsSelected { get; set; }     // 4.0h button selected
+        public string Btn5SubInfo { get; set; }         // 4.0h button price
         public Boolean Btn6IsSelected { get; set; }     // 5.0h button selected
+        public string Btn6SubInfo { get; set; }         // 5.0h button price
         public Boolean Btn7IsSelected { get; set; }     // 6.0h button selected
+        public string Btn7SubInfo { get; set; }         // 6.0h button price
         public Boolean Btn8IsSelected { get; set; }     // 8.0h button selected
+        public string Btn8SubInfo { get; set; }         // 8.0h button price
         public ICommand OnButtonTapped { get; set; }    // Selection button tapped
 
         // SERVICES
         private readonly IDialogService _dialogService;
-        private readonly OrderDataService _orderDataService;
+        private readonly IOrderDataService _orderDataService;
 
         // PRIVATE VARIABLES
         private static bool activity = false;
@@ -58,7 +67,7 @@ namespace NextPark.Mobile.ViewModels
                                 IApiService apiService,
                                 IAuthService authService,
                                 INavigationService navService,
-                                OrderDataService orderDataService)
+                                IOrderDataService orderDataService)
                                 : base(apiService, authService, navService)
         {
             _dialogService = dialogService;
@@ -100,14 +109,42 @@ namespace NextPark.Mobile.ViewModels
                 _parking = (UIParkingModel)data;
                 Info = _parking.Address;
                 SubInfo = _parking.Cap.ToString() + " " + _parking.City;
-                Picture = _parking.ImageUrl;
-                FullPrice = _parking.PriceMin.ToString("N2") + "CHF/h";
+                if (string.IsNullOrEmpty(_parking.ImageUrl))
+                {
+                    Picture = "icon_no_photo.png";
+                    PictureAspect = Aspect.AspectFit;
+                }
+                else
+                {
+                    Picture = ApiSettings.BaseUrl + _parking.ImageUrl;
+                    PictureAspect = Aspect.AspectFill;
+                }
+                FullPrice = _parking.PriceMin.ToString("N2") + " CHF/h";
                 FullAvailability = (_parking.isFree()) ? "Disponibile" : "Occupato";
                 base.OnPropertyChanged("Info");
                 base.OnPropertyChanged("SubInfo");
                 base.OnPropertyChanged("Picture");
+                base.OnPropertyChanged("PictureAspect");
                 base.OnPropertyChanged("FullPrice");
                 base.OnPropertyChanged("FullAvailability");
+
+                Btn1SubInfo = (_parking.PriceMin * 0.5).ToString("N2") + "\nCHF";
+                Btn2SubInfo = (_parking.PriceMin * 1.0).ToString("N2") + "\nCHF";
+                Btn3SubInfo = (_parking.PriceMin * 2.0).ToString("N2") + "\nCHF";
+                Btn4SubInfo = (_parking.PriceMin * 3.0).ToString("N2") + "\nCHF";
+                Btn5SubInfo = (_parking.PriceMin * 4.0).ToString("N2") + "\nCHF";
+                Btn6SubInfo = (_parking.PriceMin * 5.0).ToString("N2") + "\nCHF";
+                Btn7SubInfo = (_parking.PriceMin * 6.0).ToString("N2") + "\nCHF";
+                Btn8SubInfo = (_parking.PriceMin * 8.0).ToString("N2") + "\nCHF";
+
+                base.OnPropertyChanged("Btn1SubInfo");
+                base.OnPropertyChanged("Btn2SubInfo");
+                base.OnPropertyChanged("Btn3SubInfo");
+                base.OnPropertyChanged("Btn4SubInfo");
+                base.OnPropertyChanged("Btn5SubInfo");
+                base.OnPropertyChanged("Btn6SubInfo");
+                base.OnPropertyChanged("Btn7SubInfo");
+                base.OnPropertyChanged("Btn8SubInfo");
 
                 Time = TimeSpan.FromHours(1.0);
                 base.OnPropertyChanged("Time");
@@ -134,6 +171,12 @@ namespace NextPark.Mobile.ViewModels
             return Task.FromResult(false);
         }
 
+        public override bool BackButtonPressed()
+        {
+            OnBackClickMethod(null);
+            return false; // Do not propagate back button pressed
+        }
+
         // Back Click Action
         public void OnBackClickMethod(object sender)
         {
@@ -155,9 +198,6 @@ namespace NextPark.Mobile.ViewModels
         // Booking button click action
         public void OnBookingMethod(object sender)
         {
-            string message = string.Format("Prenota per {0} h", Time.TotalHours);
-            _dialogService.ShowAlert("Alert", message);
-
             // TODO: execute payment
             // TODO: fill book data according to add book backend method
             OrderModel order = new OrderModel
@@ -165,6 +205,7 @@ namespace NextPark.Mobile.ViewModels
                 ParkingId = _parking.Id,
                 StartDate = DateTime.Now,
                 EndDate = DateTime.Now + Time,
+                Price = Time.TotalHours * _parking.PriceMin,
                 UserId = int.Parse(AuthSettings.UserId)
             };
 
@@ -230,7 +271,7 @@ namespace NextPark.Mobile.ViewModels
         public async void SendOrder(OrderModel order)
         {
             try {
-                var result = await _orderDataService.Post(order);
+                var result = await _orderDataService.CreateOrderAsync(order);
 
                 IsRunning = false;
                 base.OnPropertyChanged("IsRunning");

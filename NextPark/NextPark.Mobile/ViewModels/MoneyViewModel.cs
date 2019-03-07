@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Xamarin.Forms;
 using NextPark.Models;
 using NextPark.Mobile.Settings;
+using NextPark.Mobile.Services.Data;
 
 namespace NextPark.Mobile.ViewModels
 {
@@ -38,6 +39,7 @@ namespace NextPark.Mobile.ViewModels
         // SERVICES
         private readonly IDialogService _dialogService;
         private readonly IProfileService _profileService;
+        private readonly IPurchaseDataService _purchaseDataService;
 
         // PRIVATE VARIABLES
         protected static UInt16 selectedValue;
@@ -47,11 +49,13 @@ namespace NextPark.Mobile.ViewModels
         public MoneyViewModel(IDialogService dialogService,
                               IApiService apiService,
                               IAuthService authService,
-                              INavigationService navService)
+                              INavigationService navService,
+                              IPurchaseDataService purchaseDataService)
                               : base(apiService, authService, navService)
         {
             _dialogService = dialogService;
             _profileService = new ProfileService(apiService);
+            _purchaseDataService = purchaseDataService;
 
             // Header
             // TODO: evaluate back text and action
@@ -111,6 +115,12 @@ namespace NextPark.Mobile.ViewModels
             selectedValue = 10;
 
             return Task.FromResult(false);
+        }
+
+        public override bool BackButtonPressed()
+        {
+            OnBackClickMethod(null);
+            return false; // Do not propagate back button pressed
         }
 
         // Back Click Action
@@ -186,6 +196,8 @@ namespace NextPark.Mobile.ViewModels
             // TODO: send buy credit request to backend
             _dialogService.ShowAlert("Alert", "TODO: Payment operations for: " + selectedValue.ToString() + " CHF");
 
+
+
             UpdateUserCoin = new UpdateUserCoinModel { Coins = AuthSettings.UserCoin + double.Parse(selectedValue.ToString()), UserId = int.Parse(AuthSettings.UserId) };
 
             // Start activity spinner
@@ -198,11 +210,15 @@ namespace NextPark.Mobile.ViewModels
 
         public async void BuyMoney()
         {
-            if (UpdateUserCoin != null)
+            PurchaseModel purchaseModel = new PurchaseModel
             {
-                var buyResponse = await _profileService.UpdateUserCoins(UpdateUserCoin);
+                CashToAdd = double.Parse(selectedValue.ToString()),
+                UserId = AuthSettings.User.Id
+            };
 
-                // Stop activity spinner
+            var buyResponse = await _purchaseDataService.BuyAmount(purchaseModel);
+
+                 // Stop activity spinner
                 IsRunning = false;
                 base.OnPropertyChanged("IsRunning");
 
@@ -221,9 +237,6 @@ namespace NextPark.Mobile.ViewModels
                 } else {
                     await _dialogService.ShowAlert("Attenzione", "Acquisto fallito");
                 }
-            } else {
-                await _dialogService.ShowAlert("Errore", "Dati non validi");
-            }
         }
 
         // Withdrawal button click action
@@ -245,6 +258,22 @@ namespace NextPark.Mobile.ViewModels
 
         public async void Withdrawal()
         {
+            try {
+                PurchaseModel purchaseModel = new PurchaseModel
+                {
+                    UserId = AuthSettings.User.Id
+                };
+
+                var drawalResult = await _purchaseDataService.DrawalCash(purchaseModel);
+                if (drawalResult != null) {
+                    // Request accepted
+                } else {
+                    // Error during drawal operation
+                }
+
+            } catch (Exception e) {
+                return;
+            }
             // Stop activity spinner
             IsRunning = false;
             base.OnPropertyChanged("IsRunning");

@@ -8,6 +8,9 @@ using System.Collections.ObjectModel;
 using NextPark.Models;
 using NextPark.Mobile.UIModels;
 using NextPark.Enums.Enums;
+using System.Collections.Generic;
+using NextPark.Mobile.Services.Data;
+using NextPark.Mobile.Controls;
 
 namespace NextPark.Mobile.ViewModels
 {
@@ -22,6 +25,7 @@ namespace NextPark.Mobile.ViewModels
         public string UserMoney { get; set; }       // Header money value
         public ICommand OnMoneyClick { get; set; }  // Header money action
 
+        public string Picture { get; set; }             // Parking image
         public string Address { get; set; }             // Parking address text
         public string City { get; set; }                // Parking city text
         public string ActiveStatusText { get; set; }    // Parking active status text
@@ -77,12 +81,20 @@ namespace NextPark.Mobile.ViewModels
 
         public ICommand OnEventTapAction { get; set; }
 
+        public List<OrderModel> Orders { get; set; }
+        public List<EventModel> Events { get; set; }
+
+        public DayView MyDayContent { get; set; }
+
         // SERVICES
         private readonly IDialogService _dialogService;
         private readonly IProfileService _profileService;
+        private readonly IParkingDataService _parkingDataService;
+        private readonly IEventDataService _eventDataService;
+        private readonly IOrderDataService _orderDataService;
 
         // PRIVATE VARIABLES
-        private ParkingItem parking;
+        private ParkingItem _parking;
         private bool activeSwitchToggled;
         private ObservableCollection<UICalendarEventModel> calendarEvents;
         public ObservableCollection<UICalendarEventModel> CalendarEvents
@@ -96,11 +108,20 @@ namespace NextPark.Mobile.ViewModels
                                     IApiService apiService,
                                     IAuthService authService,
                                     INavigationService navService,
-                                    IProfileService profileService)
+                                    IProfileService profileService,
+                                    IParkingDataService parkingDataService,
+                                    IEventDataService eventDataService,
+                                    IOrderDataService orderDataService)
                                     : base(apiService, authService, navService)
         {
             _dialogService = dialogService;
             _profileService = profileService;
+            _parkingDataService = parkingDataService;
+            _eventDataService = eventDataService;
+            _orderDataService = orderDataService;
+
+            Events = new List<EventModel>();
+            Orders = new List<OrderModel>();
 
             // Header
             UserName = AuthSettings.User.Name;
@@ -135,20 +156,22 @@ namespace NextPark.Mobile.ViewModels
 
             if (data is ParkingItem)
             {
-                parking = (ParkingItem)data;
-                _profileService.LastEditingParking = parking;
+                _parking = (ParkingItem)data;
+                _profileService.LastEditingParking = _parking;
 
                 // Header
-                BackText = "Parcheggi";
+                BackText = "Indietro";
                 UserName = AuthSettings.User.Name;
                 UserMoney = AuthSettings.UserCoin.ToString("N0");
                 base.OnPropertyChanged("BackText");
                 base.OnPropertyChanged("UserName");
                 base.OnPropertyChanged("UserMoney");
 
-                Address = parking.Address;
+                Picture = _parking.Picture;
+                base.OnPropertyChanged("Picture");
+                Address = _parking.Address;
                 base.OnPropertyChanged("Address");
-                City = parking.City;
+                City = _parking.City;
                 base.OnPropertyChanged("City");
 
                 // Default Value
@@ -156,11 +179,21 @@ namespace NextPark.Mobile.ViewModels
                 ActiveSwitchToggled = true;
                 base.OnPropertyChanged("ActiveStatusText");
                 base.OnPropertyChanged("ActiveSwitchToggled");
+
+                GetParkingCalendarEvents();
             }
+
+            MyDayContent.ScrollTo((int)DateTime.Now.TimeOfDay.TotalMinutes);
 
             ChangeSelectedDay(DateTime.Now);
 
             return Task.FromResult(false);
+        }
+
+        public override bool BackButtonPressed()
+        {
+            OnBackClickMethod(null);
+            return false; // Do not propagate back button pressed
         }
 
         // Back Click action
@@ -185,7 +218,7 @@ namespace NextPark.Mobile.ViewModels
         public void OnEditParkingMethod(object sender)
         {
             // TODO: Evaluate Add Parking page with element or EditParking Page to be added
-            NavigationService.NavigateToAsync<AddParkingViewModel>(parking);
+            NavigationService.NavigateToAsync<AddParkingViewModel>(_parking.ParkingModel);
         }
 
         // Activate/Deactivate Parking toggle switch action
@@ -194,12 +227,31 @@ namespace NextPark.Mobile.ViewModels
             if (value)
             {
                 ActiveStatusText = "Attivo";
+                _parking.ParkingModel.Status = ParkingStatus.Enabled;
             }
             else
             {
                 ActiveStatusText = "Non Attivo";
+                _parking.ParkingModel.Status = ParkingStatus.Disabled; 
             }
             base.OnPropertyChanged("ActiveStatusText");
+
+            // Update parking on backend
+            UpdateParkingStatus();
+        }
+
+        private async Task<bool> UpdateParkingStatus()
+        {
+            try {
+                var result = await _parkingDataService.EditParkingAsync(_parking.ParkingModel);
+                if (result != null) {
+                    _parking.ParkingModel = result;
+                    return true;
+                }
+            } catch (Exception e) {
+                return false;
+            }
+            return false;
         }
 
         // Calendar Click action
@@ -213,7 +265,7 @@ namespace NextPark.Mobile.ViewModels
         public void OnAddAvailabilityMethod(object sender)
         {
             // TODO: Add availability
-            NavigationService.NavigateToAsync<AddEventViewModel>(new EventModel { ParkingId = parking.UID});
+            NavigationService.NavigateToAsync<AddEventViewModel>(new EventModel { ParkingId = _parking.UID});
         }
 
         // Go to previous week
@@ -344,6 +396,7 @@ namespace NextPark.Mobile.ViewModels
 
         public void RefreshEvents(DateTime dateTime) 
         {
+            /*
             EventModel myEvent = new EventModel
             {
                 StartDate = DateTime.Now,
@@ -357,16 +410,93 @@ namespace NextPark.Mobile.ViewModels
                 StartDate = DateTime.Now,
                 EndDate = DateTime.Now.AddHours(2.5)
             };
+            */
 
-            // Clear all previous events
-            if (CalendarEvents != null) CalendarEvents.Clear();
+            // Clear all previous calendar events
+            List<UICalendarEventModel> TempCalendarEvents = new List<UICalendarEventModel>();
+            /*
+            if (CalendarEvents == null) {
+                CalendarEvents = new ObservableCollection<UICalendarEventModel>();
+            } else {
+                CalendarEvents.Clear();
+            }
 
+            if (Events.Count == 0)
+            {
+                Events.Add(new EventModel
+                {
+                    StartDate = DateTime.Now,
+                    EndDate = DateTime.Now.AddHours(2),
+                    RepetitionType = RepetitionType.None,
+                    RepetitionEndDate = DateTime.Now.AddHours(2)
+                });
+            }
+            */
+            // Add availabilities
+            foreach (EventModel availability in Events) {
+                if ((availability.StartDate.Date <= dateTime) && (availability.EndDate.Date >= dateTime)) {
+                    // Event for today
+                    int startPosition = (int)availability.StartDate.TimeOfDay.TotalMinutes;
+                    TimeSpan duration = availability.EndDate.TimeOfDay - availability.StartDate.TimeOfDay;
+
+                    TempCalendarEvents.Add(new UICalendarEventModel
+                    {
+                        Index = TempCalendarEvents.Count,
+                        Text = "Disponibile",
+                        StartSeconds = startPosition,
+                        DurationSeconds = (int)duration.TotalMinutes,
+                        EventColor = Color.FromHex("#8CC63F"),
+                        TextColor = Color.DarkGreen,
+                        yConstPosition = Constraint.RelativeToParent((parent) => { return parent.Y + 7 + startPosition; }),
+                        xConstPosition = Constraint.RelativeToParent((parent) => { return parent.Width * 0.025; }),
+                        OnEventTap = OnEventTapAction,
+                        Event = availability
+                    });
+                }
+            }
+
+            // Add orders
+            foreach (OrderModel order in Orders)
+            {
+                if ((order.StartDate.Date <= dateTime) && (order.EndDate.Date >= dateTime))
+                {
+                    // Compute order start and end positions
+                    TimeSpan start = order.StartDate.TimeOfDay;
+                    TimeSpan end = order.EndDate.TimeOfDay;
+
+                    if (order.StartDate < dateTime) start = TimeSpan.FromMinutes(0);
+                    if (order.EndDate < dateTime) end = TimeSpan.FromMinutes(1439);
+
+                    int startPosition = (int)start.TotalMinutes;
+
+                    TimeSpan duration = end - start;
+
+                    TempCalendarEvents.Add(new UICalendarEventModel
+                    {
+                        Index = TempCalendarEvents.Count,
+                        Text = "Disponibile",
+                        StartSeconds = 0,
+                        DurationSeconds = (int)duration.TotalMinutes,
+                        EventColor = (order.OrderStatus == Enums.OrderStatus.Finished) ? Color.LightSkyBlue: Color.Red,
+                        TextColor = (order.OrderStatus == Enums.OrderStatus.Finished) ? Color.DarkBlue : Color.DarkRed,
+                        yConstPosition = Constraint.RelativeToParent((parent) => { return parent.Y + 7 + startPosition; }),
+                        xConstPosition = Constraint.RelativeToParent((parent) => { return parent.Width * 0.525; }),
+                        OnEventTap = OnEventTapAction,
+                        Order = order 
+                    });
+                }
+            }
+
+            CalendarEvents = new ObservableCollection<UICalendarEventModel>(TempCalendarEvents);
+            /*
             CalendarEvents = new ObservableCollection<UICalendarEventModel>
             {
-                new UICalendarEventModel { Index=0, Text = "Disponibile", StartSeconds=7, DurationSeconds=60, EventColor=Color.FromHex("#8CC63F"), TextColor=Color.DarkGreen, yConstPosition=Constraint.RelativeToParent((parent) => {return parent.Y + 7 + 0;}), xConstPosition=Constraint.RelativeToParent((parent) => {return parent.Width*0.025;}), OnEventTap=OnEventTapAction, Event=myEvent},
-                new UICalendarEventModel { Index=1, Text = "Disponibile", StartSeconds=187, DurationSeconds=30, EventColor=Color.FromHex("#8CC63F"), TextColor=Color.DarkGreen, yConstPosition=Constraint.RelativeToParent((parent) => {return parent.Y + 7 + 180;}), xConstPosition=Constraint.RelativeToParent((parent) => {return parent.Width*0.025;}), OnEventTap=OnEventTapAction, Event=myEvent},
-                new UICalendarEventModel { Index=2, Text = "TI 12345", StartSeconds=37, DurationSeconds=30, EventColor=Color.LightSteelBlue, TextColor=Color.DarkBlue, yConstPosition=Constraint.RelativeToParent((parent) => {return parent.Y + 7 + 30;}), xConstPosition=Constraint.RelativeToParent((parent) => {return parent.Width*0.525;}), OnEventTap=OnEventTapAction, Order=myOrder}
+                new UICalendarEventModel { Index=0, Text = "Disponibile", StartSeconds=7, DurationSeconds=60, EventColor=Color.FromHex("#8CC63F"), TextColor=Color.DarkGreen, yConstPosition=Constraint.RelativeToParent((parent) => {return parent.Y + 7 + 0;}), xConstPosition=Constraint.RelativeToParent((parent) => {return parent.Width*0.025;}), OnEventTap=OnEventTapAction, Event=null},
+                new UICalendarEventModel { Index=1, Text = "Disponibile", StartSeconds=187, DurationSeconds=30, EventColor=Color.FromHex("#8CC63F"), TextColor=Color.DarkGreen, yConstPosition=Constraint.RelativeToParent((parent) => {return parent.Y + 7 + 180;}), xConstPosition=Constraint.RelativeToParent((parent) => {return parent.Width*0.025;}), OnEventTap=OnEventTapAction, Event=null},
+                new UICalendarEventModel { Index=2, Text = "TI 12345", StartSeconds=37, DurationSeconds=30, EventColor=Color.LightSteelBlue, TextColor=Color.DarkBlue, yConstPosition=Constraint.RelativeToParent((parent) => {return parent.Y + 7 + 30;}), xConstPosition=Constraint.RelativeToParent((parent) => {return parent.Width*0.525;}), OnEventTap=OnEventTapAction, Order=null}
             };
+            */
+
         }
 
         // Calendar event tapped
@@ -384,6 +514,40 @@ namespace NextPark.Mobile.ViewModels
             } else if (myCalendarEvent.Order != null) {
                 // Calendar event is 
                 _dialogService.ShowAlert("Riservazione", "Dalle ore: " + myCalendarEvent.Order.StartDate.ToShortTimeString() + "\nAlle ore: " + myCalendarEvent.Order.EndDate.ToShortTimeString());
+            }
+        }
+
+        private async void GetParkingCalendarEvents() 
+        {
+            if (_parking == null) return;
+
+            try {
+                // Get Events
+                var eventsResult = await _eventDataService.GetAllEventsAsync();
+                if (eventsResult.Count == 0) return;
+                foreach (EventModel availability in eventsResult)
+                {               
+                    if (_parking.UID == availability.ParkingId) {
+                        Events.Add(availability);
+                    }
+                }
+
+                // Get orders
+                var ordersResult = await _orderDataService.GetAllOrdersAsync();
+                if ((ordersResult != null) && (ordersResult.Count > 0))
+                {
+                    foreach (OrderModel order in ordersResult)
+                    {
+                        if (_parking.UID == order.ParkingId)
+                        {
+                            Orders.Add(order);
+                        }
+                    }
+                }
+                RefreshEvents(SelectedDay);
+
+            } catch (Exception e) {
+                return;
             }
         }
 

@@ -9,11 +9,14 @@ namespace NextPark.Mobile.Services
         string AuthToken { get; set; }
 
         Task<Response> CheckConnection();
+        Task<Response> Delete<TVm>(string url);
         Task<Response> Delete<TVm>(string endpoint, int id);
-        Task<Response> Get<TVm>(string endpoint, int id);
         Task<Response> Get<TVm>(string endpoint);
+        Task<Response> Get<TVm>(string endpoint, int id);
         HttpClient GetHttpClient();
+        Task<Response> Post<TParam, TVm>(string endpoint, TParam tvm);
         Task<Response> Post<TVm>(string endpoint, TVm tvm);
         Task<Response> Put<TVm>(string endpoint, int id, TVm tvm);
+        Task<Response> Put<TVm>(string url, TVm tvm);
     }
 }

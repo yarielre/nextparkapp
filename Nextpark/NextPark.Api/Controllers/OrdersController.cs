@@ -4,114 +4,175 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NextPark.Data.Infrastructure;
 using NextPark.Data.Repositories;
 using NextPark.Domain.Entities;
+using NextPark.Enums;
+using NextPark.Enums.Enums;
 using NextPark.Models;
 
 namespace NextPark.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
     public class OrdersController : ControllerBase
     {
         private readonly IMapper _mapper;
         private readonly IRepository<Order> _orderRepository;
         private readonly IRepository<Parking> _parkingRepository;
-        private readonly IRepository<ApplicationUser> _useRepository;
+        private readonly IRepository<Feed> _feedRepository;
+        private readonly IRepository<Transaction> _transactionRepository;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IRepository<ApplicationUser> _useRepository;
 
         public OrdersController(IRepository<Order> repository,
-                                IUnitOfWork unitOfWork,
-                                IMapper mapper,
-                                IUnitOfWork unitOfWork1,
-                                IRepository<Parking> parkingRepository,
-                                IRepository<Order> orderRepository,
-                                IMapper mapper1,
-                                IRepository<ApplicationUser> useRepository)
+            IUnitOfWork unitOfWork,
+            IMapper mapper,
+            IRepository<Parking> parkingRepository,
+            IRepository<Order> orderRepository,
+            IRepository<ApplicationUser> useRepository,
+            IRepository<Feed> feedRepository,
+            IRepository<Transaction> transactionRepository)
         {
-            _unitOfWork = unitOfWork1;
+            _unitOfWork = unitOfWork;
             _parkingRepository = parkingRepository;
             _orderRepository = orderRepository;
-            _mapper = mapper1;
+            _mapper = mapper;
             _useRepository = useRepository;
+            _feedRepository = feedRepository;
+            _transactionRepository = transactionRepository;
         }
 
-        [HttpPost("renew")]
-        public async Task<IActionResult> RenovateOrder([FromBody] RenovateOrder model)
+        [HttpPut("{id}/renew")]
+        public async Task<IActionResult> RenovateOrder(int id,[FromBody] OrderModel model)
         {
 
-            if (model == null)
-            {
-                return BadRequest("Invalid RenovateOrder parameter");
-            }
-
             if (!ModelState.IsValid)
-            {
                 return BadRequest("Invalid Model State parameter");
-            }
 
             try
             {
-
-                var order = _mapper.Map<OrderModel, Order>(model.Order);
+                var user = await _useRepository.FirstOrDefaultWhereAsync(u => u.Id == model.UserId).ConfigureAwait(false);
+                if (user == null)
+                {
+                    return NotFound("User not found");
+                }
+                
+                 if (user.Balance < model.Price)
+                 return BadRequest("Not enough money");
+                 var order = _mapper.Map<OrderModel, Order>(model);
                 _orderRepository.Update(order);
-                var user = _useRepository.Find(model.User.Id);
-                user.Balance = model.User.Balance;
-                _useRepository.Update(user);
-                await _unitOfWork.CommitAsync();
+                await _unitOfWork.CommitAsync().ConfigureAwait(false);
                 var vm = _mapper.Map<Order, OrderModel>(order);
                 return Ok(vm);
-
             }
             catch (Exception e)
             {
-
                 return BadRequest(string.Format("Server error: {0}", e));
             }
-
-
         }
 
         [HttpPost("terminate")]
-        public async Task<IActionResult> TeminateOrder([FromBody]int id)
+        public async Task<IActionResult> TeminateOrder([FromBody] int id)
         {
-
             try
             {
+                //Logic terminate
+                //Change order state  completed
+                //Scale user balance
+                //Change parking state to available
 
                 var order = _orderRepository.Find(id);
 
                 if (order == null)
-                {
                     return BadRequest("Order not found.");
+                var parking = _parkingRepository.Find(order.ParkingId);
+                if (parking == null)
+                {
+                    return BadRequest("Parking not found.");
+                }
+                //Parking's owned user
+                var parkingOwnedUser = _useRepository.Find(parking.UserId);
+                if (parkingOwnedUser == null)
+                {
+                    return BadRequest("Parking's owned user not found.");
+                }
+                var tax = await _feedRepository.FirstOrDefaultWhereAsync(f => f.Name == "RentEarningPercent").ConfigureAwait(false);
+                if (tax == null)
+                {
+                    return BadRequest("Rent earning tax not found.");
+                }
+                //User who created the order
+                var userOrder = _useRepository.Find(order.UserId);
+                if (userOrder == null)
+                {
+                    return BadRequest("User who rented the order not found");
                 }
 
-                _orderRepository.Delete(order);
-                var parking = await _parkingRepository.FirstWhereAsync(p => p.Id == order.ParkingId, new CancellationToken());
-                _parkingRepository.Update(parking);
-                await _unitOfWork.CommitAsync();
-                var vm = _mapper.Map<Parking, ParkingModel>(parking);
-                return Ok(vm);
+                var rentEraningTax = CalCulateTax(order.Price, tax.Tax);
+                order.OrderStatus = OrderStatus.Finished;
+                parking.Status = ParkingStatus.Enabled;
 
+                var renTransaction = new Transaction
+                {
+                    CashMoved = rentEraningTax,
+                    UserId = parking.UserId,
+                    CreationDate = DateTime.Now,
+                    CompletationDate = DateTime.Now,
+                    Status = TransactionStatus.Completed,
+                    TransactionId = new Guid(),
+                    Type = TransactionType.RentTrasaction
+                };
+
+                var feedTransaction = new Transaction
+                {
+                    CashMoved = rentEraningTax,
+                    UserId = parking.UserId,
+                    CreationDate = DateTime.Now,
+                    CompletationDate = DateTime.Now,
+                    Status = TransactionStatus.Completed,
+                    TransactionId = new Guid(),
+                    Type = TransactionType.FeedTransaction
+                };
+               
+                //Saving rent and feed transactions
+                _transactionRepository.Add(renTransaction);
+                _transactionRepository.Add(feedTransaction);
+                await _unitOfWork.CommitAsync().ConfigureAwait(false);
+
+                //Update user balance when rent is finished
+                userOrder.Balance = userOrder.Balance - order.Price;
+                _useRepository.Update(userOrder);
+                await _unitOfWork.CommitAsync().ConfigureAwait(false);
+
+                //Update user profit when rent is finished
+                parkingOwnedUser.Profit = parkingOwnedUser.Profit + rentEraningTax;
+                _useRepository.Update(parkingOwnedUser);
+                await _unitOfWork.CommitAsync().ConfigureAwait(false);
+
+                //Update parking after status change
+                _parkingRepository.Update(parking);
+                await _unitOfWork.CommitAsync().ConfigureAwait(false);
+
+                //Update order after status change
+                _orderRepository.Update(order);
+                await _unitOfWork.CommitAsync().ConfigureAwait(false);
+
+                var vm = _mapper.Map<Order, OrderModel>(order);
+                return Ok(vm);
             }
             catch (Exception e)
             {
-
-                return BadRequest(string.Format("Server error: {0}", e));
+                return BadRequest($"Server error: {e}");
             }
-
         }
 
         // GET api/controller
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            var list = await _orderRepository.FindAllAsync();
+            var list = await _orderRepository.FindAllAsync().ConfigureAwait(false);
             var vm = _mapper.Map<List<Order>, List<OrderModel>>(list);
             return Ok(vm);
         }
@@ -131,38 +192,51 @@ namespace NextPark.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] OrderModel orderModel)
         {
-            if (orderModel == null)
-                return BadRequest("adding null orderModel");
-
-            //START LOCK
-            //Parking disponibile No? Return Error
-            //Soldi suficcenti? No? Return Error
-            //Altri check
-            //END LOCK   
-
-            var order = _mapper.Map<OrderModel, Order>(orderModel);
-
-            _orderRepository.Add(order);
-
-            await _unitOfWork.CommitAsync();
-
-            var vm = _mapper.Map<Order, OrderModel>(order);
-            return Ok(vm);
-
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+            var parking = await _parkingRepository.FirstOrDefaultWhereAsync(p => p.Id == orderModel.ParkingId,
+                new CancellationToken(), p => p.Events).ConfigureAwait(false);
+            if (parking == null)
+                return NotFound("Not found parking");
+            var isAvailable = IsParkingAvailable(parking, orderModel);
+            if (!isAvailable)
+                return BadRequest("Parking is not available");
+            var user = _useRepository.Find(orderModel.UserId);
+            if (user.Balance < orderModel.Price)
+                return BadRequest("Not enough money");
+            try
+            {
+                var order = _mapper.Map<OrderModel, Order>(orderModel);
+                _orderRepository.Add(order);
+                await _unitOfWork.CommitAsync().ConfigureAwait(false);
+                var vm = _mapper.Map<Order, OrderModel>(order);
+                return Ok(vm);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw new Exception(e.Message);
+            }
         }
 
         // PUT api/controller/5
         [HttpPut("{id}")]
-        public async Task<ActionResult> Put(int id, [FromBody]Order entity)
+        public async Task<ActionResult> Put(int id, [FromBody] OrderModel model)
         {
-            if (ModelState.IsValid)
-            {
-                _orderRepository.Update(entity);
-                var vm = _mapper.Map<Order, OrderModel>(entity);
-                await _unitOfWork.CommitAsync();
-                return Ok(vm);
-            }
-            return BadRequest(ModelState);
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
+
+            var entity = _mapper.Map<OrderModel, Order>(model);
+
+            _orderRepository.Update(entity);
+
+
+            var vm = _mapper.Map<Order, OrderModel>(entity);
+
+            await _unitOfWork.CommitAsync().ConfigureAwait(false);
+
+            return Ok(vm);
+
         }
 
         // DELETE api/controller/5
@@ -175,8 +249,20 @@ namespace NextPark.Api.Controllers
             var vm = _mapper.Map<Order, OrderModel>(entity);
             _orderRepository.Delete(entity);
 
-            await _unitOfWork.CommitAsync();
+            await _unitOfWork.CommitAsync().ConfigureAwait(false);
             return Ok(vm);
+        }
+
+        private bool IsParkingAvailable(Parking parking, OrderModel order)
+        {
+            //If parking have events, is enable and the date of the last event y bigger than order end date
+            return parking.Events.Count > 0 && parking.Status == ParkingStatus.Enabled
+                   && order.EndDate <= parking.Events.OrderBy(e => e.EndDate).Last().EndDate;
+        }
+
+        private double CalCulateTax(double price,double taxPorcent)
+        {
+            return (price * taxPorcent) / 100;
         }
     }
 }

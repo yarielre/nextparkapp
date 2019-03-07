@@ -4,6 +4,8 @@ using Android.OS;
 using Acr.UserDialogs;
 using Plugin.InAppBilling;
 using Android.Content;
+using Xamarin.Forms;
+using NextPark.Mobile.ViewModels;
 
 namespace NextPark.Mobile.Droid
 {
@@ -36,6 +38,31 @@ namespace NextPark.Mobile.Droid
         {
             Plugin.Permissions.PermissionsImplementation.Current.OnRequestPermissionsResult(requestCode, permissions, grantResults);
             base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+        protected void OnCloseAppRequested()
+        {
+            Android.App.AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+            AlertDialog alert = dialog.Create();
+            alert.SetTitle("Conferma chiusura");
+            alert.SetMessage("Chiudere l'applicazione?");
+            alert.SetButton("OK", (c, ev) =>
+            {
+                base.OnBackPressed();
+            });
+            alert.SetButton2("ANNULLA", (c, ev) => { });
+            alert.Show();
+        }
+        public override void OnBackPressed()
+        {
+            Page currentPage = Xamarin.Forms.Application.Current.MainPage;
+            if (currentPage != null) {
+                if (currentPage.BindingContext is BaseViewModel bvm)
+                {
+                    if (bvm.BackButtonPressed()) {
+                        OnCloseAppRequested();
+                    }
+                }
+            }
         }
     }
 }

@@ -40,14 +40,20 @@ namespace NextPark.Mobile.ViewModels
         public ICommand OnAction { get; set; }             // Arrived button click action
         public ICommand OnNavigate { get; set; }            // Navigate button click action
         public ICommand OnBookDel { get; set; }             // Delete button click action
+        public ICommand OnRenew { get; set; }               // Renew order action
+        public ICommand OnCancelRenew { get; set; }         // Cancel renew order
+
+        public bool RenewVisible { get; set; }
+        public bool RenewIsRunning { get; set; }
+        public TimeSpan RenewTime { get; set; }
 
         private UIBookingModel order;
-        private ParkingModel parking;
 
         // SERVICES
         private readonly IGeolocatorService _geoLocatorService;
         private readonly IDialogService _dialogService;
-        private readonly ParkingDataService _parkingDataService;
+        private readonly IOrderDataService _orderDataService;
+        private readonly IParkingDataService _parkingDataService;
 
         // METHODS
         public BookingMapViewModel(IGeolocatorService geolocatorService, 
@@ -55,12 +61,14 @@ namespace NextPark.Mobile.ViewModels
                                    IApiService apiService, 
                                    IAuthService authService, 
                                    INavigationService navService,
-                                   ParkingDataService parkingDataService)
+                                   IParkingDataService parkingDataService,
+                                   IOrderDataService orderDataService)
                                    : base(apiService, authService, navService)
         {
             _geoLocatorService = geolocatorService;
             _dialogService = dialogService;
             _parkingDataService = parkingDataService;
+            _orderDataService = orderDataService;
 
             // Header
             UserName = AuthSettings.User.Name;
@@ -81,6 +89,10 @@ namespace NextPark.Mobile.ViewModels
             OnAction = new Command<object>(OnActionMethod);
             OnNavigate = new Command<object>(OnNavigateMethod);
             OnBookDel = new Command<object>(OnBookDelMethod);
+            OnRenew = new Command<object>(OnRenewMethod);
+            OnCancelRenew = new Command<object>(OnCancelRenewMethod);
+
+            RenewVisible = false;
         }
 
         public override Task InitializeAsync(object data = null)
@@ -114,7 +126,7 @@ namespace NextPark.Mobile.ViewModels
                     base.OnPropertyChanged("ActionVisible");
                 } else {
                     // Renovate
-                    ActionText = "Aggiorna";
+                    ActionText = "Rinnova";
                     ActionVisible = true;
                     base.OnPropertyChanged("ActionText");
                     base.OnPropertyChanged("ActionVisible");
@@ -152,18 +164,24 @@ namespace NextPark.Mobile.ViewModels
             // Add Map Pin of parking
             var pin = new CustomPin
             {
-                Id = parking.Id,
-                Parking = parking,
+                Id = order.Parking.Id,
+                Parking = order.Parking,
                 Type = PinType.Place,
                 Position = position,
-                Label = parking.Address,
-                Address = parking.Cap.ToString() + " " + parking.City,
+                Label = order.Parking.Address,
+                Address = order.Parking.Cap.ToString() + " " + order.Parking.City,
                 Icon = "icon_pin_green_256"
             };
             Map.Pins.Add(pin);
 
             // Move to parking position
             Map.MoveToRegion(MapSpan.FromCenterAndRadius(position, Distance.FromKilometers(1)));
+        }
+
+        public override bool BackButtonPressed()
+        {
+            OnBackClickMethod(null);
+            return false; // Do not propagate back button pressed
         }
 
         // Back Click action
@@ -195,9 +213,9 @@ namespace NextPark.Mobile.ViewModels
             }
             else
             {
-                // Renovate
-                // TODO: manage user arrived
-                _dialogService.ShowAlert("Alert", "TODO: manage renovate order");
+                // Renew order
+                RenewVisible = true;
+                base.OnPropertyChanged("RenewVisible");
             }
 
         }
@@ -216,14 +234,77 @@ namespace NextPark.Mobile.ViewModels
             {
                 // Delete
                 // TODO: manage booking delete action
-                _dialogService.ShowAlert("Alert", "TODO: manage booking delete action");
+                DeleteOrder();
             }
             else
             {
                 // Terminate
-                // TODO: manage booking delete action
-                _dialogService.ShowAlert("Alert", "TODO: manage terminate oreder");
+                TerminateOrder();
             }
+        }
+
+        public async void DeleteOrder()
+        {
+            try
+            {
+                var result = await _orderDataService.DeleteOrdersAsync(order.Id);
+
+            }
+            catch (Exception e)
+            {
+                await _dialogService.ShowAlert("Errore", e.Message);
+            }
+        }
+
+        public async void TerminateOrder()
+        {
+            try {
+                var result = await _orderDataService.TerminateOrderAsync(order.Id);
+
+            } catch (Exception e) {
+                await _dialogService.ShowAlert("Errore", e.Message);
+            }
+        }
+
+        // Renew order button click action
+        public void OnRenewMethod(object sender)
+        {
+            RenewIsRunning = true;
+            base.OnPropertyChanged("RenewIsRunning");
+            RenewOrder();
+        }
+
+        public async void RenewOrder()
+        {
+            try {
+                if (RenewTime.TotalMinutes > 0)
+                {
+                    // Update order time
+                    order.EndDate.AddMinutes(RenewTime.TotalMinutes);
+                    // Update order price
+                    TimeSpan totalTime = order.EndDate - order.StartDate;
+                    order.Price = totalTime.TotalHours * order.Parking.PriceMin;
+                    // Send order update
+                    var result = await _orderDataService.EditOrderAsync(order.Id, order);
+                    if (result != null)
+                    {
+
+                    }
+                }
+            } catch (Exception e) {
+                await _dialogService.ShowAlert("Errore", e.Message);
+            } finally {
+                RenewIsRunning = false;
+                RenewVisible = false;
+                base.OnPropertyChanged("RenewIsRunning");
+                base.OnPropertyChanged("RenewVisible");
+            }
+        }
+
+        public void OnCancelRenewMethod(object sender)
+        {
+            RenewVisible = false;
+            base.OnPropertyChanged("RenewVisible");
         }
     }
 }

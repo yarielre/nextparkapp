@@ -96,7 +96,10 @@ namespace NextPark.Api.Controllers
                     Email = model.Email,
                     Address = model.Address,
                     CarPlate = model.CarPlate,
-                    State = model.State
+                    State = model.State,
+                    Cap = model.Cap,
+                    City = model.City,
+                    Phone = model.Phone
                 };
 
                 var result = await _userManager.CreateAsync(user, model.Password);
@@ -116,12 +119,14 @@ namespace NextPark.Api.Controllers
             }
 
         }
+
         [HttpGet("logout")]
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();
-            return Ok();
+            return Ok( new TokenResponse { IsSuccess = true });
         }
+
         [HttpPost("userbyname")]
         public IActionResult GetUserByUserName([FromBody] string username)
         {
