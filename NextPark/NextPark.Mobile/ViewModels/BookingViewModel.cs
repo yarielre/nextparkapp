@@ -210,15 +210,7 @@ namespace NextPark.Mobile.ViewModels
             };
 
             // Show activity spinner
-            if (activity == true)
-            {
-                activity = false;
-            }
-            else
-            {
-                activity = true;
-            }
-            this.IsRunning = activity;
+            this.IsRunning = true;
             base.OnPropertyChanged("IsRunning");
 
             // TODO: send book action to backend
