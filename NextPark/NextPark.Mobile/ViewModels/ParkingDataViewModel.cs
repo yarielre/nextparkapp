@@ -10,6 +10,7 @@ using NextPark.Mobile.UIModels;
 using NextPark.Enums.Enums;
 using System.Collections.Generic;
 using NextPark.Mobile.Services.Data;
+using NextPark.Mobile.Controls;
 
 namespace NextPark.Mobile.ViewModels
 {
@@ -83,9 +84,12 @@ namespace NextPark.Mobile.ViewModels
         public List<OrderModel> Orders { get; set; }
         public List<EventModel> Events { get; set; }
 
+        public DayView MyDayContent { get; set; }
+
         // SERVICES
         private readonly IDialogService _dialogService;
         private readonly IProfileService _profileService;
+        private readonly IParkingDataService _parkingDataService;
         private readonly IEventDataService _eventDataService;
         private readonly IOrderDataService _orderDataService;
 
@@ -105,12 +109,14 @@ namespace NextPark.Mobile.ViewModels
                                     IAuthService authService,
                                     INavigationService navService,
                                     IProfileService profileService,
+                                    IParkingDataService parkingDataService,
                                     IEventDataService eventDataService,
                                     IOrderDataService orderDataService)
                                     : base(apiService, authService, navService)
         {
             _dialogService = dialogService;
             _profileService = profileService;
+            _parkingDataService = parkingDataService;
             _eventDataService = eventDataService;
             _orderDataService = orderDataService;
 
@@ -177,6 +183,8 @@ namespace NextPark.Mobile.ViewModels
                 GetParkingCalendarEvents();
             }
 
+            MyDayContent.ScrollTo((int)DateTime.Now.TimeOfDay.TotalMinutes);
+
             ChangeSelectedDay(DateTime.Now);
 
             return Task.FromResult(false);
@@ -219,12 +227,31 @@ namespace NextPark.Mobile.ViewModels
             if (value)
             {
                 ActiveStatusText = "Attivo";
+                _parking.ParkingModel.Status = ParkingStatus.Enabled;
             }
             else
             {
                 ActiveStatusText = "Non Attivo";
+                _parking.ParkingModel.Status = ParkingStatus.Disabled; 
             }
             base.OnPropertyChanged("ActiveStatusText");
+
+            // Update parking on backend
+            UpdateParkingStatus();
+        }
+
+        private async Task<bool> UpdateParkingStatus()
+        {
+            try {
+                var result = await _parkingDataService.EditParkingAsync(_parking.ParkingModel);
+                if (result != null) {
+                    _parking.ParkingModel = result;
+                    return true;
+                }
+            } catch (Exception e) {
+                return false;
+            }
+            return false;
         }
 
         // Calendar Click action

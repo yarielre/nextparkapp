@@ -324,7 +324,7 @@
                                 Date="{Binding DatePickerDate}"/>
                     
                     <!-- Day view -->
-                    <controls:DayView HeightRequest="300" Padding="0" Margin="0,-5,0,0" VerticalOptions="Fill">
+                    <controls:DayView x:Name="dayView" HeightRequest="300" Padding="0" Margin="0,-5,0,0" VerticalOptions="Fill">
                         
                         <!-- Events and Orders -->
                         <repeater:RelRepeaterView  HorizontalOptions="FillAndExpand" ItemsSource="{Binding CalendarEvents}">
