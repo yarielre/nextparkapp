@@ -175,7 +175,7 @@ namespace NextPark.Mobile.ViewModels
                 base.OnPropertyChanged("City");
 
                 // Default Value
-                ActiveStatusText = "Attivo";
+                ActiveStatusText = "Attivato";
                 ActiveSwitchToggled = true;
                 base.OnPropertyChanged("ActiveStatusText");
                 base.OnPropertyChanged("ActiveSwitchToggled");
@@ -226,12 +226,12 @@ namespace NextPark.Mobile.ViewModels
         {
             if (value)
             {
-                ActiveStatusText = "Attivo";
+                ActiveStatusText = "Attivato";
                 _parking.ParkingModel.Status = ParkingStatus.Enabled;
             }
             else
             {
-                ActiveStatusText = "Non Attivo";
+                ActiveStatusText = "Disattivato";
                 _parking.ParkingModel.Status = ParkingStatus.Disabled; 
             }
             base.OnPropertyChanged("ActiveStatusText");
