@@ -223,8 +223,12 @@ namespace NextPark.Mobile.ViewModels
         // Navigate button click action
         public void OnNavigateMethod(object sender)
         {
-            // TODO: manage navigation to parking
-            _dialogService.ShowAlert("Alert", "TODO: manage navigation to parking");
+            // Get parking location
+            var location = new Xamarin.Essentials.Location(order.Parking.Latitude, order.Parking.Longitude);
+            // Set navigation options
+            var options = new Xamarin.Essentials.MapLaunchOptions { NavigationMode = Xamarin.Essentials.NavigationMode.Driving };
+            // Call native map application
+            Xamarin.Essentials.Map.OpenAsync(location, options);
         }
 
         // Delete button click action
