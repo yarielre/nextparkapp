@@ -96,7 +96,7 @@ namespace NextPark.Mobile.ViewModels
             base.OnPropertyChanged("Profit");
 
             // Withdrawal enable
-            if (AuthSettings.User.Profit > 10.0) {
+            if (AuthSettings.User.Profit > 50.0) {
                 EnableWithdrawal();
             } else {
                 DisableWithdrawal();
