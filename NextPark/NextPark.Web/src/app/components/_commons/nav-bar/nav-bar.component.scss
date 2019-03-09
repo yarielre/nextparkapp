@@ -3,3 +3,13 @@
      Every toolbar row uses a flexbox row layout. */
   flex: 1 1 auto;
 }
+
+.container-toolBar{
+  position:relative;
+  z-index: 2;
+}
+
+.container-sideNav{
+  position:relative;
+  z-index: 1;
+}

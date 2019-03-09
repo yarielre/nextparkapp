@@ -4,7 +4,7 @@ import { Observable } from "rxjs";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { StorageService } from "../services/storage.service";
 import { TokenResponse, LoginModel } from "../models";
-import { NEXT_PARK_URL } from "../constants";
+import { NEXT_PARK_URL } from "../_helpers/constants";
 
 @Injectable({ providedIn: "root" })
 export class AuthenticationService {
@@ -59,9 +59,9 @@ export class AuthenticationService {
 
   buildForm() {
     this.loginForm = this.fb.group({
-      username: ["", [Validators.required]],
+      username: ["Lolo", [Validators.required]],
       password: [
-        "",
+        "123456Qq@",
         [
           Validators.pattern("^(?=.*[0-9])(?=.*[a-zA-Z])([a-zA-Z0-9]+)$"),
           Validators.minLength(6),

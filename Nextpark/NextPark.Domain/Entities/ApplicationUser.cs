@@ -28,6 +28,6 @@ namespace NextPark.Domain.Entities
         public List<Order> Orders { get; set; }
         public List<CarPlate> CarPlates { get; set; }
         public List<Transaction> Transactions { get; set; }
-
+        public List<Device> Devices { get; set; }
     }
 }

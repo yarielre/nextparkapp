@@ -37,7 +37,7 @@ export class LoginComponent implements OnInit {
       resp => {
         this.toogleSpiner();
         this.storage.setToken(resp);
-        this.router.navigate(['/home']);
+        this.router.navigate(['/myTable']);
       },
       error => {
         this.toogleSpiner();

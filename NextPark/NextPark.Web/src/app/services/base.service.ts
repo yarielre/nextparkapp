@@ -21,6 +21,7 @@ export class BaseService<T extends BaseModel> {
   }
 
   public getAll(url: string = this.baseUrl): Observable<T[]> {
+    console.log(url, this.httpOptions)
     return this.http.get<T[]>(url, this.httpOptions);
   }
 
