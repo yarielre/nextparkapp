@@ -176,13 +176,23 @@ namespace NextPark.Mobile.ViewModels
                 return;
             }
 
+            // Compute price
+            double orderPrice = double.Parse((((EndDate + EndTime) - (StartDate + StartTime)).TotalHours * _parking.PriceMin).ToString("N2"));
+            // Check user balance
+            if (AuthSettings.User.Balance < orderPrice) {
+                // Not enough credit
+                _dialogService.ShowAlert("Attenzione", "Credito insufficiente");
+                NavigationService.NavigateToAsync<MoneyViewModel>();
+                return;
+            }
+
             // TODO: fill book data according to add book backend method
             OrderModel order = new OrderModel
             {
                 ParkingId = _parking.Id,
                 StartDate = StartDate+StartTime,
                 EndDate = EndDate + EndTime,
-                Price = double.Parse((((EndDate+EndTime)-(StartDate+StartTime)).TotalHours * _parking.PriceMin).ToString("N2")),
+                Price = orderPrice,
                 UserId = int.Parse(AuthSettings.UserId),
                 PaymentStatus = Enums.Enums.PaymentStatus.Pending
             };
