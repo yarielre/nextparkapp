@@ -15,8 +15,15 @@ namespace NextPark.Mobile.Controls
         public static readonly BindableProperty IdentifierProperty = BindableProperty.Create(nameof(Identifier), typeof(int), typeof(UserBookingItem), default(int), Xamarin.Forms.BindingMode.OneWay);
 
         public static readonly BindableProperty AddressProperty = BindableProperty.Create(nameof(Address), typeof(string), typeof(UserBookingItem), default(string), Xamarin.Forms.BindingMode.OneWay);
+        public static readonly BindableProperty CapProperty = BindableProperty.Create(nameof(Cap), typeof(string), typeof(UserBookingItem), default(string), Xamarin.Forms.BindingMode.OneWay);
         public static readonly BindableProperty CityProperty = BindableProperty.Create(nameof(City), typeof(string), typeof(UserBookingItem), default(string), Xamarin.Forms.BindingMode.OneWay);
+
         public static readonly BindableProperty TimeProperty = BindableProperty.Create(nameof(Time), typeof(string), typeof(UserBookingItem), default(string), Xamarin.Forms.BindingMode.OneWay);
+        //public static readonly BindableProperty TimeVisibleProperty = BindableProperty.Create(nameof(TimeVisible), typeof(bool), typeof(UserBookingItem), false, Xamarin.Forms.BindingMode.OneWay);
+        //public static readonly BindableProperty StartDateTimeProperty = BindableProperty.Create(nameof(StartDateTime), typeof(string), typeof(UserBookingItem), default(string), Xamarin.Forms.BindingMode.OneWay);
+        //public static readonly BindableProperty EndDateTimeProperty = BindableProperty.Create(nameof(EndDateTime), typeof(string), typeof(UserBookingItem), default(string), Xamarin.Forms.BindingMode.OneWay);
+        //public static readonly BindableProperty DateTimeVisibleProperty = BindableProperty.Create(nameof(DateTimeVisible), typeof(bool), typeof(UserBookingItem), false, Xamarin.Forms.BindingMode.OneWay);
+
 
         public static readonly BindableProperty SwipeActionProperty = BindableProperty.Create(nameof(SwipeAction), typeof(ICommand), typeof(UserBookingItem), null, Xamarin.Forms.BindingMode.OneWay);
 
@@ -55,6 +62,12 @@ namespace NextPark.Mobile.Controls
         {
             get { return (string)this.GetValue(AddressProperty); }
             set { SetValue(AddressProperty, value); }
+        }
+
+        public string Cap
+        {
+            get { return (string)this.GetValue(CapProperty); }
+            set { SetValue(CapProperty, value); }
         }
 
         public string City

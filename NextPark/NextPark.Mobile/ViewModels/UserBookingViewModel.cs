@@ -121,6 +121,16 @@ namespace NextPark.Mobile.ViewModels
             ordersResponse = new List<OrderModel>();
             ordersResponse.Add(new OrderModel
             {
+                StartDate = DateTime.Now.AddDays(1),
+                EndDate = DateTime.Now.AddDays(1).AddHours(2),
+                OrderStatus = Enums.OrderStatus.Actived,
+                ParkingId = 11,
+                Price = 2.0,
+                UserId = 5
+            });
+
+            ordersResponse.Add(new OrderModel
+            {
                 StartDate = DateTime.Now,
                 EndDate = DateTime.Now.AddHours(2),
                 OrderStatus = Enums.OrderStatus.Actived,
@@ -128,6 +138,57 @@ namespace NextPark.Mobile.ViewModels
                 Price = 2.0,
                 UserId = 5
             });
+
+            ordersResponse.Add(new OrderModel
+            {
+                StartDate = DateTime.Now,
+                EndDate = DateTime.Now.AddHours(2),
+                OrderStatus = Enums.OrderStatus.Actived,
+                ParkingId = 10,
+                Price = 2.0,
+                UserId = 5
+            });
+            ordersResponse.Add(new OrderModel
+            {
+                StartDate = DateTime.Now,
+                EndDate = DateTime.Now.AddHours(2),
+                OrderStatus = Enums.OrderStatus.Actived,
+                ParkingId = 10,
+                Price = 2.0,
+                UserId = 5
+            });
+            ordersResponse.Add(new OrderModel
+            {
+                StartDate = DateTime.Now,
+                EndDate = DateTime.Now.AddHours(2),
+                OrderStatus = Enums.OrderStatus.Actived,
+                ParkingId = 10,
+                Price = 2.0,
+                UserId = 5
+            });
+            ordersResponse.Add(new OrderModel
+            {
+                StartDate = DateTime.Now,
+                EndDate = DateTime.Now.AddHours(2),
+                OrderStatus = Enums.OrderStatus.Actived,
+                ParkingId = 10,
+                Price = 2.0,
+                UserId = 5
+            });
+            ordersResponse.Add(new OrderModel
+            {
+                StartDate = DateTime.Now,
+                EndDate = DateTime.Now.AddHours(2),
+                OrderStatus = Enums.OrderStatus.Actived,
+                ParkingId = 10,
+                Price = 2.0,
+                UserId = 5
+            });
+
+
+            // Create Comparison instance and use it.
+            Comparison<OrderModel> comparison = new Comparison<OrderModel>(CompareOrders);
+            ordersResponse.Sort(comparison);
 
             foreach (OrderModel order in ordersResponse)
             {
@@ -138,9 +199,7 @@ namespace NextPark.Mobile.ViewModels
                     var parking = _profileService.GetParkingById(order.ParkingId);
                     if (parking != null) {
 
-                        TimeSpan remainingTime = order.EndDate - DateTime.Now;
-
-                        BookingList.Add(new UIBookingModel
+                        UIBookingModel booking = new UIBookingModel
                         {
                             UID = order.Id,
                             Index = count++,
@@ -148,10 +207,20 @@ namespace NextPark.Mobile.ViewModels
                             Cap = parking.Cap.ToString(),
                             City = parking.City,
                             Parking = (ParkingModel)parking,
-                            Time = string.Format("{0}:{1}", remainingTime.Hours.ToString(), remainingTime.Minutes.ToString()),
                             OnBookingDel = OnBookingDelete,
                             OnBookingTap = OnBookingTapped
-                        });
+                        };
+
+                        if (order.StartDate > DateTime.Now) {
+                            // Reservation
+                            booking.Time = order.StartDate.ToString("dd/MM/yy  HH:mm") + "\n" + order.EndDate.ToString("dd/MM/yy  HH:mm");
+                        } else {
+                            // Booking
+                            TimeSpan remainingTime = (order.EndDate - DateTime.Now);
+                            booking.Time = string.Format("{0:%h} h {0:%m} min", remainingTime);
+                        }
+
+                        BookingList.Add(booking);
                     }
 
                 }
@@ -169,7 +238,7 @@ namespace NextPark.Mobile.ViewModels
             }
             base.OnPropertyChanged("NoElementFound");
 
-            BookingListHeight = BookingList.Count * 50.0;
+            BookingListHeight = BookingList.Count * 50.0+2;
             base.OnPropertyChanged("BookingListHeight");
         }
 
@@ -235,6 +304,11 @@ namespace NextPark.Mobile.ViewModels
         public void OnBookingSwipedMethod(object args)
         {
             _dialogService.ShowAlert("Alert", "Swipe booking: " + args);
+        }
+
+        private static int CompareOrders(OrderModel a, OrderModel b)
+        {
+            return a.StartDate.CompareTo(b.StartDate);
         }
     }
 }

@@ -10,12 +10,11 @@
                     RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}">
 
                     <!-- External Frame container -->
-                    <Frame  Margin="0,-1,0,0"
+                    <Frame  Margin="0"
                             BorderColor="{TemplateBinding BorderColor}" 
                             BackgroundColor="White" 
                             HasShadow="false"
-                            Padding="6"
-                            HeightRequest="40"
+                            Padding="5"
                             MinimumHeightRequest="40"
                             CornerRadius="0"
                             IsClippedToBounds="true"
@@ -48,11 +47,11 @@
                                        TextColor="Gray"
                                        HorizontalTextAlignment="Start"/>
                                 <StackLayout Orientation="Horizontal" Spacing="2" HorizontalOptions="Start">
-                                    <Label  Text="{Binding Cap}"
+                                    <Label  Text="{TemplateBinding Cap}"
                                             FontSize="Small"
                                             FontAttributes="None"
                                             TextColor="Gray"/>
-                                    <Label  Text="{Binding City}"
+                                    <Label  Text="{TemplateBinding City}"
                                             FontSize="Small"
                                             FontAttributes="None"
                                             TextColor="Gray"/>
@@ -60,16 +59,16 @@
                             </StackLayout>
                             <!-- Booking remaining time -->
                             <StackLayout Spacing="0"
+                                         Orientation="Vertical"
                                          HorizontalOptions="EndAndExpand"
                                          VerticalOptions="Center"
                                          Grid.Row="0" Grid.Column="1">
-                                                                    
                                 <Label Text="{TemplateBinding Time}"
                                        FontSize="Small"
                                        FontAttributes="Bold"
                                        TextColor="Gray"
                                        HorizontalTextAlignment="End"
-                                       />
+                                       VerticalTextAlignment="Center"/>
                             </StackLayout>
                             <!-- Delete box -->
                             <Frame HeightRequest="40"
