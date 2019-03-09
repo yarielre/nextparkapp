@@ -223,8 +223,12 @@ namespace NextPark.Mobile.ViewModels
         // Navigate button click action
         public void OnNavigateMethod(object sender)
         {
-            // TODO: manage navigation to parking
-            _dialogService.ShowAlert("Alert", "TODO: manage navigation to parking");
+            // Get parking location
+            var location = new Xamarin.Essentials.Location(order.Parking.Latitude, order.Parking.Longitude);
+            // Set navigation options
+            var options = new Xamarin.Essentials.MapLaunchOptions { NavigationMode = Xamarin.Essentials.NavigationMode.Driving };
+            // Call native map application
+            Xamarin.Essentials.Map.OpenAsync(location, options);
         }
 
         // Delete button click action
@@ -284,6 +288,14 @@ namespace NextPark.Mobile.ViewModels
                     // Update order price
                     TimeSpan totalTime = order.EndDate - order.StartDate;
                     order.Price = totalTime.TotalHours * order.Parking.PriceMin;
+                    // Check user balance
+                    if (AuthSettings.User.Balance < order.Price)
+                    {
+                        // Not enough credit
+                        await _dialogService.ShowAlert("Attenzione", "Credito insufficiente");
+                        await NavigationService.NavigateToAsync<MoneyViewModel>();
+                        return;
+                    }
                     // Send order update
                     var result = await _orderDataService.EditOrderAsync(order.Id, order);
                     if (result != null)

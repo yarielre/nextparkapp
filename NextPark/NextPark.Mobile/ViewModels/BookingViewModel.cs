@@ -59,7 +59,6 @@ namespace NextPark.Mobile.ViewModels
         private readonly IOrderDataService _orderDataService;
 
         // PRIVATE VARIABLES
-        private static bool activity = false;
         private UIParkingModel _parking;
 
         // METHODS
@@ -198,14 +197,23 @@ namespace NextPark.Mobile.ViewModels
         // Booking button click action
         public void OnBookingMethod(object sender)
         {
-            // TODO: execute payment
+            // Compute price
+            double orderPrice = Time.TotalHours * _parking.PriceMin;
+            // Check user balance
+            if (AuthSettings.User.Balance < orderPrice) {
+                // Not enough credit
+                _dialogService.ShowAlert("Attenzione", "Credito insufficiente");
+                NavigationService.NavigateToAsync<MoneyViewModel>();
+                return;
+            }
+
             // TODO: fill book data according to add book backend method
             OrderModel order = new OrderModel
             {
                 ParkingId = _parking.Id,
                 StartDate = DateTime.Now,
                 EndDate = DateTime.Now + Time,
-                Price = Time.TotalHours * _parking.PriceMin,
+                Price = orderPrice,
                 UserId = int.Parse(AuthSettings.UserId)
             };
 
@@ -265,6 +273,7 @@ namespace NextPark.Mobile.ViewModels
             try {
                 var result = await _orderDataService.CreateOrderAsync(order);
 
+                // Hide activity spinner
                 IsRunning = false;
                 base.OnPropertyChanged("IsRunning");
 

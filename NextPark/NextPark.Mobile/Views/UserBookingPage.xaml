@@ -2,6 +2,7 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms" 
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:controls="clr-namespace:NextPark.Mobile.Controls"
+             xmlns:ios="clr-namespace:Xamarin.Forms.PlatformConfiguration.iOSSpecific;assembly=Xamarin.Forms.Core" 
              BindingContext="{Binding UserBooking, Source={StaticResource Locator}}"             
              x:Class="NextPark.Mobile.Views.UserBookingPage">
     <ContentPage.Content>
@@ -34,35 +35,37 @@
                            Padding="-1"
                            Margin="-5,0,-5,0"
                            IsClippedToBounds="true">
-                        <StackLayout Orientation="Vertical" Spacing="0">
+                        <StackLayout Orientation="Vertical" Spacing="0">       
                             <ListView x:Name="BookingListView"
                                       ItemsSource="{Binding BookingList}"
                                       HasUnevenRows="true"
-                                      SeparatorVisibility="None"
+                                      SeparatorVisibility="Default" ios:ListView.SeparatorStyle="FullWidth"
                                       ItemSelected="OnItemSelected"
                                       ItemTapped="OnItemTapped"
                                       RowHeight="50"
                                       HeightRequest="{Binding BookingListHeight}"
                                       SelectionMode="None"
-                                      BackgroundColor="Transparent">
+                                      BackgroundColor="White">                         
                                 <ListView.ItemTemplate>
                                     <DataTemplate>
                                         <ViewCell Height="50">
-                                            <controls:UserBookingItem BorderColor="Gray" 
+                                            <controls:UserBookingItem BorderColor="Transparent" 
                                                                       Identifier="{Binding Index}"
                                                                       Address="{Binding Address}"
+                                                                      Cap="{Binding Cap}"
                                                                       City="{Binding City}"
                                                                       Time="{Binding Time}"
                                                                       TapAction="{Binding OnBookingTap}"
-                                                                      DelAction="{Binding OnBookingDel}"
-                                                                      />
+                                                                      DelAction="{Binding OnBookingDel}">
+                                            </controls:UserBookingItem>
                                         </ViewCell>
                                     </DataTemplate>
                                 </ListView.ItemTemplate>
                             </ListView>
                         </StackLayout>
                     </Frame>
-            </StackLayout></controls:DetailPage>
+                </StackLayout>
+            </controls:DetailPage>
         </ContentView>
     </ContentPage.Content>
 </ContentPage>

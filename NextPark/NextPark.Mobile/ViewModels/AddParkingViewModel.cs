@@ -70,9 +70,16 @@ namespace NextPark.Mobile.ViewModels
 
         // PRIVATE VARIABLES
         private bool _isAuthorized;
+        private bool _addressUpdated;
         private bool _editing;
         private MediaFile mediaFile;
         private ParkingModel _parking;
+
+        private string _autoAddress { get; set; }
+        private string _autoCap { get; set; }
+        private string _autoCity { get; set; }
+        private double _autoLatitude { get; set; }
+        private double _autoLongitude { get; set; }
 
         // METHODS
         public AddParkingViewModel(IDialogService dialogService,
@@ -305,7 +312,7 @@ namespace NextPark.Mobile.ViewModels
             }
             // Position
             if (!error && !_isAuthorized) {
-                _dialogService.ShowAlert("Attenzione", "La foto e la posizione sono obbligatorie");
+                _dialogService.ShowAlert("Attenzione", "Non è stata rilevata una posizione valida. Cancellare l'indirizzo e scattare una foto al parcheggio.");
                 error = true;
             }
 
@@ -315,6 +322,23 @@ namespace NextPark.Mobile.ViewModels
         // Add Parking button action
         public void OnAddParkingMethod(object sender)
         {
+            OnAddParkingAsync();
+        }
+
+        public async void OnAddParkingAsync()
+        {
+            // Check if address has been changed by user
+            if (!_autoAddress.Equals(Address) || !_autoCap.Equals(Cap) || !_autoCity.Equals(City))
+            {
+                // use user data to get position
+                _isAuthorized = await GetLocationByAddress();
+            } else {
+                // use camera position otherwise
+                Latitude = _autoLatitude;
+                Longitude = _autoLongitude;
+            }
+
+            // Check input data
             if (!AddParkingDataCheck()) {
 
                 // Create model 
@@ -495,22 +519,29 @@ namespace NextPark.Mobile.ViewModels
                     // TODO: ask for location, location is a must have!
                     return false;
                 }
-                Longitude = getLocation.Longitude;
-                Latitude = getLocation.Latitude;
+
+                _autoLatitude = getLocation.Latitude;
+                _autoLongitude = getLocation.Longitude;
 
                 var result = await _geoLocatorService.GetAddressForPosition(getLocation);
 
                 foreach (var address in result)
                 {
-                    Cap = address.PostalCode;
-                    Address = address.Thoroughfare + " " + address.SubThoroughfare;
-                    City = address.Locality;
-                    base.OnPropertyChanged("Cap");
-                    base.OnPropertyChanged("Address");
-                    base.OnPropertyChanged("City");
+                    _autoCap = address.PostalCode;
+                    _autoAddress = address.Thoroughfare + " " + address.SubThoroughfare;
+                    _autoCity = address.Locality;
+
+                    if (string.IsNullOrEmpty(Address))
+                    {
+                        Cap = _autoCap;
+                        Address = _autoAddress;
+                        City = _autoCity;
+                        base.OnPropertyChanged("Cap");
+                        base.OnPropertyChanged("Address");
+                        base.OnPropertyChanged("City");
+                    }
                     break;
                 }
-
                 return true;
             }
             catch (Exception ex)
@@ -518,6 +549,31 @@ namespace NextPark.Mobile.ViewModels
                 // _loggerService.LogVerboseException(ex, this).ShowVerboseException(ex, this).ThrowVerboseException(ex, this);
             }
             return false;
+        }
+
+        public async Task<bool> GetLocationByAddress()
+        {
+            try {
+                string SearchText = Address + " " + Cap + " " + City;
+                var result = await _geoLocatorService.GetPositionForAddress(SearchText);
+                if (result == null)
+                {
+                    // no results found
+                    return false;
+                }
+
+                foreach (var location in result)
+                {
+                    Longitude = location.Longitude;
+                    Latitude = location.Latitude;
+                    return true;
+                }
+                // no results found
+                return false;
+
+            } catch (Exception e) {
+                return false;
+            }
         }
     }
 }

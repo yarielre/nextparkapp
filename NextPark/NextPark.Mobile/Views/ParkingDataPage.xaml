@@ -7,7 +7,7 @@
              x:Class="NextPark.Mobile.Views.ParkingDataPage">
     <ContentPage.Content>
         <ContentView>
-            <controls:DetailPage x:Name="header"
+            <controls:DetailStaticPage x:Name="header"
                                 HeaderBackText="{Binding BackText}"
                                 IsHeaderBackVisible="true"
                                 HeaderBackAction="{Binding OnBackClick}"                               
@@ -16,7 +16,7 @@
                                 HeaderMoney="{Binding UserMoney}"
                                 HeaderMoneyAction="{Binding OnMoneyClick}">
                                 
-                <StackLayout Orientation="Vertical" VerticalOptions="Fill" Spacing="5">
+                <StackLayout Orientation="Vertical" VerticalOptions="Fill" Spacing="5" Margin="0">
                     
                     <!-- Parking Informations group -->
                     <Grid Margin="0,0,0,0" Padding="0">
@@ -94,7 +94,7 @@
                     
                     <!-- Separator -->
                     <BoxView HeightRequest="1"
-                             Margin="0,5,0,10"
+                             Margin="0,-5,0,5"
                              HorizontalOptions="FillAndExpand"
                              BackgroundColor="Gray"/>
                     
@@ -106,23 +106,23 @@
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
-                        <Label x:Name="activeLabel" 
-                               Text="{Binding ActiveStatusText}"
-                               TextColor="Gray"
-                               FontSize="Medium" 
-                               FontAttributes="None" 
-                               VerticalOptions="Center"
-                               HorizontalOptions="End"
-                               Margin="0"
-                               Grid.Row="0" Grid.Column="0"/>
-                        <Switch BackgroundColor="White"
-                                OnColor="#8CC63F"
-                                IsToggled="{Binding ActiveSwitchToggled}"
-                                Margin="10,0,0,0"
-                                VerticalOptions="Start"
-                                Grid.Row="0" Grid.Column="1"/>
+                        <StackLayout Orientation="Horizontal" HorizontalOptions="Start" Spacing="5" Grid.Row="0" Grid.Column="0">
+                            <Switch BackgroundColor="White"
+                                    OnColor="#8CC63F"
+                                    IsToggled="{Binding ActiveSwitchToggled}"
+                                    Margin="10,0,0,0"
+                                    VerticalOptions="Center"/>
+                            <Label  x:Name="activeLabel" 
+                                    Text="{Binding ActiveStatusText}"
+                                    TextColor="Gray"
+                                    FontSize="Medium" 
+                                    FontAttributes="None" 
+                                    VerticalOptions="Center"
+                                    VerticalTextAlignment="Center"
+                                    HorizontalOptions="End"
+                                    Margin="0"/>
+                        </StackLayout>
                         <Frame BackgroundColor="#8CC63F"
                                HasShadow="false"
                                IsClippedToBounds="true"
@@ -133,7 +133,7 @@
                                Padding="0"
                                VerticalOptions="Center"
                                HorizontalOptions="End"
-                               Grid.Row="0" Grid.Column="2">
+                               Grid.Row="0" Grid.Column="1">
                                <Image Source="icon_add_48.png"
                                       HeightRequest="20"
                                       WidthRequest="20"
@@ -337,6 +337,7 @@
                                                  Margin="0"
                                                  Padding="0"
                                                  Opacity="0.8"
+                                                 IsClippedToBounds="true"
                                                  RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.45}"
                                                  RelativeLayout.YConstraint="{Binding yConstPosition}"
                                                  RelativeLayout.XConstraint="{Binding xConstPosition}">
@@ -357,7 +358,7 @@
                     </controls:DayView>
                     
                 </StackLayout>
-            </controls:DetailPage>
+            </controls:DetailStaticPage>
         </ContentView>
     </ContentPage.Content>                
 </ContentPage>
