@@ -47,7 +47,7 @@ namespace NextPark.Api.Controllers
             var user = _userManager.Users.FirstOrDefault(u => u.Id == id);
             if (user == null)
                 return BadRequest("User not found");
-            user.Balance = user.Balance + balance;
+            user.Balance = user.Balance =+ balance;
             try
             {
                 var increaseBalanceTransaction = new Transaction
