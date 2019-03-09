@@ -20,18 +20,22 @@ namespace NextPark.Mobile.ViewModels
         private readonly IEventDataService _eventDataService;
         private readonly IParkingDataService _parkingDataService;
         private readonly IOrderDataService _orderDataService;
+        private readonly IPurchaseDataService _purchaseDataService;
 
         private bool _startButtonEnabled;
         private string _resultConsole;
         private StringBuilder _consoleBuffer;
 
+        public UserModel LoggedUser { get; set; }
+
         public TestViewModel(IApiService apiService, IAuthService authService, INavigationService navService,
-            IEventDataService eventDataService, IParkingDataService parkingDataService, IOrderDataService orderDataService) : base(apiService, authService,
+            IEventDataService eventDataService, IParkingDataService parkingDataService, IOrderDataService orderDataService, IPurchaseDataService purchaseDataService) : base(apiService, authService,
             navService)
         {
             _eventDataService = eventDataService;
             _parkingDataService = parkingDataService;
             _orderDataService = orderDataService;
+            _purchaseDataService = purchaseDataService;
 
             CleanConsoleAsync();
 
@@ -44,7 +48,7 @@ namespace NextPark.Mobile.ViewModels
             get => _startButtonEnabled;
             set => SetValue(ref _startButtonEnabled, value);
         }
-        
+
 
         public string ResultConsole
         {
@@ -113,6 +117,7 @@ namespace NextPark.Mobile.ViewModels
                 if (userData.IsSuccess)
                 {
                     AddLineToConsole("Full user information OK");
+                    this.LoggedUser = userData.Result as UserModel;
                 }
                 else
                 {
@@ -158,9 +163,9 @@ namespace NextPark.Mobile.ViewModels
 
         #region Parking Test
 
-       
 
-      
+
+
         private async Task ParkingServiceTest()
         {
             AddLineToConsole("-------------------------------------------");
@@ -199,7 +204,7 @@ namespace NextPark.Mobile.ViewModels
             {
                 AddLineToConsole("Creating the parking FAILED");
             }
-           
+
             var eventParking = new EventModel
             {
                 StartDate = DateTime.Now,
@@ -209,7 +214,7 @@ namespace NextPark.Mobile.ViewModels
                 RepetitionType = Enums.Enums.RepetitionType.Dayly
             };
 
-           // postedParking.Status = Enums.Enums.ParkingStatus.Disabled;
+            // postedParking.Status = Enums.Enums.ParkingStatus.Disabled;
 
             var result = await _eventDataService.CreateEventAsync(eventParking);
 
@@ -357,9 +362,10 @@ namespace NextPark.Mobile.ViewModels
             {
                 AddLineToConsole("Getting parking events FAILED");
             }
-         
+
             var firstRepitedEvent = parkingEvents.FirstOrDefault(e => e.RepetitionId != Guid.Empty);
-            if (firstRepitedEvent != null) {
+            if (firstRepitedEvent != null)
+            {
                 AddLineToConsole("Editing all events of the selected parking by series");
                 AddLineToConsole("Editing all events repetition end date to more 5 days");
                 firstRepitedEvent.RepetitionEndDate = firstRepitedEvent.RepetitionEndDate.AddDays(5);
@@ -368,7 +374,7 @@ namespace NextPark.Mobile.ViewModels
 
                 if (editedEvents != null)
                 {
-                   
+
                     AddLineToConsole("Editing parking events by series OK");
                 }
                 else
@@ -415,7 +421,6 @@ namespace NextPark.Mobile.ViewModels
 
             AddLineToConsole("-------------------------------------------");
             AddLineToConsole("TESTING ORDER SERVICE...");
-            AddLineToConsole("Working on it...");
 
             var order = new OrderModel
             {
@@ -424,7 +429,9 @@ namespace NextPark.Mobile.ViewModels
                 ParkingId = 1,
                 UserId = 1,
                 Price = 20,
-                PaymentCode = "drtrtrt"
+                PaymentCode = "drtrtrt",
+                OrderStatus = Enums.OrderStatus.Actived,
+                PaymentStatus = PaymentStatus.Pending
             };
             AddLineToConsole("Creating one order...");
             var postedOrder = await _orderDataService.CreateOrderAsync(order).ConfigureAwait(false);
@@ -447,7 +454,20 @@ namespace NextPark.Mobile.ViewModels
         {
             AddLineToConsole("-------------------------------------------");
             AddLineToConsole("TESTING PURCHASE SERVICE...");
-            AddLineToConsole("Working on it...");
+
+            AddLineToConsole("Adding money...");
+            var purchaseModel = _purchaseDataService.BuyAmount(new PurchaseModel { CashToAdd = 10, UserId = this.LoggedUser.Id });
+
+            if (purchaseModel != null)
+            {
+                AddLineToConsole("Adding money... OK");
+
+            }
+            else
+            {
+                AddLineToConsole("Adding money... FAILED");
+            }
+
         }
         #endregion
 
@@ -472,6 +492,6 @@ namespace NextPark.Mobile.ViewModels
         }
 
         #endregion
-        
+
     }
 }
