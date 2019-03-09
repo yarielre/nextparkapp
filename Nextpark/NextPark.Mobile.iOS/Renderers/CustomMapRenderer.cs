@@ -17,7 +17,7 @@ namespace Inside.Xamarin.iOS.Renderers
 {
     public class CustomMKAnnotationView : MKAnnotationView
     {
-        public string Id { get; set; }
+        public string Type { get; set; }
 
         public string Url { get; set; }
 
@@ -31,11 +31,9 @@ namespace Inside.Xamarin.iOS.Renderers
     {
         private readonly UITapGestureRecognizer _tapRecogniser;
         private CustomMap _formsMap;
-        private static string annotationId = "NextParkAnnotation";
+        private static string NextParkAnnotationType = "NextParkAnnotation";
 
         private UIView customPinView;
-
-
 
         public CustomMapRenderer()
         {
@@ -91,46 +89,37 @@ namespace Inside.Xamarin.iOS.Renderers
             }
         }
 
-        //private void OnDidSelectAnnotationView(object sender, MKAnnotationViewEventArgs e)
-        //{
-        //    var pos = new Position(e.View.Annotation.Coordinate.Latitude, e.View.Annotation.Coordinate.Longitude);
-        //    var pin = _formsMap.Pins.First(p => p.Position == pos);
-        //    var customPin = pin as CustomPin;
-        //    if (customPin != null) ((CustomMap)Element).OnPinTap(customPin.Parking);
-        //}
-
         protected override MKAnnotationView GetViewForAnnotation(MKMapView mapView, IMKAnnotation annotation)
         {
             MKAnnotationView annotationView = null;
-
-     
+            // My Location is excluded
             if (annotation is MKUserLocation)
                 return null;
     
+            // Get Custom pin
             var customPin = GetCustomPin(annotation);
-
             if (customPin == null)
             {
+                // Pin not found
                 return null;
             }
 
-            annotationView = mapView.DequeueReusableAnnotation(annotationId);
-
+            // Use icon name to identify reusable annotation
+            annotationView = mapView.DequeueReusableAnnotation(customPin.Icon);
             if (annotationView == null)
             {
-                annotationView = new CustomMKAnnotationView(annotation, annotationId);//customPin.Id.ToString());
-
+                // If not yet created, create a new annotation with icon name as identifier
+                annotationView = new CustomMKAnnotationView(annotation, customPin.Icon);//customPin.Id.ToString());
                 annotationView.Image = UIImage.FromFile(customPin.Icon+".png").Scale(new CGSize(50.0, 50.0));
                 annotationView.CalloutOffset = new CGPoint(0, 0);
                 //annotationView.LeftCalloutAccessoryView = new UIImageView(UIImage.FromFile(customPin.Icon+".png"));
                 //annotationView.LeftCalloutAccessoryView = UIButton.FromType(UIButtonType.DetailDisclosure);
+                ((CustomMKAnnotationView)annotationView).Type = NextParkAnnotationType; // Use NextParkAnnotation to identify the NextPark annotation type
 
-                ((CustomMKAnnotationView)annotationView).Id = annotationId;
             }
 
             annotationView.CanShowCallout = true;
 
-           
             return annotationView;
         }
 
@@ -145,11 +134,10 @@ namespace Inside.Xamarin.iOS.Renderers
 
         void OnDidSelectAnnotationView(object sender, MKAnnotationViewEventArgs e)
         {
-            //var customView = e.View as CustomMKAnnotationView;
             var customView = (CustomMKAnnotationView)GetViewForAnnotation((MKMapView)sender, e.View.Annotation);
             customPinView = new UIView();
 
-            if (customView.Id == "NextParkAnnotation")
+            if ((customView != null) && (customView.Type.Equals(NextParkAnnotationType)))
             {
                 customPinView.Frame = new CGRect(0, 0, 200, 84);
                 //var image = new UIImageView(new CGRect(0, 0, 200, 84));
@@ -159,7 +147,11 @@ namespace Inside.Xamarin.iOS.Renderers
                 e.View.AddSubview(customPinView);
             }
             var customPin = GetCustomPin(e.View.Annotation);
-            ((CustomMap)Element).OnPinTap(customPin.Parking);
+            if (customPin != null)
+            {
+                // My Location excluded
+                ((CustomMap)Element).OnPinTap(customPin.Parking);
+            }
         }
 
         void OnDidDeselectAnnotationView(object sender, MKAnnotationViewEventArgs e)

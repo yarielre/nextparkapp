@@ -228,6 +228,7 @@ namespace NextPark.Mobile.ViewModels
                     }
                 }
 
+                Map.Pins.Clear();
                 foreach (UIParkingModel parking in _profileService.ParkingList)
                 {
                     // Add Map Pin
