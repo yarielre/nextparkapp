@@ -1,7 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -12,7 +9,9 @@ using NextPark.Domain.Entities;
 using NextPark.Enums.Enums;
 using NextPark.Models;
 using NextPark.Services;
-using NextPark.Services.Services.Interfaces;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace NextPark.Api.Controllers
 {

@@ -20,8 +20,15 @@ namespace NextPark.Data.Infrastructure
 
             if (_dbContext != null) return _dbContext;
             var dbContextBuilder = new DbContextOptionsBuilder();
-            dbContextBuilder.UseSqlServer(connectionString);
+            
+            //Using MSSQL SERVER
+            //dbContextBuilder.UseSqlServer(connectionString);
+
+            //Using POSTGRES SQL SERVER
+            dbContextBuilder.UseNpgsql(connectionString);
+            
             _dbContext = new ApplicationDbContext(dbContextBuilder.Options);
+            
             return _dbContext;
         }
 

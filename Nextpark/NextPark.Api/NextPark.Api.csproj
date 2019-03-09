@@ -7,8 +7,6 @@
 
   <ItemGroup>
     <Compile Remove="Controllers\BaseController.cs" />
-    <Compile Remove="Migrations\20190211225717_Changes.Designer.cs" />
-    <Compile Remove="Migrations\20190211225717_Changes.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -21,6 +19,8 @@
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.1.2" />
     <PackageReference Include="Microsoft.Azure.NotificationHubs" Version="2.0.2" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.6" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="2.1.1" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL.Design" Version="1.1.1" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="4.0.1" />
   </ItemGroup>
 

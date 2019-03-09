@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Net;
 using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using NextPark.Domain.Entities;
 
 namespace NextPark.Services
 {
@@ -13,6 +16,7 @@ namespace NextPark.Services
         string _password = "";
         string _smtpserver = "";
         int _port = 587;
+        private readonly ILogger<EmailSender> _logger;
 
         public EmailSender() //TODO: Inject Configs to get the init settings from json file.
         {
@@ -44,22 +48,63 @@ namespace NextPark.Services
         }
         public Task SendEmailAsync(string email, string subject, string message)
         {
-            SmtpClient client = new SmtpClient(_smtpserver);
+            var client = new SmtpClient(_smtpserver)
+            {
+                Port = _port,
+                DeliveryMethod = SmtpDeliveryMethod.Network,
+                UseDefaultCredentials = false
+            };
 
-            client.Port = _port;
-            client.DeliveryMethod = SmtpDeliveryMethod.Network;
-            client.UseDefaultCredentials = false;
-            System.Net.NetworkCredential credentials = new System.Net.NetworkCredential(_sender, _password);
+            var credentials = new NetworkCredential(_sender, _password);
             client.EnableSsl = true;
             client.Credentials = credentials;
 
-            var mail = new MailMessage(_sender, email.Trim())
+            try
             {
-                Subject = subject,
-                Body = message
-            };
+                var mail = new MailMessage(_sender.Trim(), email.Trim())
+                {
+                    IsBodyHtml = true,
+                    Subject = subject,
+                    Body = message
+                };
 
-            return client.SendMailAsync(_sender, email, subject, message);
+                client.Send(mail);
+
+                return Task.CompletedTask;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return Task.CompletedTask;
+            }
+        }
+
+        public void SendEmailToRegisteredUserAsync(ApplicationUser user)
+        {
+            //TODO Cambiar el asunto del correo 
+            var subject = "Docente confirmado";
+            var message = new StringBuilder();
+            message.Append(
+                $"<p>{user.Name} {user.Lastname}, ora fai parte di una community che collega docenti selezionati" +
+                " con studenti di tutta la Svizzera. Trova un allievo con cui esplorare" +
+                " numerose materie, trasmettere le tue conoscenze e costruire il futuro dell’istruzione.</p>" +
+                "<br/>" +
+                "<div>Studenti proveniente da tutte le scuole:</div>" +
+                "<div> •Elementari</div>" +
+                "<div> •Medie</div>" +
+                "<div> •Scuole medie superiori</div>" +
+                "<div> •Università</div>" +
+
+                "<p>Non ti resta che attendere le tue lezioni, ti notificheremo ogniqualvolta " +
+                "troveremo una lezione compatibile con la tua registrazione!</p>" +
+               "<p style=\"font-size: 18px\">Inviato con il ♥ da Work IN Pair WORK IN PAIRS " +
+                "Sagl, 6500 Bellinzona, +41 79 383 62 33</p>"
+
+            );
+
+            var body = $"<HTML><head></head><body style=\"font-family: Arial;font-size: 12px\">{message.ToString()}</body></HTML>";
+
+            SendEmailAsync(user.Email, subject, body);
         }
 
 

@@ -18,7 +18,12 @@ namespace NextPark.Data
 
             var connectionString = configuration.GetConnectionString("DefaultConnection");
 
-            builder.UseSqlServer(connectionString, b => b.MigrationsAssembly("NextPark.Api"));
+            //Using MSSQL SERVER
+            //builder.UseSqlServer(connectionString, b => b.MigrationsAssembly("NextPark.Api"));
+
+            //Using POSTGRES SQL SERVER
+            builder.UseNpgsql(connectionString, b => b.MigrationsAssembly("NextPark.Api"));
+            
 
             return new ApplicationDbContext(builder.Options);
         }
