@@ -149,12 +149,6 @@ namespace Inside.Xamarin.iOS.Renderers
                 var customPin = GetCustomPin(e.View.Annotation);
                 ((CustomMap)Element).OnPinTap(customPin.Parking);
             }
-            var customPin = GetCustomPin(e.View.Annotation);
-            if (customPin != null)
-            {
-                // My Location excluded
-                ((CustomMap)Element).OnPinTap(customPin.Parking);
-            }
         }
 
         void OnDidDeselectAnnotationView(object sender, MKAnnotationViewEventArgs e)
