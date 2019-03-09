@@ -77,7 +77,8 @@
                                             BorderRadius="8"
                                             BackgroundColor="Red"
                                             WidthRequest="191"
-                                            Margin="0"/>
+                                            Margin="0"
+                                            IsVisible="false"/>
                                 </StackLayout>
                           </StackLayout>
                       </StackLayout>
