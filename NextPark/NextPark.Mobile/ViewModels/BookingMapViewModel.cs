@@ -288,6 +288,14 @@ namespace NextPark.Mobile.ViewModels
                     // Update order price
                     TimeSpan totalTime = order.EndDate - order.StartDate;
                     order.Price = totalTime.TotalHours * order.Parking.PriceMin;
+                    // Check user balance
+                    if (AuthSettings.User.Balance < order.Price)
+                    {
+                        // Not enough credit
+                        await _dialogService.ShowAlert("Attenzione", "Credito insufficiente");
+                        await NavigationService.NavigateToAsync<MoneyViewModel>();
+                        return;
+                    }
                     // Send order update
                     var result = await _orderDataService.EditOrderAsync(order.Id, order);
                     if (result != null)
