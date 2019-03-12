@@ -146,7 +146,12 @@ namespace NextPark.Mobile.ViewModels
                         AllDaySwitchToggled = true;
                         AllDayTextColor = Color.Black;
 
-                        StartDate = DateTime.Now.Date;
+                        if (_event.StartDate < DateTime.Now.Date)
+                        {
+                            StartDate = DateTime.Now.Date;
+                        } else {
+                            StartDate = _event.StartDate.Date;
+                        }
                         StartTime = DateTime.Now.TimeOfDay;
                         EndDate = DateTime.Now.Date;
                         EndTime = DateTime.Now.TimeOfDay;
@@ -338,6 +343,9 @@ namespace NextPark.Mobile.ViewModels
                     _event.RepetitionType = RepetitionType.Weekly;
                     break;
             }
+            // Remove seconds from timing
+            StartTime.Subtract(TimeSpan.FromSeconds(StartTime.Seconds));
+            EndTime.Subtract(TimeSpan.FromSeconds(EndTime.Seconds));
 
             _event.StartDate = StartDate + StartTime;
             _event.EndDate = StartDate + EndTime;
