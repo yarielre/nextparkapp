@@ -107,14 +107,14 @@
                                            FontSize="Small" 
                                            HorizontalOptions="Start" VerticalOptions="Center"
                                            Grid.Row="0" Grid.Column="0"/>
-                                    <DatePicker HorizontalOptions="Center" FontSize="Small"
+                                    <DatePicker HorizontalOptions="Fill" FontSize="Small"
                                                 Grid.Row="0" Grid.Column="1"
                                                 Date="{Binding StartDate}"
                                                 MinimumDate="{Binding MinStartDate}">
                                         <DatePicker.Format>dd/MM/yyyy</DatePicker.Format>
                                     </DatePicker>
                                     <TimePicker FontSize="Small"
-                                                HorizontalOptions="End"
+                                                HorizontalOptions="Fill"
                                                 Grid.Row="0" Grid.Column="2"
                                                 Time="{Binding StartTime}">
                                         <TimePicker.Format>HH:mm</TimePicker.Format>
@@ -123,14 +123,14 @@
                                            FontSize="Small" 
                                            HorizontalOptions="Start" VerticalOptions="Center"
                                            Grid.Row="1" Grid.Column="0"/>
-                                    <DatePicker HorizontalOptions="Center" FontSize="Small"
+                                    <DatePicker HorizontalOptions="Fill" FontSize="Small"
                                                 Grid.Row="1" Grid.Column="1"
                                                 Date="{Binding EndDate}"
                                                 MinimumDate="{Binding MinEndDate}">
                                         <DatePicker.Format>dd/MM/yyyy</DatePicker.Format>
                                     </DatePicker>
                                     <TimePicker FontSize="Small"
-                                                HorizontalOptions="End"
+                                                HorizontalOptions="Fill"
                                                 Grid.Row="1" Grid.Column="2"
                                                 Time="{Binding EndTime}"/>
                                     
