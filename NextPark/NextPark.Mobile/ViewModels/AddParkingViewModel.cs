@@ -15,7 +15,7 @@ namespace NextPark.Mobile.ViewModels
     public class AddParkingViewModel : BaseViewModel
     {
         private const double PRICE_MIN = 1.50;
-        private const double PRICE_MAX = 6.00;
+        private const double PRICE_MAX = 10.00;
 
         // PROPERTIES
         public string BackText { get; set; }        // Header back text
@@ -111,6 +111,11 @@ namespace NextPark.Mobile.ViewModels
             OnDelParking = new Command<object>(OnDelParkingMethod);
             OnPriceMinDown = new Command(OnPriceMinDownMethod);
             OnPriceMinUp = new Command(OnPriceMinUpMethod);
+
+            // auto address init
+            _autoAddress = "";
+            _autoCap = "";
+            _autoCity = "";
         }
 
         // Initialization
