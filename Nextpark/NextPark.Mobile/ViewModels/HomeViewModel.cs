@@ -244,25 +244,29 @@ namespace NextPark.Mobile.ViewModels
 
                 // Get Events
                 var eventsResult = await _eventDataService.GetAllEventsAsync();
-                if (eventsResult.Count == 0) return;
-                foreach(EventModel availability in eventsResult)
+                if ((eventsResult != null) && (eventsResult.Count != 0))
                 {
-                    UIParkingModel parkingModel = _profileService.GetParkingById(availability.ParkingId);
-                    if (parkingModel != null) {
-                        parkingModel.Events.Add(availability);
-                    }
-                }
-
-                // Get orders
-                var ordersResult = await _orderDataService.GetAllOrdersAsync();
-                if ((ordersResult != null) && (ordersResult.Count != 0))
-                {
-                    foreach (OrderModel order in ordersResult)
+                    foreach (EventModel availability in eventsResult)
                     {
-                        UIParkingModel parkingModel = _profileService.GetParkingById(order.ParkingId);
+                        UIParkingModel parkingModel = _profileService.GetParkingById(availability.ParkingId);
                         if (parkingModel != null)
                         {
-                            parkingModel.Orders.Add(order);
+                            parkingModel.Events.Add(availability);
+                        }
+                    }
+
+
+                    // Get orders
+                    var ordersResult = await _orderDataService.GetAllOrdersAsync();
+                    if ((ordersResult != null) && (ordersResult.Count != 0))
+                    {
+                        foreach (OrderModel order in ordersResult)
+                        {
+                            UIParkingModel parkingModel = _profileService.GetParkingById(order.ParkingId);
+                            if (parkingModel != null)
+                            {
+                                parkingModel.Orders.Add(order);
+                            }
                         }
                     }
                 }
