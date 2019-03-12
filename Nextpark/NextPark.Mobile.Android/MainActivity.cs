@@ -6,16 +6,18 @@ using Plugin.InAppBilling;
 using Android.Content;
 using Xamarin.Forms;
 using NextPark.Mobile.ViewModels;
+using Android.Views;
 
 namespace NextPark.Mobile.Droid
 {
-    [Activity(Label = "NextPark.Mobile", Icon = "@mipmap/icon", Theme = "@style/MainTheme", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
+    [Activity(Label = "NextPark", Icon = "@mipmap/icon", Theme = "@style/MainTheme", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
     public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
     {
         protected override void OnCreate(Bundle savedInstanceState)
         {
             TabLayoutResource = Resource.Layout.Tabbar;
             ToolbarResource = Resource.Layout.Toolbar;
+            base.SetTheme(Resource.Style.MainTheme);
 
             base.OnCreate(savedInstanceState);
 
