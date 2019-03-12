@@ -122,7 +122,6 @@ namespace NextPark.Mobile.ViewModels
                     PictureAspect = Aspect.AspectFill;
                 }
                 FullPrice = _parking.PriceMin.ToString("N2") + " CHF/h";
-                FullAvailability = (_parking.isFree()) ? "Disponibile" : "Occupato";
                 base.OnPropertyChanged("Info");
                 base.OnPropertyChanged("SubInfo");
                 base.OnPropertyChanged("Picture");
@@ -144,6 +143,12 @@ namespace NextPark.Mobile.ViewModels
                 EndDate = booking.EndDate.Date;
                 EndTime = booking.EndDate.TimeOfDay;
                 MinEndDate = booking.StartDate.Date;
+
+                // Remove seconds from times
+                StartTime.Subtract(TimeSpan.FromSeconds(StartTime.Seconds));
+                EndTime.Subtract(TimeSpan.FromSeconds(EndTime.Seconds));
+                bool isFree = _parking.isFree(StartDate + StartTime, EndDate + EndTime);
+                FullAvailability = (isFree) ? "Disponibile" : "Occupato";
 
                 base.OnPropertyChanged("StartDate");
                 base.OnPropertyChanged("StartTime");

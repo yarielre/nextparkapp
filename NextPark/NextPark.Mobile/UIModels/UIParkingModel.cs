@@ -54,5 +54,48 @@ namespace NextPark.Mobile.UIModels
             }
             return false;
         }
+
+        public bool isFree(DateTime start, DateTime end)
+        {
+            DateTime tempStart = start;
+            bool available = false;
+
+            if (Status == Enums.Enums.ParkingStatus.Disabled)
+            {
+                // Parking disactivated by owner
+                return false;
+            }
+
+            foreach (EventModel availability in Events)
+            {
+                if ((availability.StartDate <= tempStart) && (availability.EndDate > tempStart))
+                {
+                    if (availability.EndDate > end)
+                    {
+                        available = true;
+                        break;
+                    } else {
+                        // Search for contiguous next event
+                        tempStart = availability.EndDate.AddMinutes(1);
+                    }
+                }
+            }
+
+            if (available == true) {
+                foreach (OrderModel order in Orders)
+                {
+                    if ((order.EndDate > start) && (order.StartDate < end))
+                    {
+                        // order already present (overlap at start, inside actual request, overlap at end)
+                        return false;
+                    }
+                }
+                // No previous orders found, parking id free
+                return true;
+            }
+
+            // Parking not available
+            return false;
+        }
     }
 }

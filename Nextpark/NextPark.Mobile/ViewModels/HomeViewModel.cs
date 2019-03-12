@@ -271,16 +271,27 @@ namespace NextPark.Mobile.ViewModels
                     }
                 }
 
-                Map.Pins.Clear();
-                foreach (UIParkingModel parking in _profileService.ParkingList)
-                {
-                    // Add Map Pin
-                    CreatePin(new Position(parking.Latitude, parking.Longitude), parking);
-                }
+                RefreshMapPins();
+
             }
             catch (Exception e) {
                 _dialogService.ShowToast(e.Message, TimeSpan.FromSeconds(10));
                 Xamarin.Forms.Device.StartTimer(TimeSpan.FromSeconds(9), () => { UpdateParkingList(); return false; });
+            }
+        }
+
+        private void RefreshMapPins()
+        {
+            if ((mapReady == false) || (Map == null) || (Map.Pins == null)) {
+                // Map not ready
+                return;
+            }
+
+            Map.Pins.Clear();
+            foreach (UIParkingModel parking in _profileService.ParkingList)
+            {
+                // Add Map Pin
+                CreatePin(new Position(parking.Latitude, parking.Longitude), parking);
             }
         }
 
@@ -350,6 +361,18 @@ namespace NextPark.Mobile.ViewModels
 
         private void CreatePin(Position position, UIParkingModel parking)
         {
+            // Get parking status
+            bool isFree = false;
+            if (_profileService.UserReserveMode) {
+                // Remove seconds from times
+                ResStartTime.Subtract(TimeSpan.FromSeconds(ResStartTime.Seconds));
+                ResEndTime.Subtract(TimeSpan.FromSeconds(ResEndTime.Seconds));
+                isFree = parking.isFree(ResStartDate + ResStartTime, ResEndDate + ResEndTime);
+            } else {
+                isFree = parking.isFree();
+            }
+
+            // Create new custom pin
             var pin = new CustomPin
             {
                 Id = parking.Id,
@@ -358,7 +381,7 @@ namespace NextPark.Mobile.ViewModels
                 Position = position,
                 Label = parking.Address,
                 Address = parking.Cap.ToString() + " " + parking.City,
-                Icon = (parking.isFree()) ? "icon_pin_green_256" : "icon_pin_red_256"
+                Icon = (isFree) ? "icon_pin_green_256" : "icon_pin_red_256"
             };
 
             Map.Pins.Add(pin);
@@ -552,6 +575,8 @@ namespace NextPark.Mobile.ViewModels
             base.OnPropertyChanged("ReserveModeBackColor");
             base.OnPropertyChanged("ReserveModeTextColor");
             base.OnPropertyChanged("ReserveDatesVisible");
+
+            RefreshMapPins();
         }
 
         public void OnReserveDatesTapMethod()
@@ -570,6 +595,8 @@ namespace NextPark.Mobile.ViewModels
             base.OnPropertyChanged("ResEndText");
             _profileService.UserStartDate = ResStartDate + ResStartTime;
             _profileService.UserEndDate = ResEndDate + ResEndTime;
+
+            RefreshMapPins();
         }
 
         public void OnHideReserveDatesPopupMethod()

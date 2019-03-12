@@ -191,7 +191,7 @@ namespace NextPark.Mobile.ViewModels
 
             MyDayContent.ScrollTo((int)DateTime.Now.TimeOfDay.TotalMinutes);
 
-            ChangeSelectedDay(DateTime.Now);
+            ChangeSelectedDay(DateTime.Now.Date);
 
             return Task.FromResult(false);
         }
@@ -271,7 +271,7 @@ namespace NextPark.Mobile.ViewModels
         public void OnAddAvailabilityMethod(object sender)
         {
             // TODO: Add availability
-            NavigationService.NavigateToAsync<AddEventViewModel>(new EventModel { ParkingId = _parking.UID});
+            NavigationService.NavigateToAsync<AddEventViewModel>(new EventModel { ParkingId = _parking.UID, StartDate=SelectedDay.Date});
         }
 
         // Go to previous week
@@ -477,10 +477,15 @@ namespace NextPark.Mobile.ViewModels
 
                     TimeSpan duration = end - start;
 
+                    // Temporary put busy if car plate is not present
+                    if (string.IsNullOrEmpty(order.CarPlate)) {
+                        order.CarPlate = "Occupato";
+                    }
+
                     TempCalendarEvents.Add(new UICalendarEventModel
                     {
                         Index = TempCalendarEvents.Count,
-                        Text = "Disponibile",
+                        Text = order.CarPlate,
                         StartSeconds = 0,
                         DurationSeconds = (int)duration.TotalMinutes,
                         EventColor = (order.OrderStatus == Enums.OrderStatus.Finished) ? Color.LightSkyBlue: Color.Red,
