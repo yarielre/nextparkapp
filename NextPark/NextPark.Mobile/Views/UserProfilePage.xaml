@@ -14,7 +14,7 @@
                                HeaderUserAction="{Binding OnUserClick}"
                                HeaderMoney="{Binding UserMoney}"
                                HeaderMoneyAction="{Binding OnMoneyClick}">
-                
+                               
                 <StackLayout HorizontalOptions="FillAndExpand" Padding="10,0,10,0" Spacing="0">
                     <controls:UserProfileItem Title="Dati utente"
                                               BackgroundColor="White"
@@ -124,8 +124,38 @@
                                    FontSize="Small"
                                    FontAttributes="None" />
                         </StackLayout>
-                    </controls:UserProfileItem>                     
-                </StackLayout>
+                    </controls:UserProfileItem>
+                    <controls:UserProfileItem Title="Servizio clienti"
+                                              BackgroundColor="White"
+                                              BorderColor="#8CC63F"
+                                              Icon="icon_service_256.png"
+                                              LinkEnable="false"
+                                              ClickAction="">
+                        <StackLayout Spacing="1" HorizontalOptions="StartAndExpand">
+                            <Label FontAttributes="None">
+                                <Label.FormattedText>
+                                    <FormattedString>
+                                        <Span Text="www.nextpark.ch"
+                                              TextColor="Blue"
+                                              TextDecorations="Underline"
+                                              FontSize="Small">
+                                            <Span.GestureRecognizers>
+                                                <TapGestureRecognizer Command="{Binding OnCommandClick}"
+                                                                      CommandParameter="http://www.nextpark.ch" />
+                                            </Span.GestureRecognizers>
+                                        </Span>
+                                    </FormattedString>
+                                </Label.FormattedText>
+                            </Label>
+                            <Label Text="Mail: info@nextpark.ch"
+                                   FontSize="Small"
+                                   FontAttributes="None" />
+                            <Label Text="Tel: +41793836233"
+                                   FontSize="Small"
+                                   FontAttributes="None" />
+                        </StackLayout>
+                    </controls:UserProfileItem>
+                </StackLayout>                
             </controls:BasePage>
         </ContentView>
     </ContentPage.Content>

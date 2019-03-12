@@ -142,6 +142,7 @@
     <AndroidResource Include="Resources\drawable\icon_wrench_256.png" />
     <AndroidResource Include="Resources\drawable\image_bg_nextpark.png" />
     <AndroidResource Include="Resources\drawable\image_parking1.png" />
+    <AndroidResource Include="Resources\drawable\icon_service_256.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\drawable-hdpi\" />

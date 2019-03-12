@@ -41,6 +41,8 @@ namespace NextPark.Mobile.ViewModels
         // User bookings
         public string NextBooking { get; set; }         // Next booking descriprion, or no bookings
         public ICommand OnBookingsAction { get; set; }  // Bookings selection action
+        // Customer service
+        public ICommand OnCommandClick { get; set; }
 
         // SERVICES
         private readonly IDialogService _dialogService;
@@ -70,6 +72,7 @@ namespace NextPark.Mobile.ViewModels
             OnBudgetAction = new Command(OnBudgetClickMethod);
             OnParkingsAction = new Command(OnParkingsClickMethod);
             OnBookingsAction = new Command(OnBookingsClickMethod);
+            OnCommandClick = new Command<string>(OnCommandClickMethod);
 
             UserName = AuthSettings.User.Name;
             UserMoney = AuthSettings.UserCoin.ToString("N0");
@@ -265,6 +268,14 @@ namespace NextPark.Mobile.ViewModels
                 return false;
             }
             return false;
+        }
+
+        public void OnCommandClickMethod(string url)
+        {
+            if (!string.IsNullOrEmpty(url))
+            {
+                Xamarin.Forms.Device.OpenUri(new System.Uri(url));
+            }
         }
     }
 }
