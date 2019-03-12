@@ -43,7 +43,17 @@ namespace NextPark.Mobile.ViewModels
         public ICommand TimeChanged { get; set; }   // Time Picker property changed
         public ICommand BookAction { get; set; }   // Time Picker property changed
 
+        // Confirm pop-up
+        public bool ConfirmVisible { get; set; }
+        public string ConfirmStartDateTime { get; set; }
+        public string ConfirmEndDateTime { get; set; }
+        public string ConfirmPrice { get; set; }
+        public ICommand OnConfirm { get; set; }
+        public ICommand OnCancel { get; set; }
+
+        // PRIVATE VARIBLES
         private UIParkingModel _parking;
+        private OrderModel _order;
 
         // SERVICES
         private readonly IDialogService _dialogService;
@@ -74,6 +84,10 @@ namespace NextPark.Mobile.ViewModels
             OnMoneyClick = new Command<object>(OnMoneyClickMethod);
 
             BookAction = new Command<object>(OnBookingMethod);
+
+            ConfirmVisible = false;
+            OnConfirm = new Command(OnConfirmMethod);
+            OnCancel = new Command(OnCancelMethod);
         }
 
         // Initialization
@@ -187,7 +201,7 @@ namespace NextPark.Mobile.ViewModels
             }
 
             // TODO: fill book data according to add book backend method
-            OrderModel order = new OrderModel
+            _order = new OrderModel
             {
                 ParkingId = _parking.Id,
                 StartDate = StartDate+StartTime,
@@ -201,8 +215,16 @@ namespace NextPark.Mobile.ViewModels
             this.IsRunning = true;
             base.OnPropertyChanged("IsRunning");
 
-            // TODO: send book action to backend
-            SendOrder(order);
+            // Ask confirm
+            ConfirmStartDateTime = _order.StartDate.ToString("dd/MM/yy hh:mm");
+            ConfirmEndDateTime = _order.EndDate.ToString("dd/MM/yy hh:mm");
+            ConfirmPrice = _order.Price.ToString("N2") + " CHF";
+            ConfirmVisible = true;
+
+            base.OnPropertyChanged("ConfirmStartDateTime");
+            base.OnPropertyChanged("ConfirmEndDateTime");
+            base.OnPropertyChanged("ConfirmPrice");
+            base.OnPropertyChanged("ConfirmVisible");
         }
 
         public async void SendOrder(OrderModel order)
@@ -238,6 +260,22 @@ namespace NextPark.Mobile.ViewModels
                 base.OnPropertyChanged("EndDate");
             }
             base.OnPropertyChanged("MinEndDate");
+        }
+
+        public void OnConfirmMethod()
+        {
+            ConfirmVisible = false;
+            base.OnPropertyChanged("ConfirmVisible");
+            SendOrder(_order);
+        }
+
+        public void OnCancelMethod()
+        {
+            ConfirmVisible = false;
+            base.OnPropertyChanged("ConfirmVisible");
+            // Hide activity spinner
+            IsRunning = false;
+            base.OnPropertyChanged("IsRunning");
         }
     }
 }

@@ -54,12 +54,21 @@ namespace NextPark.Mobile.ViewModels
         public string Btn8SubInfo { get; set; }         // 8.0h button price
         public ICommand OnButtonTapped { get; set; }    // Selection button tapped
 
+        // Confirm pop-up
+        public bool ConfirmVisible { get; set; }
+        public string ConfirmStartDateTime { get; set; }
+        public string ConfirmEndDateTime { get; set; }
+        public string ConfirmPrice { get; set; }
+        public ICommand OnConfirm { get; set; }
+        public ICommand OnCancel { get; set; }
+
         // SERVICES
         private readonly IDialogService _dialogService;
         private readonly IOrderDataService _orderDataService;
 
         // PRIVATE VARIABLES
         private UIParkingModel _parking;
+        private OrderModel _order;
 
         // METHODS
         public BookingViewModel(IDialogService dialogService,
@@ -85,6 +94,10 @@ namespace NextPark.Mobile.ViewModels
 
             OnButtonTapped = new Command<string>(OnButtonTappedMethod);
             BookAction = new Command<object>(OnBookingMethod);
+
+            ConfirmVisible = false;
+            OnConfirm = new Command(OnConfirmMethod);
+            OnCancel = new Command(OnCancelMethod);
         }
 
         // Initialization
@@ -199,6 +212,9 @@ namespace NextPark.Mobile.ViewModels
         {
             // Compute price
             double orderPrice = Time.TotalHours * _parking.PriceMin;
+            if (_parking.UserId == AuthSettings.User.Id) {
+                orderPrice = 0;
+            }
             // Check user balance
             if (AuthSettings.User.Balance < orderPrice) {
                 // Not enough credit
@@ -208,7 +224,7 @@ namespace NextPark.Mobile.ViewModels
             }
 
             // TODO: fill book data according to add book backend method
-            OrderModel order = new OrderModel
+            _order = new OrderModel
             {
                 ParkingId = _parking.Id,
                 StartDate = DateTime.Now,
@@ -221,8 +237,16 @@ namespace NextPark.Mobile.ViewModels
             this.IsRunning = true;
             base.OnPropertyChanged("IsRunning");
 
-            // TODO: send book action to backend
-            SendOrder(order);
+            // Ask confirm
+            ConfirmStartDateTime = _order.StartDate.ToString("dd/MM/yy hh:mm");
+            ConfirmEndDateTime = _order.EndDate.ToString("dd/MM/yy hh:mm");
+            ConfirmPrice = _order.Price.ToString("N2") + " CHF";
+            ConfirmVisible = true;
+
+            base.OnPropertyChanged("ConfirmStartDateTime");
+            base.OnPropertyChanged("ConfirmEndDateTime");
+            base.OnPropertyChanged("ConfirmPrice");
+            base.OnPropertyChanged("ConfirmVisible");
         }
 
         // Selection Button Tapped action
@@ -270,7 +294,8 @@ namespace NextPark.Mobile.ViewModels
 
         public async void SendOrder(OrderModel order)
         {
-            try {
+            try
+            {            
                 var result = await _orderDataService.CreateOrderAsync(order);
 
                 // Hide activity spinner
@@ -286,5 +311,22 @@ namespace NextPark.Mobile.ViewModels
                 await _dialogService.ShowAlert("Errore", e.Message);
             }
         }
+
+        public void OnConfirmMethod()
+        {
+            ConfirmVisible = false;
+            base.OnPropertyChanged("ConfirmVisible");
+            SendOrder(_order);
+        }
+
+        public void OnCancelMethod()
+        {
+            ConfirmVisible = false;
+            base.OnPropertyChanged("ConfirmVisible");
+            // Hide activity spinner
+            IsRunning = false;
+            base.OnPropertyChanged("IsRunning");
+        }
+
     }
 }

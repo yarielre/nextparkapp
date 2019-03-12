@@ -81,11 +81,6 @@
                                                FontAttributes="Bold"
                                                FontSize="Medium"
                                                TextColor="Gray"/>
-                                        <Label Text="Disponibilità:"
-                                               HorizontalTextAlignment="End"
-                                               FontAttributes="None"
-                                               FontSize="Medium"
-                                               TextColor="Gray"/>
                                         <Label Text="{Binding FullAvailability}"
                                                HorizontalTextAlignment="End"
                                                FontAttributes="None"
@@ -93,38 +88,6 @@
                                                TextColor="Gray"/> 
                                     </StackLayout>
                                 </Grid>
-                                
-                                <Frame HeightRequest="30"
-                                       Margin="5,5,0,5"
-                                       Padding="0"
-                                       IsClippedToBounds="true"
-                                       CornerRadius="8"
-                                       HasShadow="false"
-                                       BorderColor="#8CC63F">                                    
-                                    <Grid>
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="*"/>
-                                        </Grid.RowDefinitions>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="*" />
-                                        </Grid.ColumnDefinitions>
-                                        <Label Text="Parcheggia ora"
-                                               FontSize="Small"
-                                               TextColor="White"
-                                               BackgroundColor="#8CC63F"
-                                               HorizontalTextAlignment="Center"
-                                               VerticalTextAlignment="Center"
-                                               Grid.Row="0" Grid.Column="0"/>
-                                        <Label Text="Riservazione futura"
-                                               FontSize="Small"
-                                               BackgroundColor="White"
-                                               TextColor="#8CC63F"
-                                               HorizontalTextAlignment="Center"
-                                               VerticalTextAlignment="Center"
-                                               Grid.Row="0" Grid.Column="1"/>
-                                    </Grid>
-                                </Frame>
                                 
                                 <!-- Time selector buttons-->
                                 <StackLayout Orientation="Horizontal" Spacing="10" HorizontalOptions="Center" Margin="5,10,0,0">
@@ -206,6 +169,92 @@
                             </StackLayout>
                         </Frame>  
                     </StackLayout>
+                    
+                    <ContentView x:Name="confirmPopup" 
+                                 BackgroundColor="#C0606060" 
+                                 Padding="10, 0" 
+                                 IsVisible="{Binding ConfirmVisible}" 
+                                 RelativeLayout.XConstraint="0"
+                                 RelativeLayout.YConstraint="0"
+                                 RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=1}"
+                                 RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}">
+                        <StackLayout VerticalOptions="Center" HorizontalOptions="Center" Spacing="0">
+                            <Frame BorderColor="#8CC63F"
+                                   CornerRadius="16"
+                                   HasShadow="false"
+                                   IsClippedToBounds="true"
+                                   HeightRequest="300"
+                                   WidthRequest="300"
+                                   Padding="0"
+                                   Margin="0">
+                            <StackLayout Orientation="Vertical" 
+                                         HeightRequest="300" 
+                                         WidthRequest="300" 
+                                         BackgroundColor="White" 
+                                         Spacing="5" 
+                                         Padding="0" Margin="0">
+                                <Label Text="Conferma dell'ordine"
+                                       FontSize="Medium"
+                                       FontAttributes="Bold"
+                                       HorizontalOptions="Center"
+                                       Margin="20,20,20,10"/>
+                                <StackLayout Orientation="Horizontal" Spacing="2" HorizontalOptions="Start" Padding="10,0">
+                                    <Label Text="Arrivo:"
+                                           FontSize="Default"                                           
+                                           VerticalTextAlignment="Center"/>
+                                    <Label Text="{Binding ConfirmStartDateTime}"
+                                           FontSize="Default"                                           
+                                           VerticalTextAlignment="Center"/>
+                                </StackLayout>
+                                <StackLayout Orientation="Horizontal" Spacing="2" HorizontalOptions="Start" Padding="10,0">
+                                    <Label Text="Partenza:"
+                                           FontSize="Default"                                           
+                                           VerticalTextAlignment="Center"/>
+                                    <Label Text="{Binding ConfirmEndDateTime}"
+                                           FontSize="Default"                                           
+                                           VerticalTextAlignment="Center"/>
+                                </StackLayout>
+                                <StackLayout Orientation="Horizontal" Spacing="2" HorizontalOptions="Start" Padding="10,0">
+                                    <Label Text="Prezzo:"
+                                           FontSize="Default"                                           
+                                           VerticalTextAlignment="Center"/>
+                                    <Label Text="{Binding ConfirmPrice}"
+                                           FontSize="Default"                                           
+                                           VerticalTextAlignment="Center"/>
+                                </StackLayout>
+                                <Label Text="Sicuro di confermare l'ordine?"
+                                       FontSize="Default"
+                                       HorizontalOptions="Center"
+                                       HorizontalTextAlignment="Center"
+                                       VerticalTextAlignment="Center"
+                                       Margin="10,10,0,10"/>
+                                <!-- Renew button -->
+                                <Button Text="Conferma"
+                                        FontAttributes="Bold"
+                                        HorizontalOptions="Center"
+                                        Command="{Binding OnConfirm}"
+                                        TextColor="White"
+                                        BorderRadius="8"
+                                        BackgroundColor="#8CC63F"
+                                        WidthRequest="191"
+                                        Margin="0"/>
+                                <!-- Cancel renew button -->
+                                <Button Text="Annulla"
+                                        FontAttributes="Bold"
+                                        HorizontalOptions="Center"
+                                        Command="{Binding OnCancel}"
+                                        TextColor="#8CC63F"
+                                        BorderRadius="8"
+                                        BorderColor="#8CC63F"
+                                        BorderWidth="1"
+                                        BackgroundColor="White"
+                                        WidthRequest="191"
+                                        Margin="0"/> 
+                            </StackLayout>
+                            </Frame>
+                        </StackLayout>
+                    </ContentView>
+                    
                 </RelativeLayout>
             </controls:BasePage>
         </ContentView>
