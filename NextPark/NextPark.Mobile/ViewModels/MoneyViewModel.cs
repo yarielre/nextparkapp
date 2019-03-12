@@ -196,10 +196,6 @@ namespace NextPark.Mobile.ViewModels
             // TODO: send buy credit request to backend
             _dialogService.ShowAlert("Alert", "TODO: Payment operations for: " + selectedValue.ToString() + " CHF");
 
-
-
-            UpdateUserCoin = new UpdateUserCoinModel { Coins = AuthSettings.UserCoin + double.Parse(selectedValue.ToString()), UserId = int.Parse(AuthSettings.UserId) };
-
             // Start activity spinner
             IsRunning = true;
             base.OnPropertyChanged("IsRunning");
