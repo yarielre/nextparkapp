@@ -70,7 +70,7 @@ namespace NextPark.Mobile.UIModels
             {
                 if ((availability.StartDate <= tempStart) && (availability.EndDate > tempStart))
                 {
-                    if (availability.EndDate > end)
+                    if (availability.EndDate >= end)
                     {
                         available = true;
                         break;
