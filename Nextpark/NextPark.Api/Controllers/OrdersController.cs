@@ -206,6 +206,12 @@ namespace NextPark.Api.Controllers
             if (!isAvailable)
                 return BadRequest("Parking is not available");
 
+            var parkigOrders = await _orderRepository.FindAllWhereAsync(ev => ev.ParkingId == orderModel.ParkingId);
+            var isOrderdable= IsParkingOrderable(parkigOrders, orderModel);
+
+            if (!isOrderdable)
+                return BadRequest("Parking is not orderable");
+
             var user = _useRepository.Find(orderModel.UserId);
 
             if (user.Balance < orderModel.Price)
@@ -271,10 +277,10 @@ namespace NextPark.Api.Controllers
             var orderDayEvents = parking.Events.Where(ev => ev.StartDate.Date == order.StartDate.Date).ToList();
             if (orderDayEvents == null || orderDayEvents.Count == 0) return false;
 
-            var eventsStartingOnTime = orderDayEvents.Where(ev => ev.StartDate <= order.StartDate).ToList();
+            var eventsStartingOnTime = orderDayEvents.Where(ev => ev.StartDate.TimeOfDay <= order.StartDate.TimeOfDay).ToList();
             if (eventsStartingOnTime == null || eventsStartingOnTime.Count == 0) return false;
 
-            var eventsEndingOnTime = eventsStartingOnTime.Where(ev => ev.EndDate >= order.EndDate).ToList();
+            var eventsEndingOnTime = eventsStartingOnTime.Where(ev => ev.EndDate.TimeOfDay >= order.EndDate.TimeOfDay).ToList();
             if (eventsEndingOnTime == null || eventsEndingOnTime.Count == 0) return false;
 
             return true;
@@ -296,10 +302,10 @@ namespace NextPark.Api.Controllers
             var orderDayEvents = parkingOrders.Where(ev => ev.StartDate.Date == order.StartDate.Date).ToList();
             if (orderDayEvents == null || orderDayEvents.Count == 0) return true;
 
-            var eventsStartingOnTime = orderDayEvents.Where(ev => ev.StartDate <= order.StartDate).ToList();
+            var eventsStartingOnTime = orderDayEvents.Where(ev => ev.StartDate.TimeOfDay <= order.StartDate.TimeOfDay).ToList();
             if (eventsStartingOnTime == null || eventsStartingOnTime.Count == 0) return true;
 
-            var eventsEndingOnTime = eventsStartingOnTime.Where(ev => ev.EndDate >= order.EndDate).ToList();
+            var eventsEndingOnTime = eventsStartingOnTime.Where(ev => ev.EndDate.TimeOfDay >= order.EndDate.TimeOfDay).ToList();
             if (eventsEndingOnTime == null || eventsEndingOnTime.Count == 0) return true;
 
             return false;

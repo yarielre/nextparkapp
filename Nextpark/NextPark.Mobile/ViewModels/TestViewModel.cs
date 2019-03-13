@@ -422,17 +422,72 @@ namespace NextPark.Mobile.ViewModels
             AddLineToConsole("-------------------------------------------");
             AddLineToConsole("TESTING ORDER SERVICE...");
 
+
+            AddLineToConsole("Selecting one parking");
+            var parkings = await _parkingDataService.GetAllParkingsAsync();
+
+            AddLineToConsole($"Found: {parkings.Count} parkings");
+
+            var selectedPArking = parkings.FirstOrDefault();
+            if (selectedPArking != null)
+            {
+                AddLineToConsole("Selecting one parking OK");
+            }
+            else
+            {
+                AddLineToConsole("Selecting one parking FAILED");
+                AddLineToConsole("Orders testing FAILED");
+                return;
+            }
+
+            var startDate = DateTime.Now.ToUniversalTime();
+            var endDate = startDate.AddHours(3);
+            
+
+            var newWeklyEvent = new EventModel
+            {
+                StartDate = startDate,
+                EndDate = endDate,
+                ParkingId = selectedPArking.Id,
+                RepetitionEndDate = endDate.AddDays(5),
+                RepetitionType = RepetitionType.Weekly,
+                WeeklyRepeDayOfWeeks = new List<DayOfWeek>
+                {
+                    DayOfWeek.Monday,
+                    DayOfWeek.Thursday,
+                    DayOfWeek.Wednesday,
+                    DayOfWeek.Tuesday,
+                    DayOfWeek.Friday
+                }
+            };
+
+            var createdWeeklyEvents = await _eventDataService.CreateEventAsync(newWeklyEvent);
+            if (createdWeeklyEvents != null)
+            {
+                AddLineToConsole($"Created: {createdWeeklyEvents.Count} weekly events for the selected parking");
+                AddLineToConsole("Creating weekly events OK");
+            }
+            else
+            {
+                AddLineToConsole("Creating newWeklyEvent events FAILED");
+                return;
+            }
+
+            var orderStartDate = DateTime.Now.ToUniversalTime().AddDays(1);
+            var orderEndDate = orderStartDate.AddHours(1);
+
             var order = new OrderModel
             {
-                StartDate = DateTime.Now,
-                EndDate = DateTime.Now,
-                ParkingId = 1,
+                StartDate = orderStartDate,
+                EndDate = orderEndDate,
+                ParkingId = selectedPArking.Id,
                 UserId = 1,
-                Price = 20,
+                Price = 10,
                 PaymentCode = "drtrtrt",
                 OrderStatus = Enums.OrderStatus.Actived,
                 PaymentStatus = PaymentStatus.Pending
             };
+
             AddLineToConsole("Creating one order...");
             var postedOrder = await _orderDataService.CreateOrderAsync(order).ConfigureAwait(false);
             AddLineToConsole(postedOrder != null ? "Creating the order OK" : "Creating the order FAILED");
