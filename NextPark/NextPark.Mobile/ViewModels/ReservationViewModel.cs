@@ -213,7 +213,7 @@ namespace NextPark.Mobile.ViewModels
                 EndDate = EndDate + EndTime,
                 Price = orderPrice,
                 UserId = int.Parse(AuthSettings.UserId),
-                PaymentStatus = Enums.Enums.PaymentStatus.Pending
+                CarPlate = AuthSettings.User.CarPlate
             };
 
             // Show activity spinner

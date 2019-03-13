@@ -230,7 +230,8 @@ namespace NextPark.Mobile.ViewModels
                 StartDate = DateTime.Now,
                 EndDate = DateTime.Now + Time,
                 Price = orderPrice,
-                UserId = int.Parse(AuthSettings.UserId)
+                UserId = int.Parse(AuthSettings.UserId),
+                CarPlate = AuthSettings.User.CarPlate
             };
 
             // Show activity spinner
