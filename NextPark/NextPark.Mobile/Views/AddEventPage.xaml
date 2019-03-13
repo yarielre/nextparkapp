@@ -163,6 +163,7 @@
                             BorderRadius="8"
                             BackgroundColor="#8CC63F"
                             WidthRequest="191"
+                            IsVisible="{Binding AddButtonVisible}"
                             Margin="0,10,0,20"/>
                     <Button Text="Elimina"
                             FontAttributes="Bold"

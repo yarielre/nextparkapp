@@ -145,8 +145,8 @@ namespace NextPark.Mobile.ViewModels
                 MinEndDate = booking.StartDate.Date;
 
                 // Remove seconds from times
-                StartTime.Subtract(TimeSpan.FromSeconds(StartTime.Seconds));
-                EndTime.Subtract(TimeSpan.FromSeconds(EndTime.Seconds));
+                StartTime = StartTime.Subtract(TimeSpan.FromSeconds(StartTime.Seconds));
+                EndTime = EndTime.Subtract(TimeSpan.FromSeconds(EndTime.Seconds));
                 bool isFree = _parking.isFree(StartDate + StartTime, EndDate + EndTime);
                 FullAvailability = (isFree) ? "Disponibile" : "Occupato";
 

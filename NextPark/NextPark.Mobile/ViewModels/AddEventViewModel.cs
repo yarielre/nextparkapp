@@ -55,6 +55,7 @@ namespace NextPark.Mobile.ViewModels
         public bool RepetitionEndVisible { get; set; }  // Repetition end visibility
 
         public bool TimeSlotVisible { get; set; }   // Timeslot visible
+        public bool AddButtonVisible { get; set; }      // Add/Save button visible
         public bool DeleteButtonVisible { get; set; }   // Delete button visible
 
         public bool IsRunning { get; set; }         // Activity spinner
@@ -162,6 +163,7 @@ namespace NextPark.Mobile.ViewModels
                             (DayOfWeek)(DateTime.Now.DayOfWeek)
                         };
                         RepetitionIndex = 0;
+                        AddButtonVisible = true;
                         DeleteButtonVisible = false;
                         AddButtonText = "Aggiungi";
                         _modifying = false;
@@ -180,7 +182,14 @@ namespace NextPark.Mobile.ViewModels
                                 (DayOfWeek)(DateTime.Now.DayOfWeek)
                             };
                         }
-                        DeleteButtonVisible = true;
+                        if (EndDate > DateTime.Now.Date)
+                        {
+                            AddButtonVisible = true;
+                            DeleteButtonVisible = true;
+                        } else {
+                            AddButtonVisible = false;
+                            DeleteButtonVisible = false;
+                        }
                         AddButtonText = "Salva";
                         _modifying = true;
                     }
@@ -219,6 +228,7 @@ namespace NextPark.Mobile.ViewModels
                     base.OnPropertyChanged("RepetitionEndDate");
                     base.OnPropertyChanged("RepetitionMinEndDate");
                     base.OnPropertyChanged("WeekDaysVisible");
+                    base.OnPropertyChanged("AddButtonVisible");
                     base.OnPropertyChanged("DeleteButtonVisible");
                     base.OnPropertyChanged("AddButtonText");
 
@@ -267,10 +277,36 @@ namespace NextPark.Mobile.ViewModels
         // Add event button action
         public void OnAddClickMethod(object sender)
         {
-            // TODO: fill data according to backend login method
+            // Show activity spinner
             IsRunning = true;
             base.OnPropertyChanged("IsRunning");
-            // TODO: call login method
+
+            // Check for orders
+            if (_modifying)
+            {
+                // Remove seconds from event
+                StartTime = StartTime.Subtract(TimeSpan.FromSeconds(StartTime.Seconds));
+                EndTime = EndTime.Subtract(TimeSpan.FromSeconds(EndTime.Seconds));
+                DateTime start = StartDate + StartTime;
+                DateTime end = EndDate + EndTime;
+
+                UIParkingModel parking = _profileService.GetParkingById(_event.ParkingId);
+                foreach (OrderModel order in parking.Orders)
+                {
+                    if ((order.StartDate < _event.EndDate) && (order.EndDate > _event.StartDate))
+                    {
+                        if (((StartTime > TimeSpan.FromMinutes(0)) && (start > order.StartDate)) || ((EndTime < TimeSpan.FromMinutes(1439)) && (end < order.EndDate)))
+                        {
+                            // Orders are present, unauthorized to modify event
+                            _dialogService.ShowAlert("Errore", "Non è stato possibile modificare la disponibilità in quanto ci sono degli ordini confermati all'interno di queste date.");
+                            IsRunning = false;
+                            base.OnPropertyChanged("IsRunning");
+                            return;
+                        }
+                    }
+                }
+            }
+            // Try to add or modify events
             AddEvent();
         }
 
@@ -314,10 +350,22 @@ namespace NextPark.Mobile.ViewModels
         // Delete event button action
         public void OnDeleteClickMethod(object sender)
         {
-            // TODO: fill data according to backend login method
+            // Show activty spinner
             IsRunning = true;
             base.OnPropertyChanged("IsRunning");
-            // TODO: call login method
+
+            // Check for orders
+            UIParkingModel parking = _profileService.GetParkingById(_event.ParkingId);
+            foreach (OrderModel order in parking.Orders) {
+                if ((order.StartDate < _event.EndDate) && (order.EndDate > _event.StartDate)) {
+                    // Orders are present, unauthorized to delete event
+                    _dialogService.ShowAlert("Errore", "Non è stato possibile eliminare la disponibilità in quanto ci sono degli ordini confermati all'interno di queste date.");
+                    IsRunning = false;
+                    base.OnPropertyChanged("IsRunning");
+                    return;
+                }
+            }
+            // Try to delete event
             DeleteEvent();
         }
 
@@ -326,6 +374,8 @@ namespace NextPark.Mobile.ViewModels
             // Check Data
             if (StartTime > EndTime) {
                 await _dialogService.ShowAlert("Errore", "L'orario di fine deve essere maggiore a quello di inizio");
+                IsRunning = false;
+                base.OnPropertyChanged("IsRunning");
                 return;
             }
 
@@ -344,8 +394,8 @@ namespace NextPark.Mobile.ViewModels
                     break;
             }
             // Remove seconds from timing
-            StartTime.Subtract(TimeSpan.FromSeconds(StartTime.Seconds));
-            EndTime.Subtract(TimeSpan.FromSeconds(EndTime.Seconds));
+            StartTime = StartTime.Subtract(TimeSpan.FromSeconds(StartTime.Seconds));
+            EndTime = EndTime.Subtract(TimeSpan.FromSeconds(EndTime.Seconds));
 
             _event.StartDate = StartDate + StartTime;
             _event.EndDate = StartDate + EndTime;
@@ -353,23 +403,109 @@ namespace NextPark.Mobile.ViewModels
 
             var result = new List<EventModel>();
 
-            if (_modifying) {
-               var resultEdit = await _eventDataService.EditEventsAsync(_event.Id, _event);
-                result.Add(resultEdit);
+            try
+            {
+                if (_modifying)
+                {
 
-            } else {
-                result = await _eventDataService.CreateEventAsync(_event);
+                    var choice = "Modifica solo questo evento";
+
+                    // TODO: check for repetition
+                    if (_event.RepetitionType != RepetitionType.None)
+                    {
+                        // Show choice popup
+                        choice = await Application.Current.MainPage.DisplayActionSheet(
+                                        "Questo è un evento periodico",
+                                        "Annulla",
+                                        null,
+                                        "Modifica solo questo evento",
+                                        "Modifica tutti gli eventi futuri");
+                        if ((choice == null) || (choice.Equals("Annulla")))
+                        {
+                            IsRunning = false;
+                            base.OnPropertyChanged("IsRunning");
+                            return;
+                        }
+                    }
+
+                    if (choice.Equals("Modifica solo questo evento"))
+                    {
+                        var resultEdit = await _eventDataService.EditEventsAsync(_event.Id, _event);
+                        result.Add(resultEdit);
+                    }
+                    else if (choice.Equals("Modifica tutti gli eventi futuri"))
+                    {
+                        result = await _eventDataService.EditSerieEventsAsync(_event);
+                    }
+                }
+                else
+                {
+                    result = await _eventDataService.CreateEventAsync(_event);
+                }
             }
+            catch (Exception e) { }
+            finally
+            {
+                IsRunning = false;
+                base.OnPropertyChanged("IsRunning");
 
-            if ((result != null) && (result.Count > 0)) {
-                await NavigationService.NavigateToAsync<ParkingDataViewModel>(_profileService.LastEditingParking);
+                if ((result != null) && (result.Count > 0))
+                {
+                    await NavigationService.NavigateToAsync<ParkingDataViewModel>(_profileService.LastEditingParking);
+                }
             }
         }
 
         public async void DeleteEvent()
         {
+            var choice = "Elimina solo questo evento";
+
+            // TODO: check for repetition
+            if (_event.RepetitionType != RepetitionType.None)
+            {
+                // Show choice popup
+                choice = await Application.Current.MainPage.DisplayActionSheet(
+                                "Questo è un evento periodico",
+                                "Annulla",
+                                null,
+                                "Elimina solo questo evento",
+                                "Elimina tutti gli eventi futuri");
+                if ((choice == null) || (choice.Equals("Annulla")))
+                {
+                    IsRunning = false;
+                    base.OnPropertyChanged("IsRunning");
+                    return;
+                }
+            }
+
+            // Delete event or event serie
+            try
+            {
+                if (choice.Equals("Elimina solo questo evento"))
+                {
+                    var result = await _eventDataService.DeleteEventsAsync(_event.Id);
+
+                }
+                else if (choice.Equals("Elimina tutti gli eventi futuri"))
+                {
+                    // TODO: verify GetHash or add DeleteSerieEventsAsync(Guid Id)
+                    var result = await _eventDataService.DeleteSerieEventsAsync(_event.RepetitionId.GetHashCode());
+                }
+
+                // TODO: check result looking at error enumerators
+
+            }
+            catch (Exception e)
+            {
+
+            }
+            finally
+            {
+                IsRunning = false;
+                base.OnPropertyChanged("IsRunning");
+            }
+        
             // await oderRemove
-            var result = await _eventDataService.DeleteEventsAsync(_event.Id);
             await NavigationService.NavigateToAsync<ParkingDataViewModel>(_profileService.LastEditingParking);
         }
 

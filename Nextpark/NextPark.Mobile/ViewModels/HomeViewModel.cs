@@ -365,8 +365,8 @@ namespace NextPark.Mobile.ViewModels
             bool isFree = false;
             if (_profileService.UserReserveMode) {
                 // Remove seconds from times
-                ResStartTime.Subtract(TimeSpan.FromSeconds(ResStartTime.Seconds));
-                ResEndTime.Subtract(TimeSpan.FromSeconds(ResEndTime.Seconds));
+                ResStartTime = ResStartTime.Subtract(TimeSpan.FromSeconds(ResStartTime.Seconds));
+                ResEndTime = ResEndTime.Subtract(TimeSpan.FromSeconds(ResEndTime.Seconds));
                 isFree = parking.isFree(ResStartDate + ResStartTime, ResEndDate + ResEndTime);
             } else {
                 isFree = parking.isFree();
