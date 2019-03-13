@@ -11,6 +11,7 @@ using NextPark.Mobile.Services.Data;
 using NextPark.Models;
 using NextPark.Enums.Enums;
 using System.ComponentModel;
+using NextPark.Mobile.UIModels;
 
 namespace NextPark.Mobile.ViewModels
 {
@@ -109,6 +110,8 @@ namespace NextPark.Mobile.ViewModels
         // SERVICES
         private readonly IDialogService _dialogService;
         private readonly IParkingDataService _parkingDataService;
+        private readonly IOrderDataService _orderDataService;
+        private readonly IProfileService _profileService;
 
         // PRIVATE VARIABLES
         private ObservableCollection<ParkingItem> _parkingList;
@@ -124,11 +127,15 @@ namespace NextPark.Mobile.ViewModels
                                     IApiService apiService,
                                     IAuthService authService,
                                     INavigationService navService,
-                                    IParkingDataService parkingDataService)
+                                    IParkingDataService parkingDataService,
+                                    IOrderDataService orderDataService,
+                                    IProfileService profileService)
                                     : base(apiService, authService, navService)
         {
             _dialogService = dialogService;
             _parkingDataService = parkingDataService;
+            _orderDataService = orderDataService;
+            _profileService = profileService;
 
             // Header
             UserName = AuthSettings.User.Name;
@@ -227,12 +234,12 @@ namespace NextPark.Mobile.ViewModels
                 {
                     if (parking.UserId == int.Parse(AuthSettings.UserId))
                     {
-                        bool free = false;
-                        // TODO: check parking orders
-                        if (parking.Status == ParkingStatus.Enabled)
-                        {
-                            free = true;
-                        }
+                        bool free = true;
+
+                        // TODO: improve get orders by parking id
+                        //var ordersResult = await _orderDataService.GetAllOrdersAsync();
+
+                        UIParkingModel uiParking = _profileService.GetParkingById(parking.Id);
 
                         // Set Image
                         string imageUrl = "";
@@ -243,6 +250,8 @@ namespace NextPark.Mobile.ViewModels
                             imageUrl = ApiSettings.BaseUrl + parking.ImageUrl;
                         }
 
+                        string status = (parking.Status == ParkingStatus.Disabled) ? "Disattivo" : ((uiParking.isFree())? "Disponibile" : "Non disponibile");
+
                         ParkingList.Add(new ParkingItem
                         {
                             UID = parking.Id,
@@ -250,8 +259,8 @@ namespace NextPark.Mobile.ViewModels
                             Address = parking.Address,
                             Cap = parking.Cap,
                             City = parking.City,
-                            Status = (free) ? "libero" : "occupato",
-                            StatusColor = (free) ? Color.Green : Color.Red,
+                            Status = status,
+                            StatusColor = (uiParking.isFree()) ? Color.Green : Color.Red,
                             Picture = imageUrl,
                             OnParkingTap = OnParkingTapped,
                             ParkingModel = parking

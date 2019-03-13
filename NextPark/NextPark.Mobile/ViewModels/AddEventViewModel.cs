@@ -442,6 +442,21 @@ namespace NextPark.Mobile.ViewModels
                 {
                     result = await _eventDataService.CreateEventAsync(_event);
                 }
+
+                // Refresh parking events
+                // TODO: improve with getEventByParkingId
+                var eventsResult = await _eventDataService.GetAllEventsAsync();
+                if ((eventsResult != null) && (eventsResult.Count != 0))
+                {
+                    UIParkingModel uiParking = _profileService.GetParkingById(_event.ParkingId);
+                    uiParking.Events.Clear();
+                    foreach (EventModel availability in eventsResult)
+                    {
+                        if (availability.ParkingId == _event.ParkingId) {
+                            uiParking.Events.Add(availability);
+                        }
+                    }
+                }
             }
             catch (Exception e) { }
             finally

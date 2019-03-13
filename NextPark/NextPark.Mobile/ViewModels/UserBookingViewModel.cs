@@ -109,12 +109,6 @@ namespace NextPark.Mobile.ViewModels
             {
                 var ordersResponse = await _orderDataService.GetAllOrdersAsync();
 
-                ordersResponse.Add(new OrderModel
-                {
-                    ParkingId = 7,
-                    UserId = AuthSettings.User.Id
-                });
-
                 int count = 0;
                 BookingList.Clear();
 

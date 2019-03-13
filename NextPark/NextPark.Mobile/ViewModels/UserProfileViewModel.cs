@@ -35,6 +35,8 @@ namespace NextPark.Mobile.ViewModels
         // User parkings
         private int _totUserParkings { get; set; }
         private int _activeUserParkings { get; set; }
+        private int _availableUserParkings { get; set; }
+
         public string ParkingsStatus { get; set; }          // Free parkings / Tot. parkings + free
         public string ParkingsAvailability { get; set; }    // Available parkings / Tot. parkings + available
         public ICommand OnParkingsAction { get; set; }      // Parkings selection action
@@ -48,6 +50,7 @@ namespace NextPark.Mobile.ViewModels
         private readonly IDialogService _dialogService;
         private readonly IParkingDataService _parkingDataService;
         private readonly IOrderDataService _orderDataService;
+        private readonly IProfileService _profileService;
 
         // METHODS
         public UserProfileViewModel(IDialogService dialogService,
@@ -55,13 +58,15 @@ namespace NextPark.Mobile.ViewModels
                                     IAuthService authService, 
                                     INavigationService navService,
                                     IParkingDataService parkingDataService,
-                                    IOrderDataService orderDataService
+                                    IOrderDataService orderDataService,
+                                    IProfileService profileService
                                    )
                                     : base(apiService, authService, navService)
         {
             _dialogService = dialogService;
             _parkingDataService = parkingDataService;
             _orderDataService = orderDataService;
+            _profileService = profileService;
 
             // Header actions
             OnBackClick = new Command<object>(OnBackClickMethod);
@@ -204,13 +209,17 @@ namespace NextPark.Mobile.ViewModels
                             {
                                 _activeUserParkings++;
                             }
+                            var uiParking = _profileService.GetParkingById(parking.Id);
+                            if (uiParking.isFree()) {
+                                _availableUserParkings++;
+                            }
                         }
                     }
                 }
 
                 // Update status on page
-                ParkingsStatus = _totUserParkings.ToString() + "/" + _totUserParkings.ToString() + " liberi";
-                ParkingsAvailability = _activeUserParkings.ToString() + "/" + _totUserParkings.ToString() + " disponibili";
+                ParkingsStatus = _availableUserParkings.ToString() + "/" + _totUserParkings.ToString() + " disponibili";
+                ParkingsAvailability = _activeUserParkings.ToString() + "/" + _totUserParkings.ToString() + " attivi";
                 base.OnPropertyChanged("ParkingsStatus");
                 base.OnPropertyChanged("ParkingsAvailability");
 
