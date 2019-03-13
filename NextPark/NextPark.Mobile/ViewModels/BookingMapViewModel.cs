@@ -217,7 +217,22 @@ namespace NextPark.Mobile.ViewModels
 
         public override bool BackButtonPressed()
         {
-            OnBackClickMethod(null);
+            if (RenewVisible)
+            {
+                RenewVisible = false;
+                base.OnPropertyChanged("RenewVisible");
+            }
+            else if (ConfirmVisible)
+            {
+                ConfirmVisible = false;
+                RenewIsRunning = true;
+                base.OnPropertyChanged("ConfirmVisible");
+                base.OnPropertyChanged("RenewIsRunning");
+            }
+            else
+            {
+                OnBackClickMethod(null);
+            }
             return false; // Do not propagate back button pressed
         }
 
@@ -425,6 +440,8 @@ namespace NextPark.Mobile.ViewModels
 
         public void OnConfirmMethod()
         {
+            RenewIsRunning = true;
+            base.OnPropertyChanged("RenewIsRunning");
             RenewOrder();
         }
 
