@@ -13,6 +13,7 @@ using NextPark.Mobile.UIModels;
 using NextPark.Models;
 using NextPark.Mobile.Services.Data;
 using NextPark.Mobile.CustomControls;
+using System.Collections.Generic;
 
 namespace NextPark.Mobile.ViewModels
 {
@@ -20,6 +21,12 @@ namespace NextPark.Mobile.ViewModels
     {
         public CustomControls.CustomMap Map { get; set; }
         public UIBookingModel Booking { get; set; }
+    }
+
+    public class TimeSelButton
+    {
+        public bool isSelected { get; set; }
+        public int minutes { get; set; }
     }
 
     public class BookingMapViewModel : BaseViewModel
@@ -45,8 +52,33 @@ namespace NextPark.Mobile.ViewModels
 
         public bool RenewVisible { get; set; }
         public bool RenewIsRunning { get; set; }
+        public string RenewTotalTimeText { get; set; }
         public TimeSpan RenewTime { get; set; }
 
+        // Buttons
+        public Boolean Btn1IsSelected { get; set; }     // 15 min button selected
+        public string Btn1SubInfo { get; set; }         // 15 min button price
+        public Boolean Btn2IsSelected { get; set; }     // 45 min button selected
+        public string Btn2SubInfo { get; set; }         // 45 min button price
+        public Boolean Btn3IsSelected { get; set; }     // 1.0 h button selected
+        public string Btn3SubInfo { get; set; }         // 1.0 h button price
+        public Boolean Btn4IsSelected { get; set; }     // 2.0 h button selected
+        public string Btn4SubInfo { get; set; }         // 2.0 h button price
+        public Boolean Btn5IsSelected { get; set; }     // 3.0 h button selected
+        public string Btn5SubInfo { get; set; }         // 3.0 h button price
+        public Boolean Btn6IsSelected { get; set; }     // 4.0 h button selected
+        public string Btn6SubInfo { get; set; }         // 4.0 h button price
+        public ICommand OnButtonTapped { get; set; }    // Selection button tapped
+
+        // Confirm pop-up
+        public bool ConfirmVisible { get; set; }
+        public string ConfirmTotalTime { get; set; }
+        public string ConfirmPrice { get; set; }
+        public ICommand OnConfirm { get; set; }
+        public ICommand OnCancel { get; set; }
+
+        // PRIVATE VARIABLES
+        private List<TimeSelButton> _timeSelButtons = new List<TimeSelButton>();
         private UIBookingModel order;
 
         // SERVICES
@@ -91,8 +123,13 @@ namespace NextPark.Mobile.ViewModels
             OnBookDel = new Command<object>(OnBookDelMethod);
             OnRenew = new Command<object>(OnRenewMethod);
             OnCancelRenew = new Command<object>(OnCancelRenewMethod);
+            OnButtonTapped = new Command<string>(OnButtonTappedMethod);
 
             RenewVisible = false;
+
+            ConfirmVisible = false;
+            OnConfirm = new Command(OnConfirmMethod);
+            OnCancel = new Command(OnCancelMethod);
         }
 
         public override Task InitializeAsync(object data = null)
@@ -126,7 +163,7 @@ namespace NextPark.Mobile.ViewModels
                     base.OnPropertyChanged("ActionVisible");
                 } else {
                     // Renovate
-                    ActionText = "Rinnova";
+                    ActionText = "Estendi";
                     ActionVisible = true;
                     base.OnPropertyChanged("ActionText");
                     base.OnPropertyChanged("ActionVisible");
@@ -214,8 +251,22 @@ namespace NextPark.Mobile.ViewModels
             else
             {
                 // Renew order
+                RenewTime = TimeSpan.FromMinutes(0);
+                RenewTotalTimeText = string.Format("{0:%h} h {0:%m} min", RenewTime);
                 RenewVisible = true;
                 base.OnPropertyChanged("RenewVisible");
+                base.OnPropertyChanged("RenewTotalTimeText");
+
+                // Init time selection buttons
+                _timeSelButtons.Clear();
+                _timeSelButtons.Add(new TimeSelButton { isSelected = false, minutes = 15 });    // 15 min
+                _timeSelButtons.Add(new TimeSelButton { isSelected = false, minutes = 30 });    // 30 min
+                _timeSelButtons.Add(new TimeSelButton { isSelected = false, minutes = 60 });    // 1 h
+                _timeSelButtons.Add(new TimeSelButton { isSelected = false, minutes = 120 });   // 2 h
+                _timeSelButtons.Add(new TimeSelButton { isSelected = false, minutes = 180 });   // 3 h
+                _timeSelButtons.Add(new TimeSelButton { isSelected = false, minutes = 240 });   // 4 h
+
+                UpdateButtonStatus();
             }
 
         }
@@ -273,9 +324,16 @@ namespace NextPark.Mobile.ViewModels
         // Renew order button click action
         public void OnRenewMethod(object sender)
         {
-            RenewIsRunning = true;
-            base.OnPropertyChanged("RenewIsRunning");
-            RenewOrder();
+            // Ask confirm
+            ConfirmTotalTime = string.Format("{0:%h} h {0:%m} min", RenewTime);
+            ConfirmPrice = (RenewTime.TotalHours * order.Parking.PriceMin).ToString("N2") + " CHF";
+            ConfirmVisible = true;
+            RenewVisible = false;
+
+            base.OnPropertyChanged("ConfirmTotalTime");
+            base.OnPropertyChanged("ConfirmPrice");
+            base.OnPropertyChanged("ConfirmVisible");
+            base.OnPropertyChanged("RenewVisible");
         }
 
         public async void RenewOrder()
@@ -307,9 +365,9 @@ namespace NextPark.Mobile.ViewModels
                 await _dialogService.ShowAlert("Errore", e.Message);
             } finally {
                 RenewIsRunning = false;
-                RenewVisible = false;
+                ConfirmVisible = false;
                 base.OnPropertyChanged("RenewIsRunning");
-                base.OnPropertyChanged("RenewVisible");
+                base.OnPropertyChanged("ConfirmVisible");
             }
         }
 
@@ -317,6 +375,66 @@ namespace NextPark.Mobile.ViewModels
         {
             RenewVisible = false;
             base.OnPropertyChanged("RenewVisible");
+        }
+
+        // Selection Button Tapped action
+        public void OnButtonTappedMethod(string identifier)
+        {
+            UInt16 btnIndex;
+
+            // Get the tapped selection button
+            btnIndex = Convert.ToUInt16(identifier);
+            if (btnIndex > 0) btnIndex--;
+            if (_timeSelButtons[btnIndex].isSelected) {
+                // If already selected, deselect it and remove it from total
+                _timeSelButtons[btnIndex].isSelected = false;
+                if (RenewTime >= TimeSpan.FromMinutes(_timeSelButtons[btnIndex].minutes)) {
+                    RenewTime -= TimeSpan.FromMinutes(_timeSelButtons[btnIndex].minutes);
+                }
+            } else {
+                // Select the button and add its time to total
+                _timeSelButtons[btnIndex].isSelected = true;
+                RenewTime += TimeSpan.FromMinutes(_timeSelButtons[btnIndex].minutes);
+            }
+
+            // Update renew time
+            RenewTotalTimeText = string.Format("{0:%h} h {0:%m} min", RenewTime);
+            base.OnPropertyChanged("RenewTotalTimeText");
+
+            UpdateButtonStatus();
+        }
+
+        public void UpdateButtonStatus()
+        {
+            // Update Buttons
+            Btn1IsSelected = _timeSelButtons[0].isSelected;
+            Btn2IsSelected = _timeSelButtons[1].isSelected;
+            Btn3IsSelected = _timeSelButtons[2].isSelected;
+            Btn4IsSelected = _timeSelButtons[3].isSelected;
+            Btn5IsSelected = _timeSelButtons[4].isSelected;
+            Btn6IsSelected = _timeSelButtons[5].isSelected;
+            base.OnPropertyChanged("Btn1IsSelected");
+            base.OnPropertyChanged("Btn2IsSelected");
+            base.OnPropertyChanged("Btn3IsSelected");
+            base.OnPropertyChanged("Btn4IsSelected");
+            base.OnPropertyChanged("Btn5IsSelected");
+            base.OnPropertyChanged("Btn6IsSelected");
+            base.OnPropertyChanged("Btn7IsSelected");
+            base.OnPropertyChanged("Btn8IsSelected");
+        }
+
+        public void OnConfirmMethod()
+        {
+            RenewOrder();
+        }
+
+        public void OnCancelMethod()
+        {
+            ConfirmVisible = false;
+            base.OnPropertyChanged("ConfirmVisible");
+            // Hide activity spinner
+            RenewIsRunning = false;
+            base.OnPropertyChanged("RenewIsRunning");
         }
     }
 }
