@@ -239,7 +239,7 @@ namespace NextPark.Mobile.ViewModels
                 PriceMinDownEnable = false;
             } else {
                 // Enable PriceMinDown button
-                PriceMinDownBorderColor = Color.FromHex("#8CC63F");
+                PriceMinDownBorderColor = (Color)Application.Current.Resources["NextParkColor1"];
                 PriceMinDownEnable = true;
             }
             if (PriceMin >= PRICE_MAX) {
@@ -248,7 +248,7 @@ namespace NextPark.Mobile.ViewModels
                 PriceMinUpEnable = false;
             } else {
                 // Enable PriceMinUp button
-                PriceMinUpBorderColor = Color.FromHex("#8CC63F");
+                PriceMinUpBorderColor = (Color)Application.Current.Resources["NextParkColor1"];
                 PriceMinUpEnable = true;
             }
             base.OnPropertyChanged("PriceMin");

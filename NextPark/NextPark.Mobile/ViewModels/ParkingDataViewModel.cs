@@ -326,13 +326,13 @@ namespace NextPark.Mobile.ViewModels
 
             switch(weekDay) {
                 default:
-                case 1: Day1TextColor = Color.White; Day1BackgroundColor = Color.FromHex("#8CC63F"); break;
-                case 2: Day2TextColor = Color.White; Day2BackgroundColor = Color.FromHex("#8CC63F"); break;
-                case 3: Day3TextColor = Color.White; Day3BackgroundColor = Color.FromHex("#8CC63F"); break;
-                case 4: Day4TextColor = Color.White; Day4BackgroundColor = Color.FromHex("#8CC63F"); break;
-                case 5: Day5TextColor = Color.White; Day5BackgroundColor = Color.FromHex("#8CC63F"); break;
-                case 6: Day6TextColor = Color.White; Day6BackgroundColor = Color.FromHex("#8CC63F"); break;
-                case 0: Day7TextColor = Color.White; Day7BackgroundColor = Color.FromHex("#8CC63F"); break;
+                case 1: Day1TextColor = Color.White; Day1BackgroundColor = (Color)Application.Current.Resources["NextParkColor1"]; break;
+                case 2: Day2TextColor = Color.White; Day2BackgroundColor = (Color)Application.Current.Resources["NextParkColor1"]; break;
+                case 3: Day3TextColor = Color.White; Day3BackgroundColor = (Color)Application.Current.Resources["NextParkColor1"]; break;
+                case 4: Day4TextColor = Color.White; Day4BackgroundColor = (Color)Application.Current.Resources["NextParkColor1"]; break;
+                case 5: Day5TextColor = Color.White; Day5BackgroundColor = (Color)Application.Current.Resources["NextParkColor1"]; break;
+                case 6: Day6TextColor = Color.White; Day6BackgroundColor = (Color)Application.Current.Resources["NextParkColor1"]; break;
+                case 0: Day7TextColor = Color.White; Day7BackgroundColor = (Color)Application.Current.Resources["NextParkColor1"]; break;
             }
 
             if (weekDay == 0) weekDay = 7;

@@ -535,8 +535,8 @@ namespace NextPark.Mobile.ViewModels
         {
             if (_profileService.UserReserveMode) {
                 BookModeBackColor = Color.White;
-                BookModeTextColor = Color.Gray;
-                ReserveModeBackColor = Color.Gray;
+                BookModeTextColor = (Color)Xamarin.Forms.Application.Current.Resources["NextParkColor1"]; //Color.Gray;
+                ReserveModeBackColor = (Color)Xamarin.Forms.Application.Current.Resources["NextParkColor1"]; //Color.Gray;
                 ReserveModeTextColor = Color.White;
                 ReserveDatesVisible = true;
                 MinResStartDate = DateTime.Now.Date;
@@ -561,10 +561,10 @@ namespace NextPark.Mobile.ViewModels
                 base.OnPropertyChanged("ResStartText");
                 base.OnPropertyChanged("ResEndText");
             } else {
-                BookModeBackColor = Color.Gray;
+                BookModeBackColor = (Color)Xamarin.Forms.Application.Current.Resources["NextParkColor1"]; //Color.Gray;
                 BookModeTextColor = Color.White;
                 ReserveModeBackColor = Color.White;
-                ReserveModeTextColor = Color.Gray;
+                ReserveModeTextColor = (Color)Xamarin.Forms.Application.Current.Resources["NextParkColor1"];//Color.Gray;
                 ReserveDatesVisible = false;
                 ReserveDatesPopupVisible = false;
                 base.OnPropertyChanged("ReserveDatesPopupVisible");

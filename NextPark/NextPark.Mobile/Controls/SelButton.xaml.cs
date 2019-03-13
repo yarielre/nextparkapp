@@ -28,8 +28,8 @@ namespace NextPark.Mobile.Controls
             {
                 if ((bool)newValue == true)
                 {
-                    control.BtnBackgroundColor = Color.FromHex("#8CC63F");
-                    control.BtnBorderColor = Color.FromHex("#8CC63F");
+                    control.BtnBackgroundColor = (Color)Application.Current.Resources["NextParkColor1"];
+                    control.BtnBorderColor = (Color)Application.Current.Resources["NextParkColor1"];
                     control.BtnTextColor = Color.White;
                     //control._isSelected = true;
                 }
@@ -92,8 +92,8 @@ namespace NextPark.Mobile.Controls
                 /*
                 if ((bool)value == true)
                 {
-                    this.BtnBackgroundColor = Color.FromHex("#8CC63F");
-                    this.BtnBorderColor = Color.FromHex("#8CC63F");
+                    this.BtnBackgroundColor = (Color)Application.Current.Resources["NextParkColor1"];
+                    this.BtnBorderColor = (Color)Application.Current.Resources["NextParkColor1"];
                     this.BtnTextColor = Color.White;
                     //this._isSelected = true;
                 }

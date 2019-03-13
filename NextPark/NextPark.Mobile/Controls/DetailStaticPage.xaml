@@ -66,7 +66,7 @@
                     <StackLayout HorizontalOptions="FillAndExpand"
                                  RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}">
                         <Frame  Margin="10,2,10,10"
-                                BorderColor="#8CC63F" 
+                                BorderColor="{DynamicResource NextParkColor1}" 
                                 CornerRadius="9" 
                                 BackgroundColor="Transparent" 
                                 HasShadow="false"
@@ -74,7 +74,7 @@
                                 VerticalOptions="FillAndExpand">
                         <Frame  x:Name="FrameContainer"
                                 Margin="1,1,1,1" 
-                                BorderColor="#8CC63F"
+                                BorderColor="{DynamicResource NextParkColor1}"
                                 CornerRadius="8" 
                                 BackgroundColor="#D0FFFFFF" 
                                 HasShadow="false"

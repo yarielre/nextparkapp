@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms" 
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:controls="clr-namespace:NextPark.Mobile.Controls"
@@ -20,7 +20,7 @@
                     <StackLayout HorizontalOptions="FillAndExpand"
                                  RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}">
                         <Frame  Margin="2,2,2,2"
-                                BorderColor="#8CC63F" 
+                                BorderColor="{DynamicResource NextParkColor1}" 
                                 CornerRadius="9" 
                                 BackgroundColor="Transparent" 
                                 HasShadow="false"
@@ -39,7 +39,7 @@
                                      RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent,Property=Height,Factor=0,Constant=160}"
                                      >
                             <Frame  Margin="10,0,10,2"
-                                    BorderColor="#8CC63F" 
+                                    BorderColor="{DynamicResource NextParkColor1}" 
                                     CornerRadius="9" 
                                     BackgroundColor="White" 
                                     HasShadow="false"
@@ -163,7 +163,7 @@
                                         Command="{Binding BookAction}"
                                         TextColor="White"
                                         BorderRadius="8"
-                                        BackgroundColor="#8CC63F"
+                                        BackgroundColor="{DynamicResource NextParkColor1}"
                                         WidthRequest="191"
                                         Margin="0,0,0,10"/>                                 
                             </StackLayout>
@@ -179,7 +179,7 @@
                                  RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=1}"
                                  RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}">
                         <StackLayout VerticalOptions="Center" HorizontalOptions="Center" Spacing="0">
-                            <Frame BorderColor="#8CC63F"
+                            <Frame BorderColor="{DynamicResource NextParkColor1}"
                                    CornerRadius="16"
                                    HasShadow="false"
                                    IsClippedToBounds="true"
@@ -235,7 +235,7 @@
                                         Command="{Binding OnConfirm}"
                                         TextColor="White"
                                         BorderRadius="8"
-                                        BackgroundColor="#8CC63F"
+                                        BackgroundColor="{DynamicResource NextParkColor1}"
                                         WidthRequest="191"
                                         Margin="0"/>
                                 <!-- Cancel renew button -->
@@ -243,9 +243,9 @@
                                         FontAttributes="Bold"
                                         HorizontalOptions="Center"
                                         Command="{Binding OnCancel}"
-                                        TextColor="#8CC63F"
+                                        TextColor="{DynamicResource NextParkColor1}"
                                         BorderRadius="8"
-                                        BorderColor="#8CC63F"
+                                        BorderColor="{DynamicResource NextParkColor1}"
                                         BorderWidth="1"
                                         BackgroundColor="White"
                                         WidthRequest="191"

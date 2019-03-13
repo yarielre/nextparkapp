@@ -182,8 +182,8 @@ namespace NextPark.Mobile.ViewModels
         private void EnableWithdrawal()
         {
             WithdrawalEnable = true;
-            BtnWithdrawalBorderColor = Color.FromHex("#8CC63F");
-            BtnWithdrawalBackgroundColor = Color.FromHex("#8CC63F");
+            BtnWithdrawalBorderColor = (Color)Application.Current.Resources["NextParkColor1"];
+            BtnWithdrawalBackgroundColor = (Color)Application.Current.Resources["NextParkColor1"];
             base.OnPropertyChanged("WithdrawalEnable");
             base.OnPropertyChanged("BtnWithdrawalBorderColor");
             base.OnPropertyChanged("BtnWithdrawalBackgroundColor");
