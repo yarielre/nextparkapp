@@ -7,6 +7,7 @@
         <ResourceDictionary>
             <!--Global Styles-->
             <Color x:Key="NextParkColor1">#2E9AA1</Color>
+            <Color x:Key="NextParkLightColor1">#39B2A2</Color>
             <Color x:Key="NavigationPrimary">#2196F3</Color>
             <Style TargetType="NavigationPage">
                 <Setter Property="BarBackgroundColor" Value="{StaticResource NavigationPrimary}" />
