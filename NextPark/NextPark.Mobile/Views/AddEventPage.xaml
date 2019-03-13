@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms" 
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:controls="clr-namespace:NextPark.Mobile.Controls"
@@ -57,8 +57,9 @@
                         <TimePicker FontSize="Small"
                                     HorizontalOptions="End"
                                     Grid.Row="1" Grid.Column="2"
-                                    Time="{Binding EndTime}"/>
-
+                                    Time="{Binding EndTime}">
+                            <TimePicker.Format>HH:mm</TimePicker.Format>
+                        </TimePicker>
                         <Label Text="Ripetizione"
                                FontSize="Small"
                                HorizontalOptions="Start" VerticalOptions="Center"
