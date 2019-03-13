@@ -40,6 +40,7 @@
                                    Aspect="Fill"
                                    VerticalOptions="Center"
                                    HorizontalOptions="Center"
+                                   IsVisible="{TemplateBinding LinkEnable}"
                                    Grid.Row="0" Grid.Column="1"/>
                             <!-- Item content -->
                             <StackLayout HorizontalOptions="Center"

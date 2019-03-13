@@ -105,141 +105,79 @@ namespace NextPark.Mobile.ViewModels
 
         private async Task GetUserBookings()
         {
-            var ordersResponse = await _orderDataService.GetAllOrdersAsync();
-
-            /*
+            try
             {
-                new BookingItem { UID = 0, Address = "Via Strada 1", City = "Lugano, Ticino", Time = "01h45", OnBookingTap = OnBookingTapped, OnBookingDel = OnBookingDelete },
-                new BookingItem { UID = 1, Address = "Via Strada 1.5", City = "Lugano, Ticino", Time = "02h00", OnBookingTap = OnBookingTapped, OnBookingDel = OnBookingDelete },
-                new BookingItem { UID = 2, Address = "Via Strada 2", City = "Lugano, Ticino", Time = "02h30", OnBookingTap = OnBookingTapped, OnBookingDel = OnBookingDelete }
-            };
-            */
+                var ordersResponse = await _orderDataService.GetAllOrdersAsync();
 
-            int count = 0;
-            BookingList.Clear();
+                int count = 0;
+                BookingList.Clear();
 
-            ordersResponse = new List<OrderModel>();
-            ordersResponse.Add(new OrderModel
-            {
-                StartDate = DateTime.Now.AddDays(1),
-                EndDate = DateTime.Now.AddDays(1).AddHours(2),
-                OrderStatus = Enums.OrderStatus.Actived,
-                ParkingId = 11,
-                Price = 2.0,
-                UserId = 5
-            });
+                // Create Comparison instance and use it.
+                Comparison<OrderModel> comparison = new Comparison<OrderModel>(CompareOrders);
+                ordersResponse.Sort(comparison);
 
-            ordersResponse.Add(new OrderModel
-            {
-                StartDate = DateTime.Now,
-                EndDate = DateTime.Now.AddHours(2),
-                OrderStatus = Enums.OrderStatus.Actived,
-                ParkingId = 10,
-                Price = 2.0,
-                UserId = 5
-            });
-
-            ordersResponse.Add(new OrderModel
-            {
-                StartDate = DateTime.Now,
-                EndDate = DateTime.Now.AddHours(2),
-                OrderStatus = Enums.OrderStatus.Actived,
-                ParkingId = 10,
-                Price = 2.0,
-                UserId = 5
-            });
-            ordersResponse.Add(new OrderModel
-            {
-                StartDate = DateTime.Now,
-                EndDate = DateTime.Now.AddHours(2),
-                OrderStatus = Enums.OrderStatus.Actived,
-                ParkingId = 10,
-                Price = 2.0,
-                UserId = 5
-            });
-            ordersResponse.Add(new OrderModel
-            {
-                StartDate = DateTime.Now,
-                EndDate = DateTime.Now.AddHours(2),
-                OrderStatus = Enums.OrderStatus.Actived,
-                ParkingId = 10,
-                Price = 2.0,
-                UserId = 5
-            });
-            ordersResponse.Add(new OrderModel
-            {
-                StartDate = DateTime.Now,
-                EndDate = DateTime.Now.AddHours(2),
-                OrderStatus = Enums.OrderStatus.Actived,
-                ParkingId = 10,
-                Price = 2.0,
-                UserId = 5
-            });
-            ordersResponse.Add(new OrderModel
-            {
-                StartDate = DateTime.Now,
-                EndDate = DateTime.Now.AddHours(2),
-                OrderStatus = Enums.OrderStatus.Actived,
-                ParkingId = 10,
-                Price = 2.0,
-                UserId = 5
-            });
-
-
-            // Create Comparison instance and use it.
-            Comparison<OrderModel> comparison = new Comparison<OrderModel>(CompareOrders);
-            ordersResponse.Sort(comparison);
-
-            foreach (OrderModel order in ordersResponse)
-            {
-
-                if (order.UserId == int.Parse(AuthSettings.UserId))
+                foreach (OrderModel order in ordersResponse)
                 {
-                    //var parking = await _parkingDataService.GetParkingAsync(order.ParkingId);
-                    var parking = _profileService.GetParkingById(order.ParkingId);
-                    if (parking != null) {
 
-                        UIBookingModel booking = new UIBookingModel
+                    if (order.UserId == AuthSettings.User.Id)
+                    {
+                        //var parking = await _parkingDataService.GetParkingAsync(order.ParkingId);
+                        var parking = _profileService.GetParkingById(order.ParkingId);
+                        if (parking != null)
                         {
-                            UID = order.Id,
-                            Index = count++,
-                            Address = parking.Address,
-                            Cap = parking.Cap.ToString(),
-                            City = parking.City,
-                            Parking = (ParkingModel)parking,
-                            OnBookingDel = OnBookingDelete,
-                            OnBookingTap = OnBookingTapped
-                        };
 
-                        if (order.StartDate > DateTime.Now) {
-                            // Reservation
-                            booking.Time = order.StartDate.ToString("dd/MM/yy  HH:mm") + "\n" + order.EndDate.ToString("dd/MM/yy  HH:mm");
-                        } else {
-                            // Booking
-                            TimeSpan remainingTime = (order.EndDate - DateTime.Now);
-                            booking.Time = string.Format("{0:%h} h {0:%m} min", remainingTime);
+                            UIBookingModel booking = new UIBookingModel
+                            {
+                                UID = order.Id,
+                                Index = count++,
+                                Address = parking.Address,
+                                Cap = parking.Cap.ToString(),
+                                City = parking.City,
+                                Parking = (ParkingModel)parking,
+                                OnBookingDel = OnBookingDelete,
+                                OnBookingTap = OnBookingTapped
+                            };
+
+                            if (order.StartDate > DateTime.Now)
+                            {
+                                // Reservation
+                                booking.Time = order.StartDate.ToString("dd/MM/yy  HH:mm") + "\n" + order.EndDate.ToString("dd/MM/yy  HH:mm");
+                            }
+                            else
+                            {
+                                // Booking
+                                TimeSpan remainingTime = (order.EndDate - DateTime.Now);
+                                booking.Time = string.Format("{0:%h} h {0:%m} min", remainingTime);
+                            }
+
+                            BookingList.Add(booking);
                         }
 
-                        BookingList.Add(booking);
                     }
-
                 }
             }
-            base.OnPropertyChanged("BookingList");
-
-            if (BookingList.Count == 0)
+            catch (Exception e)
             {
-                NoElementFound = true;
 
             }
-            else
+            finally
             {
-                NoElementFound = false;
-            }
-            base.OnPropertyChanged("NoElementFound");
+                base.OnPropertyChanged("BookingList");
 
-            BookingListHeight = BookingList.Count * 50.0+2;
-            base.OnPropertyChanged("BookingListHeight");
+                if (BookingList.Count == 0)
+                {
+                    NoElementFound = true;
+
+                }
+                else
+                {
+                    NoElementFound = false;
+                }
+                base.OnPropertyChanged("NoElementFound");
+
+                BookingListHeight = BookingList.Count * 50.0 + 2;
+                base.OnPropertyChanged("BookingListHeight");
+            }
         }
 
         public override bool BackButtonPressed()

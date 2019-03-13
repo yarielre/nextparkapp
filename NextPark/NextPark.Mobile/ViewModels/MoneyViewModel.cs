@@ -182,8 +182,8 @@ namespace NextPark.Mobile.ViewModels
         private void EnableWithdrawal()
         {
             WithdrawalEnable = true;
-            BtnWithdrawalBorderColor = Color.FromHex("#8CC63F");
-            BtnWithdrawalBackgroundColor = Color.FromHex("#8CC63F");
+            BtnWithdrawalBorderColor = (Color)Application.Current.Resources["NextParkColor1"];
+            BtnWithdrawalBackgroundColor = (Color)Application.Current.Resources["NextParkColor1"];
             base.OnPropertyChanged("WithdrawalEnable");
             base.OnPropertyChanged("BtnWithdrawalBorderColor");
             base.OnPropertyChanged("BtnWithdrawalBackgroundColor");
@@ -195,10 +195,6 @@ namespace NextPark.Mobile.ViewModels
             // TODO: fill data according to buy credit data model
             // TODO: send buy credit request to backend
             _dialogService.ShowAlert("Alert", "TODO: Payment operations for: " + selectedValue.ToString() + " CHF");
-
-
-
-            UpdateUserCoin = new UpdateUserCoinModel { Coins = AuthSettings.UserCoin + double.Parse(selectedValue.ToString()), UserId = int.Parse(AuthSettings.UserId) };
 
             // Start activity spinner
             IsRunning = true;

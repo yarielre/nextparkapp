@@ -11,6 +11,7 @@ namespace NextPark.Mobile.Controls
         public static readonly BindableProperty ClickActionProperty = BindableProperty.Create(nameof(ClickAction), typeof(ICommand), typeof(UserProfileItem), null, Xamarin.Forms.BindingMode.OneWay);
         public static readonly BindableProperty BorderColorProperty = BindableProperty.Create(nameof(BorderColor), typeof(Color), typeof(UserProfileItem), Color.Gray, Xamarin.Forms.BindingMode.OneWay);
         public static readonly BindableProperty IconProperty = BindableProperty.Create(nameof(Icon), typeof(string), typeof(UserProfileItem), default(string), Xamarin.Forms.BindingMode.OneWay);
+        public static readonly BindableProperty LinkEnableProperty = BindableProperty.Create(nameof(LinkEnable), typeof(bool), typeof(UserProfileItem), true, Xamarin.Forms.BindingMode.OneWay);
 
         public ICommand ClickAction
         {
@@ -34,6 +35,12 @@ namespace NextPark.Mobile.Controls
         {
             get { return (string)this.GetValue(IconProperty); }
             set { SetValue(IconProperty, value); }
+        }
+
+        public bool LinkEnable
+        {
+            get { return (bool)this.GetValue(LinkEnableProperty); }
+            set { SetValue(LinkEnableProperty, value); }
         }
 
         public UserProfileItem()

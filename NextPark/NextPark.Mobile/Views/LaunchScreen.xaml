@@ -3,12 +3,12 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
              BindingContext="{Binding Launch, Source={StaticResource Locator}}"
              x:Class="NextPark.Mobile.Views.LaunchScreen"
-              BackgroundColor="Black">
+              BackgroundColor="{DynamicResource NextParkColor1}">
     <ContentPage.Content>
         <StackLayout HorizontalOptions="FillAndExpand" 
                      VerticalOptions="CenterAndExpand"
-                     BackgroundColor="Black">
-            <Image Source="bg_logo.png" BackgroundColor="Black"
+                     BackgroundColor="Transparent">
+            <Image Source="bg_logo.png" BackgroundColor="{DynamicResource NextParkColor1}"
                    HorizontalOptions="Center"
                    VerticalOptions="Center"
                    HeightRequest="100"

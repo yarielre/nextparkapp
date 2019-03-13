@@ -244,39 +244,54 @@ namespace NextPark.Mobile.ViewModels
 
                 // Get Events
                 var eventsResult = await _eventDataService.GetAllEventsAsync();
-                if (eventsResult.Count == 0) return;
-                foreach(EventModel availability in eventsResult)
+                if ((eventsResult != null) && (eventsResult.Count != 0))
                 {
-                    UIParkingModel parkingModel = _profileService.GetParkingById(availability.ParkingId);
-                    if (parkingModel != null) {
-                        parkingModel.Events.Add(availability);
-                    }
-                }
-
-                // Get orders
-                var ordersResult = await _orderDataService.GetAllOrdersAsync();
-                if ((ordersResult != null) && (ordersResult.Count != 0))
-                {
-                    foreach (OrderModel order in ordersResult)
+                    foreach (EventModel availability in eventsResult)
                     {
-                        UIParkingModel parkingModel = _profileService.GetParkingById(order.ParkingId);
+                        UIParkingModel parkingModel = _profileService.GetParkingById(availability.ParkingId);
                         if (parkingModel != null)
                         {
-                            parkingModel.Orders.Add(order);
+                            parkingModel.Events.Add(availability);
+                        }
+                    }
+
+
+                    // Get orders
+                    var ordersResult = await _orderDataService.GetAllOrdersAsync();
+                    if ((ordersResult != null) && (ordersResult.Count != 0))
+                    {
+                        foreach (OrderModel order in ordersResult)
+                        {
+                            UIParkingModel parkingModel = _profileService.GetParkingById(order.ParkingId);
+                            if (parkingModel != null)
+                            {
+                                parkingModel.Orders.Add(order);
+                            }
                         }
                     }
                 }
 
-                Map.Pins.Clear();
-                foreach (UIParkingModel parking in _profileService.ParkingList)
-                {
-                    // Add Map Pin
-                    CreatePin(new Position(parking.Latitude, parking.Longitude), parking);
-                }
+                RefreshMapPins();
+
             }
             catch (Exception e) {
                 _dialogService.ShowToast(e.Message, TimeSpan.FromSeconds(10));
                 Xamarin.Forms.Device.StartTimer(TimeSpan.FromSeconds(9), () => { UpdateParkingList(); return false; });
+            }
+        }
+
+        private void RefreshMapPins()
+        {
+            if ((mapReady == false) || (Map == null) || (Map.Pins == null)) {
+                // Map not ready
+                return;
+            }
+
+            Map.Pins.Clear();
+            foreach (UIParkingModel parking in _profileService.ParkingList)
+            {
+                // Add Map Pin
+                CreatePin(new Position(parking.Latitude, parking.Longitude), parking);
             }
         }
 
@@ -346,6 +361,18 @@ namespace NextPark.Mobile.ViewModels
 
         private void CreatePin(Position position, UIParkingModel parking)
         {
+            // Get parking status
+            bool isFree = false;
+            if (_profileService.UserReserveMode) {
+                // Remove seconds from times
+                ResStartTime = ResStartTime.Subtract(TimeSpan.FromSeconds(ResStartTime.Seconds));
+                ResEndTime = ResEndTime.Subtract(TimeSpan.FromSeconds(ResEndTime.Seconds));
+                isFree = parking.isFree(ResStartDate + ResStartTime, ResEndDate + ResEndTime);
+            } else {
+                isFree = parking.isFree();
+            }
+
+            // Create new custom pin
             var pin = new CustomPin
             {
                 Id = parking.Id,
@@ -354,7 +381,7 @@ namespace NextPark.Mobile.ViewModels
                 Position = position,
                 Label = parking.Address,
                 Address = parking.Cap.ToString() + " " + parking.City,
-                Icon = (parking.isFree()) ? "icon_pin_green_256" : "icon_pin_red_256"
+                Icon = (isFree) ? "icon_pin_green_256" : "icon_pin_red_256"
             };
 
             Map.Pins.Add(pin);
@@ -508,8 +535,8 @@ namespace NextPark.Mobile.ViewModels
         {
             if (_profileService.UserReserveMode) {
                 BookModeBackColor = Color.White;
-                BookModeTextColor = Color.Gray;
-                ReserveModeBackColor = Color.Gray;
+                BookModeTextColor = (Color)Xamarin.Forms.Application.Current.Resources["NextParkColor1"]; //Color.Gray;
+                ReserveModeBackColor = (Color)Xamarin.Forms.Application.Current.Resources["NextParkColor1"]; //Color.Gray;
                 ReserveModeTextColor = Color.White;
                 ReserveDatesVisible = true;
                 MinResStartDate = DateTime.Now.Date;
@@ -534,10 +561,10 @@ namespace NextPark.Mobile.ViewModels
                 base.OnPropertyChanged("ResStartText");
                 base.OnPropertyChanged("ResEndText");
             } else {
-                BookModeBackColor = Color.Gray;
+                BookModeBackColor = (Color)Xamarin.Forms.Application.Current.Resources["NextParkColor1"]; //Color.Gray;
                 BookModeTextColor = Color.White;
                 ReserveModeBackColor = Color.White;
-                ReserveModeTextColor = Color.Gray;
+                ReserveModeTextColor = (Color)Xamarin.Forms.Application.Current.Resources["NextParkColor1"];//Color.Gray;
                 ReserveDatesVisible = false;
                 ReserveDatesPopupVisible = false;
                 base.OnPropertyChanged("ReserveDatesPopupVisible");
@@ -548,6 +575,8 @@ namespace NextPark.Mobile.ViewModels
             base.OnPropertyChanged("ReserveModeBackColor");
             base.OnPropertyChanged("ReserveModeTextColor");
             base.OnPropertyChanged("ReserveDatesVisible");
+
+            RefreshMapPins();
         }
 
         public void OnReserveDatesTapMethod()
@@ -566,6 +595,8 @@ namespace NextPark.Mobile.ViewModels
             base.OnPropertyChanged("ResEndText");
             _profileService.UserStartDate = ResStartDate + ResStartTime;
             _profileService.UserEndDate = ResEndDate + ResEndTime;
+
+            RefreshMapPins();
         }
 
         public void OnHideReserveDatesPopupMethod()

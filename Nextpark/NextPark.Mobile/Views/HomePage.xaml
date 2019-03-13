@@ -30,48 +30,61 @@
                 </StackLayout>
                 
                 <!-- Book now or future reservation choice -->
-                <ContentView HeightRequest="32"
+                <ContentView HeightRequest="25"
                              BackgroundColor="White"
-                             Margin="0"
+                             Margin="0,0,0,0"
+                             Padding="0,0,0,5"
                              RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}"
                          >
-                    <Frame HeightRequest="30"
-                           Margin="0,0,0,5"
+                    <Frame HeightRequest="25"
+                           Margin="0"
                            HorizontalOptions="Center"
                            VerticalOptions="Start"
-                           Padding="0"
                            IsClippedToBounds="true"
-                           CornerRadius="8"
+                           CornerRadius="0"
                            HasShadow="false"
-                           BorderColor="Gray">                                    
-                        <Grid>
+                           BorderColor="{DynamicResource NextParkColor1}"
+                           BackgroundColor="{DynamicResource NextParkColor1}">
+                        <Frame.Padding>
+                            <OnPlatform x:TypeArguments="Thickness">
+                                <On Platform="iOS" Value="0"/>
+                                <On Platform="Android" Value="1" />
+                            </OnPlatform>
+                        </Frame.Padding>
+                        <Grid IsClippedToBounds="true">
                             <Grid.RowDefinitions>
-                               <RowDefinition Height="*"/>
+                               <RowDefinition Height="25"/>
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
                                <ColumnDefinition Width="*" />
                                <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
                             <ContentView BackgroundColor="{Binding BookModeBackColor}"
+                                         HeightRequest="25"
                                          Grid.Row="0" Grid.Column="0">
                                 <Label Text=" Parcheggia ora "
                                        FontSize="Small"
                                        TextColor="{Binding BookModeTextColor}"
                                        HorizontalTextAlignment="Center"
                                        VerticalTextAlignment="Center"
-                                       Margin="5,0"/>
+                                       VerticalOptions="Center"
+                                       Margin="5,0"
+                                       HeightRequest="25"/>
                                 <ContentView.GestureRecognizers>
                                     <TapGestureRecognizer Command="{Binding OnBookMode}"/>                            
                                 </ContentView.GestureRecognizers>
                             </ContentView>
                             <ContentView BackgroundColor="{Binding ReserveModeBackColor}"
+                                         HeightRequest="25"
                                          Grid.Row="0" Grid.Column="1">
                                 <Label Text=" Riservazione futura "
                                        FontSize="Small"
                                        TextColor="{Binding ReserveModeTextColor}"
                                        HorizontalTextAlignment="Center"
                                        VerticalTextAlignment="Center"
-                                       Margin="5,0"/>
+                                       VerticalOptions="Center"
+                                       Margin="5,0"
+                                       HeightRequest="25"/>
                                 <ContentView.GestureRecognizers>
                                     <TapGestureRecognizer Command="{Binding OnReserveMode}"/>                            
                                 </ContentView.GestureRecognizers>
@@ -85,18 +98,33 @@
                            RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=0, Constant=35}"
                            RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}"
                            HorizontalOptions="Center">
-                                 
+                    
+                    
                     <Frame BackgroundColor="White"
-                           BorderColor="Gray"
+                           BorderColor="{DynamicResource NextParkColor1}"
                            Opacity="0.9"
                            IsClippedToBounds="true"
                            HasShadow="false"
                            Margin="20,0,20,0"
-                           Padding="0"
                            RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.5}"
                            HorizontalOptions="Center"
                            CornerRadius="8"
-                           >
+                           Padding="2">
+                    <Frame BackgroundColor="White"
+                           BorderColor="White"
+                           Opacity="0.9"
+                           IsClippedToBounds="true"
+                           HasShadow="false"
+                           Margin="0"
+                           RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.5}"
+                           HorizontalOptions="Center"
+                           CornerRadius="8">
+                        <Frame.Padding>
+                            <OnPlatform x:TypeArguments="Thickness">
+                                <On Platform="iOS" Value="0"/>
+                                <On Platform="Android" Value="0" />
+                            </OnPlatform>
+                        </Frame.Padding>
                         <StackLayout Spacing="0">
                             <SearchBar BackgroundColor="White"
                                        Placeholder="Cerca indirizzo"
@@ -108,7 +136,11 @@
                                        FontSize="Small"
                                        HeightRequest="40"/>
                             <ContentView BackgroundColor="White"
-                                         Opacity="0.9" IsVisible="{Binding ReserveDatesVisible}" HorizontalOptions="CenterAndExpand">
+                                         Opacity="0.9" 
+                                         Margin="1"
+                                         Padding="1"
+                                         IsVisible="{Binding ReserveDatesVisible}" 
+                                         HorizontalOptions="CenterAndExpand">
                                 <Grid HorizontalOptions="FillAndExpand">
                                     <Grid.RowDefinitions>
                                        <RowDefinition Height="*"/>
@@ -133,6 +165,7 @@
                             </ContentView>
                         </StackLayout>
                     </Frame>
+                    </Frame>
                 </StackLayout>
                 
                 <!-- Current Position -->
@@ -142,7 +175,7 @@
                            HorizontalOptions="End">
                                  
                     <Frame BackgroundColor="White"
-                           BorderColor="Gray"
+                           BorderColor="{DynamicResource NextParkColor1}"
                            Opacity="0.9"
                            IsClippedToBounds="true"
                            HasShadow="false"
@@ -178,7 +211,7 @@
                        RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}"
                        RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=1, Constant=-180}">
                     <ContentView WidthRequest="280" HeightRequest="148" HorizontalOptions="Center" IsVisible="{Binding InfoPanelVisible}">
-                        <Frame BorderColor="#8CC63F"
+                        <Frame BorderColor="{DynamicResource NextParkColor1}"
                                BackgroundColor="White"
                                CornerRadius="14"
                                IsClippedToBounds="true"
@@ -204,7 +237,7 @@
                                            CornerRadius="8"
                                            IsClippedToBounds="true"
                                            BackgroundColor="White"
-                                           BorderColor="Gray"
+                                           BorderColor="{DynamicResource NextParkColor1}"
                                            HorizontalOptions="Center"
                                            VerticalOptions="Center"
                                            Margin="0"
@@ -243,7 +276,7 @@
                                         CommandParameter="{Binding UID}"
                                         TextColor="White"
                                         BorderRadius="8"
-                                        BackgroundColor="#8CC63F"
+                                        BackgroundColor="{DynamicResource NextParkColor1}"
                                         WidthRequest="191"
                                         HeightRequest="30"
                                         Padding="0"
@@ -262,7 +295,7 @@
                              RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=1, Constant=-30}"
                              RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}">
                         <StackLayout VerticalOptions="Center" HorizontalOptions="Center" Spacing="0">
-                            <Frame BorderColor="#8CC63F"
+                            <Frame BorderColor="{DynamicResource NextParkColor1}"
                                    CornerRadius="16"
                                    HasShadow="false"
                                    IsClippedToBounds="true"
@@ -270,6 +303,12 @@
                                    WidthRequest="300"
                                    Padding="10,20"
                                    Margin="0">
+                            <Frame.HeightRequest>
+                                <OnPlatform x:TypeArguments="x:Double">
+                                <On Platform="iOS" Value="200"/>
+                                <On Platform="Android" Value="260" />
+                            </OnPlatform>
+                            </Frame.HeightRequest>
                             <StackLayout Orientation="Vertical" 
                                          HeightRequest="200" 
                                          WidthRequest="300" 
@@ -295,14 +334,14 @@
                                            FontSize="Small" 
                                            HorizontalOptions="Start" VerticalOptions="Center"
                                            Grid.Row="0" Grid.Column="0"/>
-                                    <DatePicker HorizontalOptions="Center" FontSize="Small"
+                                    <DatePicker HorizontalOptions="Fill" FontSize="Small"
                                                 Grid.Row="0" Grid.Column="1"
                                                 Date="{Binding ResStartDate}"
                                                 MinimumDate="{Binding MinResStartDate}">
                                         <DatePicker.Format>dd/MM/yy</DatePicker.Format>
                                     </DatePicker>
                                     <TimePicker FontSize="Small"
-                                                HorizontalOptions="End"
+                                                HorizontalOptions="Fill"
                                                 Grid.Row="0" Grid.Column="2"
                                                 Time="{Binding ResStartTime}">
                                         <TimePicker.Format>HH:mm</TimePicker.Format>
@@ -311,16 +350,18 @@
                                            FontSize="Small" 
                                            HorizontalOptions="Start" VerticalOptions="Center"
                                            Grid.Row="1" Grid.Column="0"/>
-                                    <DatePicker HorizontalOptions="Center" FontSize="Small"
+                                    <DatePicker HorizontalOptions="Fill" FontSize="Small"
                                                 Grid.Row="1" Grid.Column="1"
                                                 Date="{Binding ResEndDate}"
                                                 MinimumDate="{Binding MinResEndDate}">
                                         <DatePicker.Format>dd/MM/yy</DatePicker.Format>
                                     </DatePicker>
                                     <TimePicker FontSize="Small"
-                                                HorizontalOptions="End"
+                                                HorizontalOptions="Fill"
                                                 Grid.Row="1" Grid.Column="2"
-                                                Time="{Binding ResEndTime}"/>
+                                                Time="{Binding ResEndTime}">
+                                        <TimePicker.Format>HH:mm</TimePicker.Format>
+                                    </TimePicker>
                                     
                                 </Grid>
                                 <StackLayout Orientation="Vertical" HorizontalOptions="CenterAndExpand" Spacing="5">
@@ -331,7 +372,7 @@
                                         Command="{Binding OnConfirmReserveDates}"
                                         TextColor="White"
                                         BorderRadius="8"
-                                        BackgroundColor="#8CC63F"
+                                        BackgroundColor="{DynamicResource NextParkColor1}"
                                         WidthRequest="191"
                                         Margin="0"/>
                                 <!-- Cancel button -->
@@ -339,9 +380,9 @@
                                         FontAttributes="Bold"
                                         HorizontalOptions="Center"
                                         Command="{Binding OnHideReserveDatesPopup}"
-                                        TextColor="#8CC63F"
+                                        TextColor="{DynamicResource NextParkColor1}"
                                         BorderRadius="8"
-                                        BorderColor="#8CC63F"
+                                        BorderColor="{DynamicResource NextParkColor1}"
                                         BorderWidth="1"
                                         BackgroundColor="White"
                                         WidthRequest="191"

@@ -19,6 +19,8 @@ namespace NextPark.Models
         public int ParkingId { get; set; }
 
         public int UserId { get; set; }
+
+        public string CarPlate { get; set; }
      
     }
 }

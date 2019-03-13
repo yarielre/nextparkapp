@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
             xmlns:controls="clr-namespace:NextPark.Mobile.Controls"
@@ -20,7 +20,7 @@
                     <StackLayout HorizontalOptions="FillAndExpand"
                                  RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}">
                         <Frame  Margin="2,2,2,2"
-                                BorderColor="#8CC63F" 
+                                BorderColor="{DynamicResource NextParkColor1}" 
                                 CornerRadius="9" 
                                 BackgroundColor="Transparent" 
                                 HasShadow="false"
@@ -39,7 +39,7 @@
                                      RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent,Property=Height,Factor=0,Constant=160}"
                                      >
                             <Frame  Margin="10,0,10,2"
-                                    BorderColor="#8CC63F" 
+                                    BorderColor="{DynamicResource NextParkColor1}" 
                                     CornerRadius="9" 
                                     BackgroundColor="White" 
                                     HasShadow="false"
@@ -107,14 +107,14 @@
                                            FontSize="Small" 
                                            HorizontalOptions="Start" VerticalOptions="Center"
                                            Grid.Row="0" Grid.Column="0"/>
-                                    <DatePicker HorizontalOptions="Center" FontSize="Small"
+                                    <DatePicker HorizontalOptions="Fill" FontSize="Small"
                                                 Grid.Row="0" Grid.Column="1"
                                                 Date="{Binding StartDate}"
                                                 MinimumDate="{Binding MinStartDate}">
                                         <DatePicker.Format>dd/MM/yyyy</DatePicker.Format>
                                     </DatePicker>
                                     <TimePicker FontSize="Small"
-                                                HorizontalOptions="End"
+                                                HorizontalOptions="Fill"
                                                 Grid.Row="0" Grid.Column="2"
                                                 Time="{Binding StartTime}">
                                         <TimePicker.Format>HH:mm</TimePicker.Format>
@@ -123,14 +123,14 @@
                                            FontSize="Small" 
                                            HorizontalOptions="Start" VerticalOptions="Center"
                                            Grid.Row="1" Grid.Column="0"/>
-                                    <DatePicker HorizontalOptions="Center" FontSize="Small"
+                                    <DatePicker HorizontalOptions="Fill" FontSize="Small"
                                                 Grid.Row="1" Grid.Column="1"
                                                 Date="{Binding EndDate}"
                                                 MinimumDate="{Binding MinEndDate}">
                                         <DatePicker.Format>dd/MM/yyyy</DatePicker.Format>
                                     </DatePicker>
                                     <TimePicker FontSize="Small"
-                                                HorizontalOptions="End"
+                                                HorizontalOptions="Fill"
                                                 Grid.Row="1" Grid.Column="2"
                                                 Time="{Binding EndTime}"/>
                                     
@@ -149,12 +149,98 @@
                                         Command="{Binding BookAction}"
                                         TextColor="White"
                                         BorderRadius="8"
-                                        BackgroundColor="#8CC63F"
+                                        BackgroundColor="{DynamicResource NextParkColor1}"
                                         WidthRequest="191"
                                         Margin="0,0,0,10"/>                                 
                             </StackLayout>
                         </Frame>  
                     </StackLayout>
+                    
+                    <ContentView x:Name="confirmPopup" 
+                                 BackgroundColor="#C0606060" 
+                                 Padding="10, 0" 
+                                 IsVisible="{Binding ConfirmVisible}" 
+                                 RelativeLayout.XConstraint="0"
+                                 RelativeLayout.YConstraint="0"
+                                 RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=1}"
+                                 RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}">
+                        <StackLayout VerticalOptions="Center" HorizontalOptions="Center" Spacing="0">
+                            <Frame BorderColor="{DynamicResource NextParkColor1}"
+                                   CornerRadius="16"
+                                   HasShadow="false"
+                                   IsClippedToBounds="true"
+                                   HeightRequest="300"
+                                   WidthRequest="300"
+                                   Padding="0"
+                                   Margin="0">
+                            <StackLayout Orientation="Vertical" 
+                                         HeightRequest="300" 
+                                         WidthRequest="300" 
+                                         BackgroundColor="White" 
+                                         Spacing="5" 
+                                         Padding="0" Margin="0">
+                                <Label Text="Conferma dell'ordine"
+                                       FontSize="Medium"
+                                       FontAttributes="Bold"
+                                       HorizontalOptions="Center"
+                                       Margin="20,20,20,10"/>
+                                <StackLayout Orientation="Horizontal" Spacing="2" HorizontalOptions="Start" Padding="10,0">
+                                    <Label Text="Arrivo:"
+                                           FontSize="Default"                                           
+                                           VerticalTextAlignment="Center"/>
+                                    <Label Text="{Binding ConfirmStartDateTime}"
+                                           FontSize="Default"                                           
+                                           VerticalTextAlignment="Center"/>
+                                </StackLayout>
+                                <StackLayout Orientation="Horizontal" Spacing="2" HorizontalOptions="Start" Padding="10,0">
+                                    <Label Text="Partenza:"
+                                           FontSize="Default"                                           
+                                           VerticalTextAlignment="Center"/>
+                                    <Label Text="{Binding ConfirmEndDateTime}"
+                                           FontSize="Default"                                           
+                                           VerticalTextAlignment="Center"/>
+                                </StackLayout>
+                                <StackLayout Orientation="Horizontal" Spacing="2" HorizontalOptions="Start" Padding="10,0">
+                                    <Label Text="Prezzo:"
+                                           FontSize="Default"                                           
+                                           VerticalTextAlignment="Center"/>
+                                    <Label Text="{Binding ConfirmPrice}"
+                                           FontSize="Default"                                           
+                                           VerticalTextAlignment="Center"/>
+                                </StackLayout>
+                                <Label Text="Sicuro di confermare l'ordine?"
+                                       FontSize="Default"
+                                       HorizontalOptions="Center"
+                                       HorizontalTextAlignment="Center"
+                                       VerticalTextAlignment="Center"
+                                       Margin="10,10,0,10"/>
+                                <!-- Renew button -->
+                                <Button Text="Conferma"
+                                        FontAttributes="Bold"
+                                        HorizontalOptions="Center"
+                                        Command="{Binding OnConfirm}"
+                                        TextColor="White"
+                                        BorderRadius="8"
+                                        BackgroundColor="{DynamicResource NextParkColor1}"
+                                        WidthRequest="191"
+                                        Margin="0"/>
+                                <!-- Cancel renew button -->
+                                <Button Text="Annulla"
+                                        FontAttributes="Bold"
+                                        HorizontalOptions="Center"
+                                        Command="{Binding OnCancel}"
+                                        TextColor="{DynamicResource NextParkColor1}"
+                                        BorderRadius="8"
+                                        BorderColor="{DynamicResource NextParkColor1}"
+                                        BorderWidth="1"
+                                        BackgroundColor="White"
+                                        WidthRequest="191"
+                                        Margin="0"/> 
+                            </StackLayout>
+                            </Frame>
+                        </StackLayout>
+                    </ContentView>                    
+                    
                 </RelativeLayout>
             </controls:BasePage>
         </ContentView>

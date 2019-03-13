@@ -14,6 +14,7 @@ using Android.Graphics.Drawables;
 using Android.Support.V4.Content;
 using Android.Graphics;
 using Android.Support.Annotation;
+using Android.Util;
 
 [assembly: ExportRenderer(typeof(CustomMap), typeof(CustomMapRenderer))]
 
@@ -87,7 +88,10 @@ namespace NextPark.Mobile.Droid.Renderers
             marker.SetSnippet(pin.Address);
 
             var resourceId = Resources.GetIdentifier(customPin.Icon, "drawable", "com.wisegar.nextpark");
-            Bitmap image = Bitmap.CreateScaledBitmap(BitmapFactory.DecodeResource(Resources, resourceId), 200, 200, false);
+
+            float density = Context.Resources.DisplayMetrics.Density;
+            int dpValue = (int)(50.0 * density); // 50px in dips
+            Bitmap image = Bitmap.CreateScaledBitmap(BitmapFactory.DecodeResource(Resources, resourceId), dpValue, dpValue, false);
             BitmapDescriptor bitmapResource = BitmapDescriptorFactory.FromBitmap(image);
             marker.SetIcon(bitmapResource);
 

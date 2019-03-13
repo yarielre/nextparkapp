@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms" 
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:customMap="clr-namespace:NextPark.Mobile.CustomControls;assembly=NextPark.Mobile"
@@ -55,7 +55,7 @@
                                             Command="{Binding OnAction}"
                                             TextColor="White"                                            
                                             BorderRadius="8"
-                                            BackgroundColor="#8CC63F"
+                                            BackgroundColor="{DynamicResource NextParkColor1}"
                                             WidthRequest="191"
                                             Margin="0"/>
                                     <Button Text="Naviga"
@@ -92,37 +92,165 @@
                                  RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=1}"
                                  RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}">
                         <StackLayout VerticalOptions="Center" HorizontalOptions="Center" Spacing="0">
-                            <Frame BorderColor="#8CC63F"
+                            <Frame BorderColor="{DynamicResource NextParkColor1}"
                                    CornerRadius="16"
                                    HasShadow="false"
                                    IsClippedToBounds="true"
-                                   HeightRequest="250"
+                                   HeightRequest="380"
                                    WidthRequest="300"
                                    Padding="0"
                                    Margin="0">
                             <StackLayout Orientation="Vertical" 
-                                         HeightRequest="250" 
+                                         HeightRequest="380" 
                                          WidthRequest="300" 
                                          BackgroundColor="White" 
-                                         Spacing="10" 
+                                         Spacing="5" 
                                          Padding="0" Margin="0">
-                                <Label Text="Rinnova la prenotazione"
+                                <Label Text="Estendi la prenotazione"
                                        FontSize="Medium"
                                        FontAttributes="Bold"
                                        HorizontalOptions="Center"
                                        Margin="20,20,20,10"/>
-                                <StackLayout Orientation="Horizontal" Spacing="5" HorizontalOptions="CenterAndExpand">
+                                <!-- Time selector buttons-->
+                                <StackLayout Orientation="Horizontal" Spacing="10" HorizontalOptions="Center" Margin="5,5,0,0">
+                                    <controls:SelButton x:Name="Btn015"
+                                                        Info="15 min"
+                                                        SubInfo="{Binding Btn1SubInfo}"
+                                                        ID="1"
+                                                        Selected="{Binding Btn1IsSelected}"
+                                                        TapAction="{Binding OnButtonTapped}"/>
+                                    <controls:SelButton x:Name="Btn030"
+                                                        Info="30 min"
+                                                        SubInfo="{Binding Btn2SubInfo}"
+                                                        ID="2"
+                                                        Selected="{Binding Btn2IsSelected}"
+                                                        TapAction="{Binding OnButtonTapped}"/>
+                                    <controls:SelButton x:Name="Btn100"
+                                                        Info="1 h"
+                                                        SubInfo="{Binding Btn3SubInfo}"
+                                                        ID="3"
+                                                        Selected="{Binding Btn3IsSelected}"
+                                                        TapAction="{Binding OnButtonTapped}"/>                                    
+                                </StackLayout> 
+                                <StackLayout Orientation="Horizontal" Spacing="10" HorizontalOptions="Center" Margin="5,5,0,0">
+                                    <controls:SelButton x:Name="Btn200"
+                                                        Info="2 h"
+                                                        SubInfo="{Binding Btn4SubInfo}"
+                                                        ID="4"
+                                                        Selected="{Binding Btn4IsSelected}"
+                                                        TapAction="{Binding OnButtonTapped}"/>
+                                    <controls:SelButton x:Name="Btn300"
+                                                        Info="3 h"
+                                                        SubInfo="{Binding Btn5SubInfo}"
+                                                        ID="5"
+                                                        Selected="{Binding Btn5IsSelected}"
+                                                        TapAction="{Binding OnButtonTapped}"/>
+                                    <controls:SelButton x:Name="Btn400"
+                                                        Info="4 h"
+                                                        SubInfo="{Binding Btn6SubInfo}"
+                                                        ID="6"
+                                                        Selected="{Binding Btn6IsSelected}"
+                                                        TapAction="{Binding OnButtonTapped}"/>                                    
+                                </StackLayout>                                    
+                                <StackLayout Orientation="Horizontal" Spacing="5" HorizontalOptions="CenterAndExpand" Margin="0,10,0,20">
                                     <Label Text="Stai ancora per:"
                                            FontSize="Default"
                                            HorizontalOptions="Center"
                                            VerticalTextAlignment="Center"/>
-                                    <TimePicker Time="{Binding RenewTime}"
-                                                Format="HH:mm"
-                                                HorizontalOptions="Center"
-                                                Margin="5,0,0,0">
-                                        <TimePicker.Format>HH:mm</TimePicker.Format>
-                                    </TimePicker>
+                                    <Label Text="{Binding RenewTotalTimeText}"
+                                           FontSize="Default"
+                                           HorizontalOptions="Center"
+                                           VerticalTextAlignment="Center"/>
+                                </StackLayout>                                
+                                <!-- Renew button -->
+                                <Button Text="Conferma"
+                                        FontAttributes="Bold"
+                                        HorizontalOptions="Center"
+                                        Command="{Binding OnRenew}"
+                                        TextColor="White"
+                                        BorderRadius="8"
+                                        BackgroundColor="{DynamicResource NextParkColor1}"
+                                        WidthRequest="191"
+                                        Margin="0"/>
+                                <!-- Cancel renew button -->
+                                <Button Text="Annulla"
+                                        FontAttributes="Bold"
+                                        HorizontalOptions="Center"
+                                        Command="{Binding OnCancelRenew}"
+                                        TextColor="{DynamicResource NextParkColor1}"
+                                        BorderRadius="8"
+                                        BorderColor="{DynamicResource NextParkColor1}"
+                                        BorderWidth="1"
+                                        BackgroundColor="White"
+                                        WidthRequest="191"
+                                        Margin="0"/> 
+                            </StackLayout>
+                            </Frame>
+                        </StackLayout>
+                    </ContentView>
+                    
+                    <ContentView x:Name="confirmPopup" 
+                                 BackgroundColor="#C0606060" 
+                                 Padding="10, 0" 
+                                 IsVisible="{Binding ConfirmVisible}" 
+                                 RelativeLayout.XConstraint="0"
+                                 RelativeLayout.YConstraint="0"
+                                 RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=1}"
+                                 RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}">
+                        <StackLayout VerticalOptions="Center" HorizontalOptions="Center" Spacing="0">
+                            <Frame BorderColor="{DynamicResource NextParkColor1}"
+                                   CornerRadius="16"
+                                   HasShadow="false"
+                                   IsClippedToBounds="true"
+                                   HeightRequest="300"
+                                   WidthRequest="300"
+                                   Padding="0"
+                                   Margin="0">
+                                <Frame.HeightRequest>
+                                    <OnPlatform x:TypeArguments="x:Double">
+                                        <On Platform="iOS" Value="300"/>
+                                        <On Platform="Android" Value="320" />
+                                    </OnPlatform>
+                                </Frame.HeightRequest>
+                            <StackLayout Orientation="Vertical" 
+                                         HeightRequest="300" 
+                                         WidthRequest="300" 
+                                         BackgroundColor="White" 
+                                         Spacing="5" 
+                                         Padding="0" Margin="0">
+                                    <StackLayout.HeightRequest>
+                                        <OnPlatform x:TypeArguments="x:Double">
+                                            <On Platform="iOS" Value="300"/>
+                                            <On Platform="Android" Value="320" />
+                                        </OnPlatform>
+                                    </StackLayout.HeightRequest>
+                                <Label Text="Conferma dell'ordine"
+                                       FontSize="Medium"
+                                       FontAttributes="Bold"
+                                       HorizontalOptions="Center"
+                                       Margin="20,20,20,10"/>
+                                <StackLayout Orientation="Horizontal" Spacing="2" HorizontalOptions="Start" Padding="10,0">
+                                    <Label Text="Estensione:"
+                                           FontSize="Default"                                           
+                                           VerticalTextAlignment="Center"/>
+                                    <Label Text="{Binding ConfirmTotalTime}"
+                                           FontSize="Default"                                           
+                                           VerticalTextAlignment="Center"/>
                                 </StackLayout>
+                                <StackLayout Orientation="Horizontal" Spacing="2" HorizontalOptions="Start" Padding="10,0">
+                                    <Label Text="Prezzo:"
+                                           FontSize="Default"                                           
+                                           VerticalTextAlignment="Center"/>
+                                    <Label Text="{Binding ConfirmPrice}"
+                                           FontSize="Default"                                           
+                                           VerticalTextAlignment="Center"/>
+                                </StackLayout>
+                                <Label Text="Sicuro di confermare l'estensione?"
+                                       FontSize="Default"
+                                       HorizontalOptions="Center"
+                                       HorizontalTextAlignment="Center"
+                                       VerticalTextAlignment="Center"
+                                       Margin="10,10,0,10"/>
                                 <!-- Activity indicator, active when buying -->
                                 <ActivityIndicator
                                     IsRunning="{Binding RenewIsRunning, Mode=TwoWay}"                    
@@ -133,20 +261,20 @@
                                 <Button Text="Conferma"
                                         FontAttributes="Bold"
                                         HorizontalOptions="Center"
-                                        Command="{Binding OnRenew}"
+                                        Command="{Binding OnConfirm}"
                                         TextColor="White"
                                         BorderRadius="8"
-                                        BackgroundColor="#8CC63F"
+                                        BackgroundColor="{DynamicResource NextParkColor1}"
                                         WidthRequest="191"
                                         Margin="0"/>
                                 <!-- Cancel renew button -->
                                 <Button Text="Annulla"
                                         FontAttributes="Bold"
                                         HorizontalOptions="Center"
-                                        Command="{Binding OnCancelRenew}"
-                                        TextColor="#8CC63F"
+                                        Command="{Binding OnCancel}"
+                                        TextColor="{DynamicResource NextParkColor1}"
                                         BorderRadius="8"
-                                        BorderColor="#8CC63F"
+                                        BorderColor="{DynamicResource NextParkColor1}"
                                         BorderWidth="1"
                                         BackgroundColor="White"
                                         WidthRequest="191"
