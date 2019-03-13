@@ -194,16 +194,23 @@ namespace NextPark.Api.Controllers
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
+
             var parking = await _parkingRepository.FirstOrDefaultWhereAsync(p => p.Id == orderModel.ParkingId,
                 new CancellationToken(), p => p.Events).ConfigureAwait(false);
+
             if (parking == null)
                 return NotFound("Not found parking");
+
             var isAvailable = IsParkingAvailable(parking, orderModel);
+
             if (!isAvailable)
                 return BadRequest("Parking is not available");
+
             var user = _useRepository.Find(orderModel.UserId);
+
             if (user.Balance < orderModel.Price)
                 return BadRequest("Not enough money");
+
             try
             {
                 var order = _mapper.Map<OrderModel, Order>(orderModel);
@@ -261,13 +268,41 @@ namespace NextPark.Api.Controllers
             if (parking.Status != ParkingStatus.Enabled) return false;
 
             //Add logic to: Get the parking events of the same order date
-            //Add logic to: Check if the order start time bigger than any of the events start time.
-            //Add logic to: Check if the order end time is smaller or equal to the same event end time.
+            var orderDayEvents = parking.Events.Where(ev => ev.StartDate.Date == order.StartDate.Date).ToList();
+            if (orderDayEvents == null || orderDayEvents.Count == 0) return false;
+
+            var eventsStartingOnTime = orderDayEvents.Where(ev => ev.StartDate <= order.StartDate).ToList();
+            if (eventsStartingOnTime == null || eventsStartingOnTime.Count == 0) return false;
+
+            var eventsEndingOnTime = eventsStartingOnTime.Where(ev => ev.EndDate >= order.EndDate).ToList();
+            if (eventsEndingOnTime == null || eventsEndingOnTime.Count == 0) return false;
 
             return true;
 
             //return parking.Events.Count > 0 && parking.Status == ParkingStatus.Enabled
             //       && order.EndDate <= parking.Events.OrderBy(e => e.EndDate).Last().EndDate;
+        }
+
+        private bool IsParkingOrderable(List<Order> parkingOrders, OrderModel order)
+        {
+            //If parking have events, is enable and the date of the last event y bigger than order end date
+            if (parkingOrders == null) return true;
+            if (parkingOrders.Count == 0) return true;
+
+            //Add logic to: Check if the order start time bigger than any of the events start time.
+            //Add logic to: Check if the order end time is smaller or equal to the same event end time.
+
+            //Add logic to: Get the parking events of the same order date
+            var orderDayEvents = parkingOrders.Where(ev => ev.StartDate.Date == order.StartDate.Date).ToList();
+            if (orderDayEvents == null || orderDayEvents.Count == 0) return true;
+
+            var eventsStartingOnTime = orderDayEvents.Where(ev => ev.StartDate <= order.StartDate).ToList();
+            if (eventsStartingOnTime == null || eventsStartingOnTime.Count == 0) return true;
+
+            var eventsEndingOnTime = eventsStartingOnTime.Where(ev => ev.EndDate >= order.EndDate).ToList();
+            if (eventsEndingOnTime == null || eventsEndingOnTime.Count == 0) return true;
+
+            return false;
         }
 
         private double CalCulateTax(double price,double taxPorcent)
