@@ -256,8 +256,18 @@ namespace NextPark.Api.Controllers
         private bool IsParkingAvailable(Parking parking, OrderModel order)
         {
             //If parking have events, is enable and the date of the last event y bigger than order end date
-            return parking.Events.Count > 0 && parking.Status == ParkingStatus.Enabled
-                   && order.EndDate <= parking.Events.OrderBy(e => e.EndDate).Last().EndDate;
+            if (parking.Events == null) return false;
+            if (parking.Events.Count == 0) return false;
+            if (parking.Status != ParkingStatus.Enabled) return false;
+
+            //Add logic to: Get the parking events of the same order date
+            //Add logic to: Check if the order start time bigger than any of the events start time.
+            //Add logic to: Check if the order end time is smaller or equal to the same event end time.
+
+            return true;
+
+            //return parking.Events.Count > 0 && parking.Status == ParkingStatus.Enabled
+            //       && order.EndDate <= parking.Events.OrderBy(e => e.EndDate).Last().EndDate;
         }
 
         private double CalCulateTax(double price,double taxPorcent)
