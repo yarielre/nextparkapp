@@ -6,9 +6,10 @@ namespace NextPark.Enums.Enums
 {
     public enum ErrorType
     {
-        None = 0,
-        ParkingNotFound = 1,
-        ParkingNotVailable = 2,
-        NotEnoughMoney = 3
+        None,
+        ParkingNotFound,
+        ParkingNotVailable,
+        ParkingNotOrderable,
+        NotEnoughMoney
     }
 }

@@ -156,22 +156,28 @@ namespace NextPark.Mobile.Services
 
                 var response = await client.PostAsync(url, content);
 
-                if (response.StatusCode != HttpStatusCode.OK) {
+                if (!response.IsSuccessStatusCode) {
+
+                    ApiResponse recivedApiResponse = null;
                     try
                     {
                         var apiResultJson = await response.Content.ReadAsStringAsync();
-                        var apiResult = JsonConvert.DeserializeObject<ApiResponse>(apiResultJson);
+                        recivedApiResponse = JsonConvert.DeserializeObject<ApiResponse>(apiResultJson);
                     }
-                    catch (Exception e)
+                    catch
                     {
 
                     }
-
-                    return new ApiResponse
+                    if (recivedApiResponse == null)
                     {
-                        IsSuccess = false,
-                        Message = response.Content.ReadAsStringAsync().Result
-                    };
+                        return new ApiResponse
+                        {
+                            IsSuccess = false,
+                            Message = response.Content.ReadAsStringAsync().Result
+                        };
+                    }
+
+                    return recivedApiResponse;
                 }
               
 
@@ -207,23 +213,28 @@ namespace NextPark.Mobile.Services
                 var client = GetHttpClient();
                 var response = await client.PostAsync(endpoint, content);
 
-                if (response.StatusCode != HttpStatusCode.OK)
+                if (!response.IsSuccessStatusCode)
                 {
+                    ApiResponse recivedApiResponse = null;
                     try
                     {
                         var apiResultJson = await response.Content.ReadAsStringAsync();
-                        var apiResult = JsonConvert.DeserializeObject<ApiResponse>(apiResultJson);
+                        recivedApiResponse = JsonConvert.DeserializeObject<ApiResponse>(apiResultJson);
                     }
-                    catch (Exception e)
+                    catch
                     {
 
                     }
+                    if (recivedApiResponse == null) {
+                        return new ApiResponse
+                        {
+                            IsSuccess = false,
+                            Message = response.Content.ReadAsStringAsync().Result
+                        };
+                    }
 
-                    return new ApiResponse
-                    {
-                        IsSuccess = false,
-                        Message = response.Content.ReadAsStringAsync().Result
-                    };
+                    return recivedApiResponse;
+                    
                 }
               
                 var resultJson = await response.Content.ReadAsStringAsync();

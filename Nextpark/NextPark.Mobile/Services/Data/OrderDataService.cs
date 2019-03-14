@@ -1,11 +1,33 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using NextPark.Enums.Enums;
 using NextPark.Mobile.Settings;
 using NextPark.Models;
 
 namespace NextPark.Mobile.Services.Data
 {
+    public class DataServiceResponse<T>  where T : class, new() {
+
+        private DataServiceResponse(){}
+
+        public bool IsSuccess { get; private set; }
+        public ErrorType ErrorType { get; private set; }
+        public string Message { get; private set; }
+        public T Result { get; private set; }
+
+        public static DataServiceResponse<T> GetInstance(ApiResponse apiResponse) {
+
+            return new DataServiceResponse<T>
+            {
+                IsSuccess = apiResponse.IsSuccess,
+                ErrorType = apiResponse.ErrorType,
+                Message = apiResponse.Message,
+                Result = apiResponse.Result as T
+            };
+        }
+    }
+
     public class OrderDataService : IOrderDataService
     {
         private readonly IApiService _apiService;
@@ -69,7 +91,7 @@ namespace NextPark.Mobile.Services.Data
             }
         }
 
-        public async Task<OrderModel> CreateOrderAsync(OrderModel model)
+        public async Task<DataServiceResponse<OrderModel>> CreateOrderAsync(OrderModel model)
         {
             var isConneted = await _apiService.CheckConnection().ConfigureAwait(false);
             if (!isConneted.IsSuccess)
@@ -79,11 +101,7 @@ namespace NextPark.Mobile.Services.Data
             var url = ApiSettings.OrdersEndPoint;
             var response = await _apiService.Post(url, model).ConfigureAwait(false);
 
-            if (response.IsSuccess)
-            {
-                return response.Result as OrderModel;
-            }
-            return null;
+            return DataServiceResponse<OrderModel>.GetInstance(response);
         }
 
         public async Task<OrderModel> GetOrderAsync(int orderId)

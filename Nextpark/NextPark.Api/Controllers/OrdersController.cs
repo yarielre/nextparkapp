@@ -210,12 +210,12 @@ namespace NextPark.Api.Controllers
             var isOrderdable= IsParkingOrderable(parkigOrders, orderModel);
 
             if (!isOrderdable)
-                return BadRequest("Parking is not orderable");
+                return BadRequest(ApiResponse.GetErrorResponse("Parking is not orderable", ErrorType.ParkingNotOrderable));
 
             var user = _useRepository.Find(orderModel.UserId);
 
             if (user.Balance < orderModel.Price)
-                return BadRequest("Not enough money");
+                return BadRequest(ApiResponse.GetErrorResponse("Not enough money", ErrorType.NotEnoughMoney));
 
             try
             {
@@ -223,7 +223,7 @@ namespace NextPark.Api.Controllers
                 _orderRepository.Add(order);
                 await _unitOfWork.CommitAsync().ConfigureAwait(false);
                 var vm = _mapper.Map<Order, OrderModel>(order);
-                return Ok(vm);
+                return Ok(ApiResponse.GetSuccessResponse(vm, "Order created"));
             }
             catch (Exception e)
             {

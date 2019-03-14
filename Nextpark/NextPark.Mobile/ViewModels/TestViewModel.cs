@@ -480,7 +480,7 @@ namespace NextPark.Mobile.ViewModels
             {
                 StartDate = orderStartDate,
                 EndDate = orderEndDate,
-                ParkingId = 10000,//selectedPArking.Id,
+                ParkingId = selectedPArking.Id,
                 UserId = 1,
                 Price = 10,
                 PaymentCode = "drtrtrt",
@@ -489,16 +489,18 @@ namespace NextPark.Mobile.ViewModels
             };
 
             AddLineToConsole("Creating one order...");
-            var postedOrder = await _orderDataService.CreateOrderAsync(order).ConfigureAwait(false);
-            AddLineToConsole(postedOrder != null ? "Creating the order OK" : "Creating the order FAILED");
-            if (postedOrder != null)
+            var postedOrderResponse = await _orderDataService.CreateOrderAsync(order).ConfigureAwait(false);
+
+            AddLineToConsole(postedOrderResponse.IsSuccess ? $"Creating the order OK Msg: {postedOrderResponse.Message}" : postedOrderResponse.Message);
+
+            if (postedOrderResponse.Result != null)
             {
                 AddLineToConsole("Editing the order...");
-                postedOrder.PaymentStatus = PaymentStatus.Cancel;
-                var editedOrder = _orderDataService.EditOrderAsync(postedOrder.Id, postedOrder);
+                postedOrderResponse.Result.PaymentStatus = PaymentStatus.Cancel;
+                var editedOrder = _orderDataService.EditOrderAsync(postedOrderResponse.Result.Id, postedOrderResponse.Result);
                 AddLineToConsole(editedOrder != null ? "Editing the order OK" : "Editing the order FAILED");
                 AddLineToConsole("Terminate the order...");
-                var finishedOrder = _orderDataService.TerminateOrderAsync(postedOrder.Id);
+                var finishedOrder = _orderDataService.TerminateOrderAsync(postedOrderResponse.Result.Id);
                 AddLineToConsole(finishedOrder != null ? "Terminate the order OK" : "Terminate the order FAILED");
             }
         }
