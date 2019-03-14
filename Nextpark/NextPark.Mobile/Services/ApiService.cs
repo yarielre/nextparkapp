@@ -156,12 +156,24 @@ namespace NextPark.Mobile.Services
 
                 var response = await client.PostAsync(url, content);
 
-                if (response.StatusCode == HttpStatusCode.BadRequest)
+                if (response.StatusCode != HttpStatusCode.OK) {
+                    try
+                    {
+                        var apiResultJson = await response.Content.ReadAsStringAsync();
+                        var apiResult = JsonConvert.DeserializeObject<ApiResponse>(apiResultJson);
+                    }
+                    catch (Exception e)
+                    {
+
+                    }
+
                     return new ApiResponse
                     {
                         IsSuccess = false,
-                        Message = response.ReasonPhrase
+                        Message = response.Content.ReadAsStringAsync().Result
                     };
+                }
+              
 
                 var resultJson = await response.Content.ReadAsStringAsync();
                 var result = JsonConvert.DeserializeObject<TVm>(resultJson);
@@ -195,14 +207,25 @@ namespace NextPark.Mobile.Services
                 var client = GetHttpClient();
                 var response = await client.PostAsync(endpoint, content);
 
-                if (response.StatusCode == HttpStatusCode.BadRequest || response.StatusCode == HttpStatusCode.NotFound)
+                if (response.StatusCode != HttpStatusCode.OK)
+                {
+                    try
+                    {
+                        var apiResultJson = await response.Content.ReadAsStringAsync();
+                        var apiResult = JsonConvert.DeserializeObject<ApiResponse>(apiResultJson);
+                    }
+                    catch (Exception e)
+                    {
+
+                    }
+
                     return new ApiResponse
                     {
                         IsSuccess = false,
                         Message = response.Content.ReadAsStringAsync().Result
                     };
-
-
+                }
+              
                 var resultJson = await response.Content.ReadAsStringAsync();
                 var result = JsonConvert.DeserializeObject<TVm>(resultJson);
 

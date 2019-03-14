@@ -480,7 +480,7 @@ namespace NextPark.Mobile.ViewModels
             {
                 StartDate = orderStartDate,
                 EndDate = orderEndDate,
-                ParkingId = selectedPArking.Id,
+                ParkingId = 10000,//selectedPArking.Id,
                 UserId = 1,
                 Price = 10,
                 PaymentCode = "drtrtrt",
