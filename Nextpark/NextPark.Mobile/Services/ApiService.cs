@@ -26,12 +26,12 @@ namespace NextPark.Mobile.Services
             _crossConnectivity = CrossConnectivity.Current;
         }
 
-        public async Task<Response> CheckConnection()
+        public async Task<ApiResponse> CheckConnection()
         {
             if (_crossConnectivity == null)
             {
 
-                return new Response
+                return new ApiResponse
                 {
                     IsSuccess = false,
                     Message = "Network connectivity not available."
@@ -40,7 +40,7 @@ namespace NextPark.Mobile.Services
 
             if (!_crossConnectivity.IsConnected)
             {
-                return new Response
+                return new ApiResponse
                 {
                     IsSuccess = false,
                     Message = "Please turn on your internet settings."
@@ -51,14 +51,14 @@ namespace NextPark.Mobile.Services
 
             if (!isReachable)
             {
-                return new Response
+                return new ApiResponse
                 {
                     IsSuccess = false,
                     Message = "Check you internet connection."
                 };
             }
 
-            return new Response
+            return new ApiResponse
             {
                 IsSuccess = true,
                 Message = "Ok",
@@ -66,7 +66,7 @@ namespace NextPark.Mobile.Services
 
         }
 
-        public async Task<Response> Get<TVm>(string endpoint, int id)
+        public async Task<ApiResponse> Get<TVm>(string endpoint, int id)
         {
             var isConneted = await CheckConnection();
             if (!isConneted.IsSuccess) return isConneted;
@@ -78,7 +78,7 @@ namespace NextPark.Mobile.Services
                 var response = await client.GetAsync(url);
 
                 if (!response.IsSuccessStatusCode)
-                    return new Response
+                    return new ApiResponse
                     {
                         IsSuccess = false,
                         Message = response.StatusCode.ToString()
@@ -86,7 +86,7 @@ namespace NextPark.Mobile.Services
 
                 var result = await response.Content.ReadAsStringAsync();
                 var model = JsonConvert.DeserializeObject<TVm>(result);
-                return new Response
+                return new ApiResponse
                 {
                     IsSuccess = true,
                     Message = "Ok",
@@ -95,7 +95,7 @@ namespace NextPark.Mobile.Services
             }
             catch (Exception ex)
             {
-                return new Response
+                return new ApiResponse
                 {
                     IsSuccess = false,
                     Message = ex.Message
@@ -103,7 +103,7 @@ namespace NextPark.Mobile.Services
             }
         }
 
-        public async Task<Response> Get<TVm>(string endpoint)
+        public async Task<ApiResponse> Get<TVm>(string endpoint)
         {
 
             var isConneted = await CheckConnection();
@@ -116,7 +116,7 @@ namespace NextPark.Mobile.Services
                 var response = await client.GetAsync(url);
 
                 if (!response.IsSuccessStatusCode)
-                    return new Response
+                    return new ApiResponse
                     {
                         IsSuccess = false,
                         Message = response.StatusCode.ToString()
@@ -124,7 +124,7 @@ namespace NextPark.Mobile.Services
                 var result = await response.Content.ReadAsStringAsync();
                 var model = JsonConvert.DeserializeObject<List<TVm>>(result);
 
-                return new Response
+                return new ApiResponse
                 {
                     IsSuccess = true,
                     Message = "Ok",
@@ -133,7 +133,7 @@ namespace NextPark.Mobile.Services
             }
             catch (Exception ex)
             {
-                return new Response
+                return new ApiResponse
                 {
                     IsSuccess = false,
                     Message = ex.Message
@@ -141,7 +141,7 @@ namespace NextPark.Mobile.Services
             }
         }
 
-        public async Task<Response> Post<TVm>(string endpoint, TVm tvm)
+        public async Task<ApiResponse> Post<TVm>(string endpoint, TVm tvm)
         {
             var isConneted = await CheckConnection();
             if (!isConneted.IsSuccess) return isConneted;
@@ -157,7 +157,7 @@ namespace NextPark.Mobile.Services
                 var response = await client.PostAsync(url, content);
 
                 if (response.StatusCode == HttpStatusCode.BadRequest)
-                    return new Response
+                    return new ApiResponse
                     {
                         IsSuccess = false,
                         Message = response.ReasonPhrase
@@ -166,7 +166,7 @@ namespace NextPark.Mobile.Services
                 var resultJson = await response.Content.ReadAsStringAsync();
                 var result = JsonConvert.DeserializeObject<TVm>(resultJson);
 
-                return new Response
+                return new ApiResponse
                 {
                     IsSuccess = true,
                     Result = result
@@ -174,7 +174,7 @@ namespace NextPark.Mobile.Services
             }
             catch (Exception ex)
             {
-                return new Response
+                return new ApiResponse
                 {
                     IsSuccess = false,
                     Message = ex.Message
@@ -182,7 +182,7 @@ namespace NextPark.Mobile.Services
             }
         }
 
-        public async Task<Response> Post<TParam, TVm>(string endpoint, TParam tvm)
+        public async Task<ApiResponse> Post<TParam, TVm>(string endpoint, TParam tvm)
         {
             var isConneted = await CheckConnection();
             if (!isConneted.IsSuccess) return isConneted;
@@ -196,7 +196,7 @@ namespace NextPark.Mobile.Services
                 var response = await client.PostAsync(endpoint, content);
 
                 if (response.StatusCode == HttpStatusCode.BadRequest || response.StatusCode == HttpStatusCode.NotFound)
-                    return new Response
+                    return new ApiResponse
                     {
                         IsSuccess = false,
                         Message = response.Content.ReadAsStringAsync().Result
@@ -206,7 +206,7 @@ namespace NextPark.Mobile.Services
                 var resultJson = await response.Content.ReadAsStringAsync();
                 var result = JsonConvert.DeserializeObject<TVm>(resultJson);
 
-                return new Response
+                return new ApiResponse
                 {
                     IsSuccess = true,
                     Result = result
@@ -214,7 +214,7 @@ namespace NextPark.Mobile.Services
             }
             catch (Exception ex)
             {
-                return new Response
+                return new ApiResponse
                 {
                     IsSuccess = false,
                     Message = ex.Message
@@ -222,7 +222,7 @@ namespace NextPark.Mobile.Services
             }
         }
 
-        public async Task<Response> Put<TVm>(string endpoint, int id, TVm tvm)
+        public async Task<ApiResponse> Put<TVm>(string endpoint, int id, TVm tvm)
         {
             var isConneted = await CheckConnection();
             if (!isConneted.IsSuccess) return isConneted;
@@ -238,7 +238,7 @@ namespace NextPark.Mobile.Services
                 var response = await client.PutAsync(url, content);
 
                 if (response.StatusCode == HttpStatusCode.BadRequest)
-                    return new Response
+                    return new ApiResponse
                     {
                         IsSuccess = false,
                         Message = response.ReasonPhrase
@@ -247,7 +247,7 @@ namespace NextPark.Mobile.Services
                 var resultJson = await response.Content.ReadAsStringAsync();
                 var result = JsonConvert.DeserializeObject<TVm>(resultJson);
 
-                return new Response
+                return new ApiResponse
                 {
                     IsSuccess = true,
                     Result = result
@@ -255,7 +255,7 @@ namespace NextPark.Mobile.Services
             }
             catch (Exception ex)
             {
-                return new Response
+                return new ApiResponse
                 {
                     IsSuccess = false,
                     Message = ex.Message
@@ -263,7 +263,7 @@ namespace NextPark.Mobile.Services
             }
         }
 
-        public async Task<Response> Delete<TVm>(string endpoint, int id)
+        public async Task<ApiResponse> Delete<TVm>(string endpoint, int id)
         {
             var isConneted = await CheckConnection();
             if (!isConneted.IsSuccess) return isConneted;
@@ -275,7 +275,7 @@ namespace NextPark.Mobile.Services
                 var response = await client.DeleteAsync(url);
 
                 if (response.StatusCode == HttpStatusCode.BadRequest)
-                    return new Response
+                    return new ApiResponse
                     {
                         IsSuccess = false,
                         Message = response.ReasonPhrase
@@ -284,7 +284,7 @@ namespace NextPark.Mobile.Services
                 var resultJson = await response.Content.ReadAsStringAsync();
                 var result = JsonConvert.DeserializeObject<TVm>(resultJson);
 
-                return new Response
+                return new ApiResponse
                 {
                     IsSuccess = true,
                     Result = result
@@ -292,7 +292,7 @@ namespace NextPark.Mobile.Services
             }
             catch (Exception ex)
             {
-                return new Response
+                return new ApiResponse
                 {
                     IsSuccess = false,
                     Message = ex.Message
@@ -300,7 +300,7 @@ namespace NextPark.Mobile.Services
             }
         }
 
-        public async Task<Response> Put<TVm>(string url, TVm tvm)
+        public async Task<ApiResponse> Put<TVm>(string url, TVm tvm)
         {
             var isConneted = await CheckConnection();
             if (!isConneted.IsSuccess) return isConneted;
@@ -315,7 +315,7 @@ namespace NextPark.Mobile.Services
                 var response = await client.PutAsync(url, content);
 
                 if (response.StatusCode == HttpStatusCode.BadRequest)
-                    return new Response
+                    return new ApiResponse
                     {
                         IsSuccess = false,
                         Message = response.ReasonPhrase
@@ -324,7 +324,7 @@ namespace NextPark.Mobile.Services
                 var resultJson = await response.Content.ReadAsStringAsync();
                 var result = JsonConvert.DeserializeObject<List<TVm>>(resultJson);
 
-                return new Response
+                return new ApiResponse
                 {
                     IsSuccess = true,
                     Result = result
@@ -332,7 +332,7 @@ namespace NextPark.Mobile.Services
             }
             catch (Exception ex)
             {
-                return new Response
+                return new ApiResponse
                 {
                     IsSuccess = false,
                     Message = ex.Message
@@ -340,7 +340,7 @@ namespace NextPark.Mobile.Services
             }
         }
 
-        public async Task<Response> Delete<TVm>(string url)
+        public async Task<ApiResponse> Delete<TVm>(string url)
         {
             var isConneted = await CheckConnection();
             if (!isConneted.IsSuccess) return isConneted;
@@ -351,7 +351,7 @@ namespace NextPark.Mobile.Services
                 var response = await client.DeleteAsync(url);
 
                 if (response.StatusCode == HttpStatusCode.BadRequest)
-                    return new Response
+                    return new ApiResponse
                     {
                         IsSuccess = false,
                         Message = response.ReasonPhrase
@@ -360,7 +360,7 @@ namespace NextPark.Mobile.Services
                 var resultJson = await response.Content.ReadAsStringAsync();
                 var result = JsonConvert.DeserializeObject<List<TVm>>(resultJson);
 
-                return new Response
+                return new ApiResponse
                 {
                     IsSuccess = true,
                     Result = result
@@ -368,7 +368,7 @@ namespace NextPark.Mobile.Services
             }
             catch (Exception ex)
             {
-                return new Response
+                return new ApiResponse
                 {
                     IsSuccess = false,
                     Message = ex.Message

@@ -8,15 +8,15 @@ namespace NextPark.Mobile.Services
     {
         string AuthToken { get; set; }
 
-        Task<Response> CheckConnection();
-        Task<Response> Delete<TVm>(string url);
-        Task<Response> Delete<TVm>(string endpoint, int id);
-        Task<Response> Get<TVm>(string endpoint);
-        Task<Response> Get<TVm>(string endpoint, int id);
+        Task<ApiResponse> CheckConnection();
+        Task<ApiResponse> Delete<TVm>(string url);
+        Task<ApiResponse> Delete<TVm>(string endpoint, int id);
+        Task<ApiResponse> Get<TVm>(string endpoint);
+        Task<ApiResponse> Get<TVm>(string endpoint, int id);
         HttpClient GetHttpClient();
-        Task<Response> Post<TParam, TVm>(string endpoint, TParam tvm);
-        Task<Response> Post<TVm>(string endpoint, TVm tvm);
-        Task<Response> Put<TVm>(string endpoint, int id, TVm tvm);
-        Task<Response> Put<TVm>(string url, TVm tvm);
+        Task<ApiResponse> Post<TParam, TVm>(string endpoint, TParam tvm);
+        Task<ApiResponse> Post<TVm>(string endpoint, TVm tvm);
+        Task<ApiResponse> Put<TVm>(string endpoint, int id, TVm tvm);
+        Task<ApiResponse> Put<TVm>(string url, TVm tvm);
     }
 }

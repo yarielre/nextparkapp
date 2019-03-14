@@ -163,7 +163,7 @@ namespace NextPark.Mobile.Services
                 };
             }
         }
-        public async Task<Response> GetUserByUserName(string userName)
+        public async Task<ApiResponse> GetUserByUserName(string userName)
         {
             var isConneted = await _apiService.CheckConnection();
             if (!isConneted.IsSuccess) return isConneted;
@@ -177,7 +177,7 @@ namespace NextPark.Mobile.Services
                 var http = _apiService.GetHttpClient();
                 var response = await http.PostAsync(url, content);
                 if (response.StatusCode != HttpStatusCode.OK)
-                    return new Response
+                    return new ApiResponse
                     {
                         IsSuccess = false,
                         Message = response.ReasonPhrase
@@ -191,7 +191,7 @@ namespace NextPark.Mobile.Services
                 AuthSettings.UserName = result.UserName;
                 AuthSettings.UserCoin = result.Balance;
 
-                return new Response
+                return new ApiResponse
                 {
                     IsSuccess = true,
                     Result = result
@@ -199,7 +199,7 @@ namespace NextPark.Mobile.Services
             }
             catch (Exception ex)
             {
-                return new Response
+                return new ApiResponse
                 {
                     IsSuccess = false,
                     Message = ex.Message

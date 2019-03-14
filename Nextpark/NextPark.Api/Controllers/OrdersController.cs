@@ -199,7 +199,7 @@ namespace NextPark.Api.Controllers
                 new CancellationToken(), p => p.Events).ConfigureAwait(false);
 
             if (parking == null)
-                return NotFound("Not found parking");
+                return NotFound(ApiResponse.GetErrorResponse("Parking not found", ErrorType.ParkingNotFound));
 
             var isAvailable = IsParkingAvailable(parking, orderModel);
 

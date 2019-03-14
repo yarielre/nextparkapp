@@ -2,7 +2,7 @@
 
 namespace NextPark.Models
 {
-    public class Response
+    public class ApiResponse
     {
         public bool IsSuccess { get; set; }
 
@@ -12,8 +12,8 @@ namespace NextPark.Models
 
         public object Result { get; set; }
 
-        public static Response GetErrorResponse(string message, ErrorType errorType) {
-            return new Response
+        public static ApiResponse GetErrorResponse(string message, ErrorType errorType) {
+            return new ApiResponse
             {
                 ErrorType = errorType,
                 IsSuccess = false,
@@ -22,9 +22,9 @@ namespace NextPark.Models
             };
         }
 
-        public static Response GetSuccessResponse(object result, string message = "")
+        public static ApiResponse GetSuccessResponse(object result, string message = "")
         {
-            return new Response
+            return new ApiResponse
             {
                 ErrorType = ErrorType.None,
                 IsSuccess = true,
