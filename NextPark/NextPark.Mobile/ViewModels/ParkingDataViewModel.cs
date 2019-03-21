@@ -95,6 +95,7 @@ namespace NextPark.Mobile.ViewModels
 
         // PRIVATE VARIABLES
         private ParkingItem _parking;
+        private bool eventsReady;
         private bool activeSwitchToggled;
         private ObservableCollection<UICalendarEventModel> calendarEvents;
         public ObservableCollection<UICalendarEventModel> CalendarEvents
@@ -120,6 +121,7 @@ namespace NextPark.Mobile.ViewModels
             _eventDataService = eventDataService;
             _orderDataService = orderDataService;
 
+            eventsReady = false;
             Events = new List<EventModel>();
             Orders = new List<OrderModel>();
 
@@ -144,6 +146,8 @@ namespace NextPark.Mobile.ViewModels
             OnNextWeek = new Command<object>(OnNextWeekMethod);
             OnDaySelected = new Command<object>(OnDaySelectedMethod);
             OnEventTapAction = new Command<int>(OnEventTapMethod);
+
+            CalendarEvents = new ObservableCollection<UICalendarEventModel>();
         }
 
         // Initialization
@@ -397,11 +401,15 @@ namespace NextPark.Mobile.ViewModels
             base.OnPropertyChanged("Day7BackgroundColor");
             base.OnPropertyChanged("Day7DateTime");
 
-            RefreshEvents(dateTime);
+            if (eventsReady)
+            {
+                RefreshEvents(dateTime);
+            }
         }
 
         public void RefreshEvents(DateTime dateTime) 
         {
+            //var resultDeb = _eventDataService.DeleteSerieEventsAsync(301); 
             /*
             EventModel myEvent = new EventModel
             {
@@ -442,18 +450,38 @@ namespace NextPark.Mobile.ViewModels
             foreach (EventModel availability in Events) {
                 if ((availability.StartDate.Date <= dateTime) && (availability.EndDate.Date >= dateTime)) {
                     // Event for today
-                    int startPosition = (int)availability.StartDate.TimeOfDay.TotalMinutes;
+                    TimeSpan startPosition = availability.StartDate.TimeOfDay;
                     TimeSpan duration = availability.EndDate.TimeOfDay - availability.StartDate.TimeOfDay;
+
+                    if (availability.RepetitionType == RepetitionType.None) {
+                        // Check start position on dateTime
+                        if (availability.StartDate.Date < dateTime.Date) {
+                            startPosition = TimeSpan.FromMinutes(0); // start from a day before dateTime
+                            // Update duration if availability ends on dateTime
+                            duration = availability.EndDate.TimeOfDay;
+                        }
+                        // Check duration for dateTime
+                        if (availability.EndDate.Date > dateTime.Date) {
+                            // End some day after dateTime, in dateTime ends at 23:59
+                            duration = TimeSpan.FromMinutes(1439)-startPosition;
+                        }
+                    } else {
+                        if (availability.StartDate.TimeOfDay > availability.EndDate.TimeOfDay) {
+                            continue;
+                        }
+                    }
+
+                    if (duration.TotalMinutes <= 0) continue;
 
                     TempCalendarEvents.Add(new UICalendarEventModel
                     {
                         Index = TempCalendarEvents.Count,
                         Text = "Disponibile",
-                        StartSeconds = startPosition,
+                        StartSeconds = (int)startPosition.TotalMinutes,
                         DurationSeconds = (int)duration.TotalMinutes,
                         EventColor = Color.FromHex("#8CC63F"),
                         TextColor = Color.DarkGreen,
-                        yConstPosition = Constraint.RelativeToParent((parent) => { return parent.Y + 7 + startPosition; }),
+                        yConstPosition = Constraint.RelativeToParent((parent) => { return parent.Y + 7 + (int)startPosition.TotalMinutes; }),
                         xConstPosition = Constraint.RelativeToParent((parent) => { return parent.Width * 0.025; }),
                         OnEventTap = OnEventTapAction,
                         Event = availability
@@ -498,16 +526,8 @@ namespace NextPark.Mobile.ViewModels
                 }
             }
 
+            CalendarEvents.Clear();
             CalendarEvents = new ObservableCollection<UICalendarEventModel>(TempCalendarEvents);
-            /*
-            CalendarEvents = new ObservableCollection<UICalendarEventModel>
-            {
-                new UICalendarEventModel { Index=0, Text = "Disponibile", StartSeconds=7, DurationSeconds=60, EventColor=Color.FromHex("#8CC63F"), TextColor=Color.DarkGreen, yConstPosition=Constraint.RelativeToParent((parent) => {return parent.Y + 7 + 0;}), xConstPosition=Constraint.RelativeToParent((parent) => {return parent.Width*0.025;}), OnEventTap=OnEventTapAction, Event=null},
-                new UICalendarEventModel { Index=1, Text = "Disponibile", StartSeconds=187, DurationSeconds=30, EventColor=Color.FromHex("#8CC63F"), TextColor=Color.DarkGreen, yConstPosition=Constraint.RelativeToParent((parent) => {return parent.Y + 7 + 180;}), xConstPosition=Constraint.RelativeToParent((parent) => {return parent.Width*0.025;}), OnEventTap=OnEventTapAction, Event=null},
-                new UICalendarEventModel { Index=2, Text = "TI 12345", StartSeconds=37, DurationSeconds=30, EventColor=Color.LightSteelBlue, TextColor=Color.DarkBlue, yConstPosition=Constraint.RelativeToParent((parent) => {return parent.Y + 7 + 30;}), xConstPosition=Constraint.RelativeToParent((parent) => {return parent.Width*0.525;}), OnEventTap=OnEventTapAction, Order=null}
-            };
-            */
-
         }
 
         // Calendar event tapped
@@ -519,12 +539,15 @@ namespace NextPark.Mobile.ViewModels
             // Get calendar event
             UICalendarEventModel myCalendarEvent = CalendarEvents[index];
 
-            if (myCalendarEvent.Event != null) {
+            if (myCalendarEvent.Event != null)
+            {
                 // Calendar event is an Availability event
                 NavigationService.NavigateToAsync<AddEventViewModel>(myCalendarEvent.Event);
-            } else if (myCalendarEvent.Order != null) {
+            }
+            else if (myCalendarEvent.Order != null)
+            {
                 // Calendar event is 
-                _dialogService.ShowAlert("Riservazione", "Dalle ore: " + myCalendarEvent.Order.StartDate.ToShortTimeString() + "\nAlle ore: " + myCalendarEvent.Order.EndDate.ToShortTimeString());
+                _dialogService.ShowAlert("Riservazione", ((myCalendarEvent.Order.CarPlate.Equals("Occupato")) ? "" : myCalendarEvent.Order.CarPlate + "\n") + "Dalle ore: " + myCalendarEvent.Order.StartDate.ToShortTimeString() + "\nAlle ore: " + myCalendarEvent.Order.EndDate.ToShortTimeString());
             }
         }
 
@@ -536,6 +559,7 @@ namespace NextPark.Mobile.ViewModels
                 // Get Events
                 var eventsResult = await _eventDataService.GetAllEventsAsync();
                 if (eventsResult.Count == 0) return;
+
                 foreach (EventModel availability in eventsResult)
                 {               
                     if (_parking.UID == availability.ParkingId) {
@@ -555,6 +579,7 @@ namespace NextPark.Mobile.ViewModels
                         }
                     }
                 }
+                eventsReady = true;
                 RefreshEvents(SelectedDay);
 
             } catch (Exception e) {
