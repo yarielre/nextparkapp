@@ -3,7 +3,7 @@ namespace NextPark.Mobile.Settings
 {
     public static class ApiSettings
     {
-        public static string BaseUrl = "http://192.168.0.199/NextPark.Api";
+        public static string BaseUrl = "https://nextnode.ch";
 
             //"https://nextpark-api.azurewebsites.net";
         //"https://nextpark-api.azurewebsites.net";// "http://192.168.0.199/NextPark.Api"; 
