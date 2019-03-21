@@ -195,14 +195,16 @@ namespace NextPark.Mobile.ViewModels
                         {
                             AddButtonVisible = true;
                             DeleteButtonVisible = true;
+                            MinStartDate = DateTime.Now;
                         } else {
                             AddButtonVisible = false;
                             DeleteButtonVisible = false;
+                            MinStartDate = _event.StartDate.Date;
                         }
                         AddButtonText = "Salva";
                         _modifying = true;
                     }
-                    MinStartDate = DateTime.Now;
+
                     RepetitionMinEndDate = StartDate;
                     switch (_event.RepetitionType) 
                     {
@@ -230,16 +232,16 @@ namespace NextPark.Mobile.ViewModels
                     base.OnPropertyChanged("Title");
                     base.OnPropertyChanged("AllDaySwitchToggled");
                     base.OnPropertyChanged("AllDayTextColor");
-                    base.OnPropertyChanged("StartDate");
                     base.OnPropertyChanged("MinStartDate");
+                    base.OnPropertyChanged("StartDate");
                     base.OnPropertyChanged("StartTime");
                     base.OnPropertyChanged("EndDate");
                     base.OnPropertyChanged("EndDateVisible");
                     base.OnPropertyChanged("EndTime");
                     base.OnPropertyChanged("RepetitionEndVisible");
                     base.OnPropertyChanged("RepetitionIndex");
-                    base.OnPropertyChanged("RepetitionEndDate");
                     base.OnPropertyChanged("RepetitionMinEndDate");
+                    base.OnPropertyChanged("RepetitionEndDate");
                     base.OnPropertyChanged("WeekDaysVisible");
                     base.OnPropertyChanged("AddButtonVisible");
                     base.OnPropertyChanged("DeleteButtonVisible");
