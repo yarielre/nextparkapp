@@ -208,7 +208,7 @@ namespace NextPark.Mobile.ViewModels
         {
             PurchaseModel purchaseModel = new PurchaseModel
             {
-                CashToAdd = double.Parse(selectedValue.ToString()),
+                Cash = double.Parse(selectedValue.ToString()),
                 UserId = AuthSettings.User.Id
             };
 

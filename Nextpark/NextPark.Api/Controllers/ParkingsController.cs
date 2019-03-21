@@ -51,6 +51,7 @@ namespace NextPark.Api.Controllers
 
         // GET api/controller
         [HttpGet]
+        [AllowAnonymous]
         public async Task<IActionResult> Get()
         {
             var parkigns = await _parkingRepository.FindAllAsync().ConfigureAwait(false);
@@ -111,8 +112,6 @@ namespace NextPark.Api.Controllers
             try
             {
                 var parking = _mapper.Map<ParkingModel, Parking>(model);
-
-
                 try
                 {
                     var imageUrl = _mediaService.SaveImage(model.ImageBinary);

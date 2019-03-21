@@ -3,25 +3,25 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28010.2050
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NextPark.Api", "NextPark.Api\NextPark.Api.csproj", "{165E3B2A-4FC8-4CB6-B772-038E7BA69B86}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NextPark.Api", "NextPark.Api\NextPark.Api.csproj", "{165E3B2A-4FC8-4CB6-B772-038E7BA69B86}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NextPark.Data", "NextPark.Data\NextPark.Data.csproj", "{1364D8D7-F4C0-4809-98F1-BF2CBE0527DB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NextPark.Data", "NextPark.Data\NextPark.Data.csproj", "{1364D8D7-F4C0-4809-98F1-BF2CBE0527DB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NextPark.Domain", "NextPark.Domain\NextPark.Domain.csproj", "{B6D3B439-761C-4520-9BE2-07F0B9AEB383}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NextPark.Domain", "NextPark.Domain\NextPark.Domain.csproj", "{B6D3B439-761C-4520-9BE2-07F0B9AEB383}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NextPark.Enums", "NextPark.Enums\NextPark.Enums.csproj", "{41091005-6FE0-46CF-878E-AFDAE4D75E89}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NextPark.Enums", "NextPark.Enums\NextPark.Enums.csproj", "{41091005-6FE0-46CF-878E-AFDAE4D75E89}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NextPark.Mapper", "NextPark.Mapper\NextPark.Mapper.csproj", "{7DF90541-32CD-4528-A35F-8295512FA53A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NextPark.Mapper", "NextPark.Mapper\NextPark.Mapper.csproj", "{7DF90541-32CD-4528-A35F-8295512FA53A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NextPark.Mobile", "NextPark.Mobile\NextPark.Mobile.csproj", "{B40A7A99-3883-461B-B2C3-096CF67DEC90}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NextPark.Mobile", "NextPark.Mobile\NextPark.Mobile.csproj", "{B40A7A99-3883-461B-B2C3-096CF67DEC90}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NextPark.Mobile.Android", "NextPark.Mobile.Android\NextPark.Mobile.Android.csproj", "{24CE3C36-16B9-426D-AA0C-5961ECF8D88C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NextPark.Mobile.iOS", "NextPark.Mobile.iOS\NextPark.Mobile.iOS.csproj", "{AFD0AF4B-72C4-4677-A690-142DFABACF20}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NextPark.Models", "NextPark.Models\NextPark.Models.csproj", "{A4C7A367-8E60-4B59-96C5-A076E9F225CF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NextPark.Models", "NextPark.Models\NextPark.Models.csproj", "{A4C7A367-8E60-4B59-96C5-A076E9F225CF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NextPark.Services", "NextPark.Services\NextPark.Services.csproj", "{241F5865-364C-46A8-A9CD-88E469905B6C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NextPark.Services", "NextPark.Services\NextPark.Services.csproj", "{241F5865-364C-46A8-A9CD-88E469905B6C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Backend", "Backend", "{6E44F8F0-868A-4C48-AC38-7FF0DBC72DE0}"
 EndProject

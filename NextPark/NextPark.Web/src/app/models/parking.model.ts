@@ -6,8 +6,8 @@ export class Parking extends BaseModel {
   city: string;
   state: string;
   carPlate: string;
-  latitude: string;
-  longitude: string;
+  latitude: number;
+  longitude: number;
   priceMin: number;
   priceMax: number;
   status: number;

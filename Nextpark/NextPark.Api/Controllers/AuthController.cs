@@ -11,6 +11,7 @@ using NextPark.Services;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Device = NextPark.Domain.Entities.Device;
 
 namespace NextPark.Api.Controllers
 {
@@ -28,6 +29,7 @@ namespace NextPark.Api.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IPushNotificationService _pushNotificationService;
         private readonly IAuthService _authService;
+        private readonly IRepository<Device> _deviceRepository;
 
         public AuthController(UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager, IConfiguration configuration,
@@ -63,6 +65,25 @@ namespace NextPark.Api.Controllers
 
                 if (result.Succeeded)
                 {
+                    var user = _userManager.Users.FirstOrDefault(u => u.UserName == model.UserName);
+                   
+                    #region SaveDeviceId
+                    if (!string.IsNullOrEmpty(model.DeviceId) && user != null)
+                    {
+                        var device = await _deviceRepository.FirstOrDefaultWhereAsync(d => d.DeviceIdentifier == model.DeviceId).ConfigureAwait(false);
+
+                        if (device == null)
+                        {
+                            _deviceRepository.Add(new Device
+                            {
+                                DeviceIdentifier = model.DeviceId,
+                                Platform = model.Platform,
+                                UserId = user.Id
+                            });
+                            await _unitOfWork.CommitAsync().ConfigureAwait(false);
+                        }
+                    }
+                    #endregion
                     var appUser = _userManager.Users.SingleOrDefault(r => r.UserName == model.UserName);
                     return Ok(_authService.GenerateJwtTokenAsync(model.UserName, appUser));
                 }

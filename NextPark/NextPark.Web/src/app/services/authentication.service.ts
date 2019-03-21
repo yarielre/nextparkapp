@@ -4,7 +4,7 @@ import { Observable } from "rxjs";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { StorageService } from "../services/storage.service";
 import { TokenResponse, LoginModel } from "../models";
-import { NEXT_PARK_URL } from "../_helpers/constants";
+import { NEXT_PARK_URL } from "../_helpers/constants/host.settings";
 
 @Injectable({ providedIn: "root" })
 export class AuthenticationService {
@@ -12,12 +12,12 @@ export class AuthenticationService {
   loginForm: FormGroup;
 
   formErrors = {
-    'username': '',
+    'userName': '',
     'password': ''
   };
 
   validationMessages = {
-    username: {
+    userName: {
       required: 'Please enter your username'
     },
     password: {
@@ -48,6 +48,7 @@ export class AuthenticationService {
   }
 
   logout() {
+    console.log("Someone is loged: ",this.isLoged())
     return this.http.get<any>(`${NEXT_PARK_URL.auth}/logout`, {
       headers: this.httpHeaders
     });
@@ -59,7 +60,7 @@ export class AuthenticationService {
 
   buildForm() {
     this.loginForm = this.fb.group({
-      username: ["Lolo", [Validators.required]],
+      userName: ["Lolo", [Validators.required]],
       password: [
         "123456Qq@",
         [

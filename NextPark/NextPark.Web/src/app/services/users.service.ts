@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
-import { NEXT_PARK_URL } from '../_helpers/constants';
+import { NEXT_PARK_URL } from '../_helpers/constants/host.settings';
 // import {EmailSubjectMessage} from '../models/email-subject-message';
 import { User } from '../models';
 import { BaseService } from './base.service';
@@ -19,17 +19,17 @@ export class UsersService extends BaseService<User> {
     private formBuilder: FormBuilder,
     private storageService: StorageService
   ) {
-    super(httpService, storageService,  `${NEXT_PARK_URL.auth}/getallusers`);
+    super(httpService, storageService,  `${NEXT_PARK_URL.users}`);
     this.form = this.formBuilder.group({
       id: [0, Validators.required],
       name: ['', Validators.required],
       lastname: ['', Validators.required],
-      username: ['', null],
-      email: ['', null],
-      phone: ['', Validators.required],
+      userName: ['', Validators.required],
+      email: ['', Validators.required],
+      phone: ['', null],
       address: ['', Validators.required],
       cap: ['', Validators.required],
-      city: ['', Validators.required],
+      city: ['', null],
       state: ['', Validators.required],
       carPlate: ['', Validators.required],
       balance: [0, Validators.required],
@@ -37,7 +37,7 @@ export class UsersService extends BaseService<User> {
     });
   }
 
-  getAll(): Observable<User[]> {
+  getAll(url: string = this.baseUrl): Observable<User[]> {
     return super.getAll();
   }
 
@@ -54,11 +54,12 @@ export class UsersService extends BaseService<User> {
   }
 
   fillForm(user: User) {
+    console.log(user);
     this.form.setValue({
       id: user.id,
       name: user.name,
       lastname: user.lastname,
-      username: user.username,
+      userName: user.userName,
       email: user.email,
       phone: user.phone,
       address: user.address,

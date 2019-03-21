@@ -69,7 +69,7 @@ export class UserDataSource extends DataSource<User> {
         case 'id':
           [propertyA, propertyB] = [a.id, b.id];
           break;
-        case 'username':
+        case 'userName':
           [propertyA, propertyB] = [a.name, b.name];
           break;
         // case 'progress':

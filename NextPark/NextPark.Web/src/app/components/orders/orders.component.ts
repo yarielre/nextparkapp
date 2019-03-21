@@ -12,7 +12,7 @@ import { MatPaginator, MatSort } from '@angular/material';
 import { SelectionModel } from '@angular/cdk/collections';
 
 import { OrderDataSource } from '../../_helpers/data-sources';
-import { OrdersService } from 'src/app/services';
+import { OrdersService } from 'src/app/services/orders.service';
 
 @Component({
   selector: 'app-orders',

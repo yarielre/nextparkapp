@@ -23,7 +23,7 @@ namespace NextPark.Data
 
             //Using POSTGRES SQL SERVER
             builder.UseNpgsql(connectionString, b => b.MigrationsAssembly("NextPark.Api"));
-            
+
 
             return new ApplicationDbContext(builder.Options);
         }

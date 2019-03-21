@@ -41,37 +41,6 @@ namespace NextPark.Api.Controllers
             _transactionRepository = transactionRepository;
         }
 
-        [HttpPut("{id}/addbalance")]
-        public async Task<IActionResult> AddBalance(int id, [FromBody] double balance)
-        {
-            var user = _userManager.Users.FirstOrDefault(u => u.Id == id);
-            if (user == null)
-                return BadRequest("User not found");
-            user.Balance = user.Balance =+ balance;
-            try
-            {
-                var increaseBalanceTransaction = new Transaction
-                {
-                    CashMoved = balance,
-                    UserId = user.Id,
-                    CreationDate = DateTime.Now,
-                    CompletationDate = DateTime.Now,
-                    Status = TransactionStatus.Completed,
-                    TransactionId = new Guid(),
-                    Type = TransactionType.IncreaseBalanceTransaction
-                };
-                _transactionRepository.Add(increaseBalanceTransaction);
-                await _userManager.UpdateAsync(user).ConfigureAwait(false);
-                await _unitOfWork.CommitAsync().ConfigureAwait(false);
-                var userVm = _mapper.Map<ApplicationUser, UserModel>(user);
-                return Ok(userVm);
-            }
-            catch (Exception e)
-            {
-                return BadRequest($"Server error increasing user balance: {e.Message}");
-            }
-        }
-
 
         // POST api/controller
         [HttpPost("amount")]
@@ -84,34 +53,56 @@ namespace NextPark.Api.Controllers
 
             if (user == null) return BadRequest("User not found");
 
-            user.Balance =+ model.CashToAdd;
+            user.Balance = user.Balance + model.Cash;
 
-            var result = await _userManager.UpdateAsync(user);
-
-            if (result.Succeeded)
+            try
             {
+                var increaseBalanceTransaction = new Transaction
+                {
+                    CashMoved = model.Cash,
+                    UserId = user.Id,
+                    CreationDate = DateTime.Now,
+                    CompletationDate = DateTime.Now,
+                    Status = TransactionStatus.Completed,
+                    TransactionId = new Guid(),
+                    Type = TransactionType.IncreaseBalanceTransaction
+                };
 
+                _transactionRepository.Add(increaseBalanceTransaction);
+
+                await _userManager.UpdateAsync(user).ConfigureAwait(false);
+                await _unitOfWork.CommitAsync().ConfigureAwait(false);
+                
                 model.NewUserBalance = user.Balance;
 
                 return Ok(model);
             }
-
-            return BadRequest(result.Errors);
+            catch (Exception e)
+            {
+                return BadRequest($"Server error increasing user balance: {e.Message}");
+            }
 
         }
 
         // POST api/controller
-        [HttpPost("{id}/drawal")]
-        public async Task<IActionResult> DrawalCash(int id, [FromBody] double amount)
+        [HttpPost("drawal")]
+        public async Task<IActionResult> DrawalCash([FromBody] PurchaseModel model)
         {
-            var user = _userManager.Users.FirstOrDefault(u => u.Id == id);
+            if (model == null) return BadRequest("Model not valid");
+            var user = _userManager.Users.FirstOrDefault(u => u.Id == model.UserId);
             if (user == null)
                 return BadRequest("User not found");
+            if (user.Profit < model.Cash)
+            {
+                return BadRequest("Your balance is smaller than the cash you want to move.");
+            }
+            user.Profit = user.Profit - model.Cash;
+
             try
             {
                 var drawalTransaction = new Transaction
                 {
-                    CashMoved = amount,
+                    CashMoved = model.Cash,
                     UserId = user.Id,
                     CreationDate = DateTime.Now,
                     CompletationDate = DateTime.Now,
@@ -120,8 +111,10 @@ namespace NextPark.Api.Controllers
                     Type = TransactionType.WithdrawalTransaction
                 };
                 _transactionRepository.Add(drawalTransaction);
+                await _userManager.UpdateAsync(user).ConfigureAwait(false);
                 await _unitOfWork.CommitAsync().ConfigureAwait(false);
-                return Ok(amount);
+                model.NewUserProfit = user.Profit;
+                return Ok(model);
             }
             catch (Exception e)
             {

@@ -2,10 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormGroup } from '@angular/forms';
 import {
-  AuthenticationService,
-  NotificationService,
   StorageService
-} from '../../services';
+} from '../../services/storage.service';
+import {
+  NotificationService} from '../../services/notification.service';
+import {
+  AuthenticationService
+} from '../../services/authentication.service';
 import { LoginModel } from '../../models';
 
 @Component({
@@ -20,7 +23,7 @@ export class LoginComponent implements OnInit {
     private router: Router,
     private storage: StorageService,
     private notificationService: NotificationService,
-    private authService: AuthenticationService
+    public authService: AuthenticationService
   ) {}
 
   ngOnInit() {

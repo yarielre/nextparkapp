@@ -1,7 +1,8 @@
 /* You can add global styles to this file, and also import other style files */
-@import '~@angular/material/theming';
+@import "~@angular/material/theming";
 
-html, body {
+html,
+body {
   height: 100%;
 }
 
@@ -43,6 +44,17 @@ body {
 
 .mat-snack-bar-container {
   margin-top: 17% !important;
+}
+
+.actions-header {
+  max-height: 56px;
+  display: flex;
+  align-items: center;
+  font-size: 20px;
+  justify-content: flex-end;
+  border-bottom: 1px solid transparent;
+  margin-left: 10px;
+  margin-right: 10px;
 }
 
 table {
@@ -97,4 +109,64 @@ mat-footer-row mat-footer-cell {
 
 .textarea-form {
   height: 148px;
+}
+
+.mobile-label {
+  display: none;
+}
+
+.mat-cell {
+  min-height: 50px;
+  max-width: 100%;
+}
+
+@media (max-width: 850px) {
+  .mobile-label {
+    width: 80px;
+    display: inline-block;
+    font-weight: bold;
+  }
+
+  .mat-header-row {
+    display: none;
+  }
+
+  .example-header {
+    display: none;
+  }
+
+  .mat-row {
+    flex-direction: column;
+    align-items: start;
+    padding: 8px 24px;
+  }
+
+  .mat-column-select {
+    max-width: 54px;
+  }
+
+  .mat-row:hover,
+  .example-selected-row {
+    background: #f5f5f5;
+  }
+
+  .mat-row:active,
+  .mat-row.example-selected-row {
+    background: #eaeaea;
+  }
+
+  .mat-table {
+    overflow: auto;
+    height: 60vh;
+  }
+
+  .table-container {
+    padding: 5px 15px 15px 15px;
+  }
+
+  .mat-cell {
+    min-height: 50px;
+    max-width: 100%;
+    padding-left: 0px !important;
+  }
 }

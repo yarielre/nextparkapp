@@ -46,7 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Update="Resources\Localize.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
+      <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Localize.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Update="Views\TestPage.xaml">

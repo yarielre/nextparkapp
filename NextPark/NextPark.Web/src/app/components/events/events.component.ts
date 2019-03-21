@@ -12,7 +12,7 @@ import { MatPaginator, MatSort } from '@angular/material';
 import { SelectionModel } from '@angular/cdk/collections';
 
 import { EventDataSource } from '../../_helpers/data-sources';
-import { EventsService } from 'src/app/services';
+import { EventsService } from 'src/app/services/events.service';
 import { Event } from 'src/app/models';
 
 @Component({

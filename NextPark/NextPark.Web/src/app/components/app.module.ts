@@ -1,5 +1,5 @@
 import { HttpClientModule, HTTP_INTERCEPTORS } from "@angular/common/http";
-import { FlexLayoutModule } from '@angular/flex-layout';
+import { FlexLayoutModule } from "@angular/flex-layout";
 import { NgModule } from "@angular/core";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { BrowserModule } from "@angular/platform-browser";
@@ -7,21 +7,29 @@ import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { APP_ROUTING } from "../_helpers/constants/app.routing";
 import { MyMaterialModule } from "../modules/material/my-material.module";
 import {
-  NotificationService,
-  StorageService,
+  NotificationService
+} from "../services/notification.service";
+import {
+  StorageService
+} from "../services/storage.service";
+import {
   AuthenticationService
-} from "../services";
+} from "../services/authentication.service";
 import { AppRoutingModule } from "./app-routing.module";
 import { AppComponent } from "./app.component";
 import { HomeComponent } from "./home/home.component";
 import { LoginComponent } from "./login/login.component";
 import { NavBarComponent } from "./_commons/nav-bar/nav-bar.component";
-import {AuthGuard} from '../_guards';
-import { UsersComponent } from './users/users.component';
-import { MyTableComponent } from './my-table/my-table.component';
-import { ParkingsComponent } from './parkings/parkings.component';
-import { EventsComponent } from './events/events.component';
-import { OrdersComponent } from './orders/orders.component';
+import { AuthGuard } from "../_guards";
+import { UsersComponent } from "./users/users.component";
+import { ParkingsComponent } from "./parkings/parkings.component";
+import { EventsComponent } from "./events/events.component";
+import { OrdersComponent } from "./orders/orders.component";
+import { UserDeleteConfirmDialogComponent } from "./_shared/delete-confirm-dialog/user-delete-confirm-dialog.component";
+import { ParkingDeleteConfirmDialogComponent } from "./_shared/delete-confirm-dialog/parking-delete-confirm-dialog.component.1";
+import { UserFormComponent } from "./_forms/user-form/user-form.component";
+import { EmailSenderComponent } from "./_forms/email-sender/email-sender.component";
+import { ParkingFormComponent } from './_forms/parking-form/parking-form.component';
 // import { JwtInterceptor, ErrorInterceptor } from "../components/_helpers";
 
 @NgModule({
@@ -31,10 +39,14 @@ import { OrdersComponent } from './orders/orders.component';
     HomeComponent,
     LoginComponent,
     UsersComponent,
-    MyTableComponent,
     ParkingsComponent,
     EventsComponent,
-    OrdersComponent
+    OrdersComponent,
+    UserDeleteConfirmDialogComponent,
+    ParkingDeleteConfirmDialogComponent,
+    UserFormComponent,
+    EmailSenderComponent,
+    ParkingFormComponent
   ],
   imports: [
     BrowserModule,
@@ -52,11 +64,15 @@ import { OrdersComponent } from './orders/orders.component';
     StorageService,
     AuthenticationService,
     AuthGuard
-    // { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
-    // { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true }
   ],
   bootstrap: [AppComponent],
-  entryComponents: [],
+  entryComponents: [
+    UserDeleteConfirmDialogComponent,
+    ParkingDeleteConfirmDialogComponent,
+    UserFormComponent,
+    ParkingFormComponent,
+    EmailSenderComponent
+  ],
   exports: []
 })
 export class AppModule {}

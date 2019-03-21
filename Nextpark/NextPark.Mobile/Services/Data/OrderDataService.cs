@@ -46,7 +46,7 @@ namespace NextPark.Mobile.Services.Data
 
             try
             {
-               var url = $"{ApiSettings.OrdersEndPoint}/terminate";
+                var url = $"{ApiSettings.OrdersEndPoint}/terminate";
                 var response = await _apiService.Post(url, id).ConfigureAwait(false);
 
                 if (response.IsSuccess)
