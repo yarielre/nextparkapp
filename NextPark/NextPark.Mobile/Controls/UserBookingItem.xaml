@@ -44,17 +44,14 @@
                                 <Label Text="{TemplateBinding Address}"
                                        FontSize="Small"
                                        FontAttributes="Bold"
-                                       TextColor="Gray"
                                        HorizontalTextAlignment="Start"/>
                                 <StackLayout Orientation="Horizontal" Spacing="2" HorizontalOptions="Start">
                                     <Label  Text="{TemplateBinding Cap}"
                                             FontSize="Small"
-                                            FontAttributes="None"
-                                            TextColor="Gray"/>
+                                            FontAttributes="None"/>
                                     <Label  Text="{TemplateBinding City}"
                                             FontSize="Small"
-                                            FontAttributes="None"
-                                            TextColor="Gray"/>
+                                            FontAttributes="None"/>
                                 </StackLayout>
                             </StackLayout>
                             <!-- Booking remaining time -->
@@ -66,7 +63,6 @@
                                 <Label Text="{TemplateBinding Time}"
                                        FontSize="Small"
                                        FontAttributes="Bold"
-                                       TextColor="Gray"
                                        HorizontalTextAlignment="End"
                                        VerticalTextAlignment="Center"/>
                             </StackLayout>
