@@ -10,6 +10,6 @@ export class AppComponent {
   title = "nextpark-web";
 
   constructor(
-    private authService: AuthenticationService
+    public authService: AuthenticationService
   ) {}
 }

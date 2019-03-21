@@ -1,0 +1,19 @@
+<div class="delete-dialog-header">
+  <!--<button mat-dialog-close mat-icon-button>-->
+    <!--<mat-icon>close</mat-icon>-->
+  <!--</button>-->
+  <h1 mat-dialog-title>{{ data.title }}</h1>
+</div>
+<mat-dialog-content>
+  <p [innerHTML]="data.text"></p>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-raised-button color="primary" (click)="onCancel()">
+    <mat-icon>close</mat-icon>
+    Cancel
+  </button>
+  <button mat-raised-button (click)="onDelete()" color="warn">
+    <mat-icon>delete</mat-icon>
+    Delete
+  </button>
+</mat-dialog-actions>

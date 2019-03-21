@@ -45,7 +45,7 @@ namespace NextPark.Api.Controllers
         }
 
         [HttpPut("{id}/renew")]
-        public async Task<IActionResult> RenovateOrder(int id,[FromBody] OrderModel model)
+        public async Task<IActionResult> RenovateOrder(int id, [FromBody] OrderModel model)
         {
 
             if (!ModelState.IsValid)
@@ -58,10 +58,10 @@ namespace NextPark.Api.Controllers
                 {
                     return NotFound("User not found");
                 }
-                
-                 if (user.Balance < model.Price)
-                 return BadRequest("Not enough money");
-                 var order = _mapper.Map<OrderModel, Order>(model);
+
+                if (user.Balance < model.Price)
+                    return BadRequest("Not enough money");
+                var order = _mapper.Map<OrderModel, Order>(model);
                 _orderRepository.Update(order);
                 await _unitOfWork.CommitAsync().ConfigureAwait(false);
                 var vm = _mapper.Map<Order, OrderModel>(order);
@@ -135,7 +135,7 @@ namespace NextPark.Api.Controllers
                     TransactionId = new Guid(),
                     Type = TransactionType.FeedTransaction
                 };
-               
+
                 //Saving rent and feed transactions
                 _transactionRepository.Add(renTransaction);
                 _transactionRepository.Add(feedTransaction);
@@ -207,7 +207,7 @@ namespace NextPark.Api.Controllers
                 return BadRequest("Parking is not available");
 
             var parkigOrders = await _orderRepository.FindAllWhereAsync(ev => ev.ParkingId == orderModel.ParkingId);
-            var isOrderdable= IsParkingOrderable(parkigOrders, orderModel);
+            var isOrderdable = IsParkingOrderable(parkigOrders, orderModel);
 
             if (!isOrderdable)
                 return BadRequest(ApiResponse.GetErrorResponse("Parking is not orderable", ErrorType.ParkingNotOrderable));
@@ -311,7 +311,7 @@ namespace NextPark.Api.Controllers
             return false;
         }
 
-        private double CalCulateTax(double price,double taxPorcent)
+        private double CalCulateTax(double price, double taxPorcent)
         {
             return (price * taxPorcent) / 100;
         }

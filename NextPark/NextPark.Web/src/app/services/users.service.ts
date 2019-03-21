@@ -19,7 +19,7 @@ export class UsersService extends BaseService<User> {
     private formBuilder: FormBuilder,
     private storageService: StorageService
   ) {
-    super(httpService, storageService,  `${NEXT_PARK_URL.auth}/getallusers`);
+    super(httpService, storageService,  `${NEXT_PARK_URL.auth}`);
     this.form = this.formBuilder.group({
       id: [0, Validators.required],
       name: ['', Validators.required],
@@ -37,8 +37,8 @@ export class UsersService extends BaseService<User> {
     });
   }
 
-  getAll(): Observable<User[]> {
-    return super.getAll();
+  getAll(url: string = this.baseUrl): Observable<User[]> {
+    return super.getAll(`${url}/getallusers`);
   }
 
   add(obj: User, url: string = this.baseUrl): Observable<User> {
