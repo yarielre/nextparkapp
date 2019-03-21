@@ -22,6 +22,7 @@ import { MyTableComponent } from './my-table/my-table.component';
 import { ParkingsComponent } from './parkings/parkings.component';
 import { EventsComponent } from './events/events.component';
 import { OrdersComponent } from './orders/orders.component';
+import { UserDeleteConfirmDialogComponent } from './_shared/delete-confirm-dialog/user-delete-confirm-dialog.component';
 // import { JwtInterceptor, ErrorInterceptor } from "../components/_helpers";
 
 @NgModule({
@@ -34,7 +35,8 @@ import { OrdersComponent } from './orders/orders.component';
     MyTableComponent,
     ParkingsComponent,
     EventsComponent,
-    OrdersComponent
+    OrdersComponent,
+    UserDeleteConfirmDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -52,11 +54,9 @@ import { OrdersComponent } from './orders/orders.component';
     StorageService,
     AuthenticationService,
     AuthGuard
-    // { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
-    // { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true }
   ],
   bootstrap: [AppComponent],
-  entryComponents: [],
+  entryComponents: [UserDeleteConfirmDialogComponent],
   exports: []
 })
 export class AppModule {}

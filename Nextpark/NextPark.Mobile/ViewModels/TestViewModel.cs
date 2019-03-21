@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Newtonsoft.Json.Linq;
 using NextPark.Enums.Enums;
+using NextPark.Mobile.Helpers;
 using NextPark.Mobile.Services;
 using NextPark.Mobile.Services.Data;
 using NextPark.Mobile.Settings;
@@ -21,6 +22,7 @@ namespace NextPark.Mobile.ViewModels
         private readonly IParkingDataService _parkingDataService;
         private readonly IOrderDataService _orderDataService;
         private readonly IPurchaseDataService _purchaseDataService;
+        private readonly ILocalizationService _localizationService;
 
         private bool _startButtonEnabled;
         private string _resultConsole;
@@ -29,13 +31,14 @@ namespace NextPark.Mobile.ViewModels
         public UserModel LoggedUser { get; set; }
 
         public TestViewModel(IApiService apiService, IAuthService authService, INavigationService navService,
-            IEventDataService eventDataService, IParkingDataService parkingDataService, IOrderDataService orderDataService, IPurchaseDataService purchaseDataService) : base(apiService, authService,
+            IEventDataService eventDataService, IParkingDataService parkingDataService, IOrderDataService orderDataService, IPurchaseDataService purchaseDataService, ILocalizationService localizationService) : base(apiService, authService,
             navService)
         {
             _eventDataService = eventDataService;
             _parkingDataService = parkingDataService;
             _orderDataService = orderDataService;
             _purchaseDataService = purchaseDataService;
+            _localizationService = localizationService;
 
             CleanConsoleAsync();
 
@@ -63,7 +66,7 @@ namespace NextPark.Mobile.ViewModels
         private async void StartTestingAsync()
         {
             StartButtonEnabled = false;
-
+          
             await AuthServiceTest();
 
             await ParkingServiceTest();
@@ -73,6 +76,7 @@ namespace NextPark.Mobile.ViewModels
 
             await LogoutTest();
 
+            LocalizationTest();
             StartButtonEnabled = true;
         }
 
@@ -204,19 +208,30 @@ namespace NextPark.Mobile.ViewModels
             {
                 AddLineToConsole("Creating the parking FAILED");
             }
-
+            var endDate = DateTime.Now.AddDays(1);
             var eventParking = new EventModel
             {
-                StartDate = DateTime.Now,
-                EndDate = (DateTime.Now).AddDays(5),
+                StartDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day),
+                EndDate = new DateTime(endDate.Year,endDate.Month,endDate.Day,23,59,00),
                 ParkingId = postedParking.Id,
-                RepetitionEndDate = DateTime.Now,
-                RepetitionType = Enums.Enums.RepetitionType.Dayly
+                RepetitionEndDate = new DateTime(endDate.Year, endDate.Month, endDate.Day, 23, 59, 00),
+                RepetitionType = RepetitionType.Dayly
             };
 
             // postedParking.Status = Enums.Enums.ParkingStatus.Disabled;
-
+            AddLineToConsole("----------Creating dayly events----------");
+            AddLineToConsole($"->Start date:{eventParking.StartDate:G}");
+            AddLineToConsole($"->End date:{eventParking.EndDate:G}");
             var result = await _eventDataService.CreateEventAsync(eventParking);
+            if (result != null)
+            {
+                AddLineToConsole($"Created: {result.Count} dayly events for the created parking");
+                AddLineToConsole("Creating dayly events OK");
+            }
+            else
+            {
+                AddLineToConsole("Creating dayly events FAILED");
+            }
 
             AddLineToConsole("Editing the parking");
             var parkingResult = await _parkingDataService.EditParkingAsync(postedParking);
@@ -449,7 +464,7 @@ namespace NextPark.Mobile.ViewModels
                 StartDate = startDate,
                 EndDate = endDate,
                 ParkingId = selectedPArking.Id,
-                RepetitionEndDate = endDate.AddDays(5),
+                RepetitionEndDate = endDate.AddDays(30),
                 RepetitionType = RepetitionType.Weekly,
                 WeeklyRepeDayOfWeeks = new List<DayOfWeek>
                 {
@@ -457,7 +472,9 @@ namespace NextPark.Mobile.ViewModels
                     DayOfWeek.Thursday,
                     DayOfWeek.Wednesday,
                     DayOfWeek.Tuesday,
-                    DayOfWeek.Friday
+                    DayOfWeek.Friday,
+                    DayOfWeek.Saturday,
+                    DayOfWeek.Sunday
                 }
             };
 
@@ -473,7 +490,7 @@ namespace NextPark.Mobile.ViewModels
                 return;
             }
 
-            var orderStartDate = DateTime.Now.ToUniversalTime().AddDays(1);
+            var orderStartDate = DateTime.Now.ToUniversalTime();
             var orderEndDate = orderStartDate.AddHours(1);
 
             var order = new OrderModel
@@ -491,7 +508,7 @@ namespace NextPark.Mobile.ViewModels
             AddLineToConsole("Creating one order...");
             var postedOrderResponse = await _orderDataService.CreateOrderAsync(order).ConfigureAwait(false);
 
-            AddLineToConsole(postedOrderResponse.IsSuccess ? $"Creating the order OK Msg: {postedOrderResponse.Message}" : postedOrderResponse.Message);
+            AddLineToConsole(postedOrderResponse.IsSuccess ? $"Creating the order OK Msg: {postedOrderResponse.Message}" : $"Creating the order Failed Msg {postedOrderResponse.Message}");
 
             if (postedOrderResponse.Result != null)
             {
@@ -550,5 +567,12 @@ namespace NextPark.Mobile.ViewModels
 
         #endregion
 
+        private void LocalizationTest()
+        {
+            AddLineToConsole("-------------------------------------------");
+            AddLineToConsole("TESTING Localization...");
+            AddLineToConsole($"Tranlate Accept: {_localizationService.Accept}");
+            AddLineToConsole($"Tranlate Error: {_localizationService.Error}");
+        }
     }
 }

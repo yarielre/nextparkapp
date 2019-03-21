@@ -4,9 +4,6 @@ import { Observable } from "rxjs";
 import { BaseModel } from "../models/base.model";
 import {StorageService} from '../services';
 
-@Injectable({
-  providedIn: "root"
-})
 export class BaseService<T extends BaseModel> {
   httpOptions = {
     headers: new HttpHeaders({ "Content-Type": "application/json" })

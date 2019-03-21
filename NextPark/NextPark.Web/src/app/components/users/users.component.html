@@ -43,7 +43,7 @@
           <button
             color="warn"
             mat-icon-button
-            (click)="onDelete(row)"
+            (click)="onDelete(selection.selected)"
             matTooltip="Delete user"
           >
             <mat-icon>delete</mat-icon>
@@ -51,7 +51,6 @@
         </div>
 
         <mat-table
-
           #table
           [dataSource]="dataSource"
           matSort

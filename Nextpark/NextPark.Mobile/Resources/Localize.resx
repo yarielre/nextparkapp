@@ -118,12 +118,12 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Accept_Global" xml:space="preserve">
-    <value />
+    <value>Accept</value>
   </data>
   <data name="Cancel_Global" xml:space="preserve">
-    <value />
+    <value>Cancel</value>
   </data>
   <data name="Error_Global" xml:space="preserve">
-    <value />
+    <value>Error</value>
   </data>
 </root>

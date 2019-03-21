@@ -20,6 +20,7 @@ import { Parking } from 'src/app/models';
   templateUrl: './parkings.component.html',
   styleUrls: ['./parkings.component.scss']
 })
+
 export class ParkingsComponent implements OnInit {
   showNavListCode;
   displayedColumns = [

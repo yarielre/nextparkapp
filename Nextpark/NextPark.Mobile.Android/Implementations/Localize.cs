@@ -2,11 +2,13 @@
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Threading;
+using NextPark.Mobile.Helpers;
+using NextPark.Mobile.Interfaces;
 
 [assembly: Xamarin.Forms.Dependency(typeof(NextPark.Mobile.Droid.Implementations.Localize))]
 namespace NextPark.Mobile.Droid.Implementations
 {
-    class Localize : ILocalize
+    public class Localize : ILocalize
     {
         public CultureInfo GetCurrentCultureInfo()
         {

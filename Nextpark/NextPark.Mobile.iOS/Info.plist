@@ -36,6 +36,14 @@
 	<string>1.0</string>
 	<key>CFBundleName</key>
 	<string>Next Park</string>
+	<key>CFBundleLocalizations</key>
+	<array>
+		<string>it</string>
+		<string>fr</string>
+		<string>de</string>
+	</array>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>en</string>
 	<key>CFBundleDocumentTypes</key>
 	<array>
 		<dict>
