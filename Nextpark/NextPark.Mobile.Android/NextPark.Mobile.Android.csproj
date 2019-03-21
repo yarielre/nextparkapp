@@ -133,7 +133,6 @@
     <AndroidResource Include="Resources\drawable\icon_modify_128.png" />
     <AndroidResource Include="Resources\drawable\icon_no_photo.png" />
     <AndroidResource Include="Resources\drawable\icon_no_user_256.png" />
-    <AndroidResource Include="Resources\drawable\icon_pin_green_256.png" />
     <AndroidResource Include="Resources\drawable\icon_pin_red_256.png" />
     <AndroidResource Include="Resources\drawable\icon_right_128.png" />
     <AndroidResource Include="Resources\drawable\icon_right_gray_128.png" />
@@ -144,8 +143,10 @@
     <AndroidResource Include="Resources\drawable\image_parking1.png" />
     <AndroidResource Include="Resources\drawable\icon_service_256.png" />
     <AndroidResource Include="Resources\drawable\bg_logo.png" />
-    <AndroidResource Include="Resources\drawable\logo.png" />
     <AndroidResource Include="Resources\drawable\splashscreen.xml" />
+    <AndroidResource Include="Resources\drawable\logo_125.png" />
+    <AndroidResource Include="Resources\drawable\logo.png" />
+    <AndroidResource Include="Resources\drawable\icon_pin_green_256.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\drawable-hdpi\" />
