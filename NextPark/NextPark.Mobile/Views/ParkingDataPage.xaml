@@ -50,18 +50,15 @@
                             <Label Text="{Binding Address}"
                                    FontSize="Medium"
                                    FontAttributes="Bold"
-                                   TextColor="Gray"
                                    HorizontalTextAlignment="Start"/>
                             <StackLayout Orientation="Horizontal" Spacing="2">
                                 <Label Text="{Binding Cap}"
                                        FontSize="Medium"
                                        FontAttributes="None"
-                                       TextColor="Gray"
                                        HorizontalTextAlignment="Start"/>
                                 <Label Text="{Binding City}"
                                        FontSize="Medium"
                                        FontAttributes="None"
-                                       TextColor="Gray"
                                        HorizontalTextAlignment="Start"/>
                             </StackLayout>
                          </StackLayout>
@@ -94,7 +91,7 @@
                     
                     <!-- Separator -->
                     <BoxView HeightRequest="1"
-                             Margin="0,-5,0,5"
+                             Margin="0,-1,0,4"
                              HorizontalOptions="FillAndExpand"
                              BackgroundColor="Gray"/>
                     
@@ -116,15 +113,20 @@
                             </Switch>
                             <Label  x:Name="activeLabel" 
                                     Text="{Binding ActiveStatusText}"
-                                    TextColor="Gray"
-                                    FontSize="Medium" 
+                                    FontSize="Small" 
                                     FontAttributes="None" 
                                     VerticalOptions="Center"
                                     VerticalTextAlignment="Center"
                                     HorizontalOptions="End"
                                     Margin="0"/>
                         </StackLayout>
-                        <Frame BackgroundColor="{DynamicResource NextParkColor1}"
+                        <StackLayout Orientation="Horizontal" HorizontalOptions="End" Spacing="5" Grid.Row="0" Grid.Column="1">
+                        <Label Text="Disponibilità"
+                               FontSize="Small" 
+                               VerticalOptions="Center"
+                               VerticalTextAlignment="Center"
+                               HorizontalTextAlignment="End"/>
+                            <Frame BackgroundColor="{DynamicResource NextParkColor1}"
                                HasShadow="false"
                                IsClippedToBounds="true"
                                HeightRequest="40"
@@ -133,8 +135,7 @@
                                Margin="5,-5,-5,5"
                                Padding="0"
                                VerticalOptions="Center"
-                               HorizontalOptions="End"
-                               Grid.Row="0" Grid.Column="1">
+                               HorizontalOptions="End">
                                <Image Source="icon_add_48.png"
                                       HeightRequest="20"
                                       WidthRequest="20"
@@ -144,6 +145,7 @@
                                 <TapGestureRecognizer Command="{Binding OnAddAvailability}"/>
                             </Frame.GestureRecognizers>
                         </Frame>
+                        </StackLayout>
                     </Grid>
                                         
                     <!-- Week days -->
@@ -328,7 +330,7 @@
                     <controls:DayView x:Name="dayView" HeightRequest="300" Padding="0" Margin="0,-5,0,0" VerticalOptions="Fill">
                         
                         <!-- Events and Orders -->
-                        <repeater:RelRepeaterView  HorizontalOptions="FillAndExpand" ItemsSource="{Binding CalendarEvents}">
+                        <repeater:RelRepeaterView x:Name="calEvents" HorizontalOptions="FillAndExpand" ItemsSource="{Binding CalendarEvents}">
                             <repeater:RelRepeaterView.ItemTemplate>
                                 <DataTemplate>
                                     <ViewCell>
@@ -347,9 +349,9 @@
                                                    Margin="10,2,0,0"
                                                    Opacity="1"
                                                    HorizontalTextAlignment="Start"
-                                                   VerticalTextAlignment="Start"/> 
+                                                   VerticalTextAlignment="Start"/>
                                             <Frame.GestureRecognizers>
-                                                <TapGestureRecognizer Command="{Binding OnEventTap}" CommandParameter="{Binding Index}"/>                                                           
+                                                <TapGestureRecognizer Command="{Binding OnEventTap}" CommandParameter="{Binding Index}"/>                                                    
                                             </Frame.GestureRecognizers>
                                         </Frame>
                                     </ViewCell>

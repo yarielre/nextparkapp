@@ -54,6 +54,13 @@
                                FontSize="Small" 
                                HorizontalOptions="Start" VerticalOptions="Center"
                                Grid.Row="1" Grid.Column="0"/>
+                        <DatePicker HorizontalOptions="Center" FontSize="Small"
+                                    IsVisible="{Binding EndDateVisible}"
+                                    Grid.Row="1" Grid.Column="1"
+                                    Date="{Binding EndDate}"
+                                    MinimumDate="{Binding MinEndDate}">
+                            <DatePicker.Format>dd/MM/yyyy</DatePicker.Format>
+                        </DatePicker>
                         <TimePicker FontSize="Small"
                                     HorizontalOptions="End"
                                     Grid.Row="1" Grid.Column="2"

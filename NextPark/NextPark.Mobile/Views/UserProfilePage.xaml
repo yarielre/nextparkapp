@@ -26,7 +26,6 @@
                             <StackLayout Orientation="Horizontal" Spacing="2" HorizontalOptions="Start" VerticalOptions="Center">
                                 <Label Text="{Binding UserName}"
                                        FontSize="Small"
-                                       FontAttributes="Bold"
                                        VerticalTextAlignment="Center"/>
                                 <Label Text="{Binding Lastname}"
                                        FontSize="Small"
@@ -47,7 +46,7 @@
                                        FontSize="Small"/>
                             </StackLayout>
                             <StackLayout Orientation="Horizontal" Spacing="2" HorizontalOptions="Start" VerticalOptions="Center">
-                                <Label Text="Targa: " 
+                                <Label Text="Targa: "
                                        FontSize="Small"/>
                                 <Label Text="{Binding CarPlate}" 
                                        FontSize="Small"/>
@@ -99,12 +98,11 @@
                                               x:Name="liUserParkings">
                         <StackLayout Spacing="1" HorizontalOptions="StartAndExpand">
                             <Label Text="Stato attuale:"
-                               FontSize="Small"
-                               FontAttributes="None"/>
+                                   FontSize="Small"
+                                   FontAttributes="None"/>
                             <Label Text="{Binding ParkingsStatus}"
                                    FontSize="Small"
-                                   FontAttributes="Bold"
-                                   TextColor="Black"/>
+                                   FontAttributes="Bold"/>
                             <Label Text="{Binding ParkingsAvailability}"
                                    FontSize="Small"
                                    FontAttributes="None"/>                            
@@ -118,8 +116,8 @@
                                               x:Name="liUserBookings">
                         <StackLayout Spacing="1" HorizontalOptions="StartAndExpand">
                             <Label Text="Prossima prenotazione:"
-                               FontSize="Small"
-                               FontAttributes="None"/>
+                                   FontSize="Small"
+                                   FontAttributes="None"/>
                             <Label Text="{Binding NextBooking}"
                                    FontSize="Small"
                                    FontAttributes="None" />

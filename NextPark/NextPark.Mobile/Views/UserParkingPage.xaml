@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms" 
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:controls="clr-namespace:NextPark.Mobile.Controls"
@@ -59,6 +59,7 @@
                         </ContentView>
                     </Grid>
                     <Label Text="Nessun parcheggio registrato"
+                           TextColor="Black"
                            FontSize="Small"
                            Margin="0"
                            HorizontalTextAlignment="Center"
@@ -89,8 +90,7 @@
                                             <StackLayout Spacing="1" HorizontalOptions="StartAndExpand">
                                                 <Label  Text="{Binding Address}"
                                                         FontSize="Small"
-                                                        FontAttributes="Bold"
-                                                        TextColor="Gray"/>
+                                                        FontAttributes="Bold"/>
                                                 <StackLayout Orientation="Horizontal" Spacing="2">
                                                     <Label  Text="{Binding Cap}"
                                                             FontSize="Small"
