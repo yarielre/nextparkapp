@@ -119,24 +119,22 @@ namespace NextPark.Mobile.ViewModels
                 foreach (OrderModel order in ordersResponse)
                 {
 
-                    if (order.UserId == AuthSettings.User.Id)
+                    if ((order.UserId == AuthSettings.User.Id) && (order.OrderStatus == Enums.OrderStatus.Actived))
                     {
                         //var parking = await _parkingDataService.GetParkingAsync(order.ParkingId);
                         var parking = _profileService.GetParkingById(order.ParkingId);
                         if (parking != null)
                         {
-
-                            UIBookingModel booking = new UIBookingModel
-                            {
-                                UID = order.Id,
-                                Index = count++,
-                                Address = parking.Address,
-                                Cap = parking.Cap.ToString(),
-                                City = parking.City,
-                                Parking = (ParkingModel)parking,
-                                OnBookingDel = OnBookingDelete,
-                                OnBookingTap = OnBookingTapped
-                            };
+                            // Create UIBookingModel
+                            UIBookingModel booking = new UIBookingModel(order);
+                            booking.UID = order.Id;
+                            booking.Index = count++;
+                            booking.Address = parking.Address;
+                            booking.Cap= parking.Cap.ToString();
+                            booking.City = parking.City;
+                            booking.Parking = (ParkingModel)parking;
+                            booking.OnBookingDel = OnBookingDelete;
+                            booking.OnBookingTap = OnBookingTapped;
 
                             if (order.StartDate > DateTime.Now)
                             {
