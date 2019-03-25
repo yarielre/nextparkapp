@@ -47,12 +47,10 @@ namespace NextPark.Api.Controllers
         public async Task<IActionResult> BuyAmount([FromBody] PurchaseModel model)
         {
 
-            if (model == null) return BadRequest("Model not valid");
+            if (model == null) return BadRequest(ApiResponse.GetErrorResponse("Model not valid",ErrorType.EntityNull));
 
             var user = _userManager.Users.FirstOrDefault(r => r.Id == model.UserId);
-
-            if (user == null) return BadRequest("User not found");
-
+            if (user == null) return BadRequest(ApiResponse.GetErrorResponse("User not found",ErrorType.EntityNotFound));
             user.Balance = user.Balance + model.Cash;
 
             try
@@ -75,11 +73,11 @@ namespace NextPark.Api.Controllers
                 
                 model.NewUserBalance = user.Balance;
 
-                return Ok(model);
+                return Ok(ApiResponse.GetSuccessResponse(model));
             }
             catch (Exception e)
             {
-                return BadRequest($"Server error increasing user balance: {e.Message}");
+                return BadRequest(ApiResponse.GetErrorResponse($"Server error increasing user balance: {e.Message}",ErrorType.Exeption));
             }
 
         }
@@ -88,13 +86,13 @@ namespace NextPark.Api.Controllers
         [HttpPost("drawal")]
         public async Task<IActionResult> DrawalCash([FromBody] PurchaseModel model)
         {
-            if (model == null) return BadRequest("Model not valid");
+            if (model == null) return BadRequest(ApiResponse.GetErrorResponse("Model not valid",ErrorType.EntityNull));
             var user = _userManager.Users.FirstOrDefault(u => u.Id == model.UserId);
             if (user == null)
-                return BadRequest("User not found");
+                return BadRequest(ApiResponse.GetErrorResponse("User not found",ErrorType.EntityNotFound));
             if (user.Profit < model.Cash)
             {
-                return BadRequest("Your balance is smaller than the cash you want to move.");
+                return BadRequest(ApiResponse.GetErrorResponse("Your profit is smaller than the cash you want to move.",ErrorType.NotEnoughMoney));
             }
             user.Profit = user.Profit - model.Cash;
 
@@ -114,11 +112,11 @@ namespace NextPark.Api.Controllers
                 await _userManager.UpdateAsync(user).ConfigureAwait(false);
                 await _unitOfWork.CommitAsync().ConfigureAwait(false);
                 model.NewUserProfit = user.Profit;
-                return Ok(model);
+                return Ok(ApiResponse.GetSuccessResponse(model));
             }
             catch (Exception e)
             {
-                return BadRequest($"Server error increasing user balance: {e.Message}");
+                return BadRequest(ApiResponse.GetErrorResponse($"Server error substracting user profit: {e.Message}",ErrorType.Exeption));
             }
         }
     }

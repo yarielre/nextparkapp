@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using NextPark.Enums.Enums;
 using NextPark.Mobile.Settings;
 using NextPark.Models;
 
@@ -166,7 +167,15 @@ namespace NextPark.Mobile.Services
         public async Task<ApiResponse> GetUserByUserName(string userName)
         {
             var isConneted = await _apiService.CheckConnection();
-            if (!isConneted.IsSuccess) return isConneted;
+            if (!isConneted.IsSuccess)
+            {
+                return new ApiResponse
+                {
+                    Message = isConneted.Message,
+                    Result = isConneted.Result,
+                    ErrorType = ErrorType.InternetConnectionError
+                };
+            }
 
             try
             {

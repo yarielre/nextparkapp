@@ -11,6 +11,7 @@ using NextPark.Services;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using NextPark.Enums.Enums;
 
 namespace NextPark.Api.Controllers
 {
@@ -49,35 +50,28 @@ namespace NextPark.Api.Controllers
 
             if (model == null)
             {
-                return BadRequest("Invalid ChangePasswordModel parameter");
+                return BadRequest(ApiResponse.GetErrorResponse("Invalid ChangePasswordModel parameter",ErrorType.EntityNull));
             }
-
-
-
             var user = _userManager.Users.FirstOrDefault(u => u.Id == model.Id);
 
             if (user == null)
             {
-                return BadRequest("User not found.");
+                return BadRequest(ApiResponse.GetErrorResponse("User not found.",ErrorType.EntityNotFound));
             }
 
             try
             {
-
-                var result = await _userManager.ChangePasswordAsync(user, model.OldPassword, model.NewPassword);
+                var result = await _userManager.ChangePasswordAsync(user, model.OldPassword, model.NewPassword).ConfigureAwait(false);
 
                 if (result.Succeeded)
                 {
-                    return Ok();
+                    return Ok(ApiResponse.GetSuccessResponse("Ok","Ok"));
                 }
-                else
-                {
-                    return BadRequest(result);
-                }
+                return BadRequest(ApiResponse.GetErrorResponse(result.Errors.FirstOrDefault()?.Description,ErrorType.ChngePasswordError));
             }
             catch (Exception e)
             {
-                return BadRequest(string.Format("Server error: {0}", e));
+                return BadRequest(ApiResponse.GetErrorResponse(e.Message,ErrorType.Exeption));
             }
         }
 
@@ -86,15 +80,13 @@ namespace NextPark.Api.Controllers
         {
             if (model == null)
             {
-                return BadRequest("Invalid EditProfileModel parameter");
+                return BadRequest(ApiResponse.GetErrorResponse("Invalid EditProfileModel parameter",ErrorType.EntityNull));
             }
 
             var user = _userManager.Users.SingleOrDefault(r => r.Id == model.Id);
-
-
             if (user == null)
             {
-                return BadRequest("User not found.");
+                return BadRequest(ApiResponse.GetErrorResponse("User not found.",ErrorType.EntityNotFound));
             }
 
             try
@@ -104,6 +96,7 @@ namespace NextPark.Api.Controllers
             }
             catch (Exception e)
             {
+                return BadRequest(ApiResponse.GetErrorResponse(e.Message, ErrorType.Exeption));
                 //Log: return BadRequest(string.Format("{0} Exception: {1}", "Error processing Image!", e.Message));
             }
 
@@ -120,24 +113,19 @@ namespace NextPark.Api.Controllers
                 user.City = model.City;
                 user.ImageUrl = model.ImageUrl;
 
-                var result = await _userManager.UpdateAsync(user);
+                var result = await _userManager.UpdateAsync(user).ConfigureAwait(false);
 
                 if (result.Succeeded)
                 {
                     var userVm = _mapper.Map<ApplicationUser, UserModel>(user);
-                    return Ok(userVm);
+                    return Ok(ApiResponse.GetSuccessResponse(userVm));
                 }
-                else
-                {
-
-                    return BadRequest("Impossible to update the user!");
-                }
+                return BadRequest(ApiResponse.GetErrorResponse("Impossible to update the user!",ErrorType.None));
             }
             catch (Exception e)
             {
-                return BadRequest(string.Format("Server error: {0}", e));
+                return BadRequest(ApiResponse.GetErrorResponse(e.Message,ErrorType.Exeption));
             }
         }
-
     }
 }
