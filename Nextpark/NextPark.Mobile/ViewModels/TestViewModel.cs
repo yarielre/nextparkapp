@@ -60,23 +60,27 @@ namespace NextPark.Mobile.ViewModels
         }
 
         //Commands
-        public ICommand StartTesting => new Command(StartTestingAsync);
+        public ICommand StartTesting => new Command(async ()=>
+        {
+            await StartTestingAsync().ConfigureAwait(false);
+        });
         public ICommand CleanConsole => new Command(CleanConsoleAsync);
 
-        private async void StartTestingAsync()
+        private async Task StartTestingAsync()
         {
             StartButtonEnabled = false;
-          
-            await AuthServiceTest();
+            
+            await AuthServiceTest().ConfigureAwait(false);
 
-            await ParkingServiceTest();
+            await ParkingServiceTest().ConfigureAwait(false);
             await OrderServiceTest().ConfigureAwait(false);
-            await EventServiceTest();
-            PurchaseServiceTest();
-
-            await LogoutTest();
-
-            LocalizationTest();
+            await EventServiceTest().ConfigureAwait(false);
+           // PurchaseServiceTest();
+            await LogoutTest().ConfigureAwait(false);
+           // LocalizationTest();
+            #region Specific Cases
+            await CaseEventDayly().ConfigureAwait(false); 
+            #endregion
             StartButtonEnabled = true;
         }
 
@@ -176,11 +180,23 @@ namespace NextPark.Mobile.ViewModels
             AddLineToConsole("TESTING PARKING SERVICE...");
 
             AddLineToConsole("Getting all parkings");
-            var parkings = await _parkingDataService.GetAllParkingsAsync();
-
+            var parkings = await _parkingDataService.GetAllParkingsAsync().ConfigureAwait(false);
             AddLineToConsole($"Found: {parkings.Count} parkings");
 
-
+            /////////////////////////////////////////////////////////////////////////Remove this
+            //AddLineToConsole("Getting all events");
+            //var events = await _eventDataService.GetAllEventsAsync();
+            //AddLineToConsole($"Found: {events.Count} parkings");
+            //if (events!=null && events.Count>0 )
+            //{
+            //    var count = 0;
+            //    foreach (var item in events)
+            //    {
+            //        count++;
+            //        AddLineToConsole($"---Event {count}-> Start date:{item.StartDate:G}  End date:{item.EndDate:G}");
+            //    }
+            //}
+            ///////////////////////////////////////////////////////////////////////////////////////////////////////////
             var parking1 = new ParkingModel
             {
                 Address = "Via Strada",
@@ -212,7 +228,7 @@ namespace NextPark.Mobile.ViewModels
             var eventParking = new EventModel
             {
                 StartDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day),
-                EndDate = new DateTime(endDate.Year,endDate.Month,endDate.Day,23,59,00),
+                EndDate = new DateTime(endDate.Year, endDate.Month, endDate.Day, 23, 59, 00),
                 ParkingId = postedParking.Id,
                 RepetitionEndDate = new DateTime(endDate.Year, endDate.Month, endDate.Day, 23, 59, 00),
                 RepetitionType = RepetitionType.Dayly
@@ -255,7 +271,6 @@ namespace NextPark.Mobile.ViewModels
             {
                 AddLineToConsole("Deleting the parking FAILED");
             }
-
         }
 
         #endregion
@@ -457,7 +472,7 @@ namespace NextPark.Mobile.ViewModels
 
             var startDate = DateTime.Now.ToUniversalTime();
             var endDate = startDate.AddHours(3);
-            
+
 
             var newWeklyEvent = new EventModel
             {
@@ -530,9 +545,9 @@ namespace NextPark.Mobile.ViewModels
             AddLineToConsole("TESTING PURCHASE SERVICE...");
 
             AddLineToConsole("Adding money...");
-            var purchaseModel = _purchaseDataService.BuyAmount(new PurchaseModel { CashToAdd = 10, UserId = this.LoggedUser.Id });
+            var purchaseAddBalanceModel = _purchaseDataService.BuyAmount(new PurchaseModel { Cash = 10, UserId = this.LoggedUser.Id });
 
-            if (purchaseModel != null)
+            if (purchaseAddBalanceModel != null)
             {
                 AddLineToConsole("Adding money... OK");
 
@@ -541,6 +556,18 @@ namespace NextPark.Mobile.ViewModels
             {
                 AddLineToConsole("Adding money... FAILED");
             }
+            AddLineToConsole("Drawal money...");
+            var purchaseDrawalModel = _purchaseDataService.DrawalCash(new PurchaseModel { Cash = 5, UserId = this.LoggedUser.Id });
+            if (purchaseDrawalModel != null)
+            {
+                AddLineToConsole("Drawal money... OK");
+
+            }
+            else
+            {
+                AddLineToConsole("Drawal money... FAILED");
+            }
+
 
         }
         #endregion
@@ -573,6 +600,88 @@ namespace NextPark.Mobile.ViewModels
             AddLineToConsole("TESTING Localization...");
             AddLineToConsole($"Tranlate Accept: {_localizationService.Accept}");
             AddLineToConsole($"Tranlate Error: {_localizationService.Error}");
+        }
+
+        private async Task CaseEventDayly()
+        {
+            AddLineToConsole("-------------------------------------------");
+            AddLineToConsole("TESTING Specific case CaseEventDayly...");
+            var parking1 = new ParkingModel
+            {
+                Address = "Via Strada",
+                Cap = 7777,
+                City = "Lugano",
+                CarPlate = "TI 000000",
+                Latitude = 40,
+                Longitude = 40,
+                PriceMax = 4,
+                PriceMin = 4,
+                State = "Ticino",
+                Status = Enums.Enums.ParkingStatus.Enabled,
+                UserId = 1,
+                ImageUrl = $"{ApiSettings.BaseUrl}/images/image_parking1.png"
+            };
+
+            AddLineToConsole("Creating one parking");
+            var postedParking = await _parkingDataService.CreateParkingAsync(parking1);
+
+            if (postedParking != null)
+            {
+                AddLineToConsole("Creating the parking OK");
+            }
+            else
+            {
+                AddLineToConsole("Creating the parking FAILED");
+            }
+            var endDate = DateTime.Now.AddDays(1);
+            var eventParking = new EventModel
+            {
+                StartDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day),
+                EndDate = new DateTime(endDate.Year, endDate.Month, endDate.Day, 23, 59, 00),
+                ParkingId = postedParking.Id,
+                RepetitionEndDate = new DateTime(endDate.Year, endDate.Month, endDate.Day, 23, 59, 00),
+                RepetitionType = RepetitionType.Dayly
+            };
+
+            // postedParking.Status = Enums.Enums.ParkingStatus.Disabled;
+            AddLineToConsole("----------Creating dayly events----------");
+            AddLineToConsole($"->Start date:{eventParking.StartDate:G}");
+            AddLineToConsole($"->End date:{eventParking.EndDate:G}");
+            var result = await _eventDataService.CreateEventAsync(eventParking);
+            if (result != null)
+            {
+                AddLineToConsole($"Created: {result.Count} dayly events for the created parking");
+                AddLineToConsole("Creating dayly events OK");
+            }
+            else
+            {
+                AddLineToConsole("Creating dayly events FAILED");
+            }
+            AddLineToConsole("Getting posted parking's events ");
+            var events = await _eventDataService.GetAllEventsAsync();
+            AddLineToConsole($"Found: {events.Count} events.");
+            if (events != null && events.Count > 0)
+            {
+                var count = 0;
+                foreach (var item in events)
+                {
+                    count++;
+                    AddLineToConsole($"---Event {count}:{Environment.NewLine} " +
+                                     $"RepetitionId:{item.RepetitionId}{ Environment.NewLine}"+
+                                     $"Start date:{item.StartDate:G}  End date:{item.EndDate:G}");
+                }
+            }
+
+            AddLineToConsole("Deleting the parking");
+            var deletedParking = await _parkingDataService.DeleteParkingsAsync(postedParking.Id);
+            if (deletedParking != null)
+            {
+                AddLineToConsole("Deleting the parking OK");
+            }
+            else
+            {
+                AddLineToConsole("Deleting the parking FAILED");
+            }
         }
     }
 }

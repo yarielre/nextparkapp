@@ -4,7 +4,7 @@ import {
   CanActivate
 } from '@angular/router';
 
-import { StorageService } from '../../services';
+import { StorageService } from '../../services/storage.service';
 
 @Injectable({ providedIn: 'root' })
 export class AuthGuard implements CanActivate {

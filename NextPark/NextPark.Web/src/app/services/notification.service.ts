@@ -17,8 +17,8 @@ export class NotificationService {
         action,
         {
           duration,
-          horizontalPosition: 'right',
-          verticalPosition: 'top',
+          horizontalPosition: 'left',
+          verticalPosition: 'bottom',
           panelClass: ['snackbar-success']
         });
     });
@@ -32,8 +32,8 @@ export class NotificationService {
         action,
         {
           duration,
-          horizontalPosition: 'right',
-          verticalPosition: 'top',
+          horizontalPosition: 'left',
+          verticalPosition: 'bottom',
           panelClass: ['snackbar-error']
         });
     });

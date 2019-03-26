@@ -1,6 +1,8 @@
+import { map } from "rxjs/operators";
 import { Component, Inject, OnInit } from "@angular/core";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material";
-import { UsersService, NotificationService } from "../../../services";
+import { NotificationService } from "../../../services/notification.service";
+import { UsersService } from "../../../services/users.service";
 
 @Component({
   templateUrl: "./delete-confirm-dialog.component.html",
@@ -17,18 +19,22 @@ export class UserDeleteConfirmDialogComponent implements OnInit {
   ngOnInit() {}
 
   onDelete() {
-    this.userService.delete(this.data.payload).subscribe(
-      user => {
-        this.matDialogRef.close({
-          isOnDelete: true,
-          payload: this.data.payload
-        });
-      },
-      error => {
-        this.notifcationService.error("Server error");
-        this.matDialogRef.close();
-      }
-    );
+    console.log("this.data.payload: ", this.data.payload);
+    this.data.payload.map(userId => {
+      console.log(userId);
+      this.userService.delete(userId).subscribe(
+        res => {
+          this.matDialogRef.close({
+            isOnDelete: true,
+            payload: this.data.payload
+          });
+        },
+        error => {
+          this.notifcationService.error("Server error");
+          this.matDialogRef.close();
+        }
+      );
+    });
   }
 
   onCancel() {

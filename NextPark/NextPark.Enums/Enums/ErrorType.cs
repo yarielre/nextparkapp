@@ -7,9 +7,15 @@ namespace NextPark.Enums.Enums
     public enum ErrorType
     {
         None,
-        ParkingNotFound,
+        InternetConnectionError,
+        Exeption,
+        EntityNull,
+        ModelStateInvalid,
+        EntityNotFound,
         ParkingNotVailable,
         ParkingNotOrderable,
-        NotEnoughMoney
+        NotEnoughMoney,
+        EventCantBeModified,
+        ChngePasswordError
     }
 }

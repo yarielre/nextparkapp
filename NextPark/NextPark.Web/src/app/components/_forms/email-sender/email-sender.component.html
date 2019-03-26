@@ -1,0 +1,28 @@
+<form [formGroup]="emailSenderService.form" class="normal-form">
+    <div class="form-container">
+        <mat-form-field>
+          <input matInput placeholder="Subject" formControlName="subject">
+          <mat-error>
+            <span *ngIf="!emailSenderService.form.get('subject').valid && emailSenderService.form.get('subject').touched">Please enter a Subject</span>
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field>
+          <textarea matInput placeholder="Message" formControlName="message"></textarea>
+          <mat-error>
+            <span *ngIf="!emailSenderService.form.get('message').valid && emailSenderService.form.get('message').touched">Please enter an email message</span>
+          </mat-error>
+        </mat-form-field>
+
+          <div class="container-button">
+            <button mat-raised-button color="primary"
+                    [disabled]="!emailSenderService.form.valid"
+                    (click)="sendEmail(emailSenderService.form.value)">Send
+            </button>
+            <button mat-raised-button color="warn"
+                    (click)="onClose()">Cancel
+            </button>
+          </div>
+    </div>
+    </form>
+

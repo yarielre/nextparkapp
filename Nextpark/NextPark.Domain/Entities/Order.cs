@@ -8,6 +8,7 @@ namespace NextPark.Domain.Entities
     public class Order : BaseEntity
     {
         public double Price { get; set; }
+        public string CarPlate { get; set; }
 
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
@@ -16,7 +17,6 @@ namespace NextPark.Domain.Entities
 
         public PaymentStatus PaymentStatus { get; set; }
         public string PaymentCode { get; set; }
-
 
         public virtual Parking Parking { get; set; }
         public int ParkingId { get; set; }

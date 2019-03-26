@@ -19,7 +19,7 @@ namespace NextPark.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+   // [Authorize]
     public class ParkingsController : ControllerBase
     {
         private readonly IHostingEnvironment _appEnvironment;
@@ -51,11 +51,12 @@ namespace NextPark.Api.Controllers
 
         // GET api/controller
         [HttpGet]
+        [AllowAnonymous]
         public async Task<IActionResult> Get()
         {
             var parkigns = await _parkingRepository.FindAllAsync().ConfigureAwait(false);
             var vm = _mapper.Map<List<Parking>, List<ParkingModel>>(parkigns);
-            return Ok(vm);
+            return Ok(ApiResponse<List<ParkingModel>>.GetSuccessResponse(vm));
         }
 
         // GET api/controller/5
@@ -64,17 +65,17 @@ namespace NextPark.Api.Controllers
         {
             var entity = _parkingRepository.Find(id);
             if (entity == null)
-                return BadRequest("Entity not found");
+                return BadRequest(ApiResponse<ParkingModel>.GetErrorResponse("Entity not found",ErrorType.EntityNotFound));
             var vm = _mapper.Map<Parking, ParkingModel>(entity);
-            return Ok(vm);
+            return Ok(ApiResponse<ParkingModel>.GetSuccessResponse(vm));
         }
 
         // POST api/controller
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] ParkingModel model)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            if (model == null)
+                return BadRequest(ApiResponse<ParkingModel>.GetErrorResponse("Model is null",ErrorType.EntityNull));
 
             try
             {
@@ -83,6 +84,7 @@ namespace NextPark.Api.Controllers
             }
             catch (Exception e)
             {
+                return BadRequest(ApiResponse<ParkingModel>.GetErrorResponse(e.Message, ErrorType.Exeption));
                 //Log: return BadRequest(string.Format("{0} Exception: {1}", "Error processing Image!", e.Message));
             }
 
@@ -92,12 +94,11 @@ namespace NextPark.Api.Controllers
                 _parkingRepository.Add(parking);
                 await _unitOfWork.CommitAsync();
                 var vm = _mapper.Map<Parking, ParkingModel>(parking);
-                return Ok(vm);
+                return Ok(ApiResponse<ParkingModel>.GetSuccessResponse(vm));
             }
             catch (Exception e)
             {
-                return BadRequest(string.Format("{0} Exception: {1}", "Error saving parking model on database!",
-                    e.Message));
+                return BadRequest(ApiResponse<ParkingModel>.GetErrorResponse(e.Message, ErrorType.Exeption));
             }
         }
 
@@ -106,13 +107,11 @@ namespace NextPark.Api.Controllers
         public async Task<ActionResult> Put(int id, [FromBody] ParkingModel model)
         {
             if (model == null)
-                return BadRequest("Invalid ParkingModel parameter");
+                return BadRequest(ApiResponse<ParkingModel>.GetErrorResponse("Model is null",ErrorType.EntityNull));
 
             try
             {
                 var parking = _mapper.Map<ParkingModel, Parking>(model);
-
-
                 try
                 {
                     var imageUrl = _mediaService.SaveImage(model.ImageBinary);
@@ -121,18 +120,18 @@ namespace NextPark.Api.Controllers
                 }
                 catch (Exception e)
                 {
+                    return BadRequest(ApiResponse<ParkingModel>.GetErrorResponse(e.Message, ErrorType.Exeption));
                     //Log: return BadRequest(string.Format("{0} Exception: {1}", "Error processing Image!", e.Message));
                 }
 
                 _parkingRepository.Update(parking);
                 await _unitOfWork.CommitAsync();
                 var vm = _mapper.Map<Parking, ParkingModel>(parking);
-                return Ok(vm);
+                return Ok(ApiResponse<ParkingModel>.GetSuccessResponse(vm));
             }
             catch (Exception e)
             {
-                return BadRequest(string.Format("{0} Exception: {1}", "Error updating parking model on database!",
-                    e.Message));
+                return BadRequest(ApiResponse<ParkingModel>.GetErrorResponse(e.Message,ErrorType.Exeption));
             }
         }
 
@@ -142,75 +141,70 @@ namespace NextPark.Api.Controllers
         {
             var entity = _parkingRepository.Find(id);
             if (entity == null)
-                return BadRequest("Can't deleted, entity not found.");
+                return BadRequest(ApiResponse<ParkingModel>.GetErrorResponse("Can't deleted, entity not found.",ErrorType.EntityNotFound));
             var vm = _mapper.Map<Parking, ParkingModel>(entity);
             _parkingRepository.Delete(entity);
 
             await _unitOfWork.CommitAsync();
-            return Ok(vm);
+            return Ok(ApiResponse<ParkingModel>.GetSuccessResponse(vm));
         }
 
         [HttpGet("{id}/events")]
         public async Task<IActionResult> GetEvents(int id)
         {
-            var parking = _parkingRepository.Find(id);
-
-            if (parking == null) return NotFound("Parking not found");
-
-            var parkingEvents = await _parkingRepository.FirstWhereAsync(p => p.Id == id
-                                       && p.Events.Any(e => e.StartDate >= DateTime.Now), new CancellationToken(),
-                                       p => p.Events);
+            var parking = await _parkingRepository.FirstWhereAsync(p => p.Id == id
+                                                                  && p.Events.Any(e => e.StartDate >= DateTime.Now), 
+                                                                  new CancellationToken(),
+                                                                  p => p.Events).ConfigureAwait(false);
+            if (parking == null)
+            {
+                return BadRequest(ApiResponse<List<EventModel>>.GetErrorResponse("Parking not found", ErrorType.EntityNotFound));
+            }
 
             if (parking.Events == null && parking.Events.Count == 0) {
-                return NotFound("Not event found");
+                return BadRequest(ApiResponse<List<EventModel>>.GetErrorResponse("Parking don't have events",ErrorType.EntityNotFound));
             }
-         
             var vm = _mapper.Map<List<Event>, List<EventModel>>(parking.Events);
-
-            return Ok(vm);
+            return Ok(ApiResponse<List<EventModel>>.GetSuccessResponse(vm));
         }
 
         [HttpDelete("{id}/events")]
         public async Task<IActionResult> DeleteEvents(int id)
         {
             var parking = await _parkingRepository.FirstWhereAsync(p => p.Id == id, new CancellationToken(),
-                                       p => p.Events);
+                p => p.Events).ConfigureAwait(false);
 
-            if (parking == null) return NotFound("Parking not found");
+            if (parking == null) return BadRequest(ApiResponse<List<EventModel>>.GetErrorResponse("Parking not found",ErrorType.EntityNotFound));
 
             if (parking.Events == null && parking.Events.Count == 0)
             {
-                return NotFound("Not event found");
+                return BadRequest(ApiResponse<List<EventModel>>.GetErrorResponse("Parking don't have events", ErrorType.EntityNotFound));
             }
-
             var vm = _mapper.Map<List<Event>, List<EventModel>>(parking.Events);
-           
             foreach (var ev in parking.Events) {
                 _parkingEventRepository.Delete(ev);
             }
-
-            await _unitOfWork.CommitAsync();
-
-
-            return Ok(vm);
+            await _unitOfWork.CommitAsync().ConfigureAwait(false);
+            return Ok(ApiResponse<List<EventModel>>.GetSuccessResponse(vm));
         }
 
         [HttpPost("rentedbyuserdayly")]
         public async Task<IActionResult> GetParkingRentedByUserDayly([FromBody] int userId)
         {
+            //Need to know the logic of this method 22/03/2019 i think is wrong
             try
             {
                 var orders =
                     await _orderRepository.FindAllWhereAsync(o =>
-                        o.UserId == userId && o.OrderStatus == OrderStatus.Actived);
+                        o.UserId == userId && o.OrderStatus == OrderStatus.Actived).ConfigureAwait(false);
 
                 if (orders.Count > 0)
                     foreach (var order in orders)
                     {
                         var parking = await _parkingRepository.FirstWhereAsync(p => p.Id == order.ParkingId
-                                      && p.Events.Any(e => e.RepetitionType == RepetitionType.Dayly),new CancellationToken(),
-                                      p=>p.Events);
-                                                                                       
+                                                                                    && p.Events.Any(e => e.RepetitionType == RepetitionType.Dayly),
+                                                                                    new CancellationToken(),
+                                                                                    p=>p.Events).ConfigureAwait(false);
                         var vm = _mapper.Map<Parking, ParkingModel>(parking);
                         return Ok(vm);
                     }
@@ -226,6 +220,7 @@ namespace NextPark.Api.Controllers
         [HttpPost("rentedbyuserweekly")]
         public async Task<IActionResult> GetParkingRentedByUserWeekly([FromBody] int userId)
         {
+            //Need to know the logic of this method 22/03/2019 beacuse i think is wrong
             try
             {
                 var orders =
@@ -254,6 +249,7 @@ namespace NextPark.Api.Controllers
         [HttpPost("rentedbyusermonthtly")]
         public async Task<IActionResult> GetParkingRentedByUserMonthly([FromBody] int userId)
         {
+            //Need to know the logic of this method 22/03/2019 beacuse i think is wrong
             try
             {
                 var orders =

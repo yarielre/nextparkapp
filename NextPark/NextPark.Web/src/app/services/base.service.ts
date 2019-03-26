@@ -2,7 +2,7 @@ import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
 import { BaseModel } from "../models/base.model";
-import {StorageService} from '../services';
+import {StorageService} from '../services/storage.service';
 
 export class BaseService<T extends BaseModel> {
   httpOptions = {
@@ -30,6 +30,7 @@ export class BaseService<T extends BaseModel> {
     obj: T,
     url: string = `${this.baseUrl}/${obj.id}`
   ): Observable<T> {
+    console.log(url, this.httpOptions,obj)
     return this.http.put<T>(url, obj, this.httpOptions);
   }
 

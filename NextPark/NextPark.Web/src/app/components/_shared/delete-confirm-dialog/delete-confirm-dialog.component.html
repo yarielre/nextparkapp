@@ -7,7 +7,7 @@
 <mat-dialog-content>
   <p [innerHTML]="data.text"></p>
 </mat-dialog-content>
-<mat-dialog-actions>
+<mat-dialog-actions fxLayout="row" fxLayoutAlign="space-between">
   <button mat-raised-button color="primary" (click)="onCancel()">
     <mat-icon>close</mat-icon>
     Cancel
