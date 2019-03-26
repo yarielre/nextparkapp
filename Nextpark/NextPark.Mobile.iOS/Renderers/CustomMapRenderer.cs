@@ -89,9 +89,24 @@ namespace Inside.Xamarin.iOS.Renderers
             }
         }
 
+        public UIImage ResizeUIImage(UIImage sourceImage, float widthToScale, float heightToScale)
+        {
+            var sourceSize = sourceImage.Size;
+            var maxResizeFactor = Math.Max(widthToScale / sourceSize.Width, heightToScale / sourceSize.Height);
+            if (maxResizeFactor > 1) return sourceImage;
+            var width = maxResizeFactor * sourceSize.Width;
+            var height = maxResizeFactor * sourceSize.Height;
+            UIGraphics.BeginImageContext(new CGSize(width, height));
+            sourceImage.Draw(new CGRect(0, 0, width, height));
+            var resultImage = UIGraphics.GetImageFromCurrentImageContext();
+            UIGraphics.EndImageContext();
+            return resultImage;
+        }
+
         protected override MKAnnotationView GetViewForAnnotation(MKMapView mapView, IMKAnnotation annotation)
         {
             MKAnnotationView annotationView = null;
+
             // My Location is excluded
             if (annotation is MKUserLocation)
                 return null;
@@ -110,7 +125,8 @@ namespace Inside.Xamarin.iOS.Renderers
             {
                 // If not yet created, create a new annotation with icon name as identifier
                 annotationView = new CustomMKAnnotationView(annotation, customPin.Icon);//customPin.Id.ToString());
-                annotationView.Image = UIImage.FromFile(customPin.Icon+".png").Scale(new CGSize(50.0, 50.0));
+                UIImage image = ResizeUIImage(UIImage.FromFile(customPin.Icon + ".png"), 50, 50);
+                annotationView.Image = image; //UIImage.FromFile(customPin.Icon+".png").Scale(new CGSize(50.0, 50.0));
                 annotationView.CalloutOffset = new CGPoint(0, 0);
                 //annotationView.LeftCalloutAccessoryView = new UIImageView(UIImage.FromFile(customPin.Icon+".png"));
                 //annotationView.LeftCalloutAccessoryView = UIButton.FromType(UIButtonType.DetailDisclosure);
