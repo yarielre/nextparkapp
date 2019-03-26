@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NextPark.Data.Infrastructure;
 using NextPark.Data.Repositories;
@@ -16,6 +17,7 @@ namespace NextPark.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class OrdersController : ControllerBase
     {
         private readonly IMapper _mapper;
@@ -48,28 +50,30 @@ namespace NextPark.Api.Controllers
         public async Task<IActionResult> RenovateOrder(int id, [FromBody] OrderModel model)
         {
 
-            if (!ModelState.IsValid)
-                return BadRequest("Invalid Model State parameter");
+            if (model == null)
+            {
+                return BadRequest(ApiResponse.GetErrorResponse("Model is null", ErrorType.EntityNull));
+            }
 
             try
             {
                 var user = await _useRepository.FirstOrDefaultWhereAsync(u => u.Id == model.UserId).ConfigureAwait(false);
                 if (user == null)
                 {
-                    return NotFound("User not found");
+                    return BadRequest(ApiResponse.GetErrorResponse("User not found",ErrorType.EntityNotFound));
                 }
 
                 if (user.Balance < model.Price)
-                    return BadRequest("Not enough money");
+                    return BadRequest(ApiResponse.GetErrorResponse("Not enough money",ErrorType.NotEnoughMoney));
                 var order = _mapper.Map<OrderModel, Order>(model);
                 _orderRepository.Update(order);
                 await _unitOfWork.CommitAsync().ConfigureAwait(false);
                 var vm = _mapper.Map<Order, OrderModel>(order);
-                return Ok(vm);
+                return Ok(ApiResponse.GetSuccessResponse(vm));
             }
             catch (Exception e)
             {
-                return BadRequest(string.Format("Server error: {0}", e));
+                return BadRequest(ApiResponse.GetErrorResponse($"Server error: {e.Message}", ErrorType.Exeption));
             }
         }
 
@@ -86,28 +90,28 @@ namespace NextPark.Api.Controllers
                 var order = _orderRepository.Find(id);
 
                 if (order == null)
-                    return BadRequest("Order not found.");
+                    return BadRequest(ApiResponse.GetErrorResponse("Order not found.",ErrorType.EntityNotFound));
                 var parking = _parkingRepository.Find(order.ParkingId);
                 if (parking == null)
                 {
-                    return BadRequest("Parking not found.");
+                    return BadRequest(ApiResponse.GetErrorResponse("Parking not found.",ErrorType.EntityNull));
                 }
                 //Parking's owned user
                 var parkingOwnedUser = _useRepository.Find(parking.UserId);
                 if (parkingOwnedUser == null)
                 {
-                    return BadRequest("Parking's owned user not found.");
+                    return BadRequest(ApiResponse.GetErrorResponse("Parking's owned user not found.",ErrorType.EntityNotFound));
                 }
                 var tax = await _feedRepository.FirstOrDefaultWhereAsync(f => f.Name == "RentEarningPercent").ConfigureAwait(false);
                 if (tax == null)
                 {
-                    return BadRequest("Rent earning tax not found.");
+                    return BadRequest(ApiResponse.GetErrorResponse("Rent earning tax not found.",ErrorType.EntityNotFound));
                 }
                 //User who created the order
                 var userOrder = _useRepository.Find(order.UserId);
                 if (userOrder == null)
                 {
-                    return BadRequest("User who rented the order not found");
+                    return BadRequest(ApiResponse.GetErrorResponse("User who rented the order not found",ErrorType.EntityNotFound));
                 }
 
                 var rentEraningTax = CalCulateTax(order.Price, tax.Tax);
@@ -160,11 +164,11 @@ namespace NextPark.Api.Controllers
                 await _unitOfWork.CommitAsync().ConfigureAwait(false);
 
                 var vm = _mapper.Map<Order, OrderModel>(order);
-                return Ok(vm);
+                return Ok(ApiResponse.GetSuccessResponse(vm));
             }
             catch (Exception e)
             {
-                return BadRequest($"Server error: {e}");
+                return BadRequest(ApiResponse.GetErrorResponse($"Server error: {e.Message}",ErrorType.Exeption));
             }
         }
 
@@ -174,7 +178,7 @@ namespace NextPark.Api.Controllers
         {
             var list = await _orderRepository.FindAllAsync().ConfigureAwait(false);
             var vm = _mapper.Map<List<Order>, List<OrderModel>>(list);
-            return Ok(vm);
+            return Ok(ApiResponse.GetSuccessResponse(vm));
         }
 
         // GET api/controller/5
@@ -183,23 +187,23 @@ namespace NextPark.Api.Controllers
         {
             var entity = _orderRepository.Find(id);
             if (entity == null)
-                return BadRequest("Entity not found");
+                return BadRequest(ApiResponse.GetErrorResponse("Entity not found",ErrorType.EntityNotFound));
             var vm = _mapper.Map<Order, OrderModel>(entity);
-            return Ok(vm);
+            return Ok(ApiResponse.GetSuccessResponse(vm));
         }
 
         // POST api/controller
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] OrderModel orderModel)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            if (orderModel == null)
+                return BadRequest(ApiResponse.GetErrorResponse("Model is null",ErrorType.EntityNull));
 
             var parking = await _parkingRepository.FirstOrDefaultWhereAsync(p => p.Id == orderModel.ParkingId,
                 new CancellationToken(), p => p.Events).ConfigureAwait(false);
 
             if (parking == null)
-                return NotFound(ApiResponse.GetErrorResponse("Parking not found", ErrorType.ParkingNotFound));
+                return BadRequest(ApiResponse.GetErrorResponse("Parking not found", ErrorType.EntityNotFound));
 
             var isAvailable = IsParkingAvailable(parking, orderModel);
 
@@ -227,8 +231,7 @@ namespace NextPark.Api.Controllers
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
-                throw new Exception(e.Message);
+                return BadRequest(ApiResponse.GetErrorResponse(e.Message,ErrorType.Exeption));
             }
         }
 
@@ -236,7 +239,7 @@ namespace NextPark.Api.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult> Put(int id, [FromBody] OrderModel model)
         {
-            if (!ModelState.IsValid) return BadRequest(ModelState);
+            if (model == null) return BadRequest(ApiResponse.GetErrorResponse("Model is null",ErrorType.EntityNull));
 
 
             var entity = _mapper.Map<OrderModel, Order>(model);
@@ -248,7 +251,7 @@ namespace NextPark.Api.Controllers
 
             await _unitOfWork.CommitAsync().ConfigureAwait(false);
 
-            return Ok(vm);
+            return Ok(ApiResponse.GetSuccessResponse(vm));
 
         }
 
@@ -258,12 +261,12 @@ namespace NextPark.Api.Controllers
         {
             var entity = _orderRepository.Find(id);
             if (entity == null)
-                return BadRequest("Can't deleted, entity not found.");
+                return BadRequest(ApiResponse.GetErrorResponse("Can't deleted, entity not found.",ErrorType.EntityNotFound));
             var vm = _mapper.Map<Order, OrderModel>(entity);
             _orderRepository.Delete(entity);
 
             await _unitOfWork.CommitAsync().ConfigureAwait(false);
-            return Ok(vm);
+            return Ok(ApiResponse.GetSuccessResponse(vm));
         }
 
         private bool IsParkingAvailable(Parking parking, OrderModel order)

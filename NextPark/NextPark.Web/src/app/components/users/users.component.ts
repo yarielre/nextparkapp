@@ -20,6 +20,7 @@ import { UserDataSource } from "../../_helpers/data-sources";
 import { UsersService, NotificationService } from "src/app/services";
 import { User } from "src/app/models";
 import { UserDeleteConfirmDialogComponent } from "../_shared/delete-confirm-dialog/user-delete-confirm-dialog.component";
+import { UserFormComponent } from "../_forms/user-form/user-form.component";
 
 @Component({
   selector: "app-users",
@@ -33,7 +34,7 @@ export class UsersComponent implements OnInit {
     "id",
     "name",
     "lastname",
-    "username",
+    "userName",
     "email",
     "phone",
     "address",
@@ -81,28 +82,57 @@ export class UsersComponent implements OnInit {
       selected.includes(x.id.toString())
     );
     const dialogConfig: MatDialogConfig = new MatDialogConfig();
-    if (selected.length > 1) {
-    } else {
-      dialogConfig.autoFocus = true;
-      dialogConfig.width = "40%";
-      dialogConfig.data = {
-        title: "Delete User",
-        text: `Are you sure you want to delete this users <em>${
-          users[0].name
-        }.</em>`,
-        payload: users[0].id
-      };
+    const message =
+      users.length > 1
+        ? `Are you sure you want to delete all users`
+        : `Are you sure you want to delete this user <em>${
+            users[0].name
+          }.</em>`;
+    dialogConfig.autoFocus = true;
+    dialogConfig.width = "50%";
+    dialogConfig.data = {
+      title: "Delete User",
+      text: message,
+      payload: users.map(x => x.id)
+    };
 
-      this.dialog
-        .open(UserDeleteConfirmDialogComponent, dialogConfig)
-        .afterClosed()
-        .subscribe(deleteDialogdata => {
-          if (deleteDialogdata !== undefined && deleteDialogdata.isOnDelete) {
+    this.dialog
+      .open(UserDeleteConfirmDialogComponent, dialogConfig)
+      .afterClosed()
+      .subscribe(deleteDialogdata => {
+        if (deleteDialogdata !== undefined && deleteDialogdata.isOnDelete) {
+          this.refresh();
+          this.notifService.success("Deleted successfully.");
+        }
+      });
+  }
+
+  onEdit(selected: string[]) {
+    const user = this.dataSource.renderedData.filter(x =>
+      selected.includes(x.id.toString())
+    );
+
+    this.userService.fillForm(user[0]);
+    this.openEditDialog();
+  }
+
+  openEditDialog() {
+    const dialogConfig: MatDialogConfig = new MatDialogConfig();
+    dialogConfig.autoFocus = true;
+    dialogConfig.width = "50%";
+    this.dialog
+      .open(UserFormComponent, dialogConfig)
+      .afterClosed()
+      .subscribe(usertEditedResult => {
+        if (usertEditedResult !== undefined && usertEditedResult.isUpdated) {
+          if (usertEditedResult.payload !== undefined) {
             this.refresh();
-            this.notifService.success("User deleted.");
+            this.notifService.success("User updated.");
+          } else {
+            this.notifService.success("Server error");
           }
-        });
-    }
+        }
+      });
   }
 
   refresh() {

@@ -1,0 +1,149 @@
+<h2 mat-dialog-title>Edit Parking</h2>
+<mat-dialog-content fxLayout="column" [formGroup]="parkingService.form">
+  <input hidden formControlName="id" />
+  <mat-form-field>
+    <input matInput placeholder="Address" formControlName="address" />
+    <mat-error>
+      <span
+        *ngIf="
+          !parkingService.form.get('address').valid &&
+          parkingService.form.get('address').touched
+        "
+      >
+        Please enter an Address
+      </span>
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field>
+    <input matInput placeholder="Cap" formControlName="cap" />
+    <mat-error>
+      <span
+        *ngIf="
+          !parkingService.form.get('cap').valid &&
+          parkingService.form.get('cap').touched
+        "
+        >Please enter a Cap</span
+      >
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field>
+    <input matInput placeholder="City" formControlName="city" />
+    <mat-error>
+      <span
+        *ngIf="
+          !parkingService.form.get('city').valid &&
+          parkingService.form.get('city').touched
+        "
+        >Please enter a City</span
+      >
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field>
+    <input matInput placeholder="state" formControlName="state" />
+    <mat-error>
+      <span
+        *ngIf="
+          !parkingService.form.get('state').valid &&
+          parkingService.form.get('state').touched
+        "
+        >Please enter a State</span
+      >
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field>
+    <input matInput placeholder="CarPlate" formControlName="carPlate" />
+    <mat-error>
+      <span
+        *ngIf="
+          !parkingService.form.get('carPlate').valid &&
+          parkingService.form.get('carPlate').touched
+        "
+      >
+        Please enter a CarPlate</span
+      >
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field>
+    <input matInput placeholder="Latitude" formControlName="latitude" />
+    <mat-error>
+      <span
+        *ngIf="
+          !parkingService.form.get('latitude').valid &&
+          parkingService.form.get('latitude').touched
+        "
+        >Please enter a Latitude</span
+      >
+    </mat-error>
+  </mat-form-field>
+
+   <mat-form-field>
+    <input matInput placeholder="Longitude" formControlName="longitude" />
+    <mat-error>
+      <span
+        *ngIf="
+          !parkingService.form.get('longitude').valid &&
+          parkingService.form.get('longitude').touched
+        "
+        >Please enter a Longitude</span
+      >
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field>
+    <input matInput placeholder="PriceMin" formControlName="priceMin" />
+    <mat-error>
+      <span
+        *ngIf="
+          !parkingService.form.get('priceMin').valid &&
+          parkingService.form.get('priceMin').touched
+        "
+        >Please enter a PriceMin</span
+      >
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field>
+    <input matInput placeholder="PriceMax" formControlName="priceMax" />
+    <mat-error>
+      <span
+        *ngIf="
+          !parkingService.form.get('priceMax').valid &&
+          parkingService.form.get('priceMax').touched
+        "
+        >Please enter a PriceMax</span
+      >
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field>
+    <input matInput placeholder="Status" formControlName="status" />
+    <mat-error>
+      <span
+        *ngIf="
+          !parkingService.form.get('status').valid &&
+          parkingService.form.get('status').touched
+        "
+        >Please enter a Status</span
+      >
+    </mat-error>
+  </mat-form-field>
+</mat-dialog-content>
+
+<mat-dialog-actions fxLayout="row" fxLayoutAlign="space-between center">
+  <button
+    mat-raised-button
+    color="primary"
+    [disabled]="!parkingService.form.valid"
+    (click)="onSave(parkingService.form.value)"
+  >
+    Save
+  </button>
+  <button mat-raised-button color="warn" (click)="onClose(null)">
+    Cancel
+  </button>
+</mat-dialog-actions>

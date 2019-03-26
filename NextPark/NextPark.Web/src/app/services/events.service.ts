@@ -2,7 +2,7 @@ import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { Observable } from "rxjs";
-import { NEXT_PARK_URL } from "../_helpers/constants";
+import { NEXT_PARK_URL } from "../_helpers/constants/host.settings";
 // import {EmailSubjectMessage} from '../models/email-subject-message';
 import { Event } from "../models";
 import { BaseService } from "./base.service";

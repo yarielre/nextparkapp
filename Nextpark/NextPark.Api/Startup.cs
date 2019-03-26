@@ -40,7 +40,7 @@ namespace NextPark.Api
             //Using MSSQL SERVER
             //services.AddDbContext<ApplicationDbContext>(options =>
             // options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
-            
+
             //Using POSTGRES SQL SERVER
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseNpgsql(connectionString));

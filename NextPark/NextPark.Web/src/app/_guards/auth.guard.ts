@@ -4,14 +4,14 @@ import {
   CanActivate
 } from '@angular/router';
 
-import { StorageService } from '../services';
+import { StorageService } from '../services/storage.service';
 
 @Injectable({ providedIn: 'root' })
 export class AuthGuard implements CanActivate {
   constructor(private router: Router, private storageService: StorageService) {}
 
   canActivate() {
-    console.log('Hello storage ', this.storageService.isAuthenticated());
+    console.log('Auth -> isAuthenticated: ', this.storageService.isAuthenticated());
     if (this.storageService.isAuthenticated()) {
       return true;
     }

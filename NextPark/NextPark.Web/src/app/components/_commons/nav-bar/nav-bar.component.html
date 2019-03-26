@@ -1,5 +1,5 @@
-<div style="height: 91vh;">
-  <mat-toolbar class="mat-elevation-z4 container-toolBar" color="primary">
+<div>
+  <mat-toolbar *ngIf="authService.isLoged()" class="mat-elevation-z4 container-toolBar" color="primary">
     <mat-toolbar-row>
       <button
         mat-icon-button
@@ -40,12 +40,12 @@
           >Events</a
         >
 
-        <a mat-list-item (click)="logout()">
+        <a mat-list-item (click)="logout(); sidenav.toggle();">
           <mat-icon>exit_to_app</mat-icon> Logout
         </a>
       </mat-nav-list>
     </mat-sidenav>
-    <mat-sidenav-content fxFlexFill>
+    <mat-sidenav-content class="content-container">
       <router-outlet></router-outlet
     ></mat-sidenav-content>
   </mat-sidenav-container>

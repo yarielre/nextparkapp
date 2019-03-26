@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
-import { NEXT_PARK_URL } from '../_helpers/constants';
+import { NEXT_PARK_URL } from '../_helpers/constants/host.settings';
 import { Parking } from '../models';
 import { BaseService } from './base.service';
 import { StorageService } from './storage.service';
@@ -58,11 +58,11 @@ export class ParkingsService extends BaseService<Parking> {
       city: parking.city,
       state: parking.state,
       carPlate: parking.carPlate,
-      latitude: parking.carPlate,
-      longitude: parking.carPlate,
-      priceMin: parking.carPlate,
-      priceMax: parking.carPlate,
-      status: parking.carPlate
+      latitude: parking.latitude,
+      longitude: parking.longitude,
+      priceMin: parking.priceMin,
+      priceMax: parking.priceMin,
+      status: parking.status
     });
   }
 }

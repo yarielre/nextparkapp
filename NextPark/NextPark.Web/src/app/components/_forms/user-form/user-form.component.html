@@ -1,0 +1,157 @@
+<h2 mat-dialog-title>Edit User</h2>
+<mat-dialog-content fxLayout="column" [formGroup]="userService.form">
+  <input hidden formControlName="id" />
+  <mat-form-field>
+    <input matInput placeholder="Name" formControlName="name" />
+    <mat-error>
+      <span
+        *ngIf="
+          !userService.form.get('name').valid &&
+          userService.form.get('name').touched
+        "
+      >
+        Please enter a Name
+      </span>
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field>
+    <input matInput placeholder="Lastname" formControlName="lastname" />
+    <mat-error>
+      <span
+        *ngIf="
+          !userService.form.get('lastname').valid &&
+          userService.form.get('lastname').touched
+        "
+        >Please enter a Lastname</span
+      >
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field>
+    <input matInput placeholder="Username" formControlName="userName" />
+    <mat-error>
+      <span
+        *ngIf="
+          !userService.form.get('userName').valid &&
+          userService.form.get('userName').touched
+        "
+        >Please enter an Username</span
+      >
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field>
+    <input matInput placeholder="Email" formControlName="email" />
+    <mat-error>
+      <span
+        *ngIf="
+          !userService.form.get('email').valid &&
+          userService.form.get('email').touched
+        "
+        >Please enter an Email</span
+      >
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field>
+    <input matInput placeholder="Phone" formControlName="phone" />
+  </mat-form-field>
+
+  <mat-form-field>
+    <input matInput placeholder="Address" formControlName="address" />
+    <mat-error>
+      <span
+        *ngIf="
+          !userService.form.get('address').valid &&
+          userService.form.get('address').touched
+        "
+      >
+        Please enter an Address</span
+      >
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field>
+    <input matInput placeholder="Cap" formControlName="cap" />
+    <mat-error>
+      <span
+        *ngIf="
+          !userService.form.get('cap').valid &&
+          userService.form.get('cap').touched
+        "
+        >Please enter a Cap</span
+      >
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field>
+    <input matInput placeholder="City" formControlName="city" />
+  </mat-form-field>
+
+  <mat-form-field>
+    <input matInput placeholder="State" formControlName="state" />
+    <mat-error>
+      <span
+        *ngIf="
+          !userService.form.get('state').valid &&
+          userService.form.get('state').touched
+        "
+        >Please enter a State</span
+      >
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field>
+    <input matInput placeholder="CarPlate" formControlName="carPlate" />
+    <mat-error>
+      <span
+        *ngIf="
+          !userService.form.get('carPlate').valid &&
+          userService.form.get('carPlate').touched
+        "
+        >Please enter a CarPlate</span
+      >
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field>
+    <input matInput placeholder="Balance" formControlName="balance" />
+    <mat-error>
+      <span
+        *ngIf="
+          !userService.form.get('balance').valid &&
+          userService.form.get('balance').touched
+        "
+        >Please enter a Balance</span
+      >
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field>
+    <input matInput placeholder="Profit" formControlName="profit" />
+    <mat-error>
+      <span
+        *ngIf="
+          !userService.form.get('profit').valid &&
+          userService.form.get('profit').touched
+        "
+        >Please enter a Profit</span
+      >
+    </mat-error>
+  </mat-form-field>
+</mat-dialog-content>
+
+<mat-dialog-actions fxLayout="row" fxLayoutAlign="space-between center">
+  <button
+    mat-raised-button
+    color="primary"
+    [disabled]="!userService.form.valid"
+    (click)="onSave(userService.form.value)"
+  >
+    Save
+  </button>
+  <button mat-raised-button color="warn" (click)="onClose(null)">
+    Cancel
+  </button>
+</mat-dialog-actions>

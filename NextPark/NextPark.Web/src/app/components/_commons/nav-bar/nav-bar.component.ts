@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthenticationService, StorageService, NotificationService } from '../../../services';
+import { AuthenticationService } from '../../../services/authentication.service';
+import {  NotificationService } from '../../../services/notification.service';
+import { StorageService} from '../../../services/storage.service';
 import { Router } from '@angular/router';
 
 @Component({
@@ -9,7 +11,7 @@ import { Router } from '@angular/router';
 })
 export class NavBarComponent implements OnInit {
   constructor(
-    private authService: AuthenticationService,
+    public authService: AuthenticationService,
     private storage: StorageService,
     private router: Router,
     private notificationService: NotificationService
@@ -23,6 +25,7 @@ export class NavBarComponent implements OnInit {
         this.storage.logout();
       },
       error => {
+        console.log(error)
         this.notificationService.error(error.error);
       }
     );

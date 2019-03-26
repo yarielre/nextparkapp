@@ -3,7 +3,7 @@ import { BaseModel } from './base.model';
 export class User extends BaseModel {
   name: string;
   lastname: string;
-  username: string;
+  userName: string;
   email: string;
   phone: string;
   address: string;

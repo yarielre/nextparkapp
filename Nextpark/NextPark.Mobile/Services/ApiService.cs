@@ -6,6 +6,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using NextPark.Enums.Enums;
 using NextPark.Mobile.Settings;
 using NextPark.Models;
 using Plugin.Connectivity;
@@ -34,7 +35,8 @@ namespace NextPark.Mobile.Services
                 return new ApiResponse
                 {
                     IsSuccess = false,
-                    Message = "Network connectivity not available."
+                    Message = "Network connectivity not available.",
+                    ErrorType = ErrorType.InternetConnectionError
                 };
             }
 
@@ -43,10 +45,11 @@ namespace NextPark.Mobile.Services
                 return new ApiResponse
                 {
                     IsSuccess = false,
-                    Message = "Please turn on your internet settings."
+                    Message = "Please turn on your internet settings.",
+                    ErrorType = ErrorType.InternetConnectionError
                 };
             }
-            var isReachable = await _crossConnectivity.IsReachable("www.google.com", 1000);
+            var isReachable = await _crossConnectivity.IsReachable("www.google.com", 1000).ConfigureAwait(false);
             //var isReachable = await _crossConnectivity.IsRemoteReachable(ApiSettings.BaseUri, ApiSettings.BasePort, 1000);
 
             if (!isReachable)
@@ -54,97 +57,128 @@ namespace NextPark.Mobile.Services
                 return new ApiResponse
                 {
                     IsSuccess = false,
-                    Message = "Check you internet connection."
+                    Message = "Check you internet connection.",
+                    ErrorType = ErrorType.InternetConnectionError
                 };
             }
 
             return new ApiResponse
             {
                 IsSuccess = true,
-                Message = "Ok",
+                Message = "Ok"
             };
 
         }
 
-        public async Task<ApiResponse> Get<TVm>(string endpoint, int id)
+        public async Task<ApiResponse<TVm>> Get<TVm>(string endpoint, int id)
         {
-            var isConneted = await CheckConnection();
-            if (!isConneted.IsSuccess) return isConneted;
+            var isConneted = await CheckConnection().ConfigureAwait(false);
+            if (!isConneted.IsSuccess)
+            {
+                return new ApiResponse<TVm>
+                {
+                    IsSuccess = isConneted.IsSuccess,
+                    Message = isConneted.Message,
+                    ErrorType = isConneted.ErrorType,
+                    Result = default(TVm)
+                };
+            }
 
             try
             {
                 var url = $"{endpoint}/{id}";
                 var client = GetHttpClient();
-                var response = await client.GetAsync(url);
+                var response = await client.GetAsync(url).ConfigureAwait(false);
 
-                if (!response.IsSuccessStatusCode)
-                    return new ApiResponse
-                    {
-                        IsSuccess = false,
-                        Message = response.StatusCode.ToString()
-                    };
+                //if (!response.IsSuccessStatusCode)
+                //    return new ApiResponse
+                //    {
+                //        IsSuccess = false,
+                //        Message = response.StatusCode.ToString()
+                //    };
 
-                var result = await response.Content.ReadAsStringAsync();
-                var model = JsonConvert.DeserializeObject<TVm>(result);
-                return new ApiResponse
-                {
-                    IsSuccess = true,
-                    Message = "Ok",
-                    Result = model
-                };
+                var resultAsJson = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                var apiResponse = JsonConvert.DeserializeObject<ApiResponse<TVm>>(resultAsJson);
+                return apiResponse;
+                //return new ApiResponse
+                //{
+                //    IsSuccess = true,
+                //    Message = "Ok",
+                //    Result = model
+                //};
             }
             catch (Exception ex)
             {
-                return new ApiResponse
+                return new ApiResponse<TVm>
                 {
                     IsSuccess = false,
-                    Message = ex.Message
+                    Message = ex.Message,
+                    ErrorType = ErrorType.Exeption
                 };
             }
         }
 
-        public async Task<ApiResponse> Get<TVm>(string endpoint)
+        public async Task<ApiResponse<TVm>> Get<TVm> (string endpoint)
         {
 
-            var isConneted = await CheckConnection();
-            if (!isConneted.IsSuccess) return isConneted;
+            var isConneted = await CheckConnection().ConfigureAwait(false);
+            if (!isConneted.IsSuccess)
+            {
+                return new ApiResponse<TVm>
+                {
+                    IsSuccess = isConneted.IsSuccess,
+                    Message = isConneted.Message,
+                    ErrorType = isConneted.ErrorType,
+                    Result = default(TVm)
+                };
+            }
 
             try
             {
                 var url = $"{endpoint}";
                 var client = GetHttpClient();
-                var response = await client.GetAsync(url);
+                var response = await client.GetAsync(url).ConfigureAwait(false);
 
-                if (!response.IsSuccessStatusCode)
-                    return new ApiResponse
-                    {
-                        IsSuccess = false,
-                        Message = response.StatusCode.ToString()
-                    };
-                var result = await response.Content.ReadAsStringAsync();
-                var model = JsonConvert.DeserializeObject<List<TVm>>(result);
-
-                return new ApiResponse
-                {
-                    IsSuccess = true,
-                    Message = "Ok",
-                    Result = model
-                };
+                //if (!response.IsSuccessStatusCode)
+                //    return new ApiResponse
+                //    {
+                //        IsSuccess = false,
+                //        Message = response.StatusCode.ToString()
+                //    };
+                var resultAsJson = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                var apiResponse = JsonConvert.DeserializeObject<ApiResponse<TVm>>(resultAsJson);
+                return apiResponse;
+                //return new ApiResponse
+                //{
+                //    IsSuccess = true,
+                //    Message = "Ok",
+                //    Result = model
+                //};
             }
             catch (Exception ex)
             {
-                return new ApiResponse
+                return new ApiResponse<TVm>
                 {
                     IsSuccess = false,
-                    Message = ex.Message
+                    Message = ex.Message,
+                    ErrorType = ErrorType.Exeption
                 };
             }
         }
 
-        public async Task<ApiResponse> Post<TVm>(string endpoint, TVm tvm)
+        public async Task<ApiResponse<TVm>> Post<TVm>(string endpoint, TVm tvm)
         {
-            var isConneted = await CheckConnection();
-            if (!isConneted.IsSuccess) return isConneted;
+            var isConneted = await CheckConnection().ConfigureAwait(false);
+            if (!isConneted.IsSuccess)
+            {
+                return new ApiResponse<TVm>
+                {
+                    IsSuccess = isConneted.IsSuccess,
+                    Message = isConneted.Message,
+                    ErrorType = isConneted.ErrorType,
+                    Result = default(TVm)
+                };
+            }
 
             try
             {
@@ -154,56 +188,63 @@ namespace NextPark.Mobile.Services
                 var json = JsonConvert.SerializeObject(tvm);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-                var response = await client.PostAsync(url, content);
+                var response = await client.PostAsync(url, content).ConfigureAwait(false);
 
-                if (!response.IsSuccessStatusCode) {
-
-                    ApiResponse recivedApiResponse = null;
-                    try
-                    {
-                        var apiResultJson = await response.Content.ReadAsStringAsync();
-                        recivedApiResponse = JsonConvert.DeserializeObject<ApiResponse>(apiResultJson);
-                    }
-                    catch
-                    {
-
-                    }
-                    if (recivedApiResponse == null)
-                    {
-                        return new ApiResponse
-                        {
-                            IsSuccess = false,
-                            Message = response.Content.ReadAsStringAsync().Result
-                        };
-                    }
-
-                    return recivedApiResponse;
-                }
-              
-
-                var resultJson = await response.Content.ReadAsStringAsync();
-                var result = JsonConvert.DeserializeObject<TVm>(resultJson);
-
-                return new ApiResponse
-                {
-                    IsSuccess = true,
-                    Result = result
-                };
+                var resultAsJson = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                var apiResponse = JsonConvert.DeserializeObject<ApiResponse<TVm>>(resultAsJson);
+                return apiResponse;
             }
             catch (Exception ex)
             {
-                return new ApiResponse
+                return new ApiResponse<TVm>
                 {
                     IsSuccess = false,
-                    Message = ex.Message
+                    Message = ex.Message,
+                    ErrorType = ErrorType.Exeption
                 };
             }
+            //if (!response.IsSuccessStatusCode)
+            //{
+
+            //    ApiResponse recivedApiResponse = null;
+            //    try
+            //    {
+            //        var apiResultJson = await response.Content.ReadAsStringAsync();
+            //        recivedApiResponse = JsonConvert.DeserializeObject<ApiResponse>(apiResultJson);
+            //    }
+            //    catch
+            //    {
+
+            //    }
+            //    if (recivedApiResponse == null)
+            //    {
+            //        return new ApiResponse
+            //        {
+            //            IsSuccess = false,
+            //            Message = response.Content.ReadAsStringAsync().Result
+            //        };
+            //    }
+
+            //    return recivedApiResponse;
+            //}
+
+
+
         }
 
-        public async Task<ApiResponse> Post<TParam, TVm>(string endpoint, TParam tvm)
+        public async Task<ApiResponse<TVm>> Post<TParam, TVm>(string endpoint, TParam tvm)
         {
-            var isConneted = await CheckConnection();
-            if (!isConneted.IsSuccess) return isConneted;
+            var isConneted = await CheckConnection().ConfigureAwait(false);
+            if (!isConneted.IsSuccess)
+            {
+                return new ApiResponse<TVm>
+                {
+                    IsSuccess = isConneted.IsSuccess,
+                    Message = isConneted.Message,
+                    ErrorType = isConneted.ErrorType,
+                    Result = default(TVm)
+                };
+            }
 
             try
             {
@@ -211,55 +252,60 @@ namespace NextPark.Mobile.Services
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
                 var client = GetHttpClient();
-                var response = await client.PostAsync(endpoint, content);
+                var response = await client.PostAsync(endpoint, content).ConfigureAwait(false);
 
-                if (!response.IsSuccessStatusCode)
-                {
-                    ApiResponse recivedApiResponse = null;
-                    try
-                    {
-                        var apiResultJson = await response.Content.ReadAsStringAsync();
-                        recivedApiResponse = JsonConvert.DeserializeObject<ApiResponse>(apiResultJson);
-                    }
-                    catch
-                    {
+                //if (!response.IsSuccessStatusCode)
+                //{
+                //    ApiResponse recivedApiResponse = null;
+                //    try
+                //    {
+                //        var apiResultJson = await response.Content.ReadAsStringAsync();
+                //        recivedApiResponse = JsonConvert.DeserializeObject<ApiResponse>(apiResultJson);
+                //    }
+                //    catch
+                //    {
 
-                    }
-                    if (recivedApiResponse == null) {
-                        return new ApiResponse
-                        {
-                            IsSuccess = false,
-                            Message = response.Content.ReadAsStringAsync().Result
-                        };
-                    }
+                //    }
+                //    if (recivedApiResponse == null) {
+                //        return new ApiResponse
+                //        {
+                //            IsSuccess = false,
+                //            Message = response.Content.ReadAsStringAsync().Result
+                //        };
+                //    }
 
-                    return recivedApiResponse;
-                    
-                }
-              
-                var resultJson = await response.Content.ReadAsStringAsync();
-                var result = JsonConvert.DeserializeObject<TVm>(resultJson);
+                //    return recivedApiResponse;
 
-                return new ApiResponse
-                {
-                    IsSuccess = true,
-                    Result = result
-                };
+                //}
+
+                var resultAsJson = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                var apiResponse = JsonConvert.DeserializeObject<ApiResponse<TVm>>(resultAsJson);
+                return apiResponse;
             }
             catch (Exception ex)
             {
-                return new ApiResponse
+                return new ApiResponse<TVm>
                 {
                     IsSuccess = false,
-                    Message = ex.Message
+                    Message = ex.Message,
+                    ErrorType = ErrorType.Exeption
                 };
             }
         }
 
-        public async Task<ApiResponse> Put<TVm>(string endpoint, int id, TVm tvm)
+        public async Task<ApiResponse<TVm>> Put<TVm>(string endpoint, int id, TVm tvm)
         {
-            var isConneted = await CheckConnection();
-            if (!isConneted.IsSuccess) return isConneted;
+            var isConneted = await CheckConnection().ConfigureAwait(false);
+            if (!isConneted.IsSuccess)
+            {
+                return new ApiResponse<TVm>
+                {
+                    IsSuccess = isConneted.IsSuccess,
+                    Message = isConneted.Message,
+                    ErrorType = isConneted.ErrorType,
+                    Result = default(TVm)
+                };
+            }
 
             try
             {
@@ -269,75 +315,62 @@ namespace NextPark.Mobile.Services
                 var json = JsonConvert.SerializeObject(tvm);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-                var response = await client.PutAsync(url, content);
+                var response = await client.PutAsync(url, content).ConfigureAwait(false);
 
-                if (response.StatusCode == HttpStatusCode.BadRequest)
-                    return new ApiResponse
-                    {
-                        IsSuccess = false,
-                        Message = response.ReasonPhrase
-                    };
-
-                var resultJson = await response.Content.ReadAsStringAsync();
-                var result = JsonConvert.DeserializeObject<TVm>(resultJson);
-
-                return new ApiResponse
-                {
-                    IsSuccess = true,
-                    Result = result
-                };
+                var resultAsJson = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                var apiResponse = JsonConvert.DeserializeObject<ApiResponse<TVm>>(resultAsJson);
+                return apiResponse;
             }
             catch (Exception ex)
             {
-                return new ApiResponse
+                return new ApiResponse<TVm>
                 {
                     IsSuccess = false,
-                    Message = ex.Message
+                    Message = ex.Message,
+                    ErrorType = ErrorType.Exeption
                 };
             }
+            //    if (response.StatusCode == HttpStatusCode.BadRequest || response.StatusCode == HttpStatusCode.NotFound)
+            //        return new ApiResponse
+            //        {
+            //            IsSuccess = false,
+            //            Message = response.ReasonPhrase
+            //        };
+
+            //    var resultJson = await response.Content.ReadAsStringAsync();
+            //    var result = JsonConvert.DeserializeObject<TVm>(resultJson);
+
+            //    return new ApiResponse
+            //    {
+            //        IsSuccess = true,
+            //        Result = result
+            //    };
+            //}
+            //catch (Exception ex)
+            //{
+            //    return new ApiResponse
+            //    {
+            //        IsSuccess = false,
+            //        Message = ex.Message
+            //    };
+            //}
         }
 
-        public async Task<ApiResponse> Delete<TVm>(string endpoint, int id)
+       
+
+        public async Task<ApiResponse<TVm>> Put<TVm>(string url, TVm tvm)
         {
-            var isConneted = await CheckConnection();
-            if (!isConneted.IsSuccess) return isConneted;
-
-            try
+            var isConneted = await CheckConnection().ConfigureAwait(false);
+            if (!isConneted.IsSuccess)
             {
-                var url = $"{endpoint}/{id}";
-                var client = GetHttpClient();
-                var response = await client.DeleteAsync(url);
-
-                if (response.StatusCode == HttpStatusCode.BadRequest)
-                    return new ApiResponse
-                    {
-                        IsSuccess = false,
-                        Message = response.ReasonPhrase
-                    };
-
-                var resultJson = await response.Content.ReadAsStringAsync();
-                var result = JsonConvert.DeserializeObject<TVm>(resultJson);
-
-                return new ApiResponse
+                return new ApiResponse<TVm>
                 {
-                    IsSuccess = true,
-                    Result = result
+                    IsSuccess = isConneted.IsSuccess,
+                    Message = isConneted.Message,
+                    ErrorType = isConneted.ErrorType,
+                    Result = default(TVm)
                 };
             }
-            catch (Exception ex)
-            {
-                return new ApiResponse
-                {
-                    IsSuccess = false,
-                    Message = ex.Message
-                };
-            }
-        }
-
-        public async Task<ApiResponse> Put<TVm>(string url, TVm tvm)
-        {
-            var isConneted = await CheckConnection();
-            if (!isConneted.IsSuccess) return isConneted;
 
             try
             {
@@ -346,70 +379,195 @@ namespace NextPark.Mobile.Services
                 var json = JsonConvert.SerializeObject(tvm);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-                var response = await client.PutAsync(url, content);
-
-                if (response.StatusCode == HttpStatusCode.BadRequest)
-                    return new ApiResponse
-                    {
-                        IsSuccess = false,
-                        Message = response.ReasonPhrase
-                    };
-
-                var resultJson = await response.Content.ReadAsStringAsync();
-                var result = JsonConvert.DeserializeObject<List<TVm>>(resultJson);
-
-                return new ApiResponse
-                {
-                    IsSuccess = true,
-                    Result = result
-                };
+                var response = await client.PutAsync(url, content).ConfigureAwait(false);
+                var resultAsJson = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                var apiResponse = JsonConvert.DeserializeObject<ApiResponse<TVm>>(resultAsJson);
+                return apiResponse;
             }
             catch (Exception ex)
             {
-                return new ApiResponse
+                return new ApiResponse<TVm>
                 {
                     IsSuccess = false,
-                    Message = ex.Message
+                    Message = ex.Message,
+                    ErrorType = ErrorType.Exeption
                 };
             }
+            //if (response.StatusCode == HttpStatusCode.BadRequest || response.StatusCode == HttpStatusCode.NotFound)
+            //    return new ApiResponse
+            //    {
+            //        IsSuccess = false,
+            //        Message = response.ReasonPhrase
+            //    };
+
+            //var resultJson = await response.Content.ReadAsStringAsync();
+            //var result = JsonConvert.DeserializeObject<List<TVm>>(resultJson);
+
+            //return new ApiResponse
+            //{
+            //    IsSuccess = true,
+            //    Result = result
+            //};
+            //}
+            //catch (Exception ex)
+            //{
+            //    return new ApiResponse
+            //    {
+            //        IsSuccess = false,
+            //        Message = ex.Message
+            //    };
+            //}
         }
 
-        public async Task<ApiResponse> Delete<TVm>(string url)
+        public async Task<ApiResponse<TVm>> Put<TParam,TVm>(string url, TParam tParam)
         {
-            var isConneted = await CheckConnection();
-            if (!isConneted.IsSuccess) return isConneted;
+            var isConneted = await CheckConnection().ConfigureAwait(false);
+            if (!isConneted.IsSuccess)
+            {
+                return new ApiResponse<TVm>
+                {
+                    IsSuccess = isConneted.IsSuccess,
+                    Message = isConneted.Message,
+                    ErrorType = isConneted.ErrorType,
+                    Result = default(TVm)
+                };
+            }
 
             try
             {
                 var client = GetHttpClient();
-                var response = await client.DeleteAsync(url);
 
-                if (response.StatusCode == HttpStatusCode.BadRequest)
-                    return new ApiResponse
-                    {
-                        IsSuccess = false,
-                        Message = response.ReasonPhrase
-                    };
+                var json = JsonConvert.SerializeObject(tParam);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-                var resultJson = await response.Content.ReadAsStringAsync();
-                var result = JsonConvert.DeserializeObject<List<TVm>>(resultJson);
-
-                return new ApiResponse
-                {
-                    IsSuccess = true,
-                    Result = result
-                };
+                var response = await client.PutAsync(url, content).ConfigureAwait(false);
+                var resultAsJson = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                var apiResponse = JsonConvert.DeserializeObject<ApiResponse<TVm>>(resultAsJson);
+                return apiResponse;
             }
             catch (Exception ex)
             {
-                return new ApiResponse
+                return new ApiResponse<TVm>
                 {
                     IsSuccess = false,
-                    Message = ex.Message
+                    Message = ex.Message,
+                    ErrorType = ErrorType.Exeption
                 };
             }
         }
 
+        public async Task<ApiResponse<TVm>> Delete<TVm>(string url)
+        {
+            var isConneted = await CheckConnection().ConfigureAwait(false);
+            if (!isConneted.IsSuccess)
+            {
+                return new ApiResponse<TVm>
+                {
+                    IsSuccess = isConneted.IsSuccess,
+                    Message = isConneted.Message,
+                    ErrorType = isConneted.ErrorType,
+                    Result = default(TVm)
+                };
+            }
+
+            try
+            {
+                var client = GetHttpClient();
+                var response = await client.DeleteAsync(url).ConfigureAwait(false);
+                var resultAsJson = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                var apiResponse = JsonConvert.DeserializeObject<ApiResponse<TVm>>(resultAsJson);
+                return apiResponse;
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse<TVm>
+                {
+                    IsSuccess = false,
+                    Message = ex.Message,
+                    ErrorType = ErrorType.Exeption
+                };
+            }
+            //    if (response.StatusCode == HttpStatusCode.BadRequest || response.StatusCode == HttpStatusCode.NotFound)
+            //        return new ApiResponse
+            //        {
+            //            IsSuccess = false,
+            //            Message = response.ReasonPhrase
+            //        };
+
+            //    var resultJson = await response.Content.ReadAsStringAsync();
+            //    var result = JsonConvert.DeserializeObject<List<TVm>>(resultJson);
+
+            //    return new ApiResponse
+            //    {
+            //        IsSuccess = true,
+            //        Result = result
+            //    };
+            //}
+            //catch (Exception ex)
+            //{
+            //    return new ApiResponse
+            //    {
+            //        IsSuccess = false,
+            //        Message = ex.Message
+            //    };
+            //}
+        }
+        public async Task<ApiResponse<TVm>> Delete<TVm>(string endpoint, int id)
+        {
+            var isConneted = await CheckConnection().ConfigureAwait(false);
+            if (!isConneted.IsSuccess)
+            {
+                return new ApiResponse<TVm>
+                {
+                    IsSuccess = isConneted.IsSuccess,
+                    Message = isConneted.Message,
+                    ErrorType = isConneted.ErrorType,
+                    Result = default(TVm)
+                };
+            }
+            try
+            {
+                var url = $"{endpoint}/{id}";
+                var client = GetHttpClient();
+                var response = await client.DeleteAsync(url).ConfigureAwait(false);
+                var resultAsJson = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                var apiResponse = JsonConvert.DeserializeObject<ApiResponse<TVm>>(resultAsJson);
+                return apiResponse;
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse<TVm>
+                {
+                    IsSuccess = false,
+                    Message = ex.Message,
+                    ErrorType = ErrorType.Exeption
+                };
+            }
+            //if (response.StatusCode == HttpStatusCode.BadRequest)
+            //    return new ApiResponse
+            //    {
+            //        IsSuccess = false,
+            //        Message = response.ReasonPhrase
+            //    };
+
+            //var resultJson = await response.Content.ReadAsStringAsync();
+            //var result = JsonConvert.DeserializeObject<TVm>(resultJson);
+
+            //return new ApiResponse
+            //{
+            //    IsSuccess = true,
+            //    Result = result
+            //};
+            // }
+            //catch (Exception ex)
+            //{
+            //    return new ApiResponse
+            //    {
+            //        IsSuccess = false,
+            //        Message = ex.Message
+            //    };
+            //}
+        }
 
         public HttpClient GetHttpClient()
         {

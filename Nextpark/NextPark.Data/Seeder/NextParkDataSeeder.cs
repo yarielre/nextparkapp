@@ -37,7 +37,8 @@ namespace NextPark.Data.Seeder
                     Email = "info@nextpark.ch",
                     UserName = "info@nextpark.ch",
                     PhoneNumber = "11111",
-                    Balance = 1000
+                    Balance = 1000,
+                    Profit = 200
                 };
                 try
                 {

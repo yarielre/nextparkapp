@@ -14,36 +14,36 @@ namespace NextPark.Services
 {
     public class PushNotificationService : IPushNotificationService
     {
-        //TODO Cambiar la configuracion del AppCenter (Esta es la config de wip)
-        public const string Url = "https://api.appcenter.ms/v0.1/apps/";
-        public const string ApiKeyName = "X-API-Token";
-        public const string ApiKey = "093b0709a3398b6f9560434dc638c18f13e37f3c"; //"{Your App Center API Token}";
-        public const string Organization = "wisegar"; //"{Your organization name}";
-        public const string Android = "WorkInPairs"; //"{Your Android App Name}";
-        public const string IOS = "WorkInPairs-iOS"; //"{Your iOS App Name}";
-        public const string DeviceTarget = "devices_target";
+        public readonly string _url;
+        public readonly string _apiKeyName;
+        public readonly string _apiKey;
+        public readonly string _organization;
+        public readonly string _android;
+        public readonly string _iOS;
+        public readonly string _deviceTarget;
 
         public class Apis
         {
             public const string Notification = "push/notifications";
         }
 
-        public PushNotificationService()
-        {
-
-        }
-
         public PushNotificationService(IConfiguration configuration)
         {
-            //TODO: Init readonly properties from config file.
-
+            _url = configuration["AppCenter:Url"];
+            _apiKeyName = configuration["AppCenter:ApiKeyName"];
+            _apiKey = configuration["AppCenter:ApiKey"];
+            _organization = configuration["AppCenter:Organization"];
+            _android = configuration["AppCenter:Push:AppNameAndroid"];
+            _iOS = configuration["AppCenter:AppNameiOS"];
+            _deviceTarget = configuration["AppCenter:DeviceTarget"];
         }
+       
 
         public async Task NotifyAllAsync(string name, string title, string body)
         {
 
             var client = new HttpClient();
-            client.DefaultRequestHeaders.Add(ApiKeyName, ApiKey);
+            client.DefaultRequestHeaders.Add(_apiKeyName, _apiKey);
 
             var payload = new Dictionary<string, string>();
 
@@ -58,13 +58,13 @@ namespace NextPark.Services
                 }
             };
 
-            client.BaseAddress = new Uri(Url);
+            client.BaseAddress = new Uri(_url);
 
             var json = JsonConvert.SerializeObject(push);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-            var responseAndroid = await client.PostAsync($"{Organization}/{Android}/{Apis.Notification}", content);
-            var responseIOS = await client.PostAsync($"{Organization}/{IOS}/{Apis.Notification}", content);
+            var responseAndroid = await client.PostAsync($"{_organization}/{_android}/{Apis.Notification}", content);
+            var responseIOS = await client.PostAsync($"{_organization}/{_iOS}/{Apis.Notification}", content);
 
             var resultJsonAndroid = await responseAndroid.Content.ReadAsStringAsync();
             var resultAndroid = JsonConvert.DeserializeObject(resultJsonAndroid);
@@ -78,7 +78,7 @@ namespace NextPark.Services
             IDictionary<string, string> payload = null)
         {
             var client = new HttpClient();
-            client.DefaultRequestHeaders.Add(ApiKeyName, ApiKey);
+            client.DefaultRequestHeaders.Add(_apiKeyName, _apiKey);
 
             var push = new Push
             {
@@ -91,11 +91,11 @@ namespace NextPark.Services
                 },
                 Target = new Target
                 {
-                    Type = DeviceTarget
+                    Type = _deviceTarget
                 }
             };
 
-            client.BaseAddress = new Uri(Url);
+            client.BaseAddress = new Uri(_url);
 
             HttpResponseMessage responseIOS = null;
             HttpResponseMessage responseAndroid = null;
@@ -111,7 +111,7 @@ namespace NextPark.Services
                 var json = JsonConvert.SerializeObject(push);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-                responseIOS = await client.PostAsync($"{Organization}/{IOS}/{Apis.Notification}", content);
+                responseIOS = await client.PostAsync($"{_organization}/{_iOS}/{Apis.Notification}", content);
                 var resultJsonIOS = await responseIOS.Content.ReadAsStringAsync();
                 var resultIOS = JsonConvert.DeserializeObject(resultJsonIOS);
                 pushResponse.IOSResponse = resultIOS;
@@ -126,7 +126,7 @@ namespace NextPark.Services
                 var json = JsonConvert.SerializeObject(push);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-                responseAndroid = await client.PostAsync($"{Organization}/{Android}/{Apis.Notification}", content);
+                responseAndroid = await client.PostAsync($"{_organization}/{_android}/{Apis.Notification}", content);
                 var resultJsonAndroid = await responseAndroid.Content.ReadAsStringAsync();
                 var resultAndroid = JsonConvert.DeserializeObject(resultJsonAndroid);
                 pushResponse.AndroidResponse = resultAndroid;

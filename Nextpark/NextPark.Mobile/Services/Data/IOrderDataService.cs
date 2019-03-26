@@ -6,7 +6,7 @@ namespace NextPark.Mobile.Services.Data
 {
     public interface IOrderDataService
     {
-        Task<DataServiceResponse<OrderModel>> CreateOrderAsync(OrderModel model);
+        Task<ApiResponse<OrderModel>> CreateOrderAsync(OrderModel model);
         Task<OrderModel> DeleteOrdersAsync(int id);
         Task<OrderModel> EditOrderAsync(int id, OrderModel order);
         Task<List<OrderModel>> GetAllOrdersAsync();

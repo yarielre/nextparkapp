@@ -1,161 +1,181 @@
 <div fxLayout="column" class="container" fxLayoutGap="20px">
-    <div fxFlex class="table-component-holder mat-elevation-z4">
-      <div class="table-container">
-        <div class="example-header" style="padding: 0 20px;">
-          <mat-form-field
-            floatPlaceholder="never"
-            style="color: black; width: 100%;"
-          >
-            <input matInput #filter placeholder="Filter orders" />
-          </mat-form-field>
-        </div>
-
-        <div
-          fxLayout="row"
-          class="example-header example-selection-header mat-headline center-align"
-          *ngIf="!selection.isEmpty()"
+  <div fxFlex class="table-component-holder mat-elevation-z4">
+    <div class="table-container">
+      <div style="padding: 0 20px;">
+        <mat-form-field
+          floatPlaceholder="never"
+          style="color: black; width: 100%;"
         >
-          <button
-            color="primary"
-            mat-icon-button
-            (click)="onEdit(row)"
-            *ngIf="selection.selected.length === 1"
-            matTooltip="Edit order"
-          >
-            <mat-icon>edit</mat-icon>
-          </button>
-          <button
-            color="warn"
-            mat-icon-button
-            (click)="onDelete(row)"
-            matTooltip="Delete order"
-          >
-            <mat-icon>delete</mat-icon>
-          </button>
-        </div>
-
-        <mat-table
-          #table
-          [dataSource]="dataSource"
-          matSort
-          style="margin-top: 20px;"
-        >
-          <!-- Checkbox Column -->
-          <ng-container matColumnDef="select">
-            <mat-header-cell *matHeaderCellDef>
-              <mat-checkbox
-                (change)="$event ? masterToggle() : null"
-                [checked]="isAllSelected()"
-                [indeterminate]="selection.hasValue() && !isAllSelected()"
-              >
-              </mat-checkbox>
-            </mat-header-cell>
-            <mat-cell *matCellDef="let row">
-              <mat-checkbox
-                (click)="$event.stopPropagation()"
-                (change)="$event ? selection.toggle(row.id.toString()) : null"
-                [checked]="selection.isSelected(row.id.toString())"
-              >
-              </mat-checkbox>
-            </mat-cell>
-          </ng-container>
-
-          <!-- ID Column -->
-          <ng-container matColumnDef="id">
-            <mat-header-cell *matHeaderCellDef mat-sort-header>
-              ID
-            </mat-header-cell>
-            <mat-cell *matCellDef="let row"> {{ row.id }} </mat-cell>
-          </ng-container>
-
-          <!-- price Column -->
-          <ng-container matColumnDef="price">
-            <mat-header-cell *matHeaderCellDef mat-sort-header>
-                Price
-            </mat-header-cell>
-            <mat-cell *matCellDef="let row"> {{ row.price }} </mat-cell>
-          </ng-container>
-
-          <!-- startDate Column -->
-          <ng-container matColumnDef="startDate">
-            <mat-header-cell *matHeaderCellDef mat-sort-header>
-                StartDate
-            </mat-header-cell>
-            <mat-cell *matCellDef="let row"> {{ row.startDate }} </mat-cell>
-          </ng-container>
-
-          <!-- endDate Column -->
-          <ng-container matColumnDef="endDate">
-            <mat-header-cell *matHeaderCellDef mat-sort-header>
-                EndDate
-            </mat-header-cell>
-            <mat-cell *matCellDef="let row"> {{ row.endDate }} </mat-cell>
-          </ng-container>
-
-          <!-- orderStatus Column -->
-          <ng-container matColumnDef="orderStatus">
-            <mat-header-cell *matHeaderCellDef mat-sort-header>
-                OrderStatus
-            </mat-header-cell>
-            <mat-cell *matCellDef="let row"> {{ row.orderStatus }} </mat-cell>
-          </ng-container>
-
-          <!-- paymentStatus Column -->
-          <ng-container matColumnDef="paymentStatus">
-            <mat-header-cell *matHeaderCellDef mat-sort-header>
-                PaymentStatus
-            </mat-header-cell>
-            <mat-cell *matCellDef="let row"> {{ row.paymentStatus }} </mat-cell>
-          </ng-container>
-
-          <!-- paymentCode Column -->
-          <ng-container matColumnDef="paymentCode">
-            <mat-header-cell *matHeaderCellDef mat-sort-header>
-                PaymentCode
-            </mat-header-cell>
-            <mat-cell *matCellDef="let row"> {{ row.paymentCode }} </mat-cell>
-          </ng-container>
-
-          <!-- parkingId Column -->
-          <ng-container matColumnDef="parkingId">
-            <mat-header-cell *matHeaderCellDef mat-sort-header>
-                ParkingId
-            </mat-header-cell>
-            <mat-cell *matCellDef="let row"> {{ row.parkingId }} </mat-cell>
-          </ng-container>
-
-           <!-- userId Column -->
-           <ng-container matColumnDef="userId">
-              <mat-header-cell *matHeaderCellDef mat-sort-header>
-                  UserId
-              </mat-header-cell>
-              <mat-cell *matCellDef="let row"> {{ row.userId }} </mat-cell>
-            </ng-container>
-
-          <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-          <mat-row
-            *matRowDef="let row; columns: displayedColumns"
-            [class.example-selected-row]="selection.isSelected(row.id.toString())"
-            (click)="selection.toggle(row.id.toString())"
-          >
-          </mat-row>
-        </mat-table>
-
-        <div
-          class="example-no-results"
-          [style.display]="dataSource?.renderedData.length == 0 ? '' : 'none'"
-        >
-          No users found matching filter.
-        </div>
-
-        <mat-paginator
-          #paginator
-          [length]="100"
-          [pageIndex]="0"
-          [pageSize]="25"
-          [pageSizeOptions]="[5, 10, 25, 100]"
-        >
-        </mat-paginator>
+          <input matInput #filter placeholder="Filter orders" />
+        </mat-form-field>
       </div>
+
+      <div
+        fxLayout="row"
+        class="actions-header example-selection-header mat-headline center-align"
+        *ngIf="!selection.isEmpty()"
+      >
+        <button
+          color="primary"
+          mat-icon-button
+          (click)="onEdit(row)"
+          *ngIf="selection.selected.length === 1"
+          matTooltip="Edit order"
+        >
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button
+          color="warn"
+          mat-icon-button
+          (click)="onDelete(row)"
+          matTooltip="Delete order"
+        >
+          <mat-icon>delete</mat-icon>
+        </button>
+      </div>
+
+      <mat-table
+        #table
+        [dataSource]="dataSource"
+        matSort
+        style="margin-top: 20px;"
+      >
+        <!-- Checkbox Column -->
+        <ng-container matColumnDef="select">
+          <mat-header-cell *matHeaderCellDef>
+            <mat-checkbox
+              (change)="$event ? masterToggle() : null"
+              [checked]="isAllSelected()"
+              [indeterminate]="selection.hasValue() && !isAllSelected()"
+            >
+            </mat-checkbox>
+          </mat-header-cell>
+          <mat-cell *matCellDef="let row">
+            <span class="mobile-label">Select:</span>
+            <mat-checkbox
+              (click)="$event.stopPropagation()"
+              (change)="$event ? selection.toggle(row.id.toString()) : null"
+              [checked]="selection.isSelected(row.id.toString())"
+            >
+            </mat-checkbox>
+          </mat-cell>
+        </ng-container>
+
+        <!-- ID Column -->
+        <ng-container matColumnDef="id">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>
+            ID
+          </mat-header-cell>
+          <mat-cell style="min-height: 25px" *matCellDef="let row">
+            <span class="mobile-label">Id:</span> {{ row.id }}
+          </mat-cell>
+        </ng-container>
+
+        <!-- price Column -->
+        <ng-container matColumnDef="price">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>
+            Price
+          </mat-header-cell>
+          <mat-cell style="min-height: 25px" *matCellDef="let row">
+            <span class="mobile-label">Price:</span> {{ row.price }}
+          </mat-cell>
+        </ng-container>
+
+        <!-- startDate Column -->
+        <ng-container matColumnDef="startDate">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>
+            StartDate
+          </mat-header-cell>
+          <mat-cell style="min-height: 25px" *matCellDef="let row">
+            <span class="mobile-label">StartDate:</span> {{ row.startDate }}
+          </mat-cell>
+        </ng-container>
+
+        <!-- endDate Column -->
+        <ng-container matColumnDef="endDate">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>
+            EndDate
+          </mat-header-cell>
+          <mat-cell style="min-height: 25px" *matCellDef="let row">
+            <span class="mobile-label">EndDate:</span> {{ row.endDate }}
+          </mat-cell>
+        </ng-container>
+
+        <!-- orderStatus Column -->
+        <ng-container matColumnDef="orderStatus">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>
+            OrderStatus
+          </mat-header-cell>
+          <mat-cell style="min-height: 25px" *matCellDef="let row">
+            <span class="mobile-label">OrderStatus:</span> {{ row.orderStatus }}
+          </mat-cell>
+        </ng-container>
+
+        <!-- paymentStatus Column -->
+        <ng-container matColumnDef="paymentStatus">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>
+            PaymentStatus
+          </mat-header-cell>
+          <mat-cell style="min-height: 25px" *matCellDef="let row">
+            <span class="mobile-label">PaymentStatus:</span>
+            {{ row.paymentStatus }}
+          </mat-cell>
+        </ng-container>
+
+        <!-- paymentCode Column -->
+        <ng-container matColumnDef="paymentCode">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>
+            PaymentCode
+          </mat-header-cell>
+          <mat-cell style="min-height: 25px" *matCellDef="let row">
+            <span class="mobile-label">PaymentCode:</span> {{ row.paymentCode }}
+          </mat-cell>
+        </ng-container>
+
+        <!-- parkingId Column -->
+        <ng-container matColumnDef="parkingId">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>
+            ParkingId
+          </mat-header-cell>
+          <mat-cell style="min-height: 25px" *matCellDef="let row">
+            <span class="mobile-label">ParkindId:</span> {{ row.parkingId }}
+          </mat-cell>
+        </ng-container>
+
+        <!-- userId Column -->
+        <ng-container matColumnDef="userId">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>
+            UserId
+          </mat-header-cell>
+          <mat-cell style="min-height: 25px" *matCellDef="let row">
+            <span class="mobile-label">UserId:</span> {{ row.userId }}
+          </mat-cell>
+        </ng-container>
+
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row
+          *matRowDef="let row; columns: displayedColumns"
+          [class.example-selected-row]="selection.isSelected(row.id.toString())"
+          (click)="selection.toggle(row.id.toString())"
+        >
+        </mat-row>
+      </mat-table>
+
+      <div
+        class="example-no-results"
+        [style.display]="dataSource?.renderedData.length == 0 ? '' : 'none'"
+      >
+        No users found matching filter.
+      </div>
+
+      <mat-paginator
+        #paginator
+        [length]="100"
+        [pageIndex]="0"
+        [pageSize]="25"
+        [pageSizeOptions]="[5, 10, 25, 100]"
+      >
+      </mat-paginator>
     </div>
   </div>
+</div>
