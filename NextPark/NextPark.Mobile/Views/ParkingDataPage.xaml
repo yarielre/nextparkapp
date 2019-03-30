@@ -15,7 +15,7 @@
                                 HeaderUserAction="{Binding OnUserClick}"
                                 HeaderMoney="{Binding UserMoney}"
                                 HeaderMoneyAction="{Binding OnMoneyClick}">
-                                
+                    
                 <StackLayout Orientation="Vertical" VerticalOptions="Fill" Spacing="5" Margin="0">
                     
                     <!-- Parking Informations group -->
@@ -358,9 +358,8 @@
                                 </DataTemplate>
                             </repeater:RelRepeaterView.ItemTemplate>
                         </repeater:RelRepeaterView>
-                    </controls:DayView>
-                    
-                </StackLayout>
+                    </controls:DayView>                    
+                </StackLayout>                                                                  
             </controls:DetailStaticPage>
         </ContentView>
     </ContentPage.Content>                

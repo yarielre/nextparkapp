@@ -86,6 +86,13 @@ namespace NextPark.Mobile.ViewModels
 
         public DayView MyDayContent { get; set; }
 
+        // Order detail pop-up
+        public bool OrderDetailVisible { get; set; }
+        public string OrderStartDateTime { get; set; }
+        public string OrderEndDateTime { get; set; }
+        public string OrderCarPlate { get; set; }
+        public ICommand OnOrderDetailClose { get; set; }
+
         // SERVICES
         private readonly IDialogService _dialogService;
         private readonly IProfileService _profileService;
@@ -148,6 +155,10 @@ namespace NextPark.Mobile.ViewModels
             OnEventTapAction = new Command<int>(OnEventTapMethod);
 
             CalendarEvents = new ObservableCollection<UICalendarEventModel>();
+
+            // Order detail pop-up
+            OrderDetailVisible = false;
+            OnOrderDetailClose = new Command(OnOrderDetailCloseMethod);
         }
 
         // Initialization
@@ -546,7 +557,18 @@ namespace NextPark.Mobile.ViewModels
             }
             else if (myCalendarEvent.Order != null)
             {
-                // Calendar event is 
+                // Calendar event is an order
+
+                // Order data
+                OrderStartDateTime = myCalendarEvent.Order.StartDate.ToShortTimeString();
+                OrderEndDateTime = myCalendarEvent.Order.EndDate.ToShortTimeString();
+                OrderCarPlate = myCalendarEvent.Order.CarPlate;
+                OrderDetailVisible = true;
+                base.OnPropertyChanged("OrderStartDateTime");
+                base.OnPropertyChanged("OrderEndDateTime");
+                base.OnPropertyChanged("OrderCarPlate");
+                base.OnPropertyChanged("OrderDetailVisible");
+
                 _dialogService.ShowAlert("Riservazione", ((myCalendarEvent.Order.CarPlate.Equals("Occupato")) ? "" : myCalendarEvent.Order.CarPlate + "\n") + "Dalle ore: " + myCalendarEvent.Order.StartDate.ToShortTimeString() + "\nAlle ore: " + myCalendarEvent.Order.EndDate.ToShortTimeString());
             }
         }
@@ -587,5 +609,10 @@ namespace NextPark.Mobile.ViewModels
             }
         }
 
+        public void OnOrderDetailCloseMethod()
+        {
+            OrderDetailVisible = false;
+            base.OnPropertyChanged("OrderDetailVisible");
+        }
     }
 }
