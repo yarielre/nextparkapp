@@ -147,7 +147,6 @@
     <AndroidResource Include="Resources\drawable\logo_125.png" />
     <AndroidResource Include="Resources\drawable\logo.png" />
     <AndroidResource Include="Resources\drawable\icon_pin_green_256.png" />
-    <AndroidResource Include="Resources\drawable\icon_pin_green_256x.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\drawable-hdpi\" />

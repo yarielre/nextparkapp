@@ -91,7 +91,7 @@ namespace NextPark.Mobile.Droid.Renderers
 
             float density = Context.Resources.DisplayMetrics.Density;
             int dpValue = (int)(50.0 * density); // 50px in dips
-            Bitmap image = Bitmap.CreateScaledBitmap(BitmapFactory.DecodeResource(Resources, resourceId), dpValue, dpValue, true);
+            Bitmap image = Bitmap.CreateScaledBitmap(BitmapFactory.DecodeResource(Resources, resourceId), dpValue, dpValue, false);
             BitmapDescriptor bitmapResource = BitmapDescriptorFactory.FromBitmap(image);
             marker.SetIcon(bitmapResource);
 
