@@ -197,6 +197,10 @@ namespace NextPark.Mobile.ViewModels
 
             // Compute price
             double orderPrice = double.Parse((((EndDate + EndTime) - (StartDate + StartTime)).TotalHours * _parking.PriceMin).ToString("N2"));
+            if (_parking.UserId == AuthSettings.User.Id)
+            {
+                orderPrice = 0;
+            }
             // Check user balance
             if (AuthSettings.User.Balance < orderPrice) {
                 // Not enough credit
