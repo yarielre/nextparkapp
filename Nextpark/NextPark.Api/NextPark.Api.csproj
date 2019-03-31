@@ -7,10 +7,6 @@
 
   <ItemGroup>
     <Compile Remove="Controllers\BaseController.cs" />
-    <Compile Remove="Migrations\20190224083737_Changes.cs" />
-    <Compile Remove="Migrations\20190224083737_Changes.Designer.cs" />
-    <Compile Remove="Migrations\20190309151923_changesPostgres.cs" />
-    <Compile Remove="Migrations\20190309151923_changesPostgres.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

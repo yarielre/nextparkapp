@@ -77,7 +77,7 @@ namespace NextPark.Api.Controllers
             }
             catch (Exception e)
             {
-                return BadRequest(ApiResponse.GetErrorResponse($"Server error increasing user balance: {e.Message}",ErrorType.Exeption));
+                return BadRequest(ApiResponse.GetErrorResponse($"Server error increasing user balance: {e.Message}",ErrorType.Exception));
             }
 
         }
@@ -116,7 +116,7 @@ namespace NextPark.Api.Controllers
             }
             catch (Exception e)
             {
-                return BadRequest(ApiResponse.GetErrorResponse($"Server error substracting user profit: {e.Message}",ErrorType.Exeption));
+                return BadRequest(ApiResponse.GetErrorResponse($"Server error substracting user profit: {e.Message}",ErrorType.Exception));
             }
         }
     }

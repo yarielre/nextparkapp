@@ -84,7 +84,7 @@ namespace NextPark.Api.Controllers
             }
             catch (Exception e)
             {
-                return BadRequest(ApiResponse<ParkingModel>.GetErrorResponse(e.Message, ErrorType.Exeption));
+                return BadRequest(ApiResponse<ParkingModel>.GetErrorResponse(e.Message, ErrorType.Exception));
                 //Log: return BadRequest(string.Format("{0} Exception: {1}", "Error processing Image!", e.Message));
             }
 
@@ -98,7 +98,7 @@ namespace NextPark.Api.Controllers
             }
             catch (Exception e)
             {
-                return BadRequest(ApiResponse<ParkingModel>.GetErrorResponse(e.Message, ErrorType.Exeption));
+                return BadRequest(ApiResponse<ParkingModel>.GetErrorResponse(e.Message, ErrorType.Exception));
             }
         }
 
@@ -120,7 +120,7 @@ namespace NextPark.Api.Controllers
                 }
                 catch (Exception e)
                 {
-                    return BadRequest(ApiResponse<ParkingModel>.GetErrorResponse(e.Message, ErrorType.Exeption));
+                    return BadRequest(ApiResponse<ParkingModel>.GetErrorResponse(e.Message, ErrorType.Exception));
                     //Log: return BadRequest(string.Format("{0} Exception: {1}", "Error processing Image!", e.Message));
                 }
 
@@ -131,7 +131,7 @@ namespace NextPark.Api.Controllers
             }
             catch (Exception e)
             {
-                return BadRequest(ApiResponse<ParkingModel>.GetErrorResponse(e.Message,ErrorType.Exeption));
+                return BadRequest(ApiResponse<ParkingModel>.GetErrorResponse(e.Message,ErrorType.Exception));
             }
         }
 

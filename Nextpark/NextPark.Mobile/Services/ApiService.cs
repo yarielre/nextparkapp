@@ -113,7 +113,7 @@ namespace NextPark.Mobile.Services
                 {
                     IsSuccess = false,
                     Message = ex.Message,
-                    ErrorType = ErrorType.Exeption
+                    ErrorType = ErrorType.Exception
                 };
             }
         }
@@ -161,7 +161,7 @@ namespace NextPark.Mobile.Services
                 {
                     IsSuccess = false,
                     Message = ex.Message,
-                    ErrorType = ErrorType.Exeption
+                    ErrorType = ErrorType.Exception
                 };
             }
         }
@@ -200,7 +200,7 @@ namespace NextPark.Mobile.Services
                 {
                     IsSuccess = false,
                     Message = ex.Message,
-                    ErrorType = ErrorType.Exeption
+                    ErrorType = ErrorType.Exception
                 };
             }
             //if (!response.IsSuccessStatusCode)
@@ -288,7 +288,7 @@ namespace NextPark.Mobile.Services
                 {
                     IsSuccess = false,
                     Message = ex.Message,
-                    ErrorType = ErrorType.Exeption
+                    ErrorType = ErrorType.Exception
                 };
             }
         }
@@ -327,7 +327,7 @@ namespace NextPark.Mobile.Services
                 {
                     IsSuccess = false,
                     Message = ex.Message,
-                    ErrorType = ErrorType.Exeption
+                    ErrorType = ErrorType.Exception
                 };
             }
             //    if (response.StatusCode == HttpStatusCode.BadRequest || response.StatusCode == HttpStatusCode.NotFound)
@@ -390,7 +390,7 @@ namespace NextPark.Mobile.Services
                 {
                     IsSuccess = false,
                     Message = ex.Message,
-                    ErrorType = ErrorType.Exeption
+                    ErrorType = ErrorType.Exception
                 };
             }
             //if (response.StatusCode == HttpStatusCode.BadRequest || response.StatusCode == HttpStatusCode.NotFound)
@@ -451,7 +451,7 @@ namespace NextPark.Mobile.Services
                 {
                     IsSuccess = false,
                     Message = ex.Message,
-                    ErrorType = ErrorType.Exeption
+                    ErrorType = ErrorType.Exception
                 };
             }
         }
@@ -484,7 +484,7 @@ namespace NextPark.Mobile.Services
                 {
                     IsSuccess = false,
                     Message = ex.Message,
-                    ErrorType = ErrorType.Exeption
+                    ErrorType = ErrorType.Exception
                 };
             }
             //    if (response.StatusCode == HttpStatusCode.BadRequest || response.StatusCode == HttpStatusCode.NotFound)
@@ -540,7 +540,7 @@ namespace NextPark.Mobile.Services
                 {
                     IsSuccess = false,
                     Message = ex.Message,
-                    ErrorType = ErrorType.Exeption
+                    ErrorType = ErrorType.Exception
                 };
             }
             //if (response.StatusCode == HttpStatusCode.BadRequest)

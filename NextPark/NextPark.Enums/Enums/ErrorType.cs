@@ -8,7 +8,7 @@ namespace NextPark.Enums.Enums
     {
         None,
         InternetConnectionError,
-        Exeption,
+        Exception,
         EntityNull,
         ModelStateInvalid,
         EntityNotFound,
@@ -16,6 +16,10 @@ namespace NextPark.Enums.Enums
         ParkingNotOrderable,
         NotEnoughMoney,
         EventCantBeModified,
-        ChngePasswordError
+        ChngePasswordError,
+        InAppPurchaseNotSupported,
+        InAppPurchaseServiceConnectionError,
+        InAppPurchaseServiceImposibleToPurchase,
+        InAppPurchaseServiceSuccessPurchase
     }
 }
