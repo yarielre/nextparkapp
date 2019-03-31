@@ -433,8 +433,11 @@ namespace NextPark.Mobile.ViewModels
             OrderModel myOrder = new OrderModel
             {
                 StartDate = DateTime.Now,
-                EndDate = DateTime.Now.AddHours(2.5)
+                EndDate = DateTime.Now.AddHours(2.5),
+                CarPlate = "TI 123456"
             };
+
+            Orders.Add(myOrder);
             */
 
             // Clear all previous calendar events
@@ -569,7 +572,7 @@ namespace NextPark.Mobile.ViewModels
                 base.OnPropertyChanged("OrderCarPlate");
                 base.OnPropertyChanged("OrderDetailVisible");
 
-                _dialogService.ShowAlert("Riservazione", ((myCalendarEvent.Order.CarPlate.Equals("Occupato")) ? "" : myCalendarEvent.Order.CarPlate + "\n") + "Dalle ore: " + myCalendarEvent.Order.StartDate.ToShortTimeString() + "\nAlle ore: " + myCalendarEvent.Order.EndDate.ToShortTimeString());
+                //_dialogService.ShowAlert("Riservazione", ((myCalendarEvent.Order.CarPlate.Equals("Occupato")) ? "" : myCalendarEvent.Order.CarPlate + "\n") + "Dalle ore: " + myCalendarEvent.Order.StartDate.ToShortTimeString() + "\nAlle ore: " + myCalendarEvent.Order.EndDate.ToShortTimeString());
             }
         }
 
