@@ -179,7 +179,7 @@ namespace NextPark.Mobile.ViewModels
 
                     } else {
                         // Modify an Event
-                        Title = "Modifica disponibilità";
+                        Title = "Dettaglio disponibilità";
                         StartDate = _event.StartDate.Date;
                         StartTime = _event.StartDate.TimeOfDay;
                         EndDate = _event.EndDate.Date;
@@ -191,7 +191,7 @@ namespace NextPark.Mobile.ViewModels
                                 (DayOfWeek)(DateTime.Now.DayOfWeek)
                             };
                         }
-                        if (EndDate > DateTime.Now.Date)
+                        if (EndDate >= DateTime.Now.Date)
                         {
                             AddButtonVisible = true;
                             DeleteButtonVisible = true;
@@ -201,7 +201,7 @@ namespace NextPark.Mobile.ViewModels
                             DeleteButtonVisible = false;
                             MinStartDate = _event.StartDate.Date;
                         }
-                        AddButtonText = "Salva";
+                        AddButtonText = "Modifica";
                         _modifying = true;
                     }
 
