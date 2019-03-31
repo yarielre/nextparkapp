@@ -149,7 +149,7 @@ namespace NextPark.Mobile.ViewModels
             // Set User data
             UserName = AuthSettings.User.Name;
             UserImage = "icon_no_user_256.png";
-            UserMoney = AuthSettings.UserCoin.ToString("N0");
+            UserMoney = AuthSettings.UserCoin.ToString("N2");
             base.OnPropertyChanged("UserName");
             base.OnPropertyChanged("UserImage");
             base.OnPropertyChanged("UserMoney");
@@ -204,7 +204,7 @@ namespace NextPark.Mobile.ViewModels
                         // Update user data
                         UserName = AuthSettings.User.Name;
                         UserImage = "icon_no_user_256.png";
-                        UserMoney = AuthSettings.UserCoin.ToString("N0");
+                        UserMoney = AuthSettings.UserCoin.ToString("N2");
                         base.OnPropertyChanged("UserName");
                         base.OnPropertyChanged("UserImage");
                         base.OnPropertyChanged("UserMoney");

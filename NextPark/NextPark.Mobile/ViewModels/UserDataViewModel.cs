@@ -76,7 +76,7 @@ namespace NextPark.Mobile.ViewModels
             OnLogoutClick = new Command<object>(OnLogoutClickMethod);
 
             UserName = AuthSettings.User.Name;
-            UserMoney = AuthSettings.UserCoin.ToString("N0");
+            UserMoney = AuthSettings.UserCoin.ToString("N2");
 
             /* Future implementation
             OnUserImageTap = new Command<object>(OnUserImageTapMethod);
@@ -90,7 +90,7 @@ namespace NextPark.Mobile.ViewModels
             // Header
             BackText = "Profilo";
             UserName = AuthSettings.User.Name;
-            UserMoney = AuthSettings.UserCoin.ToString("N0");
+            UserMoney = AuthSettings.UserCoin.ToString("N2");
 
             base.OnPropertyChanged("BackText");
             base.OnPropertyChanged("UserName");

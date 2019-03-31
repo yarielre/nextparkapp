@@ -62,7 +62,7 @@ namespace NextPark.Mobile.ViewModels
 
             // Header
             UserName = AuthSettings.User.Name;
-            UserMoney = AuthSettings.UserCoin.ToString("N0");
+            UserMoney = AuthSettings.UserCoin.ToString("N2");
 
             // Header actions
             OnBackClick = new Command<object>(OnBackClickMethod);
@@ -87,7 +87,7 @@ namespace NextPark.Mobile.ViewModels
             // Header
             BackText = "Profilo";
             UserName = AuthSettings.User.Name;
-            UserMoney = AuthSettings.UserCoin.ToString("N0");
+            UserMoney = AuthSettings.UserCoin.ToString("N2");
             base.OnPropertyChanged("BackText");
             base.OnPropertyChanged("UserName");
             base.OnPropertyChanged("UserMoney");

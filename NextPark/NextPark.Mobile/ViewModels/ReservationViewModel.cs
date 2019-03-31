@@ -74,7 +74,7 @@ namespace NextPark.Mobile.ViewModels
 
             // Header
             UserName = AuthSettings.User.Name;
-            UserMoney = AuthSettings.UserCoin.ToString("N0");
+            UserMoney = AuthSettings.UserCoin.ToString("N2");
             base.OnPropertyChanged("UserName");
             base.OnPropertyChanged("UserMoney");
 
@@ -101,7 +101,7 @@ namespace NextPark.Mobile.ViewModels
             // Header
             BackText = "Mappa";
             UserName = AuthSettings.User.Name;
-            UserMoney = AuthSettings.UserCoin.ToString("N0");
+            UserMoney = AuthSettings.UserCoin.ToString("N2");
             base.OnPropertyChanged("BackText");
             base.OnPropertyChanged("UserName");
             base.OnPropertyChanged("UserMoney");
@@ -197,6 +197,10 @@ namespace NextPark.Mobile.ViewModels
 
             // Compute price
             double orderPrice = double.Parse((((EndDate + EndTime) - (StartDate + StartTime)).TotalHours * _parking.PriceMin).ToString("N2"));
+            if (_parking.UserId == AuthSettings.User.Id)
+            {
+                orderPrice = 0;
+            }
             // Check user balance
             if (AuthSettings.User.Balance < orderPrice) {
                 // Not enough credit

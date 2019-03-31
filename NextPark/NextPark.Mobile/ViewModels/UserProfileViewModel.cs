@@ -80,7 +80,7 @@ namespace NextPark.Mobile.ViewModels
             OnCommandClick = new Command<string>(OnCommandClickMethod);
 
             UserName = AuthSettings.User.Name;
-            UserMoney = AuthSettings.UserCoin.ToString("N0");
+            UserMoney = AuthSettings.UserCoin.ToString("N2");
 
         }
 
@@ -89,7 +89,7 @@ namespace NextPark.Mobile.ViewModels
         {
             // Header
             UserName = AuthSettings.User.Name;
-            UserMoney = AuthSettings.UserCoin.ToString("N0");
+            UserMoney = AuthSettings.UserCoin.ToString("N2");
             base.OnPropertyChanged("UserName");
             base.OnPropertyChanged("UserMoney");
 
@@ -111,9 +111,9 @@ namespace NextPark.Mobile.ViewModels
             base.OnPropertyChanged("CarPlate");
 
             // Budget
-            Balance = AuthSettings.UserCoin.ToString("N0");
+            Balance = AuthSettings.UserCoin.ToString("N2");
             base.OnPropertyChanged("Balance");
-            Profit = AuthSettings.User.Profit.ToString("N0");
+            Profit = AuthSettings.User.Profit.ToString("N2");
             base.OnPropertyChanged("Profit");
 
             // Parkings
