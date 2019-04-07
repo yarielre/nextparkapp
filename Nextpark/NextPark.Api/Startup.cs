@@ -164,6 +164,7 @@ namespace NextPark.Api
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "NextPark Web  API V1");
             });
+
         }
     }
 }

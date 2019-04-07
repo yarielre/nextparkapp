@@ -545,8 +545,7 @@ namespace NextPark.Mobile.ViewModels
 
             if (result)
             {
-                var purchaseResult = this._inAppPurchaseService.MakePurchase();
-
+               // var purchaseResult = _inAppPurchaseService.PurchaseCreadit1();
 
             }
         }

@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+﻿       using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NextPark.Data.Infrastructure;
@@ -123,7 +123,7 @@ namespace NextPark.Api.Controllers
             }
             catch (Exception e)
             {
-                return BadRequest(ApiResponse.GetErrorResponse(e.Message, ErrorType.Exeption));
+                return BadRequest(ApiResponse.GetErrorResponse(e.Message, ErrorType.Exception));
             }
         }
 
@@ -233,8 +233,8 @@ namespace NextPark.Api.Controllers
                             StartDate = model.StartDate,
                             EndDate = model.EndDate,
                             RepetitionEndDate = model.EndDate,
-                            RepetitionId = Guid.Empty,
-                            RepetitionType = Enums.Enums.RepetitionType.None,
+                            RepetitionId = Guid.NewGuid(),
+                            RepetitionType = RepetitionType.None,
                             ParkingId = model.ParkingId
                         }
                     };
@@ -336,7 +336,13 @@ namespace NextPark.Api.Controllers
         private async Task<bool> EventCanBeModified(Event eventToModify, Parking parking)
         {
             //Get orders associated to the parking, status actived and orders'date and time match the event's period of time
-            var orders = await _repositoryOrder.FindAllWhereAsync(o => o.ParkingId == parking.Id).ConfigureAwait(false);
+            var orders = await _repositoryOrder.FindAllWhereAsync(o => o.ParkingId == parking.Id
+                                                                       && o.OrderStatus == OrderStatus.Actived
+                                                                       && o.StartDate.Date >= eventToModify.StartDate.Date
+                                                                       && o.EndDate.Date <= eventToModify.EndDate.Date
+                                                                       && o.StartDate.TimeOfDay >= eventToModify.StartDate.TimeOfDay
+                                                                       && o.EndDate.Date.TimeOfDay <= eventToModify.EndDate.TimeOfDay)
+                .ConfigureAwait(false);
             // If not found orders, then event can be modified
             return orders.Count == 0;
         }
