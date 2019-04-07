@@ -14,5 +14,11 @@ namespace NextPark.Domain.Entities
         public double CashMoved { get; set; }
         public virtual  ApplicationUser User { get; set; }
         public int UserId { get; set; }
+
+        public string PurchaseId { get; set; }
+        public string PurchaseToken { get; set; }
+        public string PurchaseState { get; set; }
+      
+        
     }
 }

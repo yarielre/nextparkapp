@@ -73,7 +73,7 @@ namespace NextPark.Api.Controllers
             }
             catch (Exception e)
             {
-                return BadRequest(ApiResponse.GetErrorResponse($"Server error: {e.Message}", ErrorType.Exeption));
+                return BadRequest(ApiResponse.GetErrorResponse($"Server error: {e.Message}", ErrorType.Exception));
             }
         }
 
@@ -168,7 +168,7 @@ namespace NextPark.Api.Controllers
             }
             catch (Exception e)
             {
-                return BadRequest(ApiResponse.GetErrorResponse($"Server error: {e.Message}",ErrorType.Exeption));
+                return BadRequest(ApiResponse.GetErrorResponse($"Server error: {e.Message}",ErrorType.Exception));
             }
         }
 
@@ -231,7 +231,7 @@ namespace NextPark.Api.Controllers
             }
             catch (Exception e)
             {
-                return BadRequest(ApiResponse.GetErrorResponse(e.Message,ErrorType.Exeption));
+                return BadRequest(ApiResponse.GetErrorResponse(e.Message,ErrorType.Exception));
             }
         }
 
