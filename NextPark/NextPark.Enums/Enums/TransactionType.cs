@@ -7,7 +7,7 @@ namespace NextPark.Enums.Enums
     public enum TransactionType
     {
         FeedTransaction,
-        RentTrasaction,
+        RentTransaction,
         WithdrawalTransaction,
         IncreaseBalanceTransaction
     }
