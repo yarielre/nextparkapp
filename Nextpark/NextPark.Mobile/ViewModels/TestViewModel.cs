@@ -584,7 +584,7 @@ namespace NextPark.Mobile.ViewModels
             AddLineToConsole("TESTING InAppPurchase...");
             AddLineToConsole("The purchase operation is cross platform, so it will be apply the the os where is running the app! ");
             AddLineToConsole("Purchasing on 1 parking credit on Store test model enabled...");
-            var purchaseAppleResult = await _inAppPurchaseService.PurchaseCreadit1();
+            var purchaseAppleResult = await _inAppPurchaseService.PurchaseCredit1();
             if (purchaseAppleResult.IsSuccess)
             {
                 AddLineToConsole("Purchasing on 1 parking credit on Store OK");
