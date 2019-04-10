@@ -71,7 +71,7 @@ export class MyTableComponent implements OnInit {
       this.dataSource = new MyTableDataSource(
         this.paginator,
         this.sort,
-        res
+        res.result
       );
       this.changeDetectorRefs.detectChanges();
     });

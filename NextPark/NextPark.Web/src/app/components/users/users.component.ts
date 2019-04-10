@@ -137,7 +137,7 @@ export class UsersComponent implements OnInit {
 
   refresh() {
     this.userService.getAll().subscribe(res => {
-      this.dataSource = new UserDataSource(this.paginator, this.sort, res);
+      this.dataSource = new UserDataSource(this.paginator, this.sort, res.result);
       this.changeDetectorRefs.detectChanges();
     });
   }

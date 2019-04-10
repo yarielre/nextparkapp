@@ -6,6 +6,7 @@ import { NEXT_PARK_URL } from '../_helpers/constants/host.settings';
 import { Order } from '../models';
 import { BaseService } from './base.service';
 import { StorageService } from './storage.service';
+import {ApiResponse} from '../models/api-response';
 
 @Injectable({
   providedIn: 'root'
@@ -32,7 +33,7 @@ export class OrdersService extends BaseService<Order> {
     });
   }
 
-  getAll(): Observable<Order[]> {
+  getAll(): Observable<ApiResponse<Order[]>> {
     return super.getAll();
   }
 
