@@ -147,13 +147,16 @@ namespace NextPark.Mobile.Services
                 //    };
                 var resultAsJson = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
                 var apiResponse = JsonConvert.DeserializeObject<ApiResponse<TVm>>(resultAsJson);
+                if (apiResponse == null) {
+                    return new ApiResponse<TVm>
+                    {
+                        IsSuccess = false,
+                        Message = "",
+                        ErrorType = ErrorType.None
+                    };
+                }
                 return apiResponse;
-                //return new ApiResponse
-                //{
-                //    IsSuccess = true,
-                //    Message = "Ok",
-                //    Result = model
-                //};
+
             }
             catch (Exception ex)
             {
@@ -250,7 +253,7 @@ namespace NextPark.Mobile.Services
             {
                 var json = JsonConvert.SerializeObject(tvm);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
-
+                // Ecco
                 var client = GetHttpClient();
                 var response = await client.PostAsync(endpoint, content).ConfigureAwait(false);
 
