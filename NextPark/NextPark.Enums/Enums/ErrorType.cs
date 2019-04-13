@@ -16,7 +16,7 @@ namespace NextPark.Enums.Enums
         ParkingNotOrderable,
         NotEnoughMoney,
         EventCantBeModified,
-        ChangePasswordError,
+        ChngePasswordError,
         InAppPurchaseNotSupported,
         InAppPurchaseServiceConnectionError,
         InAppPurchaseServiceImposibleToPurchase,
