@@ -75,6 +75,7 @@ namespace NextPark.Mobile.UIModels
 
         public UIBookingModel(OrderModel order)
         {
+            Id = order.Id;
             Price = order.Price;
             StartDate = order.StartDate;
             EndDate = order.EndDate;

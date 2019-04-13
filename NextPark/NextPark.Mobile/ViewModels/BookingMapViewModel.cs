@@ -14,6 +14,7 @@ using NextPark.Models;
 using NextPark.Mobile.Services.Data;
 using NextPark.Mobile.CustomControls;
 using System.Collections.Generic;
+using NextPark.Enums.Enums;
 
 namespace NextPark.Mobile.ViewModels
 {
@@ -290,8 +291,8 @@ namespace NextPark.Mobile.ViewModels
                 // TODO: how many time before can user arrive?
 
                 // Modify order 
-                order.StartDate = DateTime.Now;
-                order.StartDate = order.StartDate - TimeSpan.FromSeconds(order.StartDate.Second);
+                order.StartDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, DateTime.Now.Hour, DateTime.Now.Minute, 0);
+
                 // Update price
                 TimeSpan totalTime = order.EndDate - order.StartDate;
                 order.Price = totalTime.TotalHours * order.Parking.PriceMin;
@@ -397,6 +398,9 @@ namespace NextPark.Mobile.ViewModels
         public async void TerminateOrder()
         {
             try {
+                order.PaymentStatus = PaymentStatus.Cancel;
+                order.PaymentCode = "drtrtrt";
+                var editedOrder = _orderDataService.EditOrderAsync(order.Id, order);
                 var result = await _orderDataService.TerminateOrderAsync(order.Id);
 
                 TerminateIsRunning = false;
@@ -437,6 +441,7 @@ namespace NextPark.Mobile.ViewModels
                 {
                     // Update order time
                     order.EndDate.AddMinutes(RenewTime.TotalMinutes);
+
                     // Update order price
                     TimeSpan totalTime = order.EndDate - order.StartDate;
                     order.Price = totalTime.TotalHours * order.Parking.PriceMin;

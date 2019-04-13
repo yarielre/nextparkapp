@@ -187,7 +187,7 @@ namespace NextPark.Mobile.ViewModels
 
         // Booking button click action
         public void OnBookingMethod(object sender)
-        {
+        {        
             // Check Data
             if ((StartDate + StartTime) > (EndDate + EndTime))
             {
@@ -213,20 +213,20 @@ namespace NextPark.Mobile.ViewModels
             _order = new OrderModel
             {
                 ParkingId = _parking.Id,
-                StartDate = StartDate+StartTime,
-                EndDate = EndDate + EndTime,
                 Price = orderPrice,
                 UserId = int.Parse(AuthSettings.UserId),
                 CarPlate = AuthSettings.User.CarPlate
             };
+            _order.StartDate = new DateTime(StartDate.Year, StartDate.Month, StartDate.Day, StartTime.Hours, StartTime.Minutes, 0);
+            _order.EndDate = new DateTime(EndDate.Year, EndDate.Month, EndDate.Day, EndTime.Hours, EndTime.Minutes, 0);
 
             // Show activity spinner
             this.IsRunning = true;
             base.OnPropertyChanged("IsRunning");
 
             // Ask confirm
-            ConfirmStartDateTime = _order.StartDate.ToString("dd/MM/yy hh:mm");
-            ConfirmEndDateTime = _order.EndDate.ToString("dd/MM/yy hh:mm");
+            ConfirmStartDateTime = _order.StartDate.ToString("dd/MM/yy HH:mm");
+            ConfirmEndDateTime = _order.EndDate.ToString("dd/MM/yy HH:mm");
             ConfirmPrice = _order.Price.ToString("N2") + " CHF";
             ConfirmVisible = true;
 

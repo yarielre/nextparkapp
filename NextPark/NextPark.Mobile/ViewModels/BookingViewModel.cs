@@ -210,6 +210,8 @@ namespace NextPark.Mobile.ViewModels
         // Booking button click action
         public void OnBookingMethod(object sender)
         {
+            DateTime now = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, DateTime.Now.Hour, DateTime.Now.Minute, 0);
+
             // Compute price
             double orderPrice = Time.TotalHours * _parking.PriceMin;
             if (_parking.UserId == AuthSettings.User.Id) {
@@ -224,11 +226,12 @@ namespace NextPark.Mobile.ViewModels
             }
 
             // TODO: fill book data according to add book backend method
+
             _order = new OrderModel
             {
                 ParkingId = _parking.Id,
-                StartDate = DateTime.Now,
-                EndDate = DateTime.Now + Time,
+                StartDate = now,
+                EndDate = now + Time,
                 Price = orderPrice,
                 UserId = int.Parse(AuthSettings.UserId),
                 CarPlate = AuthSettings.User.CarPlate
@@ -239,8 +242,8 @@ namespace NextPark.Mobile.ViewModels
             base.OnPropertyChanged("IsRunning");
 
             // Ask confirm
-            ConfirmStartDateTime = _order.StartDate.ToString("dd/MM/yy hh:mm");
-            ConfirmEndDateTime = _order.EndDate.ToString("dd/MM/yy hh:mm");
+            ConfirmStartDateTime = _order.StartDate.ToString("dd/MM/yy HH:mm");
+            ConfirmEndDateTime = _order.EndDate.ToString("dd/MM/yy HH:mm");
             ConfirmPrice = _order.Price.ToString("N2") + " CHF";
             ConfirmVisible = true;
 

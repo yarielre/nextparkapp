@@ -407,18 +407,20 @@ namespace NextPark.Mobile.ViewModels
                     break;
                 case 1: // Daily
                     _event.RepetitionType = RepetitionType.Dayly;
+                    EndDate = StartDate;
                     break;
                 case 2: // Weekly
                     _event.RepetitionType = RepetitionType.Weekly;
+                    EndDate = StartDate;
                     break;
             }
             // Remove seconds from timing
             StartTime = StartTime.Subtract(TimeSpan.FromSeconds(StartTime.Seconds));
             EndTime = EndTime.Subtract(TimeSpan.FromSeconds(EndTime.Seconds));
 
-            _event.StartDate = StartDate + StartTime;
-            _event.EndDate = StartDate + EndTime;
-            _event.RepetitionEndDate = RepetitionEndDate + EndTime;
+            _event.StartDate = new DateTime(StartDate.Year, StartDate.Month, StartDate.Day, StartTime.Hours, StartTime.Minutes, 0);
+            _event.EndDate = new DateTime(EndDate.Year, EndDate.Month, EndDate.Day, EndTime.Hours, EndTime.Minutes, 0);
+            _event.RepetitionEndDate = new DateTime(RepetitionEndDate.Year, RepetitionEndDate.Month, RepetitionEndDate.Day, EndTime.Hours, EndTime.Minutes, 0);
 
             var result = new List<EventModel>();
 
