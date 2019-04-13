@@ -309,9 +309,9 @@ namespace NextPark.Mobile.ViewModels
             var newMonthlyEvent = new EventModel
             {
                 StartDate = DateTime.Now,
-                EndDate = (DateTime.Now).AddDays(3),
+                EndDate = DateTime.Now.AddMonths(3).AddHours(1),
                 ParkingId = selectedPArking.Id,
-                RepetitionEndDate = new DateTime(2019, 2, 28, 3, 0, 0),
+                RepetitionEndDate = DateTime.Now.AddMonths(3).AddHours(1),
                 RepetitionType = RepetitionType.Monthly,
                 MonthlyRepeatDay = new List<int>
                 {
@@ -475,7 +475,7 @@ namespace NextPark.Mobile.ViewModels
                 return;
             }
 
-            var startDate = DateTime.Now.ToUniversalTime();
+            var startDate = DateTime.Now;
             var endDate = startDate.AddHours(3);
 
 
@@ -510,7 +510,7 @@ namespace NextPark.Mobile.ViewModels
                 return;
             }
 
-            var orderStartDate = DateTime.Now.ToUniversalTime();
+            var orderStartDate = DateTime.Now;
             var orderEndDate = orderStartDate.AddHours(1);
 
             var order = new OrderModel
@@ -584,7 +584,7 @@ namespace NextPark.Mobile.ViewModels
             AddLineToConsole("TESTING InAppPurchase...");
             AddLineToConsole("The purchase operation is cross platform, so it will be apply the the os where is running the app! ");
             AddLineToConsole("Purchasing on 1 parking credit on Store test model enabled...");
-            var purchaseAppleResult = await _inAppPurchaseService.PurchaseCreadit1();
+            var purchaseAppleResult = await _inAppPurchaseService.PurchaseCredit1();
             if (purchaseAppleResult.IsSuccess)
             {
                 AddLineToConsole("Purchasing on 1 parking credit on Store OK");

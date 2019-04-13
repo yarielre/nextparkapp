@@ -1,12 +1,14 @@
-import { HttpClient, HttpHeaders } from "@angular/common/http";
-import { Injectable } from "@angular/core";
-import { Observable } from "rxjs";
-import { BaseModel } from "../models/base.model";
+import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {Injectable} from '@angular/core';
+import {Observable} from 'rxjs';
+import {BaseModel} from '../models/base.model';
 import {StorageService} from '../services/storage.service';
+import {ApiResponse} from '../models/api-response';
+import {Transaction} from '../models/transaction.model';
 
 export class BaseService<T extends BaseModel> {
   httpOptions = {
-    headers: new HttpHeaders({ "Content-Type": "application/json" })
+    headers: new HttpHeaders({'Content-Type': 'application/json'})
   };
 
   constructor(
@@ -17,9 +19,9 @@ export class BaseService<T extends BaseModel> {
     this.httpOptions.headers = new HttpHeaders().set('Authorization', 'Bearer ' + this.storage.getToken());
   }
 
-  public getAll(url: string = this.baseUrl): Observable<T[]> {
-    console.log(url, this.httpOptions)
-    return this.http.get<T[]>(url, this.httpOptions);
+  public getAll(url: string = this.baseUrl): Observable<ApiResponse<T[]>> {
+    console.log(url, this.httpOptions);
+    return this.http.get<ApiResponse<T[]>>(url, this.httpOptions);
   }
 
   public add(obj: T, url: string = this.baseUrl): Observable<T> {
@@ -30,7 +32,7 @@ export class BaseService<T extends BaseModel> {
     obj: T,
     url: string = `${this.baseUrl}/${obj.id}`
   ): Observable<T> {
-    console.log(url, this.httpOptions,obj)
+    console.log(url, this.httpOptions, obj);
     return this.http.put<T>(url, obj, this.httpOptions);
   }
 
@@ -41,7 +43,9 @@ export class BaseService<T extends BaseModel> {
     return this.http.delete<T>(url, this.httpOptions);
   }
 
-  protected fillForm(formFill: any) {}
+  protected fillForm(formFill: any) {
+  }
 
-  protected initForm() {}
+  protected initForm() {
+  }
 }

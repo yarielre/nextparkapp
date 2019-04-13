@@ -59,7 +59,7 @@ export class EventsComponent implements OnInit {
 
   refresh() {
     this.eventsService.getAll().subscribe(res => {
-      this.dataSource = new EventDataSource(this.paginator, this.sort, res);
+      this.dataSource = new EventDataSource(this.paginator, this.sort, res.result);
       this.changeDetectorRefs.detectChanges();
     });
   }

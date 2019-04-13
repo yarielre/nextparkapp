@@ -1,0 +1,38 @@
+<form [formGroup]="transactionService.form" class="normal-form">
+  <div  class="row">
+<div class="col-sm-6 wrap-controls">
+  <input hidden formControlName="id">
+  <mat-form-field>
+    <input matInput placeholder="Cash Moved" formControlName="cashMoved">
+    <mat-error>
+      <span *ngIf="!transactionService.form.get('cashMoved').valid && transactionService.form.get('cashMoved').touched">Please enter the cash amount</span>
+    </mat-error>
+  </mat-form-field>
+
+    <mat-form-field>
+      <mat-select formControlName="status" placeholder="Transaction Status">
+        <mat-option *ngFor="let status of status" [value]="status.value">{{status.key}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+</div>
+
+    <div  class="col-sm-6">
+      <div class="wrap-controls">
+        <mat-form-field>
+          <mat-select formControlName="type" placeholder="Transaction Type">
+            <mat-option *ngFor="let type of type" [value]="type.value">{{type.key}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
+  </div>
+<div class="row">
+  <div class="container-button col-sm-6 offset-sm-6">
+    <button mat-raised-button color="primary"
+            [disabled]="!transactionService.form.valid"
+            (click)="onSave(transactionService.form.value)">Save</button>
+    <button mat-raised-button color="warn"
+            (click)="onClose(null)">Cancel</button>
+  </div>
+</div>
+</form>
