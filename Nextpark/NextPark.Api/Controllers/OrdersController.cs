@@ -125,8 +125,8 @@ namespace NextPark.Api.Controllers
                     CreationDate = DateTime.Now,
                     CompletationDate = DateTime.Now,
                     Status = TransactionStatus.Completed,
-                    TransactionId = new Guid(),
-                    Type = TransactionType.RentTrasaction
+                    TransactionId = Guid.NewGuid(),
+                    Type = TransactionType.RentTransaction
                 };
 
                 var feedTransaction = new Transaction
@@ -136,7 +136,7 @@ namespace NextPark.Api.Controllers
                     CreationDate = DateTime.Now,
                     CompletationDate = DateTime.Now,
                     Status = TransactionStatus.Completed,
-                    TransactionId = new Guid(),
+                    TransactionId = Guid.NewGuid(),
                     Type = TransactionType.FeedTransaction
                 };
 
@@ -208,7 +208,7 @@ namespace NextPark.Api.Controllers
             var isAvailable = IsParkingAvailable(parking, orderModel);
 
             if (!isAvailable)
-                return BadRequest("Parking is not available");
+                return BadRequest(ApiResponse.GetErrorResponse("Parking is not available",ErrorType.ParkingNotVailable));
 
             var parkigOrders = await _orderRepository.FindAllWhereAsync(ev => ev.ParkingId == orderModel.ParkingId);
             var isOrderdable = IsParkingOrderable(parkigOrders, orderModel);

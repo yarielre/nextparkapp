@@ -309,9 +309,9 @@ namespace NextPark.Mobile.ViewModels
             var newMonthlyEvent = new EventModel
             {
                 StartDate = DateTime.Now,
-                EndDate = (DateTime.Now).AddDays(3),
+                EndDate = DateTime.Now.AddMonths(3).AddHours(1),
                 ParkingId = selectedPArking.Id,
-                RepetitionEndDate = new DateTime(2019, 2, 28, 3, 0, 0),
+                RepetitionEndDate = DateTime.Now.AddMonths(3).AddHours(1),
                 RepetitionType = RepetitionType.Monthly,
                 MonthlyRepeatDay = new List<int>
                 {
@@ -475,7 +475,7 @@ namespace NextPark.Mobile.ViewModels
                 return;
             }
 
-            var startDate = DateTime.Now.ToUniversalTime();
+            var startDate = DateTime.Now;
             var endDate = startDate.AddHours(3);
 
 
@@ -510,7 +510,7 @@ namespace NextPark.Mobile.ViewModels
                 return;
             }
 
-            var orderStartDate = DateTime.Now.ToUniversalTime();
+            var orderStartDate = DateTime.Now;
             var orderEndDate = orderStartDate.AddHours(1);
 
             var order = new OrderModel

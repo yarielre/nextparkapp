@@ -169,4 +169,14 @@ mat-footer-row mat-footer-cell {
     max-width: 100%;
     padding-left: 0px !important;
   }
+  .filter-container{
+    width: 30% !important;
+    margin-left: 25px !important;
+  }
+
+  .filter-container div.mat-form-field-suffix button{
+    height: 32px;
+    width: 32px;
+  }
+
 }
