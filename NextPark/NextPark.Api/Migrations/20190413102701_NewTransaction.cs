@@ -4,7 +4,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace NextPark.Api.Migrations
 {
-    public partial class CarPlateOder : Migration
+    public partial class NewTransaction : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -263,7 +263,10 @@ namespace NextPark.Api.Migrations
                     Status = table.Column<int>(nullable: false),
                     Type = table.Column<int>(nullable: false),
                     CashMoved = table.Column<double>(nullable: false),
-                    UserId = table.Column<int>(nullable: false)
+                    UserId = table.Column<int>(nullable: false),
+                    PurchaseId = table.Column<string>(nullable: true),
+                    PurchaseToken = table.Column<string>(nullable: true),
+                    PurchaseState = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {

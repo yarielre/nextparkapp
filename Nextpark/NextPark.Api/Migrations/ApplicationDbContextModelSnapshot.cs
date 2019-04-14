@@ -346,6 +346,12 @@ namespace NextPark.Api.Migrations
 
                     b.Property<DateTime>("CreationDate");
 
+                    b.Property<string>("PurchaseId");
+
+                    b.Property<string>("PurchaseState");
+
+                    b.Property<string>("PurchaseToken");
+
                     b.Property<int>("Status");
 
                     b.Property<Guid>("TransactionId");

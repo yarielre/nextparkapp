@@ -10,8 +10,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace NextPark.Api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20190326154039_CarPlateOder")]
-    partial class CarPlateOder
+    [Migration("20190413102701_NewTransaction")]
+    partial class NewTransaction
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -347,6 +347,12 @@ namespace NextPark.Api.Migrations
                     b.Property<DateTime>("CompletationDate");
 
                     b.Property<DateTime>("CreationDate");
+
+                    b.Property<string>("PurchaseId");
+
+                    b.Property<string>("PurchaseState");
+
+                    b.Property<string>("PurchaseToken");
 
                     b.Property<int>("Status");
 

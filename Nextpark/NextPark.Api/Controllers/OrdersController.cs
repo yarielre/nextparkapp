@@ -143,25 +143,24 @@ namespace NextPark.Api.Controllers
                 //Saving rent and feed transactions
                 _transactionRepository.Add(renTransaction);
                 _transactionRepository.Add(feedTransaction);
-                await _unitOfWork.CommitAsync().ConfigureAwait(false);
 
                 //Update user balance when rent is finished
                 userOrder.Balance = userOrder.Balance - order.Price;
                 _useRepository.Update(userOrder);
-                await _unitOfWork.CommitAsync().ConfigureAwait(false);
 
                 //Update user profit when rent is finished
                 parkingOwnedUser.Profit = parkingOwnedUser.Profit + rentEraningTax;
                 _useRepository.Update(parkingOwnedUser);
-                await _unitOfWork.CommitAsync().ConfigureAwait(false);
 
                 //Update parking after status change
                 _parkingRepository.Update(parking);
-                await _unitOfWork.CommitAsync().ConfigureAwait(false);
 
                 //Update order after status change
                 _orderRepository.Update(order);
+
+
                 await _unitOfWork.CommitAsync().ConfigureAwait(false);
+
 
                 var vm = _mapper.Map<Order, OrderModel>(order);
                 return Ok(ApiResponse.GetSuccessResponse(vm));
