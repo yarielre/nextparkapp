@@ -398,9 +398,6 @@ namespace NextPark.Mobile.ViewModels
         public async void TerminateOrder()
         {
             try {
-                order.PaymentStatus = PaymentStatus.Cancel;
-                order.PaymentCode = "drtrtrt";
-                var editedOrder = _orderDataService.EditOrderAsync(order.Id, order);
                 var result = await _orderDataService.TerminateOrderAsync(order.Id);
 
                 TerminateIsRunning = false;
