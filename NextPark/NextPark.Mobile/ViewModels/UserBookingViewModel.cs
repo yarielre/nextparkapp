@@ -143,8 +143,17 @@ namespace NextPark.Mobile.ViewModels
                             }
                             else
                             {
-                                // Booking
-                                TimeSpan remainingTime = (order.EndDate - DateTime.Now);
+                                // Default value, booking expired
+                                TimeSpan remainingTime = TimeSpan.FromMinutes(0);
+                                booking.TimeColor = Color.Red;
+
+                                // Booking started
+                                if (order.EndDate >= DateTime.Now) {
+                                    // Booking not expired
+                                    remainingTime = (order.EndDate - DateTime.Now);
+                                    booking.TimeColor = Color.Black;
+                                }
+
                                 booking.Time = string.Format("{0:%h} h {0:%m} min", remainingTime);
                             }
 
