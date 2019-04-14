@@ -66,6 +66,9 @@ namespace NextPark.Mobile.UIModels
                 return false;
             }
 
+            // Sort events by StartDate
+            Events.Sort((a, b) => (a.StartDate.CompareTo(b.StartDate)));
+
             foreach (EventModel availability in Events)
             {
                 if ((availability.StartDate <= tempStart) && (availability.EndDate > tempStart))
