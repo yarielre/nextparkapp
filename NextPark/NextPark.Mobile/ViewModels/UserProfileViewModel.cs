@@ -248,7 +248,7 @@ namespace NextPark.Mobile.ViewModels
 
                         foreach (OrderModel order in orderList) 
                         {
-                            if (order.UserId == int.Parse(AuthSettings.UserId))
+                            if ((order.UserId == int.Parse(AuthSettings.UserId)) && (order.OrderStatus == Enums.OrderStatus.Actived))
                             {
                                 if (nextOrder == null)
                                 {
