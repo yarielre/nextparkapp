@@ -101,6 +101,10 @@ namespace NextPark.Api.Controllers
             try // No allow modify an event who has an order pending or active associated to the event
             {
                 var actualEvent = _repository.Find(id);
+                if (actualEvent == null) {
+                    return BadRequest(ApiResponse.GetErrorResponse("Event not found", ErrorType.EntityNotFound));
+                }
+
                 var updatedEvent = _mapper.Map<EventModel, Event>(model);
                 
                 // Get parking associated to the event
