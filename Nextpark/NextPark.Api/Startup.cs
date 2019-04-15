@@ -52,7 +52,7 @@ namespace NextPark.Api
             #region CORS
             services.AddCors(corsPolicy =>
             {
-                corsPolicy.AddPolicy("insideCorsPolicy", builder =>
+                corsPolicy.AddPolicy("NextParkCorsPolicy", builder =>
                 {
                     builder.AllowAnyOrigin()
                         .AllowAnyMethod()
@@ -148,13 +148,12 @@ namespace NextPark.Api
                 app.UseHsts();
             }
 
-            loggerFactory.AddConsole(Configuration.GetSection("Logging"));
-            loggerFactory.AddDebug();
-
+            loggerFactory.AddFile("Logs/nextparklog-{Date}.log");
+         
             app.UseHttpsRedirection();
 
             app.UseStaticFiles();
-            app.UseCors("insideCorsPolicy");
+            app.UseCors("NextParkCorsPolicy");
             app.UseAuthentication();
 
             app.UseMvc();
