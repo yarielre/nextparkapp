@@ -292,7 +292,7 @@ namespace NextPark.Api.Controllers
 
         // PUT api/controller/5
         [HttpPut("{id}")]
-        public async Task<ActionResult> Put(int id, [FromBody] OrderModel model)
+        public async Task<IActionResult> Put(int id, [FromBody] OrderModel model)
         {
             if (model == null)
             {
