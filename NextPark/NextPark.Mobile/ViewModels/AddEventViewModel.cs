@@ -376,7 +376,7 @@ namespace NextPark.Mobile.ViewModels
             foreach (OrderModel order in parking.Orders) {
                 if ((order.StartDate < _event.EndDate) && (order.EndDate > _event.StartDate)) {
                     // Orders are present, unauthorized to delete event
-                    _dialogService.ShowAlert("Errore", "Non è stato possibile eliminare la disponibilità in quanto ci sono degli ordini confermati all'interno di queste date.");
+                    _dialogService.ShowAlert("Errore", "Non è possibile eliminare la disponibilità in quanto ci sono degli ordini confermati all'interno di queste date.");
                     IsRunning = false;
                     base.OnPropertyChanged("IsRunning");
                     return;
@@ -448,11 +448,39 @@ namespace NextPark.Mobile.ViewModels
                     if (choice.Equals("Modifica solo questo evento"))
                     {
                         var resultEdit = await _eventDataService.EditEventsAsync(_event.Id, _event);
-                        result.Add(resultEdit);
+
+                        if (resultEdit != null) {
+                            if (resultEdit.IsSuccess == true) {
+                                result.Add(resultEdit.Result);
+                            } else if (resultEdit.ErrorType == ErrorType.EventCantBeModified) {
+                                await _dialogService.ShowAlert("Errore", "Non è possibile modificare la disponibilità in quanto ci sono degli ordini confermati all'interno di queste date.");
+                            } else {
+                                await _dialogService.ShowAlert("Errore", "Non è possibile modificare la disponibilità.");
+                            }
+                        } else {
+                            await _dialogService.ShowAlert("Errore", "Non è possibile modificare la disponibilità.");
+                        }
                     }
                     else if (choice.Equals("Modifica tutti gli eventi futuri"))
                     {
-                        result = await _eventDataService.EditSerieEventsAsync(_event);
+                        var resultEdit = await _eventDataService.EditSerieEventsAsync(_event);
+                        if (resultEdit != null)
+                        {
+                            if (resultEdit.IsSuccess == true)
+                            {
+                                result = resultEdit.Result;
+                            }
+                            else if (resultEdit.ErrorType == ErrorType.EventCantBeModified)
+                            {
+                                await _dialogService.ShowAlert("Errore", "Non è possibile modificare tutte le disponibilità in quanto ci sono degli ordini confermati all'interno di queste date.");
+                            }
+                            else
+                            {
+                                await _dialogService.ShowAlert("Errore", "Non è possibile modificare le disponibilità.");
+                            }
+                        } else {
+                            await _dialogService.ShowAlert("Errore", "Non è possibile modificare le disponibilità.");
+                        }
                     }
                 }
                 else
@@ -517,15 +545,42 @@ namespace NextPark.Mobile.ViewModels
                 {
                     var result = await _eventDataService.DeleteEventsAsync(_event.Id);
 
+                    if (result != null) {
+                        if (result.IsSuccess == true) {
+
+                        } else if (result.ErrorType == ErrorType.EventCantBeModified) {
+                            await _dialogService.ShowAlert("Errore", "Non è possibile eliminare la disponibilità in quanto ci sono degli ordini confermati all'interno di queste date.");
+                        } else {
+                            await _dialogService.ShowAlert("Errore", "Non è possibile eliminare la disponibilità.");
+                        }
+                    } else {
+                        await _dialogService.ShowAlert("Errore", "Non è possibile eliminare la disponibilità.");
+                    }
                 }
                 else if (choice.Equals("Elimina tutti gli eventi futuri"))
                 {
                     // TODO: verify GetHash or add DeleteSerieEventsAsync(Guid Id)
                     var result = await _eventDataService.DeleteSerieEventsAsync(_event.RepetitionId.GetHashCode());
+                    if (result != null)
+                    {
+                        if (result.IsSuccess == true)
+                        {
+
+                        }
+                        else if (result.ErrorType == ErrorType.EventCantBeModified)
+                        {
+                            await _dialogService.ShowAlert("Errore", "Non è possibile eliminare le disponibilità in quanto ci sono degli ordini confermati all'interno di queste date.");
+                        }
+                        else
+                        {
+                            await _dialogService.ShowAlert("Errore", "Non è possibile eliminare le disponibilità.");
+                        }
+                    }
+                    else
+                    {
+                        await _dialogService.ShowAlert("Errore", "Non è possibile eliminare le disponibilità.");
+                    }
                 }
-
-                // TODO: check result looking at error enumerators
-
             }
             catch (Exception e)
             {
@@ -535,10 +590,8 @@ namespace NextPark.Mobile.ViewModels
             {
                 IsRunning = false;
                 base.OnPropertyChanged("IsRunning");
-            }
-        
-            // await oderRemove
-            await NavigationService.NavigateToAsync<ParkingDataViewModel>(_profileService.LastEditingParking);
+                await NavigationService.NavigateToAsync<ParkingDataViewModel>(_profileService.LastEditingParking);
+            }        
         }
 
         // Activate/Deactivate Parking toggle switch action
