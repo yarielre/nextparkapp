@@ -67,12 +67,11 @@ namespace NextPark.Mobile.Services.Data
             return response.IsSuccess ? response.Result : null;
         }
 
-        public async Task<OrderModel> EditOrderAsync(int id, OrderModel order)
+        public async Task<ApiResponse<OrderModel>> EditOrderAsync(int id, OrderModel order)
         {
             var url = ApiSettings.OrdersEndPoint;
             var response = await _apiService.Put(url, id, order).ConfigureAwait(false);
-
-            return response.IsSuccess ? response.Result : null;
+            return response;
         }
 
         public async Task<OrderModel> DeleteOrdersAsync(int id)

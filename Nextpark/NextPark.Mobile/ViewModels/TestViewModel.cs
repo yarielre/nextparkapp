@@ -422,7 +422,7 @@ namespace NextPark.Mobile.ViewModels
 
                 if (deletedSeriesParkingEvents != null)
                 {
-                    AddLineToConsole($"Deleted: {deletedSeriesParkingEvents.Count} events for the selected parking  by series");
+                    AddLineToConsole($"Deleted: {deletedSeriesParkingEvents.Result.Count} events for the selected parking  by series");
 
                     AddLineToConsole("Getting parking events  by series OK");
                 }
