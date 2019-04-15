@@ -36,6 +36,15 @@ namespace NextPark.Api
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
-                .UseStartup<Startup>();
+             .ConfigureLogging((hostingContext, logging) =>
+             {
+                 logging.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
+                 logging.AddConsole();
+                 logging.AddDebug();
+                 logging.AddEventSourceLogger();
+                 logging.AddEventLog(new Microsoft.Extensions.Logging.EventLog.EventLogSettings() {
+                     SourceName = "NextPark Api Service"
+                 });
+             }).UseStartup<Startup>();
     }
 }
