@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms" 
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:customMap="clr-namespace:NextPark.Mobile.CustomControls;assembly=NextPark.Mobile"
@@ -78,7 +78,7 @@
                                             BackgroundColor="Red"
                                             WidthRequest="191"
                                             Margin="0"
-                                            IsVisible="false"/>
+                                            IsVisible="true"/>
                                 </StackLayout>
                           </StackLayout>
                       </StackLayout>
@@ -283,7 +283,91 @@
                             </Frame>
                         </StackLayout>
                     </ContentView>
-                    
+
+                    <ContentView x:Name="terminateConfirmPopup" 
+                                 BackgroundColor="#C0606060" 
+                                 Padding="10, 0" 
+                                 IsVisible="{Binding TerminateConfirmVisible}" 
+                                 RelativeLayout.XConstraint="0"
+                                 RelativeLayout.YConstraint="0"
+                                 RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=1}"
+                                 RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}">
+                        <StackLayout VerticalOptions="Center" HorizontalOptions="Center" Spacing="0">
+                            <Frame BorderColor="{DynamicResource NextParkColor1}"
+                                   CornerRadius="16"
+                                   HasShadow="false"
+                                   IsClippedToBounds="true"
+                                   HeightRequest="300"
+                                   WidthRequest="300"
+                                   Padding="0"
+                                   Margin="0">
+                                <Frame.HeightRequest>
+                                    <OnPlatform x:TypeArguments="x:Double">
+                                        <On Platform="iOS" Value="300"/>
+                                        <On Platform="Android" Value="320" />
+                                    </OnPlatform>
+                                </Frame.HeightRequest>
+                            <StackLayout Orientation="Vertical" 
+                                         HeightRequest="300" 
+                                         WidthRequest="300" 
+                                         BackgroundColor="White" 
+                                         Spacing="5" 
+                                         Padding="0" Margin="0">
+                                    <StackLayout.HeightRequest>
+                                        <OnPlatform x:TypeArguments="x:Double">
+                                            <On Platform="iOS" Value="300"/>
+                                            <On Platform="Android" Value="320" />
+                                        </OnPlatform>
+                                    </StackLayout.HeightRequest>
+                                <Label Text="Termina la prenotazione"
+                                       FontSize="Medium"
+                                       FontAttributes="Bold"
+                                       HorizontalOptions="Center"
+                                       Margin="20,20,20,10"/>
+                                <StackLayout Orientation="Horizontal" Spacing="2" HorizontalOptions="Center" Padding="20,0">
+                                    <Label Text="Verrà addebitato l'importo dell'intera prenotazione"
+                                           FontSize="Default"                                           
+                                           VerticalTextAlignment="Center"
+                                           HorizontalTextAlignment="Center"/>
+                                </StackLayout>
+                                <Label Text="Sicuro di terminare la prenotazione?"
+                                       FontSize="Default"
+                                       HorizontalOptions="Center"
+                                       HorizontalTextAlignment="Center"
+                                       VerticalTextAlignment="Center"
+                                       Margin="10,10,0,10"/>
+                                <!-- Activity indicator, active when buying -->
+                                <ActivityIndicator
+                                    IsRunning="{Binding TerminateIsRunning, Mode=TwoWay}"                    
+                                    VerticalOptions="Center"
+                                    Margin="0">
+                                </ActivityIndicator>
+                                <!-- Renew button -->
+                                <Button Text="Conferma"
+                                        FontAttributes="Bold"
+                                        HorizontalOptions="Center"
+                                        Command="{Binding OnTerminateConfirm}"
+                                        TextColor="White"
+                                        BorderRadius="8"
+                                        BackgroundColor="{DynamicResource NextParkColor1}"
+                                        WidthRequest="191"
+                                        Margin="0"/>
+                                <!-- Cancel renew button -->
+                                <Button Text="Annulla"
+                                        FontAttributes="Bold"
+                                        HorizontalOptions="Center"
+                                        Command="{Binding OnTerminateCancel}"
+                                        TextColor="{DynamicResource NextParkColor1}"
+                                        BorderRadius="8"
+                                        BorderColor="{DynamicResource NextParkColor1}"
+                                        BorderWidth="1"
+                                        BackgroundColor="White"
+                                        WidthRequest="191"
+                                        Margin="0"/> 
+                            </StackLayout>
+                            </Frame>
+                        </StackLayout>
+                    </ContentView>
                 </RelativeLayout>
                 
 

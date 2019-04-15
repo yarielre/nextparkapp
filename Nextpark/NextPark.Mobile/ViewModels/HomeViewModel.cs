@@ -36,6 +36,9 @@ namespace NextPark.Mobile.ViewModels
 
         public CustomControls.CustomMap Map { get; set; }  // Custom Map
         public ICommand OnBookingTapped { get; set; }       // Booking button click action
+        public bool BookingBtnEnable { get; set; }
+        public Color BookingBtnBackground { get; set; }
+        public Color BookingBtnBorder { get; set; }
 
         public ICommand OnSearch { get; set; }
         public string SearchText { get; set; }
@@ -302,22 +305,48 @@ namespace NextPark.Mobile.ViewModels
 
         private void Map_PinTapped(object sender, CustomControls.PinTapEventArgs e)
         {
-            UIParkingModel uiParking = _profileService.GetParkingById(e.Parking.Id);
-            if (uiParking != null) {
+            UIParkingModel parking = _profileService.GetParkingById(e.Parking.Id);
+            if (parking != null) {
                 // Parking found
 
+                // Get parking status
+                bool isFree = false;
+                if (_profileService.UserReserveMode)
+                {
+                    // Remove seconds from times
+                    ResStartTime = ResStartTime.Subtract(TimeSpan.FromSeconds(ResStartTime.Seconds));
+                    ResEndTime = ResEndTime.Subtract(TimeSpan.FromSeconds(ResEndTime.Seconds));
+                    isFree = parking.isFree(ResStartDate + ResStartTime, ResEndDate + ResEndTime);
+                    BookingBtnEnable = true;
+                    BookingBtnBorder = (Color)Xamarin.Forms.Application.Current.Resources["NextParkColor1"];
+                    BookingBtnBackground = (Color)Xamarin.Forms.Application.Current.Resources["NextParkColor1"];
+                }
+                else
+                {
+                    isFree = parking.isFree();
+                    if (isFree) {
+                        BookingBtnEnable = true;
+                        BookingBtnBorder = (Color)Xamarin.Forms.Application.Current.Resources["NextParkColor1"];
+                        BookingBtnBackground = (Color)Xamarin.Forms.Application.Current.Resources["NextParkColor1"];
+                    } else {
+                        BookingBtnEnable = false;
+                        BookingBtnBorder = Color.Gray;
+                        BookingBtnBackground = Color.FromHex("#E3E3E3");
+                    }
+                }
+
                 // Update Info panel data
-                if (string.IsNullOrEmpty(uiParking.ImageUrl))
+                if (string.IsNullOrEmpty(parking.ImageUrl))
                 {
                     Picture = "icon_no_photo.png";
                 }
                 else
                 {
-                    Picture = ApiSettings.BaseUrl + uiParking.ImageUrl;
+                    Picture = ApiSettings.BaseUrl + parking.ImageUrl;
                 }
-                StatusText = (uiParking.isFree()) ? "Disponibile" : "Occupato";
-                PriceText = uiParking.PriceMin.ToString("N2") + " CHF/h";
-                UID = uiParking.Id;
+                StatusText = (isFree) ? "Disponibile" : "Occupato";
+                PriceText = parking.PriceMin.ToString("N2") + " CHF/h";
+                UID = parking.Id;
 
                 InfoPanelVisible = true;
 
@@ -325,6 +354,9 @@ namespace NextPark.Mobile.ViewModels
                 base.OnPropertyChanged("StatusText");
                 base.OnPropertyChanged("PriceText");
                 base.OnPropertyChanged("UID");
+                base.OnPropertyChanged("BookingBtnBorder");
+                base.OnPropertyChanged("BookingBtnBackground");
+                base.OnPropertyChanged("BookingBtnEnable");
                 base.OnPropertyChanged("InfoPanelVisible");
             }
         }
@@ -568,6 +600,10 @@ namespace NextPark.Mobile.ViewModels
                 ReserveDatesPopupVisible = false;
                 base.OnPropertyChanged("ReserveDatesPopupVisible");
             }
+
+            // Hide current parking information panel
+            InfoPanelVisible = false;
+            base.OnPropertyChanged("InfoPanelVisible");
 
             base.OnPropertyChanged("BookModeBackColor");
             base.OnPropertyChanged("BookModeTextColor");

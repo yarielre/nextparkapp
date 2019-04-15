@@ -36,11 +36,18 @@ namespace NextPark.Mobile.ViewModels
                     RepetitionEndDate = StartDate;
                     base.OnPropertyChanged("RepetitionEndDate");
                 }
+                if (_startDate > EndDate) {
+                    EndDate = StartDate;
+                    base.OnPropertyChanged("EndDate");
+                }
                 RepetitionMinEndDate = StartDate;
+                MinEndDate = StartDate;
                 base.OnPropertyChanged("RepetitionMinEndDate");
+                base.OnPropertyChanged("MinEndDate");
             } 
         }
         public DateTime MinStartDate { get; set; }  // Minimum event start date
+        public DateTime MinEndDate { get; set; }  // Minimum event start date
         public DateTime EndDate { get; set; }       // Event end date
         public DateTime RepetitionEndDate { get; set; }
         public DateTime RepetitionMinEndDate { get; set; }
@@ -52,6 +59,7 @@ namespace NextPark.Mobile.ViewModels
             get { return _repetitionIndex; }
             set { _repetitionIndex = value; OnRepetitionChangedMethod(_repetitionIndex); } 
         }
+        public bool EndDateVisible { get; set; }        // End date visibility
         public bool RepetitionEndVisible { get; set; }  // Repetition end visibility
 
         public bool TimeSlotVisible { get; set; }   // Timeslot visible
@@ -115,6 +123,7 @@ namespace NextPark.Mobile.ViewModels
             OnDeleteClick = new Command<object>(OnDeleteClickMethod);
 
             TimeSlotVisible = false;
+            EndDateVisible = true;
 
             MinStartDate = DateTime.Now;
             RepetitionMinEndDate = DateTime.Now.Date;
@@ -202,16 +211,19 @@ namespace NextPark.Mobile.ViewModels
                             RepetitionIndex = 0;
                             RepetitionEndVisible = false;
                             WeekDayVisible = false;
+                            EndDateVisible = true;
                             break;
                         case RepetitionType.Dayly:
                             RepetitionIndex = 1;
                             RepetitionEndVisible = true;
                             WeekDayVisible = false;
+                            EndDateVisible = false;
                             break;
                         case RepetitionType.Weekly:
                             RepetitionIndex = 2;
                             RepetitionEndVisible = true;
                             WeekDayVisible = true;
+                            EndDateVisible = false;
                             break;
                     }
 
@@ -222,6 +234,7 @@ namespace NextPark.Mobile.ViewModels
                     base.OnPropertyChanged("MinStartDate");
                     base.OnPropertyChanged("StartTime");
                     base.OnPropertyChanged("EndDate");
+                    base.OnPropertyChanged("EndDateVisible");
                     base.OnPropertyChanged("EndTime");
                     base.OnPropertyChanged("RepetitionEndVisible");
                     base.OnPropertyChanged("RepetitionIndex");
@@ -319,18 +332,22 @@ namespace NextPark.Mobile.ViewModels
                 case 0: // Never
                     RepetitionEndVisible = false;
                     WeekDayVisible = false;
+                    EndDateVisible = true;
                     break;
                 case 1: // Daily
                     RepetitionEndVisible = true;
                     WeekDayVisible = false;
+                    EndDateVisible = false;
                     break;
                 case 2: // Weekly
                     RepetitionEndVisible = true;
                     WeekDayVisible = true;
+                    EndDateVisible = false;
                     break;
             }
             base.OnPropertyChanged("RepetitionEndVisible");
             base.OnPropertyChanged("WeekDayVisible");
+            base.OnPropertyChanged("EndDateVisible");
         }
 
         // Week Day Selected
@@ -372,7 +389,7 @@ namespace NextPark.Mobile.ViewModels
         public async void AddEvent()
         {
             // Check Data
-            if (StartTime > EndTime) {
+            if (((RepetitionIndex != 0) || (StartDate == EndDate)) && (StartTime > EndTime)) {
                 await _dialogService.ShowAlert("Errore", "L'orario di fine deve essere maggiore a quello di inizio");
                 IsRunning = false;
                 base.OnPropertyChanged("IsRunning");
@@ -384,7 +401,7 @@ namespace NextPark.Mobile.ViewModels
                 default:
                 case 0: // Never
                     _event.RepetitionType = RepetitionType.None;
-                    RepetitionEndDate = StartDate;
+                    RepetitionEndDate = EndDate;
                     break;
                 case 1: // Daily
                     _event.RepetitionType = RepetitionType.Dayly;

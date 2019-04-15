@@ -77,6 +77,12 @@ namespace NextPark.Mobile.ViewModels
         public ICommand OnConfirm { get; set; }
         public ICommand OnCancel { get; set; }
 
+        // Terminate confirm pop-up
+        public bool TerminateConfirmVisible { get; set; }
+        public bool TerminateIsRunning { get; set; }
+        public ICommand OnTerminateConfirm { get; set; }
+        public ICommand OnTerminateCancel { get; set; }
+
         // PRIVATE VARIABLES
         private List<TimeSelButton> _timeSelButtons = new List<TimeSelButton>();
         private UIBookingModel order;
@@ -112,7 +118,7 @@ namespace NextPark.Mobile.ViewModels
             ActionVisible = false;
             base.OnPropertyChanged("ActionText");
             base.OnPropertyChanged("ActionVisible");
-            DeleteText = "Elimina";
+            DeleteText = "Termina";
             base.OnPropertyChanged("DeleteText");
 
             OnBackClick = new Command<object>(OnBackClickMethod);
@@ -130,6 +136,10 @@ namespace NextPark.Mobile.ViewModels
             ConfirmVisible = false;
             OnConfirm = new Command(OnConfirmMethod);
             OnCancel = new Command(OnCancelMethod);
+
+            TerminateConfirmVisible = false;
+            OnTerminateConfirm = new Command(OnTerminateConfirmMethod);
+            OnTerminateCancel = new Command(OnTerminateCancelMethod);
         }
 
         public override Task InitializeAsync(object data = null)
@@ -156,9 +166,14 @@ namespace NextPark.Mobile.ViewModels
                 order = parameter;
 
                 if (DateTime.Now < order.StartDate) {
-                    // Early start
-                    ActionText = "Arrivato";
-                    ActionVisible = true;
+                    if (DateTime.Now.AddMinutes(30) >= order.StartDate)
+                    {
+                        // Early start, max 30 minutes before
+                        ActionText = "Arrivato";
+                        ActionVisible = true;
+                    } else {
+                        ActionVisible = false;
+                    }
                     base.OnPropertyChanged("ActionText");
                     base.OnPropertyChanged("ActionVisible");
                 } else {
@@ -168,7 +183,7 @@ namespace NextPark.Mobile.ViewModels
                     base.OnPropertyChanged("ActionText");
                     base.OnPropertyChanged("ActionVisible");
                 }
-
+                /* FUTURE IMPLEMENTATIONS
                 if (DateTime.Now < order.StartDate) {
                     // Delete
                     DeleteText = "Elimina";
@@ -178,6 +193,10 @@ namespace NextPark.Mobile.ViewModels
                     DeleteText = "Termina";
                     base.OnPropertyChanged("DeleteText");
                 }
+                */
+                // Terminate
+                DeleteText = "Termina";
+                base.OnPropertyChanged("DeleteText");
             }
 
             return Task.FromResult(false);
@@ -229,6 +248,13 @@ namespace NextPark.Mobile.ViewModels
                 base.OnPropertyChanged("ConfirmVisible");
                 base.OnPropertyChanged("RenewIsRunning");
             }
+            else if (TerminateConfirmVisible) 
+            {
+                TerminateConfirmVisible = false;
+                TerminateIsRunning = false;
+                base.OnPropertyChanged("TerminateConfirmVisible");
+                base.OnPropertyChanged("TerminateIsRunning");
+            }
             else
             {
                 OnBackClickMethod(null);
@@ -260,8 +286,29 @@ namespace NextPark.Mobile.ViewModels
             if (DateTime.Now < order.StartDate)
             {
                 // Early start
-                // TODO: manage user arrived
-                _dialogService.ShowAlert("Alert", "TODO: manage user arrived");
+
+                // TODO: how many time before can user arrive?
+
+                // Modify order 
+                order.StartDate = DateTime.Now;
+                order.StartDate = order.StartDate - TimeSpan.FromSeconds(order.StartDate.Second);
+                // Update price
+                TimeSpan totalTime = order.EndDate - order.StartDate;
+                order.Price = totalTime.TotalHours * order.Parking.PriceMin;
+                if (order.Parking.UserId == AuthSettings.User.Id)
+                {
+                    order.Price = 0;
+                }
+                // Check user balance
+                if (AuthSettings.User.Balance < order.Price)
+                {
+                    // Not enough credit
+                    _dialogService.ShowAlert("Attenzione", "Credito insufficiente");
+                    NavigationService.NavigateToAsync<MoneyViewModel>();
+                    return;
+                }
+
+                EditOrder();
             }
             else
             {
@@ -300,6 +347,7 @@ namespace NextPark.Mobile.ViewModels
         // Delete button click action
         public void OnBookDelMethod(object sender)
         {
+            /* FUTURE IMPLEMENTATION 
             if (DateTime.Now < order.StartDate)
             {
                 // Delete
@@ -310,6 +358,26 @@ namespace NextPark.Mobile.ViewModels
             {
                 // Terminate
                 TerminateOrder();
+            }
+            */
+            // Ask terminate confirmation
+            TerminateConfirmVisible = true;
+            base.OnPropertyChanged("TerminateConfirmVisible");
+        }
+
+        public async void EditOrder()
+        {
+            try
+            {
+                var result = await _orderDataService.EditOrderAsync(order.Id, order);
+                // TODO: Check edit result
+
+                // TODO: Show Estendi if sucessfull
+
+            }
+            catch (Exception e)
+            {
+                await _dialogService.ShowAlert("Errore", e.Message);
             }
         }
 
@@ -330,6 +398,17 @@ namespace NextPark.Mobile.ViewModels
         {
             try {
                 var result = await _orderDataService.TerminateOrderAsync(order.Id);
+
+                TerminateIsRunning = false;
+                TerminateConfirmVisible = false;
+                base.OnPropertyChanged("TerminateIsRunning");
+                base.OnPropertyChanged("TerminateConfirmVisible");
+
+                // Check terminate order result
+                if (result != null) {
+
+                }
+                await NavigationService.NavigateToAsync<UserBookingViewModel>();
 
             } catch (Exception e) {
                 await _dialogService.ShowAlert("Errore", e.Message);
@@ -452,6 +531,22 @@ namespace NextPark.Mobile.ViewModels
             // Hide activity spinner
             RenewIsRunning = false;
             base.OnPropertyChanged("RenewIsRunning");
+        }
+
+        public void OnTerminateConfirmMethod()
+        {
+            // Show activity spinner
+            TerminateIsRunning = true;
+            base.OnPropertyChanged("TerminateIsRunning");
+            TerminateOrder();
+        }
+
+        public void OnTerminateCancelMethod()
+        {
+            TerminateIsRunning = false;
+            TerminateConfirmVisible = false;
+            base.OnPropertyChanged("TerminateConfirmVisible");
+            base.OnPropertyChanged("TerminateIsRunning");
         }
     }
 }

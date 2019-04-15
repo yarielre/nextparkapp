@@ -68,6 +68,24 @@ namespace NextPark.Mobile.UIModels
         public event PropertyChangedEventHandler PropertyChanged;
 
         // METHODS
+        public UIBookingModel()
+        {
+
+        }
+
+        public UIBookingModel(OrderModel order)
+        {
+            Price = order.Price;
+            StartDate = order.StartDate;
+            EndDate = order.EndDate;
+            OrderStatus = order.OrderStatus;
+            PaymentStatus = order.PaymentStatus;
+            PaymentCode = order.PaymentCode;
+            ParkingId = order.ParkingId;
+            UserId = order.UserId;
+            CarPlate = order.CarPlate;
+        }
+
         protected virtual void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

@@ -92,8 +92,7 @@ namespace NextPark.Api.Controllers
         // PUT api/controller/5
         [HttpPut("{id}")]
         public async Task<ActionResult> Put(int id, [FromBody]EventModel model)
-        {
-            
+        {       
             if (model == null)
             {
                 return BadRequest(ApiResponse.GetErrorResponse("Editing null entity",ErrorType.EntityNull));
@@ -101,24 +100,30 @@ namespace NextPark.Api.Controllers
 
             try // No allow modify an event who has an order pending or active associated to the event
             {
-                var updatedEntity = _mapper.Map<EventModel, Event>(model);
+                var actualEvent = _repository.Find(id);
+                if (actualEvent == null) {
+                    return BadRequest(ApiResponse.GetErrorResponse("Event not found", ErrorType.EntityNotFound));
+                }
+
+                var updatedEvent = _mapper.Map<EventModel, Event>(model);
                 
-                //Get parking associated to the event
-                var parking = await _repositoryParking.FirstOrDefaultWhereAsync(p => p.Id == updatedEntity.ParkingId).ConfigureAwait(false);
+                // Get parking associated to the event
+                var parking = await _repositoryParking.FirstOrDefaultWhereAsync(p => p.Id == actualEvent.ParkingId).ConfigureAwait(false);
                 if (parking == null)
                 {
                     return BadRequest(ApiResponse.GetErrorResponse("Parking not found", ErrorType.EntityNotFound));
                 }
-                // Check if event can be modified
-                var eventCanBeModified = await EventCanBeModified(updatedEntity, parking).ConfigureAwait(false);
+
+                // Check if th event can be modified
+                var eventCanBeModified = await EventCanBeModified(actualEvent, updatedEvent, parking).ConfigureAwait(false);
                 if (!eventCanBeModified)
                 {
                     return BadRequest(ApiResponse.GetErrorResponse("Event has an active order and can't be modified", ErrorType.EventCantBeModified));
                 }
 
-                _repository.Update(updatedEntity);
+                _repository.Update(updatedEvent);
                 await _unitOfWork.CommitAsync().ConfigureAwait(false);
-                var vm = _mapper.Map<Event, EventModel>(updatedEntity);
+                var vm = _mapper.Map<Event, EventModel>(updatedEvent);
                 return Ok(ApiResponse.GetSuccessResponse(vm,"Event Updated"));
             }
             catch (Exception e)
@@ -142,18 +147,33 @@ namespace NextPark.Api.Controllers
                 return BadRequest(ApiResponse.GetErrorResponse("Event not found",ErrorType.EntityNotFound));
             }
 
-            var eventSerie = await _repository.FindAllWhereAsync(ev => ev.RepetitionId == entityEvent.RepetitionId).ConfigureAwait(false);
+            var updatedEvent = _mapper.Map<EventModel, Event>(model);
 
+            // Get parking associated to the event
+            var parking = await _repositoryParking.FirstOrDefaultWhereAsync(p => p.Id == entityEvent.ParkingId).ConfigureAwait(false);
+            if (parking == null)
+            {
+                return BadRequest(ApiResponse.GetErrorResponse("Parking not found", ErrorType.EntityNotFound));
+            }
+
+            // Check if all events of the serie can be modified
+            var eventSerie = await _repository.FindAllWhereAsync(ev => ev.RepetitionId == entityEvent.RepetitionId).ConfigureAwait(false);
             var updatedSerie = new List<Event>();
 
-            foreach (var ev in eventSerie)
+            foreach (Event ev in eventSerie)
             {
-                ev.StartDate = model.StartDate;
-                ev.EndDate = model.EndDate;
-                ev.RepetitionEndDate = model.RepetitionEndDate;
+                Event actualUpdatedEvent = ev;
+                actualUpdatedEvent.StartDate = ev.StartDate + updatedEvent.StartDate.TimeOfDay;
+                actualUpdatedEvent.EndDate = ev.EndDate + updatedEvent.EndDate.TimeOfDay;
+                actualUpdatedEvent.RepetitionEndDate = updatedEvent.RepetitionEndDate;
 
-                _repository.Update(ev);
-                updatedSerie.Add(ev);
+                var eventCanBeModified = await EventCanBeModified(ev, actualUpdatedEvent, parking).ConfigureAwait(false);
+                if (!eventCanBeModified)
+                {
+                    return BadRequest(ApiResponse.GetErrorResponse("Event has an active order and can't be modified", ErrorType.EventCantBeModified));
+                }
+                _repository.Update(actualUpdatedEvent);
+                updatedSerie.Add(actualUpdatedEvent);
             }
 
             await _unitOfWork.CommitAsync().ConfigureAwait(false);
@@ -173,19 +193,22 @@ namespace NextPark.Api.Controllers
             {
                 return BadRequest(ApiResponse.GetErrorResponse("Can't delete, entity not found.",ErrorType.EntityNotFound));
             }
-            //Get parking associated to the event
+
+            // Get parking associated to the event
             var parking = await _repositoryParking.FirstOrDefaultWhereAsync(p => p.Id == entity.ParkingId).ConfigureAwait(false);
             if (parking == null)
             {
                 return BadRequest(ApiResponse.GetErrorResponse("Parking not found", ErrorType.EntityNotFound));
             }
-            var eventCanBeModified = await EventCanBeModified(entity, parking).ConfigureAwait(false);
-            if (!eventCanBeModified)
+
+            // Check if event can be deleted
+            var eventCanBeDeleted = await EventCanBeDeleted(entity, parking).ConfigureAwait(false);
+            if (!eventCanBeDeleted)
             {
                 return BadRequest(ApiResponse.GetErrorResponse("Event has an active order and can't be modified", ErrorType.EventCantBeModified));
             }
-            var vm = _mapper.Map<Event, EventModel>(entity);
 
+            var vm = _mapper.Map<Event, EventModel>(entity);
             _repository.Delete(entity);
 
             await _unitOfWork.CommitAsync().ConfigureAwait(false);
@@ -203,7 +226,23 @@ namespace NextPark.Api.Controllers
                 return BadRequest(ApiResponse.GetErrorResponse("Can't deleted, entity not found.",ErrorType.EntityNotFound));
             }
 
+            // Get parking associated to the event
+            var parking = await _repositoryParking.FirstOrDefaultWhereAsync(p => p.Id == entity.ParkingId).ConfigureAwait(false);
+            if (parking == null)
+            {
+                return BadRequest(ApiResponse.GetErrorResponse("Parking not found", ErrorType.EntityNotFound));
+            }
+
+            // Check if all events of the serie can be deleted
             var eventSerie = await _repository.FindAllWhereAsync(ev => ev.RepetitionId == entity.RepetitionId);
+
+            foreach (Event entityEvent in eventSerie) {
+                var eventCanBeModified = await EventCanBeDeleted(entityEvent, parking).ConfigureAwait(false);
+                if (!eventCanBeModified)
+                {
+                    return BadRequest(ApiResponse.GetErrorResponse("Event has an active order and can't be modified", ErrorType.EventCantBeModified));
+                }
+            }
 
             _repository.Delete(eventSerie);
 
@@ -333,18 +372,35 @@ namespace NextPark.Api.Controllers
             }
             return result.OrderBy(e => e.StartDate).ToList();
         }
-        private async Task<bool> EventCanBeModified(Event eventToModify, Parking parking)
+        private async Task<bool> EventCanBeDeleted(Event eventToBeDeleted, Parking parking)
         {
-            //Get orders associated to the parking, status actived and orders'date and time match the event's period of time
+            // Get orders associated to the parking with time match with the event
             var orders = await _repositoryOrder.FindAllWhereAsync(o => o.ParkingId == parking.Id
-                                                                       && o.OrderStatus == OrderStatus.Actived
-                                                                       && o.StartDate.Date >= eventToModify.StartDate.Date
-                                                                       && o.EndDate.Date <= eventToModify.EndDate.Date
-                                                                       && o.StartDate.TimeOfDay >= eventToModify.StartDate.TimeOfDay
-                                                                       && o.EndDate.Date.TimeOfDay <= eventToModify.EndDate.TimeOfDay)
-                .ConfigureAwait(false);
-            // If not found orders, then event can be modified
+                                                                  && o.StartDate < eventToBeDeleted.EndDate
+                                                                  && o.EndDate > eventToBeDeleted.StartDate).ConfigureAwait(false);
+
+            // If not found orders, then event can be deleted
             return orders.Count == 0;
+        }
+
+        private async Task<bool> EventCanBeModified(Event actualEvent, Event updatedEvent, Parking parking)
+        {
+            // Get orders associated to the parking with time match with the event
+            var orders = await _repositoryOrder.FindAllWhereAsync(o => o.ParkingId == parking.Id
+                                                                  && o.StartDate < actualEvent.EndDate
+                                                                  && o.EndDate > actualEvent.StartDate).ConfigureAwait(false);
+
+            // Check if the change does affect an order
+            foreach (Order order in orders)
+            {
+                if (((updatedEvent.StartDate.TimeOfDay > TimeSpan.FromMinutes(0)) && (updatedEvent.StartDate > order.StartDate)) || ((updatedEvent.EndDate.TimeOfDay < TimeSpan.FromMinutes(1439)) && (updatedEvent.EndDate < order.EndDate)))
+                {
+                    return false;
+                }
+            }
+
+            // If no order is affected, then event can be modified
+            return true;
         }
     }
 }

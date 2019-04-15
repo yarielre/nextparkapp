@@ -19,7 +19,7 @@
                         <color key="backgroundColor" colorSpace="calibratedRGB" red="0.1803921568627451" green="0.60392156862745094" blue="0.63137254901960782" alpha="1"/>
                         <subviews>
                             <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" id="639" translatesAutoresizingMaskIntoConstraints="NO" fixedFrame="YES" image="logo.png">
-                                <rect key="frame" x="57" y="288" width="300" height="160"/>
+                                <rect key="frame" x="143" y="304" width="128" height="128"/>
                                 <autoresizingMask key="autoresizingMask" heightSizable="YES" widthSizable="YES"/>
                                 <edgeInsets key="layoutMargins" top="8" left="8" bottom="8" right="8"/>
                             </imageView>

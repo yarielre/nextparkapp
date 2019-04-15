@@ -117,13 +117,13 @@ namespace NextPark.Mobile.ViewModels
             base.OnPropertyChanged("Profit");
 
             // Parkings
-            ParkingsStatus = "1/1 liberi";
-            ParkingsAvailability = "1/1 disponibili";
+            ParkingsStatus = "Caricamento...";
+            ParkingsAvailability = "";
             base.OnPropertyChanged("ParkingsStatus");
             base.OnPropertyChanged("ParkingsAvailability");
 
             // Bookings
-            NextBooking = "nessuna prenotazione";
+            NextBooking = "Caricamento...";
             base.OnPropertyChanged("NextBooking");
 
             UpdateUserParkingData();
