@@ -437,9 +437,11 @@ namespace NextPark.Mobile.ViewModels
                 {
                     // Update order time
                     order.EndDate.AddMinutes(RenewTime.TotalMinutes);
+
                     // Update order price
                     TimeSpan totalTime = order.EndDate - order.StartDate;
                     order.Price = totalTime.TotalHours * order.Parking.PriceMin;
+
                     // Check user balance
                     if (AuthSettings.User.Balance < order.Price)
                     {
@@ -448,11 +450,41 @@ namespace NextPark.Mobile.ViewModels
                         await NavigationService.NavigateToAsync<MoneyViewModel>();
                         return;
                     }
+
                     // Send order update
                     var result = await _orderDataService.EditOrderAsync(order.Id, order);
                     if (result != null)
                     {
-
+                        if (result.IsSuccess == true)
+                        {
+                            // Successful
+                            await NavigationService.NavigateToAsync<UserBookingViewModel>();
+                        }
+                        else if (result.ErrorType == Enums.Enums.ErrorType.NotEnoughMoney)
+                        {
+                            // Not enough credit
+                            await _dialogService.ShowAlert("Attenzione", "Credito insufficiente");
+                            await NavigationService.NavigateToAsync<MoneyViewModel>();
+                            return;
+                        }
+                        else if ((result.ErrorType == Enums.Enums.ErrorType.ParkingNotOrderable) || (result.ErrorType == Enums.Enums.ErrorType.ParkingNotVailable))
+                        {
+                            // Parking not available
+                            await _dialogService.ShowAlert("Attenzione", "Il parcheggio non è più disponibile");
+                            return;
+                        }
+                        else
+                        {
+                            // Unexpected error
+                            await _dialogService.ShowAlert("Errore", "Impossibile rinnovare l'ordine");
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        // Unexpected error
+                        await _dialogService.ShowAlert("Errore", "Impossibile rinnovare l'ordine");
+                        return;
                     }
                 }
             } catch (Exception e) {

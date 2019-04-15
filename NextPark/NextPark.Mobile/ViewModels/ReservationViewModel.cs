@@ -247,11 +247,39 @@ namespace NextPark.Mobile.ViewModels
 
                 if (result != null)
                 {
-                    await NavigationService.NavigateToAsync<UserBookingViewModel>();
+                    if (result.IsSuccess == true)
+                    {
+                        // Successful
+                        await NavigationService.NavigateToAsync<UserBookingViewModel>();
+                    }
+                    else if (result.ErrorType == Enums.Enums.ErrorType.NotEnoughMoney)
+                    {
+                        // Not enough credit
+                        await _dialogService.ShowAlert("Attenzione", "Credito insufficiente");
+                        await NavigationService.NavigateToAsync<MoneyViewModel>();
+                        return;
+                    }
+                    else if ((result.ErrorType == Enums.Enums.ErrorType.ParkingNotOrderable) || (result.ErrorType == Enums.Enums.ErrorType.ParkingNotVailable))
+                    {
+                        // Parking not available
+                        await _dialogService.ShowAlert("Attenzione", "Il parcheggio non è più disponibile");
+                        await NavigationService.NavigateToAsync<HomeViewModel>();
+                        return;
+                    }
+                    else
+                    {
+                        // Unexpected error
+                        await _dialogService.ShowAlert("Errore", "Impossibile eseguire l'ordine");
+                        await NavigationService.NavigateToAsync<HomeViewModel>();
+                        return;
+                    }
                 }
                 else
                 {
+                    // Unexpected error
                     await _dialogService.ShowAlert("Errore", "Impossibile eseguire l'ordine");
+                    await NavigationService.NavigateToAsync<HomeViewModel>();
+                    return;
                 }
             }
             catch (Exception e)
