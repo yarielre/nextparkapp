@@ -419,9 +419,15 @@ namespace NextPark.Mobile.ViewModels
         // Renew order button click action
         public void OnRenewMethod(object sender)
         {
+            double price = (RenewTime.TotalHours * order.Parking.PriceMin);
+            if (order.Parking.UserId == AuthSettings.User.Id)
+            {
+                price = 0.0;
+            }
+
             // Ask confirm
             ConfirmTotalTime = string.Format("{0:%h} h {0:%m} min", RenewTime);
-            ConfirmPrice = (RenewTime.TotalHours * order.Parking.PriceMin).ToString("N2") + " CHF";
+            ConfirmPrice = (price).ToString("N2") + " CHF";
             ConfirmVisible = true;
             RenewVisible = false;
 
@@ -437,11 +443,15 @@ namespace NextPark.Mobile.ViewModels
                 if (RenewTime.TotalMinutes > 0)
                 {
                     // Update order time
-                    order.EndDate.AddMinutes(RenewTime.TotalMinutes);
+                    order.EndDate = order.EndDate.AddMinutes(RenewTime.TotalMinutes);
 
                     // Update order price
                     TimeSpan totalTime = order.EndDate - order.StartDate;
                     order.Price = totalTime.TotalHours * order.Parking.PriceMin;
+                    if (order.UserId == AuthSettings.User.Id)
+                    {
+                        order.Price = 0;
+                    }
 
                     // Check user balance
                     if (AuthSettings.User.Balance < order.Price)
@@ -453,7 +463,8 @@ namespace NextPark.Mobile.ViewModels
                     }
 
                     // Send order update
-                    var result = await _orderDataService.EditOrderAsync(order.Id, order);
+                    //var result = await _orderDataService.EditOrderAsync(order.Id, order);
+                    var result = await _orderDataService.RenovateOrderAsync(order.Id, order);
                     if (result != null)
                     {
                         if (result.IsSuccess == true)
