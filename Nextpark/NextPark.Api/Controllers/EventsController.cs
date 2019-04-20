@@ -147,8 +147,7 @@ namespace NextPark.Api.Controllers
                 return BadRequest(ApiResponse.GetErrorResponse("Event not found",ErrorType.EntityNotFound));
             }
 
-            var updatedEvent = _mapper.Map<EventModel, Event>(model);
-
+         
             // Get parking associated to the event
             var parking = await _repositoryParking.FirstOrDefaultWhereAsync(p => p.Id == entityEvent.ParkingId).ConfigureAwait(false);
             if (parking == null)
@@ -160,21 +159,27 @@ namespace NextPark.Api.Controllers
             var eventSerie = await _repository.FindAllWhereAsync(ev => ev.RepetitionId == entityEvent.RepetitionId).ConfigureAwait(false);
             var updatedSerie = new List<Event>();
 
-            foreach (Event ev in eventSerie)
+            foreach (Event @event in eventSerie)
             {
-                Event actualUpdatedEvent = ev;
-                actualUpdatedEvent.StartDate = ev.StartDate + updatedEvent.StartDate.TimeOfDay;
-                actualUpdatedEvent.EndDate = ev.EndDate + updatedEvent.EndDate.TimeOfDay;
-                actualUpdatedEvent.RepetitionEndDate = updatedEvent.RepetitionEndDate;
+                Event updatedEvent = @event;
+                updatedEvent.StartDate = model.StartDate;
+                updatedEvent.EndDate = model.EndDate;
+                updatedEvent.RepetitionEndDate = model.RepetitionEndDate;
 
-                var eventCanBeModified = await EventCanBeModified(ev, actualUpdatedEvent, parking).ConfigureAwait(false);
+                var eventCanBeModified = await EventCanBeModified(@event, updatedEvent, parking).ConfigureAwait(false);
                 if (!eventCanBeModified)
                 {
                     return BadRequest(ApiResponse.GetErrorResponse("Event has an active order and can't be modified", ErrorType.EventCantBeModified));
                 }
-                _repository.Update(actualUpdatedEvent);
-                updatedSerie.Add(actualUpdatedEvent);
+                
+                updatedSerie.Add(updatedEvent);
             }
+
+            foreach(Event @event in updatedSerie)
+            {
+                _repository.Update(@event);
+            }
+
 
             await _unitOfWork.CommitAsync().ConfigureAwait(false);
             
