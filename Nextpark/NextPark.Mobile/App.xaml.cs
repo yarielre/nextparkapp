@@ -16,10 +16,10 @@ namespace NextPark.Mobile
             InitializeComponent();
             InitializeApp();
 
-            //MainPage = new LaunchScreen();
+            MainPage = new LaunchScreen();
 
             //Change to the test page for api services testing. 
-            MainPage = new TestPage();
+            //MainPage = new TestPage();
 
         }
 
