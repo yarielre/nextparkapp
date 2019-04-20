@@ -67,6 +67,7 @@ namespace NextPark.Mobile.ViewModels
         private readonly IDialogService _dialogService;
         private readonly IGeolocatorService _geoLocatorService;
         private readonly IParkingDataService _parkingDataService;
+        private readonly IProfileService _profileService;
 
         // PRIVATE VARIABLES
         private bool _isAuthorized;
@@ -87,7 +88,8 @@ namespace NextPark.Mobile.ViewModels
                                    IApiService apiService,
                                    IAuthService authService,
                                    INavigationService navService,
-                                   IParkingDataService parkingDataService)
+                                   IParkingDataService parkingDataService,
+                                   IProfileService profileService)
                                    : base(apiService, authService, navService)
         {
             _dialogService = dialogService;
@@ -394,6 +396,9 @@ namespace NextPark.Mobile.ViewModels
                 var addResponse = await _parkingDataService.CreateParkingAsync(model);
 
                 if (addResponse != null) {
+                    // Add new parking to user parking list
+                    _profileService.ParkingList.Add(new UIModels.UIParkingModel(addResponse));
+
                     await NavigationService.NavigateToAsync<UserParkingViewModel>();
                 }
             } 
