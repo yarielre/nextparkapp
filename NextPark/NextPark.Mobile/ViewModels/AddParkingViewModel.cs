@@ -9,6 +9,7 @@ using NextPark.Mobile.Settings;
 using NextPark.Mobile.Services.Data;
 using NextPark.Models;
 using Plugin.Geolocator.Abstractions;
+using NextPark.Mobile.UIModels;
 
 namespace NextPark.Mobile.ViewModels
 {
@@ -67,6 +68,7 @@ namespace NextPark.Mobile.ViewModels
         private readonly IDialogService _dialogService;
         private readonly IGeolocatorService _geoLocatorService;
         private readonly IParkingDataService _parkingDataService;
+        private readonly IProfileService _profileService;
 
         // PRIVATE VARIABLES
         private bool _isAuthorized;
@@ -87,12 +89,14 @@ namespace NextPark.Mobile.ViewModels
                                    IApiService apiService,
                                    IAuthService authService,
                                    INavigationService navService,
-                                   IParkingDataService parkingDataService)
+                                   IParkingDataService parkingDataService,
+                                   IProfileService profileService)
                                    : base(apiService, authService, navService)
         {
             _dialogService = dialogService;
             _geoLocatorService = geolocatorService;
             _parkingDataService = parkingDataService;
+            _profileService = profileService;
 
             // Header
             UserName = AuthSettings.User.Name;
@@ -346,6 +350,9 @@ namespace NextPark.Mobile.ViewModels
             // Check input data
             if (!AddParkingDataCheck()) {
 
+                // PriceMax temporarily disabled
+                PriceMax = PriceMin;
+
                 // Create model 
                 ParkingModel model = new ParkingModel
                 {
@@ -394,6 +401,9 @@ namespace NextPark.Mobile.ViewModels
                 var addResponse = await _parkingDataService.CreateParkingAsync(model);
 
                 if (addResponse != null) {
+                    // Add the created parking to user parking list
+                    _profileService.ParkingList.Add(new UIParkingModel(addResponse));
+                    // Go to user parking list
                     await NavigationService.NavigateToAsync<UserParkingViewModel>();
                 }
             } 
