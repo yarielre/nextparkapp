@@ -28,14 +28,13 @@ namespace NextPark.Mobile.Services.Data
                 throw new Exception($"Error setting model on server: {ex.Message}");
             }
         }
-        public async Task<OrderModel> RenovateOrderAsync(int id,OrderModel order)
+        public async Task<ApiResponse<OrderModel>> RenovateOrderAsync(int id,OrderModel order)
         {
             try
             {
                 var url = $"{ApiSettings.OrdersEndPoint}/{id}/renew";
                 var response = await _apiService.Put(url, order).ConfigureAwait(false);
-
-                return response.IsSuccess ? response.Result : null;
+                return response;
             }
             catch (Exception ex)
             {
