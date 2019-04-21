@@ -100,28 +100,38 @@ namespace NextPark.Api.Controllers
 
             try // No allow modify an event who has an order pending or active associated to the event
             {
-                var actualEvent = _repository.Find(id);
-                if (actualEvent == null) {
+               
+                var @event = _repository.Find(id);
+
+
+                if (@event == null) {
                     return BadRequest(ApiResponse.GetErrorResponse("Event not found", ErrorType.EntityNotFound));
                 }
-
-                var updatedEvent = _mapper.Map<EventModel, Event>(model);
+                
                 
                 // Get parking associated to the event
-                var parking = await _repositoryParking.FirstOrDefaultWhereAsync(p => p.Id == actualEvent.ParkingId).ConfigureAwait(false);
+                var parking = await _repositoryParking.FirstOrDefaultWhereAsync(p => p.Id == @event.ParkingId).ConfigureAwait(false);
                 if (parking == null)
                 {
                     return BadRequest(ApiResponse.GetErrorResponse("Parking not found", ErrorType.EntityNotFound));
                 }
 
+                //Updating an id unmuted event instance. 
+                Event updatedEvent = @event;
+                updatedEvent.StartDate = model.StartDate;
+                updatedEvent.EndDate = model.EndDate;
+                updatedEvent.RepetitionEndDate = model.RepetitionEndDate;
+                
                 // Check if th event can be modified
-                var eventCanBeModified = await EventCanBeModified(actualEvent, updatedEvent, parking).ConfigureAwait(false);
+                var eventCanBeModified = await EventCanBeModified(@event, updatedEvent, parking).ConfigureAwait(false);
                 if (!eventCanBeModified)
                 {
                     return BadRequest(ApiResponse.GetErrorResponse("Event has an active order and can't be modified", ErrorType.EventCantBeModified));
                 }
 
                 _repository.Update(updatedEvent);
+
+
                 await _unitOfWork.CommitAsync().ConfigureAwait(false);
                 var vm = _mapper.Map<Event, EventModel>(updatedEvent);
                 return Ok(ApiResponse.GetSuccessResponse(vm,"Event Updated"));
