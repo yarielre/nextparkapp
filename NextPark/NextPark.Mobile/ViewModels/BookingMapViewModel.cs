@@ -406,11 +406,11 @@ namespace NextPark.Mobile.ViewModels
                 base.OnPropertyChanged("TerminateConfirmVisible");
 
                 // Check terminate order result
-                if (result != null) {
-
+                if ((result == null) || (result.IsSuccess != true)) {
+                    await _dialogService.ShowAlert("Errore", "Ordine non terminato");
+                } else {
+                    await NavigationService.NavigateToAsync<UserBookingViewModel>();
                 }
-                await NavigationService.NavigateToAsync<UserBookingViewModel>();
-
             } catch (Exception e) {
                 await _dialogService.ShowAlert("Errore", e.Message);
             }
