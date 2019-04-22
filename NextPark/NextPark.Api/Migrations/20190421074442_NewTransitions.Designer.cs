@@ -10,8 +10,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace NextPark.Api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20190413102701_NewTransaction")]
-    partial class NewTransaction
+    [Migration("20190421074442_NewTransitions")]
+    partial class NewTransitions
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

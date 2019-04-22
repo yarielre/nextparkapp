@@ -42,9 +42,9 @@ namespace NextPark.Api
                  logging.AddConsole();
                  logging.AddDebug();
                  logging.AddEventSourceLogger();
-                 logging.AddEventLog(new Microsoft.Extensions.Logging.EventLog.EventLogSettings() {
-                     SourceName = "NextPark Api Service"
-                 });
+                 //logging.AddEventLog(new Microsoft.Extensions.Logging.EventLog.EventLogSettings() {
+                 //    SourceName = "NextPark Api Service"
+                 //});
              }).UseStartup<Startup>();
     }
 }

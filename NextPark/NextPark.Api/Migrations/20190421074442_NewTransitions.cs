@@ -4,7 +4,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace NextPark.Api.Migrations
 {
-    public partial class NewTransaction : Migration
+    public partial class NewTransitions : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

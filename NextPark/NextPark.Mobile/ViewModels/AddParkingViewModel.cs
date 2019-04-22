@@ -353,7 +353,7 @@ namespace NextPark.Mobile.ViewModels
                 // PriceMax temporarily disabled
                 PriceMax = PriceMin;
 
-                // Create model 
+                // Create model
                 ParkingModel model = new ParkingModel
                 {
                     Address = Address,
@@ -406,11 +406,11 @@ namespace NextPark.Mobile.ViewModels
                     // Go to user parking list
                     await NavigationService.NavigateToAsync<UserParkingViewModel>();
                 }
-            } 
+            }
             catch (Exception e)
             {
                 await _dialogService.ShowAlert("Errore", e.Message);
-            } 
+            }
             finally
             {
                 // Stop activity spinner

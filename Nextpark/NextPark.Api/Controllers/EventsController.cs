@@ -100,28 +100,39 @@ namespace NextPark.Api.Controllers
 
             try // No allow modify an event who has an order pending or active associated to the event
             {
-                var actualEvent = _repository.Find(id);
-                if (actualEvent == null) {
+               
+                var currentEvent = _repository.Find(id);
+
+
+                if (currentEvent == null) {
                     return BadRequest(ApiResponse.GetErrorResponse("Event not found", ErrorType.EntityNotFound));
                 }
-
-                var updatedEvent = _mapper.Map<EventModel, Event>(model);
+                
                 
                 // Get parking associated to the event
-                var parking = await _repositoryParking.FirstOrDefaultWhereAsync(p => p.Id == actualEvent.ParkingId).ConfigureAwait(false);
+                var parking = await _repositoryParking.FirstOrDefaultWhereAsync(p => p.Id == currentEvent.ParkingId).ConfigureAwait(false);
                 if (parking == null)
                 {
                     return BadRequest(ApiResponse.GetErrorResponse("Parking not found", ErrorType.EntityNotFound));
                 }
 
+                // Update the event instance. 
+                Event updatedEvent = currentEvent;
+                updatedEvent.StartDate = model.StartDate;
+                updatedEvent.EndDate = model.EndDate;
+                // TODO: Future improvement: allow repetition changes
+                // updatedEvent.RepetitionEndDate = model.RepetitionEndDate;
+                
                 // Check if th event can be modified
-                var eventCanBeModified = await EventCanBeModified(actualEvent, updatedEvent, parking).ConfigureAwait(false);
+                var eventCanBeModified = await EventCanBeModified(currentEvent, updatedEvent, parking).ConfigureAwait(false);
                 if (!eventCanBeModified)
                 {
                     return BadRequest(ApiResponse.GetErrorResponse("Event has an active order and can't be modified", ErrorType.EventCantBeModified));
                 }
 
                 _repository.Update(updatedEvent);
+
+
                 await _unitOfWork.CommitAsync().ConfigureAwait(false);
                 var vm = _mapper.Map<Event, EventModel>(updatedEvent);
                 return Ok(ApiResponse.GetSuccessResponse(vm,"Event Updated"));
@@ -147,8 +158,7 @@ namespace NextPark.Api.Controllers
                 return BadRequest(ApiResponse.GetErrorResponse("Event not found",ErrorType.EntityNotFound));
             }
 
-            var updatedEvent = _mapper.Map<EventModel, Event>(model);
-
+         
             // Get parking associated to the event
             var parking = await _repositoryParking.FirstOrDefaultWhereAsync(p => p.Id == entityEvent.ParkingId).ConfigureAwait(false);
             if (parking == null)
@@ -160,20 +170,27 @@ namespace NextPark.Api.Controllers
             var eventSerie = await _repository.FindAllWhereAsync(ev => ev.RepetitionId == entityEvent.RepetitionId).ConfigureAwait(false);
             var updatedSerie = new List<Event>();
 
-            foreach (Event ev in eventSerie)
+            foreach (Event currentEvent in eventSerie)
             {
-                Event actualUpdatedEvent = ev;
-                actualUpdatedEvent.StartDate = ev.StartDate + updatedEvent.StartDate.TimeOfDay;
-                actualUpdatedEvent.EndDate = ev.EndDate + updatedEvent.EndDate.TimeOfDay;
-                actualUpdatedEvent.RepetitionEndDate = updatedEvent.RepetitionEndDate;
+                // Update the event instance
+                Event updatedEvent = currentEvent;
+                updatedEvent.StartDate = model.StartDate;
+                updatedEvent.EndDate = model.EndDate;
+                // TODO: Future improvement: allow repetition changes
+                // updatedEvent.RepetitionEndDate = model.RepetitionEndDate;
 
-                var eventCanBeModified = await EventCanBeModified(ev, actualUpdatedEvent, parking).ConfigureAwait(false);
+                var eventCanBeModified = await EventCanBeModified(currentEvent, updatedEvent, parking).ConfigureAwait(false);
                 if (!eventCanBeModified)
                 {
                     return BadRequest(ApiResponse.GetErrorResponse("Event has an active order and can't be modified", ErrorType.EventCantBeModified));
                 }
-                _repository.Update(actualUpdatedEvent);
-                updatedSerie.Add(actualUpdatedEvent);
+                
+                updatedSerie.Add(updatedEvent);
+            }
+
+            foreach(Event @event in updatedSerie)
+            {
+                _repository.Update(@event);
             }
 
             await _unitOfWork.CommitAsync().ConfigureAwait(false);

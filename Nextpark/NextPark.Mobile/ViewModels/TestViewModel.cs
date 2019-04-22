@@ -422,9 +422,14 @@ namespace NextPark.Mobile.ViewModels
 
                 if (deletedSeriesParkingEvents != null)
                 {
-                    AddLineToConsole($"Deleted: {deletedSeriesParkingEvents.Result.Count} events for the selected parking  by series");
+                    if (deletedSeriesParkingEvents.IsSuccess == true)
+                    {
+                        AddLineToConsole($"Deleted: {deletedSeriesParkingEvents.Result.Count} events for the selected parking  by series");
 
-                    AddLineToConsole("Getting parking events  by series OK");
+                        AddLineToConsole("Getting parking events  by series OK");
+                    } else {
+                        AddLineToConsole("Delete by serie error: " + deletedSeriesParkingEvents.Message);
+                    }
                 }
                 else
                 {
@@ -676,11 +681,32 @@ namespace NextPark.Mobile.ViewModels
             {
                 AddLineToConsole($"Created: {result.Count} dayly events for the created parking");
                 AddLineToConsole("Creating dayly events OK");
+
+                if (result.Count > 0)
+                {
+                    AddLineToConsole("Modifying event ");
+                    result[0].EndDate = result[0].EndDate.AddMinutes(30);
+                    var updateResult = await _eventDataService.EditEventsAsync(result[0].Id, result[0]);
+                    if (updateResult == null)
+                    {
+                        AddLineToConsole("Modifying event FAILED");
+                    }
+                    else if (updateResult.IsSuccess == false)
+                    {
+                        AddLineToConsole("Modifying event FAILED: " + updateResult.Message);
+                    }
+                    else
+                    {
+                        AddLineToConsole("Modifying event OK");
+                    }
+                }
+
             }
             else
             {
                 AddLineToConsole("Creating test case events FAILED");
             }
+
             AddLineToConsole("Getting posted parking's events ");
             var events = await _eventDataService.GetAllEventsAsync();
             AddLineToConsole($"Found: {events.Count} events.");
