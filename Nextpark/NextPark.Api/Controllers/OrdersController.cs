@@ -350,7 +350,7 @@ namespace NextPark.Api.Controllers
                 if (user.Balance < userAmountToPay)
                     return BadRequest(ApiResponse.GetErrorResponse("Not enough money", ErrorType.NotEnoughMoney));
 
-                // Update the order instance
+                // Update the same unmuted order instance
                 Order updatedOrder = currentOrder;
                 updatedOrder.StartDate = model.StartDate;
                 updatedOrder.EndDate = model.EndDate;

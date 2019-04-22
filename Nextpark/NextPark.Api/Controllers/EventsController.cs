@@ -116,7 +116,7 @@ namespace NextPark.Api.Controllers
                     return BadRequest(ApiResponse.GetErrorResponse("Parking not found", ErrorType.EntityNotFound));
                 }
 
-                // Update the event instance. 
+                // Update the same unmuted event instance. 
                 Event updatedEvent = currentEvent;
                 updatedEvent.StartDate = model.StartDate;
                 updatedEvent.EndDate = model.EndDate;
