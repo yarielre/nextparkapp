@@ -57,21 +57,25 @@ namespace NextPark.Api.Controllers
 
             try
             {
-                var updatedOrder = _mapper.Map<OrderModel, Order>(model);
+                Order currentOrder = _orderRepository.Find(model.Id);
+                if (currentOrder == null)
+                {
+                    return BadRequest(ApiResponse.GetErrorResponse("Order not found", ErrorType.EntityNotFound));
+                }
 
-                var parking = await _parkingRepository.FirstOrDefaultWhereAsync(p => p.Id == model.ParkingId,
+                Parking parking = await _parkingRepository.FirstOrDefaultWhereAsync(p => p.Id == model.ParkingId,
                     new CancellationToken(), p => p.Events).ConfigureAwait(false);
 
                 if (parking == null)
                     return BadRequest(ApiResponse.GetErrorResponse("Parking not found", ErrorType.EntityNotFound));
 
-                var isAvailable = IsParkingAvailable(parking, model);
+                bool isAvailable = IsParkingAvailable(parking, model);
 
                 if (!isAvailable)
                     return BadRequest(ApiResponse.GetErrorResponse("Parking is not available", ErrorType.ParkingNotVailable));
 
                 // Get all overlapped orders except this
-                var overlappedOrders = await _orderRepository.FindAllWhereAsync(o => o.ParkingId == model.ParkingId &&
+                List<Order> overlappedOrders = await _orderRepository.FindAllWhereAsync(o => o.ParkingId == model.ParkingId &&
                                                                                 o.Id != model.Id &&
                                                                                 o.EndDate > model.StartDate &&
                                                                                 o.StartDate < model.EndDate);
@@ -79,7 +83,7 @@ namespace NextPark.Api.Controllers
                 if (overlappedOrders.Count > 0)
                     return BadRequest(ApiResponse.GetErrorResponse("Parking is not orderable", ErrorType.ParkingNotOrderable));
 
-                var user = await _useRepository.FirstOrDefaultWhereAsync(u => u.Id == model.UserId).ConfigureAwait(false);
+                ApplicationUser user = await _useRepository.FirstOrDefaultWhereAsync(u => u.Id == model.UserId).ConfigureAwait(false);
                 if (user == null)
                 {
                     return BadRequest(ApiResponse.GetErrorResponse("User not found",ErrorType.EntityNotFound));
@@ -87,8 +91,9 @@ namespace NextPark.Api.Controllers
 
                 double userAmountToPay = model.Price;
 
-                // Get all user's active orders
-                var userActiveOrders = await _orderRepository.FindAllWhereAsync(o => o.UserId == user.Id &&
+                // Get all user's active orders except this
+                List<Order> userActiveOrders = await _orderRepository.FindAllWhereAsync(o => o.UserId == user.Id &&
+                                                                                o.Id != model.Id &&
                                                                                 o.OrderStatus == OrderStatus.Actived);
                 foreach (Order order in userActiveOrders)
                 {
@@ -100,15 +105,16 @@ namespace NextPark.Api.Controllers
                 if (user.Balance < userAmountToPay)
                     return BadRequest(ApiResponse.GetErrorResponse("Not enough money", ErrorType.NotEnoughMoney));
 
-                if (user.Balance < model.Price)
-                    return BadRequest(ApiResponse.GetErrorResponse("Not enough money",ErrorType.NotEnoughMoney));
+                // Update the order instance
+                Order updatedOrder = currentOrder;
+                updatedOrder.StartDate = model.StartDate;
+                updatedOrder.EndDate = model.EndDate;
+                updatedOrder.Price = model.Price;
 
-                // TODO: add check to all open orders to check user balance, has to cover all orders and this change
-
-                var entityOrder = _mapper.Map<OrderModel, Order>(model);
-                _orderRepository.Update(entityOrder);
+                _orderRepository.Update(updatedOrder);
                 await _unitOfWork.CommitAsync().ConfigureAwait(false);
-                var vm = _mapper.Map<Order, OrderModel>(entityOrder);
+
+                OrderModel vm = _mapper.Map<Order, OrderModel>(updatedOrder);
                 return Ok(ApiResponse.GetSuccessResponse(vm));
             }
             catch (Exception e)
@@ -301,36 +307,39 @@ namespace NextPark.Api.Controllers
 
             try
             {
-                var updatedOrder = _mapper.Map<OrderModel, Order>(model);
+                Order currentOrder = _orderRepository.Find(model.Id);
+                if (currentOrder == null) {
+                    return BadRequest(ApiResponse.GetErrorResponse("Order not found", ErrorType.EntityNotFound));
+                }
 
-                var parking = await _parkingRepository.FirstOrDefaultWhereAsync(p => p.Id == model.ParkingId,
+                Parking parking = await _parkingRepository.FirstOrDefaultWhereAsync(p => p.Id == model.ParkingId,
                     new CancellationToken(), p => p.Events).ConfigureAwait(false);
 
                 if (parking == null)
                     return BadRequest(ApiResponse.GetErrorResponse("Parking not found", ErrorType.EntityNotFound));
 
-                var isAvailable = IsParkingAvailable(parking, model);
+                bool isAvailable = IsParkingAvailable(parking, model);
 
                 if (!isAvailable)
                     return BadRequest(ApiResponse.GetErrorResponse("Parking is not available", ErrorType.ParkingNotVailable));
 
                 // Get all overlapped orders except this
-                var overlappedOrders = await _orderRepository.FindAllWhereAsync(o => o.ParkingId == model.ParkingId &&
+                List<Order> overlappedOrders = await _orderRepository.FindAllWhereAsync(o => o.ParkingId == model.ParkingId &&
                                                                                 o.Id != model.Id &&
                                                                                 o.EndDate > model.StartDate &&
                                                                                 o.StartDate < model.EndDate);
 
                 if (overlappedOrders.Count > 0)
-                    return BadRequest(ApiResponse.GetErrorResponse("Parking is not orderable", ErrorType.ParkingNotOrderable));
+                    return BadRequest(ApiResponse.GetErrorResponse("Parking is not bookable", ErrorType.ParkingNotOrderable));
 
-                var user = _useRepository.Find(updatedOrder.UserId);
+                ApplicationUser user = _useRepository.Find(model.UserId);
 
-                double userAmountToPay = updatedOrder.Price;
+                double userAmountToPay = model.Price;
 
-                // Get all user's active orders
-                var userActiveOrders = await _orderRepository.FindAllWhereAsync(o => o.UserId == user.Id &&
-                                                                              o.Id != updatedOrder.Id &&
-                                                                              o.OrderStatus == OrderStatus.Actived);
+                // Get all user's active orders except this
+                List<Order> userActiveOrders = await _orderRepository.FindAllWhereAsync(o => o.UserId == user.Id &&
+                                                                                o.Id != model.Id &&
+                                                                                o.OrderStatus == OrderStatus.Actived);
                 foreach (Order order in userActiveOrders)
                 {
                     // Sum the price of all user active orders
@@ -339,13 +348,19 @@ namespace NextPark.Api.Controllers
 
                 // Check if the user has enough money to pay all his active orders
                 if (user.Balance < userAmountToPay)
-                    return BadRequest(ApiResponse.GetErrorResponse("Not enough money", ErrorType.NotEnoughMoney));                    
+                    return BadRequest(ApiResponse.GetErrorResponse("Not enough money", ErrorType.NotEnoughMoney));
+
+                // Update the order instance
+                Order updatedOrder = currentOrder;
+                updatedOrder.StartDate = model.StartDate;
+                updatedOrder.EndDate = model.EndDate;
+                updatedOrder.Price = model.Price;
 
                 _orderRepository.Update(updatedOrder);
 
                 await _unitOfWork.CommitAsync().ConfigureAwait(false);
 
-                var entityOrder = _mapper.Map<Order, OrderModel>(updatedOrder);
+                OrderModel entityOrder = _mapper.Map<Order, OrderModel>(updatedOrder);
                 return Ok(ApiResponse.GetSuccessResponse(entityOrder, "Order Updated"));
             }
             catch (Exception e)
