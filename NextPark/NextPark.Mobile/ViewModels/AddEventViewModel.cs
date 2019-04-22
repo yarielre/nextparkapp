@@ -564,7 +564,7 @@ namespace NextPark.Mobile.ViewModels
                 else if (choice.Equals("Elimina tutti gli eventi futuri"))
                 {
                     // TODO: verify GetHash or add DeleteSerieEventsAsync(Guid Id)
-                    var result = await _eventDataService.DeleteSerieEventsAsync(_event.RepetitionId.GetHashCode());
+                    var result = await _eventDataService.DeleteSerieEventsAsync(_event.Id);
                     if (result != null)
                     {
                         if (result.IsSuccess == true)
