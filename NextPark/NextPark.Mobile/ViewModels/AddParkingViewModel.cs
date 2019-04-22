@@ -95,6 +95,7 @@ namespace NextPark.Mobile.ViewModels
             _dialogService = dialogService;
             _geoLocatorService = geolocatorService;
             _parkingDataService = parkingDataService;
+            _profileService = profileService;
 
             // Header
             UserName = AuthSettings.User.Name;
