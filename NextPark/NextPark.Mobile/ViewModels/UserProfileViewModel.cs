@@ -243,7 +243,6 @@ namespace NextPark.Mobile.ViewModels
                 {
                     if (orderList.Count > 0)
                     {
-
                         OrderModel nextOrder = null;
 
                         foreach (OrderModel order in orderList) 
@@ -271,12 +270,16 @@ namespace NextPark.Mobile.ViewModels
                         return true;
                     }
                 }
+                // No orders found
+                NextBooking = "nessuna prenotazione";
+                base.OnPropertyChanged("NextBooking");
+                return true;
+
             } catch (Exception e)
             {
                 // TODO: manage exception
                 return false;
             }
-            return false;
         }
 
         public void OnCommandClickMethod(string url)
