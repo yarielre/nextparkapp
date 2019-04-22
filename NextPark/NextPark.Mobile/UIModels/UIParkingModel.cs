@@ -45,7 +45,7 @@ namespace NextPark.Mobile.UIModels
             foreach (EventModel availability in Events) {
                 if ((availability.StartDate <= DateTime.Now) && (availability.EndDate > DateTime.Now)) {
                     foreach (OrderModel order in Orders) {
-                        if ((order.StartDate <= DateTime.Now) && (order.EndDate > DateTime.Now)) {
+                        if ((order.OrderStatus == Enums.OrderStatus.Actived) && (order.StartDate <= DateTime.Now) && (order.EndDate > DateTime.Now)) {
                             return false;
                         }
                     }
@@ -87,7 +87,7 @@ namespace NextPark.Mobile.UIModels
             if (available == true) {
                 foreach (OrderModel order in Orders)
                 {
-                    if ((order.EndDate > start) && (order.StartDate < end))
+                    if ((order.OrderStatus == Enums.OrderStatus.Actived) && (order.EndDate > start) && (order.StartDate < end))
                     {
                         // order already present (overlap at start, inside actual request, overlap at end)
                         return false;
