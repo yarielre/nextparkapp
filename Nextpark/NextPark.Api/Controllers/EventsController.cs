@@ -172,7 +172,7 @@ namespace NextPark.Api.Controllers
 
             foreach (Event currentEvent in eventSerie)
             {
-                // Update the event instance
+                // Update some event fields using the previous unaltered event instance
                 Event updatedEvent = currentEvent;
                 updatedEvent.StartDate = updatedEvent.StartDate.Date + model.StartDate.TimeOfDay;
                 updatedEvent.EndDate = updatedEvent.EndDate.Date + model.EndDate.TimeOfDay;
