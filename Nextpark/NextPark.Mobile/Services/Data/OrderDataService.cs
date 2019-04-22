@@ -14,14 +14,13 @@ namespace NextPark.Mobile.Services.Data
         {
             _apiService = apiService;
         }
-        public async Task<OrderModel> TerminateOrderAsync(int id)
+        public async Task<ApiResponse<OrderModel>> TerminateOrderAsync(int id)
         {
             try
             {
                 var url = $"{ApiSettings.OrdersEndPoint}/terminate";
                 var response = await _apiService.Post<int,OrderModel>(url, id).ConfigureAwait(false);
-
-                return response.IsSuccess ? response.Result : null;
+                return response;
             }
             catch (Exception ex)
             {

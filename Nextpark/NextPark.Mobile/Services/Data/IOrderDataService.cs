@@ -12,6 +12,6 @@ namespace NextPark.Mobile.Services.Data
         Task<List<OrderModel>> GetAllOrdersAsync();
         Task<OrderModel> GetOrderAsync(int orderId);
         Task<ApiResponse<OrderModel>> RenovateOrderAsync(int id, OrderModel order);
-        Task<OrderModel> TerminateOrderAsync(int id);
+        Task<ApiResponse<OrderModel>> TerminateOrderAsync(int id);
     }
 }
