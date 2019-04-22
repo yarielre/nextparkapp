@@ -230,20 +230,32 @@ namespace NextPark.Mobile.ViewModels
         // Activate/Deactivate Parking toggle switch action
         public void OnSwitchToggleMethod(bool value)
         {
+            bool changed = false;
+
             if (value)
             {
                 ActiveStatusText = "Attivato";
-                _parking.ParkingModel.Status = ParkingStatus.Enabled;
+                if (_parking.ParkingModel.Status != ParkingStatus.Enabled) {
+                    _parking.ParkingModel.Status = ParkingStatus.Enabled;
+                    changed = true;
+                }
             }
             else
             {
                 ActiveStatusText = "Disattivato";
-                _parking.ParkingModel.Status = ParkingStatus.Disabled; 
+                if (_parking.ParkingModel.Status != ParkingStatus.Disabled)
+                {
+                    _parking.ParkingModel.Status = ParkingStatus.Disabled;
+                    changed = true;
+                }
             }
             base.OnPropertyChanged("ActiveStatusText");
 
             // Update parking on backend
-            UpdateParkingStatus();
+            if (changed)
+            {
+                UpdateParkingStatus();
+            }
         }
 
         private async Task<bool> UpdateParkingStatus()
