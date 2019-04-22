@@ -260,8 +260,9 @@ namespace NextPark.Api.Controllers
                     return BadRequest(ApiResponse.GetErrorResponse("Parking is not available", ErrorType.ParkingNotVailable));
 
                 var overlappedOrders = await _orderRepository.FindAllWhereAsync(o => o.ParkingId == orderModel.ParkingId &&
-                                                                                 o.EndDate > orderModel.StartDate &&
-                                                                                 o.StartDate < orderModel.EndDate);
+                                                                                o.OrderStatus == OrderStatus.Actived &&
+                                                                                o.EndDate > orderModel.StartDate &&
+                                                                                o.StartDate < orderModel.EndDate);
 
                 if (overlappedOrders.Count > 0)
                     return BadRequest(ApiResponse.GetErrorResponse("Parking is not orderable", ErrorType.ParkingNotOrderable));
@@ -325,9 +326,10 @@ namespace NextPark.Api.Controllers
 
                 // Get all overlapped orders except this
                 List<Order> overlappedOrders = await _orderRepository.FindAllWhereAsync(o => o.ParkingId == model.ParkingId &&
-                                                                                o.Id != model.Id &&
-                                                                                o.EndDate > model.StartDate &&
-                                                                                o.StartDate < model.EndDate);
+                                                                                        o.Id != model.Id &&
+                                                                                        o.OrderStatus == OrderStatus.Actived &&
+                                                                                        o.EndDate > model.StartDate &&
+                                                                                        o.StartDate < model.EndDate);
 
                 if (overlappedOrders.Count > 0)
                     return BadRequest(ApiResponse.GetErrorResponse("Parking is not bookable", ErrorType.ParkingNotOrderable));
@@ -338,8 +340,8 @@ namespace NextPark.Api.Controllers
 
                 // Get all user's active orders except this
                 List<Order> userActiveOrders = await _orderRepository.FindAllWhereAsync(o => o.UserId == user.Id &&
-                                                                                o.Id != model.Id &&
-                                                                                o.OrderStatus == OrderStatus.Actived);
+                                                                                        o.Id != model.Id &&
+                                                                                        o.OrderStatus == OrderStatus.Actived);
                 foreach (Order order in userActiveOrders)
                 {
                     // Sum the price of all user active orders
@@ -350,7 +352,7 @@ namespace NextPark.Api.Controllers
                 if (user.Balance < userAmountToPay)
                     return BadRequest(ApiResponse.GetErrorResponse("Not enough money", ErrorType.NotEnoughMoney));
 
-                // Update the same unmuted order instance
+                // Update the order instance
                 Order updatedOrder = currentOrder;
                 updatedOrder.StartDate = model.StartDate;
                 updatedOrder.EndDate = model.EndDate;
