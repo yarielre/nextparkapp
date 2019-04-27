@@ -16,6 +16,8 @@ using NextPark.Data.Repositories;
 using NextPark.Domain.Entities;
 using NextPark.MapperTools;
 using NextPark.Services;
+using NextPark.Services.Services;
+using NextPark.Services.Services.HostedServices;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace NextPark.Api
@@ -39,9 +41,9 @@ namespace NextPark.Api
 
             //Using MSSQL SERVER
             //services.AddDbContext<ApplicationDbContext>(options =>
-            // options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            //options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
-            //Using POSTGRES SQL SERVER
+           //Using POSTGRES SQL SERVER
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseNpgsql(connectionString));
 
@@ -107,10 +109,14 @@ namespace NextPark.Api
             services.AddTransient<IAuthService, AuthService>();
             services.AddSingleton(mapper);
             services.AddScoped(typeof(IEmailSender), typeof(EmailSender));
+            services.AddScoped(typeof(IFileService), typeof(FileService));
             services.AddScoped(typeof(IPushNotificationService), typeof(PushNotificationService));
             services.AddScoped(typeof(IDbFactory), typeof(DbFactory));
             services.AddScoped(typeof(IUnitOfWork), typeof(UnitOfWork));
             services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
+
+            //Hosted Services
+            services.AddHostedService<TimedTerminateOrderHostedService>();
 
             services.AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)

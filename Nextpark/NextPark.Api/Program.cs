@@ -25,7 +25,7 @@ namespace NextPark.Api
                 try
                 {
                     var context = services.GetRequiredService<ApplicationDbContext>();
-                    context.Database.Migrate(); //automatic migration. Migrations most be on the migration folder.
+                    context.Database.Migrate(); //Automatic migration. Migrations files most be on the migration folder.
                     NextParkDataSeeder.Initialize(services);
                 }
                 catch (Exception ex)

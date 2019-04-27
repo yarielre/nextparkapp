@@ -12,6 +12,7 @@ using NextPark.Domain.Entities;
 using NextPark.Enums;
 using NextPark.Enums.Enums;
 using NextPark.Models;
+using NextPark.Services.Services;
 
 namespace NextPark.Api.Controllers
 {
@@ -25,25 +26,29 @@ namespace NextPark.Api.Controllers
         private readonly IRepository<Parking> _parkingRepository;
         private readonly IRepository<Feed> _feedRepository;
         private readonly IRepository<Transaction> _transactionRepository;
+        private readonly IFileService _fileService;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IRepository<ApplicationUser> _useRepository;
+        private readonly IRepository<ApplicationUser> _userRepository;
+
 
         public OrdersController(IRepository<Order> repository,
             IUnitOfWork unitOfWork,
             IMapper mapper,
             IRepository<Parking> parkingRepository,
             IRepository<Order> orderRepository,
-            IRepository<ApplicationUser> useRepository,
+            IRepository<ApplicationUser> userRepository,
             IRepository<Feed> feedRepository,
-            IRepository<Transaction> transactionRepository)
+            IRepository<Transaction> transactionRepository,
+            IFileService fileService)
         {
             _unitOfWork = unitOfWork;
             _parkingRepository = parkingRepository;
             _orderRepository = orderRepository;
             _mapper = mapper;
-            _useRepository = useRepository;
+            _userRepository = userRepository;
             _feedRepository = feedRepository;
             _transactionRepository = transactionRepository;
+            _fileService = fileService;
         }
 
         [HttpPut("{id}/renew")]
@@ -83,7 +88,7 @@ namespace NextPark.Api.Controllers
                 if (overlappedOrders.Count > 0)
                     return BadRequest(ApiResponse.GetErrorResponse("Parking is not orderable", ErrorType.ParkingNotOrderable));
 
-                ApplicationUser user = await _useRepository.FirstOrDefaultWhereAsync(u => u.Id == model.UserId).ConfigureAwait(false);
+                ApplicationUser user = await _userRepository.FirstOrDefaultWhereAsync(u => u.Id == model.UserId).ConfigureAwait(false);
                 if (user == null)
                 {
                     return BadRequest(ApiResponse.GetErrorResponse("User not found",ErrorType.EntityNotFound));
@@ -143,7 +148,7 @@ namespace NextPark.Api.Controllers
                     return BadRequest(ApiResponse.GetErrorResponse("Parking not found.",ErrorType.EntityNull));
                 }
                 //Parking's owned user
-                var parkingOwnedUser = _useRepository.Find(parking.UserId);
+                var parkingOwnedUser = _userRepository.Find(parking.UserId);
                 if (parkingOwnedUser == null)
                 {
                     return BadRequest(ApiResponse.GetErrorResponse("Parking's owned user not found.",ErrorType.EntityNotFound));
@@ -154,7 +159,7 @@ namespace NextPark.Api.Controllers
                     return BadRequest(ApiResponse.GetErrorResponse("Rent earning tax not found.",ErrorType.EntityNotFound));
                 }
                 //User who created the order
-                var userOrder = _useRepository.Find(order.UserId);
+                var userOrder = _userRepository.Find(order.UserId);
                 if (userOrder == null)
                 {
                     return BadRequest(ApiResponse.GetErrorResponse("User who rented the order not found",ErrorType.EntityNotFound));
@@ -192,11 +197,11 @@ namespace NextPark.Api.Controllers
 
                 //Update user balance when rent is finished
                 userOrder.Balance = userOrder.Balance - order.Price;
-                _useRepository.Update(userOrder);
+                _userRepository.Update(userOrder);
 
                 //Update user profit when rent is finished
                 parkingOwnedUser.Profit = parkingOwnedUser.Profit + rentEraningTax;
-                _useRepository.Update(parkingOwnedUser);
+                _userRepository.Update(parkingOwnedUser);
 
                 //Update parking after status change
                 _parkingRepository.Update(parking);
@@ -267,7 +272,7 @@ namespace NextPark.Api.Controllers
                 if (overlappedOrders.Count > 0)
                     return BadRequest(ApiResponse.GetErrorResponse("Parking is not orderable", ErrorType.ParkingNotOrderable));
 
-                var user = _useRepository.Find(orderModel.UserId);
+                var user = _userRepository.Find(orderModel.UserId);
 
                 double userAmountToPay = orderModel.Price;
 
@@ -334,7 +339,7 @@ namespace NextPark.Api.Controllers
                 if (overlappedOrders.Count > 0)
                     return BadRequest(ApiResponse.GetErrorResponse("Parking is not bookable", ErrorType.ParkingNotOrderable));
 
-                ApplicationUser user = _useRepository.Find(model.UserId);
+                ApplicationUser user = _userRepository.Find(model.UserId);
 
                 double userAmountToPay = model.Price;
 

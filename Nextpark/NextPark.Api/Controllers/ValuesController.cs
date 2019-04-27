@@ -4,19 +4,31 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using NextPark.Models;
+using NextPark.Services.Services;
 
 namespace NextPark.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
     public class ValuesController : ControllerBase
     {
+        private readonly IFileService _fileService;
+
+        public ValuesController(IFileService fileService)
+        {
+            _fileService = fileService;
+        }
         // GET api/values
         [HttpGet]
-        public ActionResult<IEnumerable<string>> Get()
+        public async Task<IActionResult> Get()
         {
-            return new string[] { "value1", "value2" };
+            _fileService.CreateFile(new OrderModel
+            {
+                EndDate = DateTime.Now,
+                Id = 12
+            });
+            return Ok();
         }
 
         // GET api/values/5
