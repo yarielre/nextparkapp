@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using NextPark.Domain.Entities;
 using NextPark.Models;
 using NextPark.Services.Services;
 
@@ -23,7 +24,7 @@ namespace NextPark.Api.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            _fileService.CreateFile(new OrderModel
+            _fileService.CreateOrderFileHosted(new Order
             {
                 EndDate = DateTime.Now,
                 Id = 12

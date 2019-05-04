@@ -15,18 +15,16 @@ namespace NextPark.Services.Services.HostedServices
 {
     public class TimedTerminateOrderHostedService : IHostedService, IDisposable
     {
-        private readonly IHostingEnvironment _appEnvironment;
         private readonly IServiceScopeFactory _serviceScopeFactory;
         private readonly ILogger<TimedTerminateOrderHostedService> _logger;
         private Timer _timer;
 
+
         public TimedTerminateOrderHostedService(ILogger<TimedTerminateOrderHostedService> logger,
-            IHostingEnvironment appEnvironment,
             IServiceScopeFactory serviceScopeFactory
             )
         {
             _logger = logger;
-            _appEnvironment = appEnvironment;
             _serviceScopeFactory = serviceScopeFactory;
         }
 
@@ -49,122 +47,55 @@ namespace NextPark.Services.Services.HostedServices
             return Task.CompletedTask;
         }
 
+        public bool ScheduleTerminateOrderTask()
+        {
+            //Use here the file service to schedule the Timed Terminate order time. 
+            //Remove the file service from the OrdersController.
+            //Use this method on the OrdersController to schedule and order termination.
+            //Make method async
+
+            return true;
+        }
+
         private async void CheckOutActiveOrders(object state)
         {
-            var filesFolder = "wwwroot/HostedServiceFiles";  //files folder used by timed hosted services
-            DirectoryInfo hostedServicesFilesFolder = new DirectoryInfo(Path.Combine(_appEnvironment.ContentRootPath, filesFolder));
-            var files = hostedServicesFilesFolder.GetFiles();
-
-            foreach (var file in files)
+            using (var scope = _serviceScopeFactory.CreateScope())
             {
-                var extension = file.Extension;
-                var cutx = file.Name.Split('_');
-                var ticks = cutx[0]; //time ticks
-
-                var dateTime = new DateTime(long.Parse(ticks));
-
-                if (DateTime.Now <= dateTime)
+                //Service in charge to create, get and delete order's file 
+                var fileService = scope.ServiceProvider.GetRequiredService<IFileService>();
+                var files = fileService.GetHostedFiles();
+                foreach (var file in files)
                 {
-                    continue;
-                }
+                    var extension = file.Extension;
+                    var cutx = file.Name.Split('_');
+                    var ticks = cutx[0]; //time ticks
 
-                using (var scope = _serviceScopeFactory.CreateScope())
-                {
-                    //Getting Repositories
-                    var orderRepository = scope.ServiceProvider.GetRequiredService<IRepository<Order>>();
-                    var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
-                    var userRepository =
-                        scope.ServiceProvider.GetRequiredService<IRepository<ApplicationUser>>();
-                    var feedRepository = scope.ServiceProvider.GetRequiredService<IRepository<Feed>>();
-                    var parkingRepository = scope.ServiceProvider.GetRequiredService<IRepository<Parking>>();
-                    var transactionRepository = scope.ServiceProvider.GetRequiredService<IRepository<Transaction>>();
+                    var dateTime = new DateTime(long.Parse(ticks));
 
-                    var id = int.Parse(cutx[1].Replace(extension, "")); //order id
-                    var order = orderRepository.Find(id);
-
-                    if (order == null)
+                    if (DateTime.Now <= dateTime)
                     {
                         continue;
                     }
+                        //Service to handle terminate order logic
+                        var orderApiService = scope.ServiceProvider.GetRequiredService<IOrderApiService>();
 
-                    order.OrderStatus = OrderStatus.Finished;
-                    orderRepository.Update(order);
-                    
-                    _logger.LogInformation($"Order with Id:{id} was finished because end time was reached.{Environment.NewLine}{DateTime.Now}");
-
-                    var parking = parkingRepository.Find(order.ParkingId); //parking related with the order
-                    if (parking == null)
-                    {
-                        _logger.LogInformation("Hosted Service Error: parking associated with tehe order not found");
-                        return;
+                        var id = int.Parse(cutx[1].Replace(extension, "")); //order id
+                        var terminateOrderApiResponse = await orderApiService.TerminateOrder(id);
+                        if (terminateOrderApiResponse.IsSuccess)
+                        {
+                            _logger.LogInformation($"Hosted Service Msg {DateTime.Now}: Order with Id:{id} was finished because end time was reached.");
+                            //Clean file
+                            file.Delete();
+                        }
+                        else
+                        {
+                            _logger.LogInformation($"Hosted Service Error: {DateTime.Now}: {terminateOrderApiResponse.Message} {Environment.NewLine}" +
+                                                   $" Error Type:{Enum.GetName(typeof(ErrorType), terminateOrderApiResponse.ErrorType)} ");
+                        }
                     }
-
-                    var parkingOwnedUser = userRepository.Find(parking?.UserId); //Parking's owned user
-                    var tax = await feedRepository.FirstOrDefaultWhereAsync(f => f.Name == "RentEarningPercent").ConfigureAwait(false);
-                    if (tax == null)
-                    {
-                        _logger.LogInformation("Hosted Service Error: Rent earning tax not found.");
-                        return;
-                    }
-                    var userOrder = userRepository.Find(order.UserId); //User who created the order
-                    if (userOrder == null)
-                    {
-                        _logger.LogInformation("Hosted Service Error: User who created the order not found");
-                        return;
-                    }
-                    var rentTax = CalCulateTax(order.Price, tax.Tax);
-                    parking.Status = ParkingStatus.Enabled;
-
-                    var rentTransaction = new Transaction
-                    {
-                        CashMoved = rentTax,
-                        UserId = parking.UserId,
-                        CreationDate = DateTime.Now,
-                        CompletationDate = DateTime.Now,
-                        Status = TransactionStatus.Completed,
-                        TransactionId = Guid.NewGuid(),
-                        Type = TransactionType.RentTransaction
-                    };
-
-                    var feedTransaction = new Transaction
-                    {
-                        CashMoved = rentTax,
-                        UserId = parking.UserId,
-                        CreationDate = DateTime.Now,
-                        CompletationDate = DateTime.Now,
-                        Status = TransactionStatus.Completed,
-                        TransactionId = Guid.NewGuid(),
-                        Type = TransactionType.FeedTransaction
-                    };
-
-                    //Saving rent and feed transactions
-                    transactionRepository.Add(rentTransaction);
-                    transactionRepository.Add(feedTransaction);
-
-                    //Update user balance when rent is finished
-                    userOrder.Balance = userOrder.Balance - order.Price;
-                    userRepository.Update(userOrder);
-
-                    //Update user profit when rent is finished
-                    parkingOwnedUser.Profit = parkingOwnedUser.Profit + rentTax;
-                    userRepository.Update(parkingOwnedUser);
-
-                    //Update parking after status change
-                    parkingRepository.Update(parking);
-
-                    //Persist transition
-                    await unitOfWork.CommitAsync().ConfigureAwait(false);
-
-                    //Clean file
-                    file.Delete();
-
                 }
             }
-        }
 
-        private double CalCulateTax(double price, double taxPorcent)
-        {
-            return (price * taxPorcent) / 100;
+           
         }
     }
-}

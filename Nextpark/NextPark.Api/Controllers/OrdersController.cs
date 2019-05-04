@@ -24,31 +24,28 @@ namespace NextPark.Api.Controllers
         private readonly IMapper _mapper;
         private readonly IRepository<Order> _orderRepository;
         private readonly IRepository<Parking> _parkingRepository;
-        private readonly IRepository<Feed> _feedRepository;
-        private readonly IRepository<Transaction> _transactionRepository;
         private readonly IFileService _fileService;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IOrderApiService _orderApiService;
         private readonly IRepository<ApplicationUser> _userRepository;
 
 
-        public OrdersController(IRepository<Order> repository,
+        public OrdersController(
             IUnitOfWork unitOfWork,
             IMapper mapper,
             IRepository<Parking> parkingRepository,
             IRepository<Order> orderRepository,
             IRepository<ApplicationUser> userRepository,
-            IRepository<Feed> feedRepository,
-            IRepository<Transaction> transactionRepository,
-            IFileService fileService)
+            IFileService fileService, 
+            IOrderApiService orderApiService)
         {
             _unitOfWork = unitOfWork;
             _parkingRepository = parkingRepository;
             _orderRepository = orderRepository;
             _mapper = mapper;
             _userRepository = userRepository;
-            _feedRepository = feedRepository;
-            _transactionRepository = transactionRepository;
             _fileService = fileService;
+            _orderApiService = orderApiService;
         }
 
         [HttpPut("{id}/renew")]
@@ -133,86 +130,15 @@ namespace NextPark.Api.Controllers
         {
             try
             {
-                //Logic terminate
-                //Change order state  completed
-                //Scale user balance
-                //Change parking state to available
-
-                var order = _orderRepository.Find(id);
-
-                if (order == null)
-                    return BadRequest(ApiResponse.GetErrorResponse("Order not found.",ErrorType.EntityNotFound));
-                var parking = _parkingRepository.Find(order.ParkingId);
-                if (parking == null)
+                var terminateOrderApiResponse = await _orderApiService.TerminateOrder(id);
+                if (!terminateOrderApiResponse.IsSuccess)
                 {
-                    return BadRequest(ApiResponse.GetErrorResponse("Parking not found.",ErrorType.EntityNull));
+                    return BadRequest(ApiResponse.GetErrorResponse(terminateOrderApiResponse.Message, terminateOrderApiResponse.ErrorType));
                 }
-                //Parking's owned user
-                var parkingOwnedUser = _userRepository.Find(parking.UserId);
-                if (parkingOwnedUser == null)
-                {
-                    return BadRequest(ApiResponse.GetErrorResponse("Parking's owned user not found.",ErrorType.EntityNotFound));
-                }
-                var tax = await _feedRepository.FirstOrDefaultWhereAsync(f => f.Name == "RentEarningPercent").ConfigureAwait(false);
-                if (tax == null)
-                {
-                    return BadRequest(ApiResponse.GetErrorResponse("Rent earning tax not found.",ErrorType.EntityNotFound));
-                }
-                //User who created the order
-                var userOrder = _userRepository.Find(order.UserId);
-                if (userOrder == null)
-                {
-                    return BadRequest(ApiResponse.GetErrorResponse("User who rented the order not found",ErrorType.EntityNotFound));
-                }
+                if (terminateOrderApiResponse.Result == null || !(terminateOrderApiResponse.Result is Order order))
+                    return Ok("result null");
 
-                var rentEraningTax = CalCulateTax(order.Price, tax.Tax);
-                order.OrderStatus = OrderStatus.Finished;
-                parking.Status = ParkingStatus.Enabled;
-
-                var renTransaction = new Transaction
-                {
-                    CashMoved = rentEraningTax,
-                    UserId = parking.UserId,
-                    CreationDate = DateTime.Now,
-                    CompletationDate = DateTime.Now,
-                    Status = TransactionStatus.Completed,
-                    TransactionId = Guid.NewGuid(),
-                    Type = TransactionType.RentTransaction
-                };
-
-                var feedTransaction = new Transaction
-                {
-                    CashMoved = rentEraningTax,
-                    UserId = parking.UserId,
-                    CreationDate = DateTime.Now,
-                    CompletationDate = DateTime.Now,
-                    Status = TransactionStatus.Completed,
-                    TransactionId = Guid.NewGuid(),
-                    Type = TransactionType.FeedTransaction
-                };
-
-                //Saving rent and feed transactions
-                _transactionRepository.Add(renTransaction);
-                _transactionRepository.Add(feedTransaction);
-
-                //Update user balance when rent is finished
-                userOrder.Balance = userOrder.Balance - order.Price;
-                _userRepository.Update(userOrder);
-
-                //Update user profit when rent is finished
-                parkingOwnedUser.Profit = parkingOwnedUser.Profit + rentEraningTax;
-                _userRepository.Update(parkingOwnedUser);
-
-                //Update parking after status change
-                _parkingRepository.Update(parking);
-
-                //Update order after status change
-                _orderRepository.Update(order);
-
-
-                await _unitOfWork.CommitAsync().ConfigureAwait(false);
-
-
+                _fileService.DeleteOrderFileHosted(order.Id); //delete order file
                 var vm = _mapper.Map<Order, OrderModel>(order);
                 return Ok(ApiResponse.GetSuccessResponse(vm));
             }
@@ -293,6 +219,7 @@ namespace NextPark.Api.Controllers
                 var entityOrder = _mapper.Map<OrderModel, Order>(orderModel);
                 _orderRepository.Add(entityOrder);
                 await _unitOfWork.CommitAsync().ConfigureAwait(false);
+                _fileService.CreateOrderFileHosted(entityOrder);
                 var vm = _mapper.Map<Order, OrderModel>(entityOrder);
                 return Ok(ApiResponse.GetSuccessResponse(vm, "Order created"));
             }
@@ -421,11 +348,6 @@ namespace NextPark.Api.Controllers
                 }
             }
             return false;
-        }
-
-        private double CalCulateTax(double price, double taxPorcent)
-        {
-            return (price * taxPorcent) / 100;
         }
     }
 }

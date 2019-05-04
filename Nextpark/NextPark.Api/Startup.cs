@@ -40,12 +40,12 @@ namespace NextPark.Api
             var connectionString = Configuration.GetConnectionString("DefaultConnection");
 
             //Using MSSQL SERVER
-            //services.AddDbContext<ApplicationDbContext>(options =>
-            //options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+           // services.AddDbContext<ApplicationDbContext>(options =>
+           // options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
-           //Using POSTGRES SQL SERVER
+            //Using POSTGRES SQL SERVER
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseNpgsql(connectionString));
+               options.UseNpgsql(connectionString));
 
             services.AddIdentity<ApplicationUser, ApplicationRole>()
               .AddEntityFrameworkStores<ApplicationDbContext>()
@@ -108,6 +108,7 @@ namespace NextPark.Api
             services.AddTransient<IMediaService, MediaService>();
             services.AddTransient<IAuthService, AuthService>();
             services.AddSingleton(mapper);
+            services.AddScoped(typeof(IOrderApiService), typeof(OrderApiService));
             services.AddScoped(typeof(IEmailSender), typeof(EmailSender));
             services.AddScoped(typeof(IFileService), typeof(FileService));
             services.AddScoped(typeof(IPushNotificationService), typeof(PushNotificationService));
@@ -117,6 +118,8 @@ namespace NextPark.Api
 
             //Hosted Services
             services.AddHostedService<TimedTerminateOrderHostedService>();
+            //Try this register to use the hostedService directly on the OrdersController
+           // services.AddSingleton<Microsoft.Extensions.Hosting.IHostedService, TimedTerminateOrderHostedService>();
 
             services.AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
