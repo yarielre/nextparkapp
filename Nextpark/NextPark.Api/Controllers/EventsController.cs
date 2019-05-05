@@ -120,9 +120,18 @@ namespace NextPark.Api.Controllers
                 Event updatedEvent = currentEvent;
                 updatedEvent.StartDate = model.StartDate;
                 updatedEvent.EndDate = model.EndDate;
+
+                // Check if the event is part of a repetition
+                if (updatedEvent.RepetitionType != RepetitionType.None)
+                {
+                    // Remove repetition from this single event
+                    updatedEvent.RepetitionType = RepetitionType.None;
+                    updatedEvent.RepetitionId = Guid.NewGuid();
+                }
+
                 // TODO: Future improvement: allow repetition changes
                 // updatedEvent.RepetitionEndDate = model.RepetitionEndDate;
-                
+
                 // Check if th event can be modified
                 var eventCanBeModified = await EventCanBeModified(currentEvent, updatedEvent, parking).ConfigureAwait(false);
                 if (!eventCanBeModified)
