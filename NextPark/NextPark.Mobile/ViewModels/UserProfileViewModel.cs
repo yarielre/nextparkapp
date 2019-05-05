@@ -262,7 +262,15 @@ namespace NextPark.Mobile.ViewModels
                         }
 
                         if (nextOrder != null) {
-                            NextBooking = nextOrder.StartDate.ToShortTimeString();
+                            if (nextOrder.StartDate < DateTime.Now)
+                            {
+                                // order already in progress
+                                NextBooking = "prenotazione in corso";
+                            }
+                            else
+                            {
+                                NextBooking = nextOrder.StartDate.ToShortTimeString();
+                            }
                         } else {
                             NextBooking = "nessuna prenotazione";
                         }
