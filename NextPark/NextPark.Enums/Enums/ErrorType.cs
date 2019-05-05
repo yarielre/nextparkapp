@@ -20,6 +20,7 @@ namespace NextPark.Enums.Enums
         InAppPurchaseNotSupported,
         InAppPurchaseServiceConnectionError,
         InAppPurchaseServiceImposibleToPurchase,
-        InAppPurchaseServiceSuccessPurchase
+        InAppPurchaseServiceSuccessPurchase,
+        OrderCanNotBeFinished
     }
 }
