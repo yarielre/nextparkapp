@@ -306,6 +306,7 @@ namespace NextPark.Mobile.ViewModels
                 DateTime end = EndDate + EndTime;
 
                 UIParkingModel parking = _profileService.GetParkingById(_event.ParkingId);
+                /*
                 foreach (OrderModel order in parking.Orders)
                 {
                     if ((order.StartDate < _event.EndDate) && (order.EndDate > _event.StartDate))
@@ -320,6 +321,7 @@ namespace NextPark.Mobile.ViewModels
                         }
                     }
                 }
+                */
             }
             // Try to add or modify events
             AddEvent();
@@ -451,6 +453,9 @@ namespace NextPark.Mobile.ViewModels
 
                     if (choice.Equals("Modifica solo questo evento"))
                     {
+                        // TODO: remove repetition
+                        // _event.RepetitionType = none
+                        // _event.RepetitionId = ?
                         var resultEdit = await _eventDataService.EditEventsAsync(_event.Id, _event);
 
                         if (resultEdit != null) {
