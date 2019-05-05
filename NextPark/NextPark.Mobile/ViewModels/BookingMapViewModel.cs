@@ -448,7 +448,7 @@ namespace NextPark.Mobile.ViewModels
                     // Update order price
                     TimeSpan totalTime = order.EndDate - order.StartDate;
                     order.Price = totalTime.TotalHours * order.Parking.PriceMin;
-                    if (order.UserId == AuthSettings.User.Id)
+                    if (order.Parking.UserId == AuthSettings.User.Id)
                     {
                         order.Price = 0;
                     }
@@ -463,8 +463,8 @@ namespace NextPark.Mobile.ViewModels
                     }
 
                     // Send order update
-                    //var result = await _orderDataService.EditOrderAsync(order.Id, order);
-                    var result = await _orderDataService.RenovateOrderAsync(order.Id, order);
+                    var result = await _orderDataService.EditOrderAsync(order.Id, order);
+                    //var result = await _orderDataService.RenovateOrderAsync(order.Id, order);
                     if (result != null)
                     {
                         if (result.IsSuccess == true)
