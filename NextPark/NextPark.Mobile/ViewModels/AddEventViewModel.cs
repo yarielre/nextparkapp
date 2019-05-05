@@ -52,6 +52,7 @@ namespace NextPark.Mobile.ViewModels
         public DateTime RepetitionEndDate { get; set; }
         public DateTime RepetitionMinEndDate { get; set; }
         public DateTime RepetitionMaxEndDate { get; set; }
+        public bool RepetitionEndEnable { get; set; }
         public TimeSpan StartTime { get; set; }     // Event timeslot start
         public TimeSpan EndTime { get; set; }       // Event timeslot end
         public int RepetitionIndex                  // Repetition Selected Index
@@ -59,6 +60,7 @@ namespace NextPark.Mobile.ViewModels
             get { return _repetitionIndex; }
             set { _repetitionIndex = value; OnRepetitionChangedMethod(_repetitionIndex); } 
         }
+        public bool RepetitionEnable { get; set; }  // Repetition Enable
         public bool EndDateVisible { get; set; }        // End date visibility
         public bool RepetitionEndVisible { get; set; }  // Repetition end visibility
 
@@ -86,6 +88,8 @@ namespace NextPark.Mobile.ViewModels
             set { _weekDays = value; base.OnPropertyChanged("WeekDays"); }
         }
         public bool WeekDayVisible { get; set; }
+        public bool WeekDayEnable { get; set; }
+        public Color WeekDayBackgroundColor { get; set; }
 
         // PRIVATE VARIABLES
         private EventModel _event { get; set; }
@@ -174,6 +178,10 @@ namespace NextPark.Mobile.ViewModels
                         RepetitionIndex = 0;
                         AddButtonVisible = true;
                         DeleteButtonVisible = false;
+                        RepetitionEnable = true;
+                        RepetitionEndEnable = true;
+                        WeekDayEnable = true;
+                        WeekDayBackgroundColor = Color.White;
                         AddButtonText = "Aggiungi";
                         _modifying = false;
 
@@ -201,6 +209,11 @@ namespace NextPark.Mobile.ViewModels
                             DeleteButtonVisible = false;
                             MinStartDate = _event.StartDate.Date;
                         }
+                        RepetitionEnable = false;
+                        RepetitionEndEnable = false;
+                        WeekDayEnable = false;
+                        WeekDayBackgroundColor = Color.FromHex("#FAFAFA");
+
                         AddButtonText = "Modifica";
                         _modifying = true;
                     }
@@ -238,11 +251,16 @@ namespace NextPark.Mobile.ViewModels
                     base.OnPropertyChanged("EndDate");
                     base.OnPropertyChanged("EndDateVisible");
                     base.OnPropertyChanged("EndTime");
+                    base.OnPropertyChanged("RepetitionEnable");
+                    base.OnPropertyChanged("RepetitionEndEnable");
                     base.OnPropertyChanged("RepetitionEndVisible");
                     base.OnPropertyChanged("RepetitionIndex");
                     base.OnPropertyChanged("RepetitionMinEndDate");
                     base.OnPropertyChanged("RepetitionEndDate");
+                    base.OnPropertyChanged("WeekDayEnable");
+                    base.OnPropertyChanged("WeekDayBackgroundColor");
                     base.OnPropertyChanged("WeekDaysVisible");
+
                     base.OnPropertyChanged("AddButtonVisible");
                     base.OnPropertyChanged("DeleteButtonVisible");
                     base.OnPropertyChanged("AddButtonText");

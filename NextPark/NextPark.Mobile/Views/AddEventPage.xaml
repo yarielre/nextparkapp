@@ -76,6 +76,7 @@
                                 Title="Frequenza"
                                 SelectedIndex="{Binding RepetitionIndex}"
                                 x:Name="repetitionPicker"
+                                IsEnabled="{Binding RepetitionEnable}"
                                 Grid.Row="2" Grid.Column="2">
                             <Picker.ItemsSource>
                                  <x:Array Type="{x:Type x:String}">
@@ -96,7 +97,8 @@
                                     Grid.Row="3" Grid.Column="1"
                                     Date="{Binding RepetitionEndDate}"
                                     MinimumDate="{Binding RepetitionMinEndDate}"
-                                    MaximumDate="{Binding RepetitionMaxEndDate}">
+                                    MaximumDate="{Binding RepetitionMaxEndDate}"
+                                    IsEnabled="{Binding RepetitionEndEnable}">
                             <DatePicker.Format>dd/MM/yyyy</DatePicker.Format>
                         </DatePicker>
                     </Grid>
@@ -109,11 +111,12 @@
                               SelectionMode="None"
                               SeparatorVisibility="None"
                               IsPullToRefreshEnabled="false"
-                               
+                              IsEnabled="{Binding WeekDayEnable}"
                               RowHeight="35"
                               HeightRequest="245"
                               HorizontalOptions="FillAndExpand"
-                              Margin="0">
+                              Margin="0"
+                              BackgroundColor="{Binding WeekDayBackgroundColor}">
                         <ListView.ItemTemplate>
                             <DataTemplate>                                
                                 <ViewCell Height="35" >
@@ -142,6 +145,7 @@
                                                    IsVisible="{Binding Selected}"
                                                    HorizontalOptions="End"
                                                    VerticalOptions="Center"
+                                                   BackgroundColor="Transparent"
                                                    Grid.Row="0" Grid.Column="1">
                                                 <Image Source="icon_check_48.png"
                                                        Aspect="AspectFit"/>
