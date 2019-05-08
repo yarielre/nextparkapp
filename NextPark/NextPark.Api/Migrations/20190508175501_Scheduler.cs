@@ -4,7 +4,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace NextPark.Api.Migrations
 {
-    public partial class CarPlateOder : Migration
+    public partial class Scheduler : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -72,6 +72,22 @@ namespace NextPark.Api.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Feeds", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Schedules",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn),
+                    ScheduleType = table.Column<int>(nullable: false),
+                    ScheduleId = table.Column<int>(nullable: false),
+                    TimeOfCreation = table.Column<DateTime>(nullable: false),
+                    TimeOfExecution = table.Column<DateTime>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Schedules", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -201,7 +217,7 @@ namespace NextPark.Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Device",
+                name: "Devices",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
@@ -212,9 +228,9 @@ namespace NextPark.Api.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Device", x => x.Id);
+                    table.PrimaryKey("PK_Devices", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Device_AspNetUsers_UserId",
+                        name: "FK_Devices_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
@@ -263,7 +279,10 @@ namespace NextPark.Api.Migrations
                     Status = table.Column<int>(nullable: false),
                     Type = table.Column<int>(nullable: false),
                     CashMoved = table.Column<double>(nullable: false),
-                    UserId = table.Column<int>(nullable: false)
+                    UserId = table.Column<int>(nullable: false),
+                    PurchaseId = table.Column<string>(nullable: true),
+                    PurchaseToken = table.Column<string>(nullable: true),
+                    PurchaseState = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -376,8 +395,8 @@ namespace NextPark.Api.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Device_UserId",
-                table: "Device",
+                name: "IX_Devices_UserId",
+                table: "Devices",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
@@ -427,7 +446,7 @@ namespace NextPark.Api.Migrations
                 name: "CarPlates");
 
             migrationBuilder.DropTable(
-                name: "Device");
+                name: "Devices");
 
             migrationBuilder.DropTable(
                 name: "Events");
@@ -437,6 +456,9 @@ namespace NextPark.Api.Migrations
 
             migrationBuilder.DropTable(
                 name: "Orders");
+
+            migrationBuilder.DropTable(
+                name: "Schedules");
 
             migrationBuilder.DropTable(
                 name: "Transactions");
