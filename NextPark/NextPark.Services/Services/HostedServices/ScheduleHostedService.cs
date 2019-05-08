@@ -60,7 +60,7 @@ namespace NextPark.Services.Services.HostedServices
                 var orderSchedules = await scheduleRepository.FindAllWhereAsync(sch => sch.ScheduleType == ScheduleType.Order);
                 foreach (var schedule in orderSchedules)
                 {
-                    if  (DateTime.Now < schedule.TimeOfExecution)
+                    if  (DateTime.Now <= schedule.TimeOfExecution)
                     {
                         continue;
                     }
