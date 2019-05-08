@@ -24,10 +24,10 @@ namespace NextPark.Api.Controllers
         private readonly IMapper _mapper;
         private readonly IRepository<Order> _orderRepository;
         private readonly IRepository<Parking> _parkingRepository;
-        private readonly IFileService _fileService;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IOrderApiService _orderApiService;
         private readonly IRepository<ApplicationUser> _userRepository;
+        private readonly IRepository<Schedule> _scheduleRepository;
 
 
         public OrdersController(
@@ -36,16 +36,16 @@ namespace NextPark.Api.Controllers
             IRepository<Parking> parkingRepository,
             IRepository<Order> orderRepository,
             IRepository<ApplicationUser> userRepository,
-            IFileService fileService, 
-            IOrderApiService orderApiService)
+            IOrderApiService orderApiService,
+            IRepository<Schedule> scheduleRepository)
         {
             _unitOfWork = unitOfWork;
             _parkingRepository = parkingRepository;
             _orderRepository = orderRepository;
             _mapper = mapper;
             _userRepository = userRepository;
-            _fileService = fileService;
             _orderApiService = orderApiService;
+            _scheduleRepository = scheduleRepository;
         }
 
         [HttpPut("{id}/renew")]
@@ -138,7 +138,6 @@ namespace NextPark.Api.Controllers
                 if (terminateOrderApiResponse.Result == null || !(terminateOrderApiResponse.Result is Order order))
                     return Ok("result null");
 
-                _fileService.DeleteOrderFileHosted(order.Id); //delete order file
                 var vm = _mapper.Map<Order, OrderModel>(order);
                 return Ok(ApiResponse.GetSuccessResponse(vm));
             }
@@ -190,6 +189,7 @@ namespace NextPark.Api.Controllers
                 if (!isAvailable)
                     return BadRequest(ApiResponse.GetErrorResponse("Parking is not available", ErrorType.ParkingNotVailable));
 
+
                 var overlappedOrders = await _orderRepository.FindAllWhereAsync(o => o.ParkingId == orderModel.ParkingId &&
                                                                                 o.OrderStatus == OrderStatus.Actived &&
                                                                                 o.EndDate > orderModel.StartDate &&
@@ -202,7 +202,8 @@ namespace NextPark.Api.Controllers
 
                 double userAmountToPay = orderModel.Price;
 
-                // Get all user's active orders
+                // Get all user's active orders  
+                
                 var userActiveOrders = await _orderRepository.FindAllWhereAsync(o => o.UserId == user.Id &&
                                                                                 o.OrderStatus == OrderStatus.Actived);
                 foreach (Order order in userActiveOrders)
@@ -215,11 +216,22 @@ namespace NextPark.Api.Controllers
                 if (user.Balance < userAmountToPay)
                     return BadRequest(ApiResponse.GetErrorResponse("Not enough money", ErrorType.NotEnoughMoney));
 
-
                 var entityOrder = _mapper.Map<OrderModel, Order>(orderModel);
                 _orderRepository.Add(entityOrder);
                 await _unitOfWork.CommitAsync().ConfigureAwait(false);
-                _fileService.CreateOrderFileHosted(entityOrder);
+
+                //Create Order schedule
+                //Save Schedule
+                var orderSchedule = new Schedule
+                {
+                    ScheduleId = entityOrder.Id,
+                    ScheduleType = ScheduleType.Order,
+                    TimeOfCreation = DateTime.Now,
+                    TimeOfExecution = entityOrder.EndDate
+                };
+                _scheduleRepository.Add(orderSchedule);
+                await _unitOfWork.CommitAsync().ConfigureAwait(false);
+
                 var vm = _mapper.Map<Order, OrderModel>(entityOrder);
                 return Ok(ApiResponse.GetSuccessResponse(vm, "Order created"));
             }
