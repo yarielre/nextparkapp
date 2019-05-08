@@ -1,4 +1,5 @@
-﻿using NextPark.Enums.Enums;
+﻿using NextPark.Domain.Entities;
+using NextPark.Enums.Enums;
 
 namespace NextPark.Models
 {
@@ -24,4 +25,50 @@ namespace NextPark.Models
 
         public ParkingStatus Status { get; set; }
     }
+
+    public static partial class ModelExtensions
+    {
+        public static Parking ToParking(this ParkingModel model)
+        {
+
+            return new Parking
+            {
+                Id = model.Id,
+                Address = model.Address,
+                Cap = model.Cap,
+                CarPlate = model.CarPlate,
+                City = model.City,
+                ImageUrl = model.ImageUrl,
+                Latitude = model.Latitude,
+                Longitude = model.Longitude,
+                PriceMax = model.PriceMax,
+                PriceMin = model.PriceMin,
+                State = model.State,
+                Status = model.Status,
+                UserId = model.UserId
+            };
+        }
+
+        public static ParkingModel ToParkingModel(this Parking entity)
+        {
+
+            return new ParkingModel
+            {
+                Id = entity.Id,
+                Address = entity.Address,
+                Cap = entity.Cap,
+                CarPlate = entity.CarPlate,
+                City = entity.City,
+                ImageUrl = entity.ImageUrl,
+                Latitude = entity.Latitude,
+                Longitude = entity.Longitude,
+                PriceMax = entity.PriceMax,
+                PriceMin = entity.PriceMin,
+                State = entity.State,
+                Status = entity.Status,
+                UserId = entity.UserId
+            };
+        }
+    }
 }
+
