@@ -175,33 +175,85 @@ namespace NextPark.Api.Controllers
                 return BadRequest(ApiResponse.GetErrorResponse("Parking not found", ErrorType.EntityNotFound));
             }
 
-            // Check if all events of the serie can be modified
+            // Get all future events of the serie
             var eventSerie = await _repository.FindAllWhereAsync(ev => ev.RepetitionId == entityEvent.RepetitionId &&
                                                                  ev.StartDate >= entityEvent.StartDate).ConfigureAwait(false);
+
+            // Get event dates
+            List<DateTime> eventDates = GenerateEventSerieDates(model);
+
+            // Create the list with updated events
             var updatedSerie = new List<Event>();
 
+            // Generate a new RepetitionId, only future events will be modified
+            Guid newRepetitionId = Guid.NewGuid();
+
+            // Update or delete current active events
             foreach (Event currentEvent in eventSerie)
             {
+                int dayIndex = -1;
+                if ((eventDates != null) && (eventDates.Count > 0))
+                {
+                    dayIndex = eventDates.FindIndex(x => x.Date == currentEvent.StartDate.Date);
+                }
+
                 // Update some event fields using the previous unaltered event instance
                 Event updatedEvent = currentEvent;
                 updatedEvent.StartDate = updatedEvent.StartDate.Date + model.StartDate.TimeOfDay;
                 updatedEvent.EndDate = updatedEvent.EndDate.Date + model.EndDate.TimeOfDay;
-                // TODO: Future improvement: allow repetition changes
-                // updatedEvent.RepetitionEndDate = model.RepetitionEndDate;
+                updatedEvent.RepetitionType = model.RepetitionType;
+                updatedEvent.RepetitionId = newRepetitionId;
+                updatedEvent.RepetitionEndDate = model.RepetitionEndDate;
 
-                var eventCanBeModified = await EventCanBeModified(currentEvent, updatedEvent, parking).ConfigureAwait(false);
-                if (!eventCanBeModified)
+                // Check if event has to be modified or deleted
+                if (dayIndex >= 0)
                 {
-                    return BadRequest(ApiResponse.GetErrorResponse("Event has an active order and can't be modified", ErrorType.EventCantBeModified));
+                    // Check if can be modified
+                    bool eventCanBeModified = await EventCanBeModified(currentEvent, updatedEvent, parking).ConfigureAwait(false);
+                    if (!eventCanBeModified)
+                    {
+                        return BadRequest(ApiResponse.GetErrorResponse("Event has an active order and can't be modified", ErrorType.EventCantBeModified));
+                    }
+                    // Add the updated event
+                    updatedSerie.Add(updatedEvent);
+
+                    // Remove this date from eventDates
+                    eventDates.RemoveAt(dayIndex);
                 }
-                
-                updatedSerie.Add(updatedEvent);
+                else
+                {
+                    // Check if can be deleted
+                    bool eventCanBeDeleted = await EventCanBeDeleted(currentEvent, parking).ConfigureAwait(false);
+                    if (!eventCanBeDeleted)
+                    {
+                        return BadRequest(ApiResponse.GetErrorResponse("Event has an active order and can't be modified", ErrorType.EventCantBeModified));
+                    }
+                    // Delete event
+                    _repository.Delete(currentEvent);
+                }
             }
 
-            foreach(Event @event in updatedSerie)
+            // Update events
+            foreach (Event @event in updatedSerie)
             {
                 _repository.Update(@event);
             }
+
+            // Add new missing events
+            foreach (DateTime date in eventDates) {
+                Event missingEvent = new Event
+                {
+                    StartDate = date.Date + model.StartDate.TimeOfDay,
+                    EndDate = date.Date + model.EndDate.TimeOfDay,
+                    RepetitionEndDate = model.RepetitionEndDate,
+                    RepetitionId = newRepetitionId,
+                    RepetitionType = model.RepetitionType,
+                    ParkingId = model.ParkingId
+                };
+
+                updatedSerie.Add(missingEvent);
+                _repository.Add(missingEvent);
+            }                                  
 
             await _unitOfWork.CommitAsync().ConfigureAwait(false);
             
@@ -399,6 +451,38 @@ namespace NextPark.Api.Controllers
             }
             return result.OrderBy(e => e.StartDate).ToList();
         }
+
+        private List<DateTime> GenerateEventSerieDates(EventModel model)
+        {
+            List<DateTime> result = new List<DateTime>();
+
+            // Repetition type is weekly and no day of weeks exception
+            if ((model.RepetitionType == RepetitionType.Weekly) && (model.WeeklyRepeDayOfWeeks.Count == 0)) {
+                // No event date
+                return result;
+            }
+            // Repetition type is none
+            if (model.RepetitionType == RepetitionType.None) {
+                // model start date only
+                result.Add(model.StartDate.Date);
+            }
+
+            // Create the list of event dates
+            for (var date = model.StartDate; date <= model.RepetitionEndDate; date = date.AddDays(1))
+            {
+                var currentDayOfWeek = date.DayOfWeek;
+
+                if ((model.RepetitionType == RepetitionType.Dayly) ||
+                    (model.WeeklyRepeDayOfWeeks.Any(dayRepeated => dayRepeated == currentDayOfWeek)))
+                {
+                    // Add this date if repetition is daily or the week day is selected
+                    result.Add(date.Date);
+                }
+            }
+
+            return result;
+        }
+
         private async Task<bool> EventCanBeDeleted(Event eventToBeDeleted, Parking parking)
         {
             // Get orders associated to the parking with time match with the event
