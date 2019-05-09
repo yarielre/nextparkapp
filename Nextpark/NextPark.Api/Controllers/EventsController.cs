@@ -176,7 +176,8 @@ namespace NextPark.Api.Controllers
             }
 
             // Check if all events of the serie can be modified
-            var eventSerie = await _repository.FindAllWhereAsync(ev => ev.RepetitionId == entityEvent.RepetitionId).ConfigureAwait(false);
+            var eventSerie = await _repository.FindAllWhereAsync(ev => ev.RepetitionId == entityEvent.RepetitionId &&
+                                                                 ev.StartDate >= entityEvent.StartDate).ConfigureAwait(false);
             var updatedSerie = new List<Event>();
 
             foreach (Event currentEvent in eventSerie)
