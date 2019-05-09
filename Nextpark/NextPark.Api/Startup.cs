@@ -110,16 +110,14 @@ namespace NextPark.Api
             services.AddSingleton(mapper);
             services.AddScoped(typeof(IOrderApiService), typeof(OrderApiService));
             services.AddScoped(typeof(IEmailSender), typeof(EmailSender));
-            services.AddScoped(typeof(IFileService), typeof(FileService));
+           // services.AddScoped(typeof(IFileService), typeof(FileService));
             services.AddScoped(typeof(IPushNotificationService), typeof(PushNotificationService));
             services.AddScoped(typeof(IDbFactory), typeof(DbFactory));
             services.AddScoped(typeof(IUnitOfWork), typeof(UnitOfWork));
             services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
 
             //Hosted Services
-            services.AddHostedService<TimedTerminateOrderHostedService>();
-            //Try this register to use the hostedService directly on the OrdersController
-           // services.AddSingleton<Microsoft.Extensions.Hosting.IHostedService, TimedTerminateOrderHostedService>();
+            services.AddHostedService<ScheduleHostedService>();
 
             services.AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)

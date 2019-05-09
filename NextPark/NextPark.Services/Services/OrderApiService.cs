@@ -19,6 +19,7 @@ namespace NextPark.Services.Services
         private readonly IRepository<ApplicationUser> _userRepository;
         private readonly IRepository<Feed> _feedRepository;
         private readonly IRepository<Transaction> _transactionRepository;
+        private readonly IRepository<Schedule> _scheduleRepository;
 
         public OrderApiService(
             IUnitOfWork unitOfWork,
@@ -26,7 +27,8 @@ namespace NextPark.Services.Services
             IRepository<Order> orderRepository,
             IRepository<ApplicationUser> userRepository,
             IRepository<Feed> feedRepository,
-            IRepository<Transaction> transactionRepository)
+            IRepository<Transaction> transactionRepository,
+            IRepository<Schedule> scheduleRepository)
         {
             _unitOfWork = unitOfWork;
             _parkingRepository = parkingRepository;
@@ -34,6 +36,7 @@ namespace NextPark.Services.Services
             _userRepository = userRepository;
             _feedRepository = feedRepository;
             _transactionRepository = transactionRepository;
+            _scheduleRepository = scheduleRepository;
         }
         public async Task<ApiResponse> TerminateOrder(int orderId)
         {
@@ -122,6 +125,12 @@ namespace NextPark.Services.Services
                 //Update order after status change
                 _orderRepository.Update(order);
 
+                //Delete the schedule order
+                var scheduleOrder = await _scheduleRepository.FirstOrDefaultWhereAsync(sch => sch.ScheduleType == ScheduleType.Order && sch.ScheduleId == orderId);
+                if (scheduleOrder!=null)
+                {
+                    _scheduleRepository.Delete(scheduleOrder);
+                }
 
                 await _unitOfWork.CommitAsync().ConfigureAwait(false);
                 return ApiResponse.GetSuccessResponse(order, "Ok");

@@ -10,8 +10,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace NextPark.Api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20190326154039_CarPlateOder")]
-    partial class CarPlateOder
+    [Migration("20190508175501_Scheduler")]
+    partial class Scheduler
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -228,7 +228,7 @@ namespace NextPark.Api.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Device");
+                    b.ToTable("Devices");
                 });
 
             modelBuilder.Entity("NextPark.Domain.Entities.Event", b =>
@@ -337,6 +337,24 @@ namespace NextPark.Api.Migrations
                     b.ToTable("Parkings");
                 });
 
+            modelBuilder.Entity("NextPark.Domain.Entities.Schedule", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("ScheduleId");
+
+                    b.Property<int>("ScheduleType");
+
+                    b.Property<DateTime>("TimeOfCreation");
+
+                    b.Property<DateTime>("TimeOfExecution");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Schedules");
+                });
+
             modelBuilder.Entity("NextPark.Domain.Entities.Transaction", b =>
                 {
                     b.Property<int>("Id")
@@ -347,6 +365,12 @@ namespace NextPark.Api.Migrations
                     b.Property<DateTime>("CompletationDate");
 
                     b.Property<DateTime>("CreationDate");
+
+                    b.Property<string>("PurchaseId");
+
+                    b.Property<string>("PurchaseState");
+
+                    b.Property<string>("PurchaseToken");
 
                     b.Property<int>("Status");
 

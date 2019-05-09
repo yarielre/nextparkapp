@@ -226,7 +226,7 @@ namespace NextPark.Api.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Device");
+                    b.ToTable("Devices");
                 });
 
             modelBuilder.Entity("NextPark.Domain.Entities.Event", b =>
@@ -333,6 +333,24 @@ namespace NextPark.Api.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Parkings");
+                });
+
+            modelBuilder.Entity("NextPark.Domain.Entities.Schedule", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("ScheduleId");
+
+                    b.Property<int>("ScheduleType");
+
+                    b.Property<DateTime>("TimeOfCreation");
+
+                    b.Property<DateTime>("TimeOfExecution");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Schedules");
                 });
 
             modelBuilder.Entity("NextPark.Domain.Entities.Transaction", b =>
