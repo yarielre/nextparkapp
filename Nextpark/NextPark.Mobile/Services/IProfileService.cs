@@ -12,6 +12,7 @@ namespace NextPark.Mobile.Services
     {
         Position LastMapPosition { get; set; }
         ParkingItem LastEditingParking { get; set; }
+        DateTime LastEditingEventDate { get; set; }
         bool UserReserveMode { get; set; }
         DateTime UserStartDate { get; set; }
         DateTime UserEndDate { get; set; }

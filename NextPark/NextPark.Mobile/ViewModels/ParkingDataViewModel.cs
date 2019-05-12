@@ -195,7 +195,8 @@ namespace NextPark.Mobile.ViewModels
 
             MyDayContent.ScrollTo((int)DateTime.Now.TimeOfDay.TotalMinutes);
 
-            ChangeSelectedDay(DateTime.Now.Date);
+            //ChangeSelectedDay(DateTime.Now.Date);
+            ChangeSelectedDay(_profileService.LastEditingEventDate);
 
             return Task.FromResult(false);
         }
@@ -318,6 +319,9 @@ namespace NextPark.Mobile.ViewModels
         // Select day
         public void ChangeSelectedDay(DateTime dateTime)
         {
+            if (dateTime == null) {
+                dateTime = DateTime.Now.Date;
+            }
             SelectedDay = dateTime;
             _pickerDateTime = dateTime;
             base.OnPropertyChanged("DatePickerDate");
@@ -412,6 +416,8 @@ namespace NextPark.Mobile.ViewModels
             base.OnPropertyChanged("Day7TextColor");
             base.OnPropertyChanged("Day7BackgroundColor");
             base.OnPropertyChanged("Day7DateTime");
+
+            _profileService.LastEditingEventDate = dateTime;
 
             if (eventsReady)
             {

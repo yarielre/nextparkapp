@@ -210,7 +210,7 @@ namespace NextPark.Mobile.ViewModels
             if (sender is int)
             {
                 ParkingItem item = ParkingList[(int)sender];
-                // TODO: pass parking item to parking data page
+                _profileService.LastEditingEventDate = DateTime.Now.Date;
                 NavigationService.NavigateToAsync<ParkingDataViewModel>(item);
                 //_dialogService.ShowAlert("Alert", "Parking data: " + item.Address);
             }
