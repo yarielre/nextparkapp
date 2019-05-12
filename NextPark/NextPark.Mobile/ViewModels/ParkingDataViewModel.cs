@@ -517,7 +517,7 @@ namespace NextPark.Mobile.ViewModels
                     TimeSpan end = order.EndDate.TimeOfDay;
 
                     if (order.StartDate < dateTime) start = TimeSpan.FromMinutes(0);
-                    if (order.EndDate < dateTime) end = TimeSpan.FromMinutes(1439);
+                    if (order.EndDate.Date > dateTime.Date) end = TimeSpan.FromMinutes(1439);
 
                     int startPosition = (int)start.TotalMinutes;
 
