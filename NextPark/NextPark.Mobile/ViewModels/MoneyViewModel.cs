@@ -40,6 +40,7 @@ namespace NextPark.Mobile.ViewModels
         private readonly IDialogService _dialogService;
         private readonly IProfileService _profileService;
         private readonly IPurchaseDataService _purchaseDataService;
+        private readonly InAppPurchaseService _inAppPurchaseService;
 
         // PRIVATE VARIABLES
         protected static UInt16 selectedValue;
@@ -50,12 +51,14 @@ namespace NextPark.Mobile.ViewModels
                               IApiService apiService,
                               IAuthService authService,
                               INavigationService navService,
-                              IPurchaseDataService purchaseDataService)
+                              IPurchaseDataService purchaseDataService,
+                              InAppPurchaseService inAppPurchaseService)
                               : base(apiService, authService, navService)
         {
             _dialogService = dialogService;
             _profileService = new ProfileService(apiService);
             _purchaseDataService = purchaseDataService;
+            _inAppPurchaseService = inAppPurchaseService;
 
             // Header
             // TODO: evaluate back text and action
@@ -192,6 +195,7 @@ namespace NextPark.Mobile.ViewModels
         // Buy Money button click action
         public void OnBuyClickMethod(object sender)
         {
+            InAppBuyMoney();
             // TODO: fill data according to buy credit data model
             // TODO: send buy credit request to backend
             _dialogService.ShowAlert("Alert", "TODO: Payment operations for: " + selectedValue.ToString() + " CHF");
@@ -203,6 +207,12 @@ namespace NextPark.Mobile.ViewModels
             // Send request to backend
             BuyMoney();
         } 
+
+        public async void InAppBuyMoney()
+        {
+            var result = await _inAppPurchaseService.PurchaseCredit1();
+            await _dialogService.ShowAlert("Alert", "TODO: Payment operations result: " + result.Message);
+        }
 
         public async void BuyMoney()
         {

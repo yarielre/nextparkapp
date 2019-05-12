@@ -15,6 +15,7 @@ namespace NextPark.Mobile.Services
         private readonly string ProductCredit20 = "parking_credit_chf20";
         private readonly string ProductCredit30 = "parking_credit_chf30";
         private readonly string ProductCredit50 = "parking_credit_chf50";
+        private readonly string NextParkCredit1 = "nextpark_credit_1";
 
 
         public bool InTestMode
@@ -44,7 +45,7 @@ namespace NextPark.Mobile.Services
         /// <returns>ApiResponse. If success ApiResponse result is of type InAppBillingPurchase</returns>
         public async Task<ApiResponse> PurchaseCredit1()
         {
-            return await this.MakePurchase(ProductCredit1);
+            return await this.MakePurchase(NextParkCredit1);
         }
         /// <summary>
         /// Purchases the credit 10
