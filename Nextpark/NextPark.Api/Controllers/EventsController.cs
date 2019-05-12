@@ -462,24 +462,26 @@ namespace NextPark.Api.Controllers
                 return result;
             }
             // Repetition type is none
-            if (model.RepetitionType == RepetitionType.None) {
+            if (model.RepetitionType == RepetitionType.None)
+            {
                 // model start date only
                 result.Add(model.StartDate.Date);
             }
-
-            // Create the list of event dates
-            for (var date = model.StartDate; date <= model.RepetitionEndDate; date = date.AddDays(1))
+            else
             {
-                var currentDayOfWeek = date.DayOfWeek;
-
-                if ((model.RepetitionType == RepetitionType.Dayly) ||
-                    (model.WeeklyRepeDayOfWeeks.Any(dayRepeated => dayRepeated == currentDayOfWeek)))
+                // Create the list of event dates
+                for (var date = model.StartDate; date <= model.RepetitionEndDate; date = date.AddDays(1))
                 {
-                    // Add this date if repetition is daily or the week day is selected
-                    result.Add(date.Date);
+                    var currentDayOfWeek = date.DayOfWeek;
+
+                    if ((model.RepetitionType == RepetitionType.Dayly) ||
+                        (model.WeeklyRepeDayOfWeeks.Any(dayRepeated => dayRepeated == currentDayOfWeek)))
+                    {
+                        // Add this date if repetition is daily or the week day is selected
+                        result.Add(date.Date);
+                    }
                 }
             }
-
             return result;
         }
 
