@@ -25,7 +25,7 @@
 	<key>CFBundleDisplayName</key>
 	<string>NextPark</string>
 	<key>CFBundleIdentifier</key>
-	<string>ch.jaro.nextpark</string>
+	<string>ch.nextpark.nextparkapp</string>
 	<key>CFBundleVersion</key>
 	<string>1.0</string>
 	<key>UILaunchStoryboardName</key>
