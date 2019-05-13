@@ -205,7 +205,7 @@ namespace NextPark.Mobile.ViewModels
             base.OnPropertyChanged("IsRunning");
 
             // Send request to backend
-            BuyMoney();
+            //BuyMoney();
         } 
 
         public async void InAppBuyMoney()

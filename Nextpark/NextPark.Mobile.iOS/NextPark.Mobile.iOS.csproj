@@ -68,7 +68,7 @@
     <ConsolePause>false</ConsolePause>
     <CodesignKey>iPhone Developer: Jaro Serena (3XUTQ8SH4M)</CodesignKey>
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
-    <CodesignProvision>VS: WildCard Development</CodesignProvision>
+    <CodesignProvision>iOS Team Provisioning Profile: ch.nextpark.nextparkapp</CodesignProvision>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Implementations\Localize.cs" />
