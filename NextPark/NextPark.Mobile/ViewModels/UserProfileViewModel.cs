@@ -237,14 +237,15 @@ namespace NextPark.Mobile.ViewModels
         // Get User Bookings
         public async Task<bool> GetBookings()
         {
-            try {
+            try
+            {
                 var orderList = await _orderDataService.GetAllOrdersAsync();
                 if (orderList != null)
                 {
-                    OrderModel nextOrder = null;
-
                     if (orderList.Count > 0)
                     {
+                        OrderModel nextOrder = null;
+
                         foreach (OrderModel order in orderList)
                         {
                             if ((order.UserId == int.Parse(AuthSettings.UserId)) && (order.OrderStatus == Enums.OrderStatus.Actived))
@@ -252,7 +253,9 @@ namespace NextPark.Mobile.ViewModels
                                 if (nextOrder == null)
                                 {
                                     nextOrder = order;
-                                } else {
+                                }
+                                else
+                                {
                                     if (nextOrder.StartDate > order.StartDate)
                                     {
                                         nextOrder = order;
@@ -261,43 +264,37 @@ namespace NextPark.Mobile.ViewModels
                             }
                         }
 
-                        if (nextOrder != null) {
+                        if (nextOrder != null)
+                        {
                             if (nextOrder.StartDate < DateTime.Now)
                             {
                                 // order already in progress
                                 NextBooking = "prenotazione in corso";
                             }
-                            else if (nextOrder.StartDate.Date > DateTime.Now.Date) {
+                            else if (nextOrder.StartDate.Date > DateTime.Now.Date)
+                            {
                                 NextBooking = nextOrder.StartDate.ToString("ddd, dd MMMMM  hh:mm");
                             }
                             else
                             {
                                 NextBooking = "oggi, alle " + nextOrder.StartDate.ToShortTimeString();
                             }
-                        } else {
+                        }
+                        else
+                        {
                             NextBooking = "nessuna prenotazione";
                         }
                         base.OnPropertyChanged("NextBooking");
                         return true;
                     }
-                    if (nextOrder != null)
-                    {
-                        NextBooking = nextOrder.StartDate.ToShortTimeString();
-                    }
-                    else
-                    {
-                        NextBooking = "nessuna prenotazione";
-                    }
-                    base.OnPropertyChanged("NextBooking");
-                    return true;
-                } else {
-                    // No orders found
-                    NextBooking = "nessuna prenotazione";
-                    base.OnPropertyChanged("NextBooking");
-                    return true;
                 }
+                // No orders found
+                NextBooking = "nessuna prenotazione";
+                base.OnPropertyChanged("NextBooking");
+                return true;
 
-            } catch (Exception e)
+            }
+            catch (Exception e)
             {
                 // TODO: manage exception
                 return false;
