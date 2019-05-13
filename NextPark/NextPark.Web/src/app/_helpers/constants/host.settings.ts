@@ -8,4 +8,5 @@ export const NEXT_PARK_URL = {
   parking: `${HOST_URL}/Parkings`,
   events: `${HOST_URL}/Events`,
   orders: `${HOST_URL}/Orders`
+  transactions: `${HOST_URL}/transactions`
 };

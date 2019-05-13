@@ -52,6 +52,7 @@ namespace NextPark.Mobile.ViewModels
         public DateTime RepetitionEndDate { get; set; }
         public DateTime RepetitionMinEndDate { get; set; }
         public DateTime RepetitionMaxEndDate { get; set; }
+        public bool RepetitionEndEnable { get; set; }
         public TimeSpan StartTime { get; set; }     // Event timeslot start
         public TimeSpan EndTime { get; set; }       // Event timeslot end
         public int RepetitionIndex                  // Repetition Selected Index
@@ -59,6 +60,7 @@ namespace NextPark.Mobile.ViewModels
             get { return _repetitionIndex; }
             set { _repetitionIndex = value; OnRepetitionChangedMethod(_repetitionIndex); } 
         }
+        public bool RepetitionEnable { get; set; }  // Repetition Enable
         public bool EndDateVisible { get; set; }        // End date visibility
         public bool RepetitionEndVisible { get; set; }  // Repetition end visibility
 
@@ -86,11 +88,14 @@ namespace NextPark.Mobile.ViewModels
             set { _weekDays = value; base.OnPropertyChanged("WeekDays"); }
         }
         public bool WeekDayVisible { get; set; }
+        public bool WeekDayEnable { get; set; }
+        public Color WeekDayBackgroundColor { get; set; }
 
         // PRIVATE VARIABLES
         private EventModel _event { get; set; }
         private bool _modifying { get; set; }
         private int _repetitionIndex { get; set; }
+        private RepetitionType originalRepetitionType;
 
         // SERVICES
         private readonly IDialogService _dialogService;
@@ -111,7 +116,7 @@ namespace NextPark.Mobile.ViewModels
             _profileService = profileService;
 
             UserName = AuthSettings.User.Name;
-            UserMoney = AuthSettings.UserCoin.ToString("N0");
+            UserMoney = AuthSettings.UserCoin.ToString("N2");
             base.OnPropertyChanged("UserName");
             base.OnPropertyChanged("UserMoney");
 
@@ -145,7 +150,7 @@ namespace NextPark.Mobile.ViewModels
                     // Header
                     BackText = "Indietro";
                     UserName = AuthSettings.User.Name;
-                    UserMoney = AuthSettings.UserCoin.ToString("N0");
+                    UserMoney = AuthSettings.UserCoin.ToString("N2");
                     base.OnPropertyChanged("BackText");
                     base.OnPropertyChanged("UserName");
                     base.OnPropertyChanged("UserMoney");
@@ -174,12 +179,16 @@ namespace NextPark.Mobile.ViewModels
                         RepetitionIndex = 0;
                         AddButtonVisible = true;
                         DeleteButtonVisible = false;
+                        RepetitionEnable = true;
+                        RepetitionEndEnable = true;
+                        WeekDayEnable = true;
+                        WeekDayBackgroundColor = Color.White;
                         AddButtonText = "Aggiungi";
                         _modifying = false;
 
                     } else {
                         // Modify an Event
-                        Title = "Modifica disponibilità";
+                        Title = "Dettaglio disponibilità";
                         StartDate = _event.StartDate.Date;
                         StartTime = _event.StartDate.TimeOfDay;
                         EndDate = _event.EndDate.Date;
@@ -188,10 +197,10 @@ namespace NextPark.Mobile.ViewModels
                         if (_event.WeeklyRepeDayOfWeeks == null) {
                             _event.WeeklyRepeDayOfWeeks = new List<DayOfWeek>
                             {
-                                (DayOfWeek)(DateTime.Now.DayOfWeek)
+                                (DayOfWeek)(_event.StartDate.DayOfWeek)
                             };
                         }
-                        if (EndDate > DateTime.Now.Date)
+                        if (EndDate >= DateTime.Now.Date)
                         {
                             AddButtonVisible = true;
                             DeleteButtonVisible = true;
@@ -201,11 +210,17 @@ namespace NextPark.Mobile.ViewModels
                             DeleteButtonVisible = false;
                             MinStartDate = _event.StartDate.Date;
                         }
+                        RepetitionEnable = true;
+                        RepetitionEndEnable = true;
+                        WeekDayEnable = true;
+                        WeekDayBackgroundColor = Color.White;
+
                         AddButtonText = "Salva";
                         _modifying = true;
                     }
 
                     RepetitionMinEndDate = StartDate;
+                    originalRepetitionType = _event.RepetitionType;
                     switch (_event.RepetitionType) 
                     {
                         default:
@@ -238,11 +253,16 @@ namespace NextPark.Mobile.ViewModels
                     base.OnPropertyChanged("EndDate");
                     base.OnPropertyChanged("EndDateVisible");
                     base.OnPropertyChanged("EndTime");
+                    base.OnPropertyChanged("RepetitionEnable");
+                    base.OnPropertyChanged("RepetitionEndEnable");
                     base.OnPropertyChanged("RepetitionEndVisible");
                     base.OnPropertyChanged("RepetitionIndex");
                     base.OnPropertyChanged("RepetitionMinEndDate");
                     base.OnPropertyChanged("RepetitionEndDate");
+                    base.OnPropertyChanged("WeekDayEnable");
+                    base.OnPropertyChanged("WeekDayBackgroundColor");
                     base.OnPropertyChanged("WeekDaysVisible");
+
                     base.OnPropertyChanged("AddButtonVisible");
                     base.OnPropertyChanged("DeleteButtonVisible");
                     base.OnPropertyChanged("AddButtonText");
@@ -306,6 +326,7 @@ namespace NextPark.Mobile.ViewModels
                 DateTime end = EndDate + EndTime;
 
                 UIParkingModel parking = _profileService.GetParkingById(_event.ParkingId);
+
                 foreach (OrderModel order in parking.Orders)
                 {
                     if ((order.StartDate < _event.EndDate) && (order.EndDate > _event.StartDate))
@@ -320,6 +341,7 @@ namespace NextPark.Mobile.ViewModels
                         }
                     }
                 }
+
             }
             // Try to add or modify events
             AddEvent();
@@ -378,7 +400,7 @@ namespace NextPark.Mobile.ViewModels
             foreach (OrderModel order in parking.Orders) {
                 if ((order.StartDate < _event.EndDate) && (order.EndDate > _event.StartDate)) {
                     // Orders are present, unauthorized to delete event
-                    _dialogService.ShowAlert("Errore", "Non è stato possibile eliminare la disponibilità in quanto ci sono degli ordini confermati all'interno di queste date.");
+                    _dialogService.ShowAlert("Errore", "Non è possibile eliminare la disponibilità in quanto ci sono degli ordini confermati all'interno di queste date.");
                     IsRunning = false;
                     base.OnPropertyChanged("IsRunning");
                     return;
@@ -404,21 +426,24 @@ namespace NextPark.Mobile.ViewModels
                 case 0: // Never
                     _event.RepetitionType = RepetitionType.None;
                     RepetitionEndDate = EndDate;
+                    _event.WeeklyRepeDayOfWeeks.Clear();
                     break;
                 case 1: // Daily
                     _event.RepetitionType = RepetitionType.Dayly;
+                    EndDate = StartDate;
                     break;
                 case 2: // Weekly
                     _event.RepetitionType = RepetitionType.Weekly;
+                    EndDate = StartDate;
                     break;
             }
             // Remove seconds from timing
             StartTime = StartTime.Subtract(TimeSpan.FromSeconds(StartTime.Seconds));
             EndTime = EndTime.Subtract(TimeSpan.FromSeconds(EndTime.Seconds));
 
-            _event.StartDate = StartDate + StartTime;
-            _event.EndDate = StartDate + EndTime;
-            _event.RepetitionEndDate = RepetitionEndDate + EndTime;
+            _event.StartDate = new DateTime(StartDate.Year, StartDate.Month, StartDate.Day, StartTime.Hours, StartTime.Minutes, 0);
+            _event.EndDate = new DateTime(EndDate.Year, EndDate.Month, EndDate.Day, EndTime.Hours, EndTime.Minutes, 0);
+            _event.RepetitionEndDate = new DateTime(RepetitionEndDate.Year, RepetitionEndDate.Month, RepetitionEndDate.Day, EndTime.Hours, EndTime.Minutes, 0);
 
             var result = new List<EventModel>();
 
@@ -427,34 +452,73 @@ namespace NextPark.Mobile.ViewModels
                 if (_modifying)
                 {
 
-                    var choice = "Modifica solo questo evento";
+                    var choice = "Salva per questo evento";
 
-                    // TODO: check for repetition
-                    if (_event.RepetitionType != RepetitionType.None)
+                    if ((_event.RepetitionType != RepetitionType.None) || (originalRepetitionType != RepetitionType.None))
                     {
-                        // Show choice popup
-                        choice = await Application.Current.MainPage.DisplayActionSheet(
-                                        "Questo è un evento periodico",
-                                        "Annulla",
-                                        null,
-                                        "Modifica solo questo evento",
-                                        "Modifica tutti gli eventi futuri");
-                        if ((choice == null) || (choice.Equals("Annulla")))
+                        if (originalRepetitionType == RepetitionType.None)
                         {
-                            IsRunning = false;
-                            base.OnPropertyChanged("IsRunning");
-                            return;
+                            // Add future events
+                            choice = "Salva per eventi futuri";
+                        }
+                        else
+                        {
+                            // Show choice popup
+                            choice = await Application.Current.MainPage.DisplayActionSheet(
+                                            "Questo è un evento periodico.",
+                                            "Annulla",
+                                            null,
+                                            "Salva per questo evento",
+                                            "Salva per eventi futuri");
+                            if ((choice == null) || (choice.Equals("Annulla")))
+                            {
+                                IsRunning = false;
+                                base.OnPropertyChanged("IsRunning");
+                                return;
+                            }
+                        }
+
+                    }
+
+                    if (choice.Equals("Salva per questo evento"))
+                    {
+                        // TODO: remove repetition
+                        // _event.RepetitionType = none
+                        // _event.RepetitionId = ?
+                        var resultEdit = await _eventDataService.EditEventsAsync(_event.Id, _event);
+
+                        if (resultEdit != null) {
+                            if (resultEdit.IsSuccess == true) {
+                                result.Add(resultEdit.Result);
+                            } else if (resultEdit.ErrorType == ErrorType.EventCantBeModified) {
+                                await _dialogService.ShowAlert("Errore", "Non è possibile modificare la disponibilità in quanto ci sono degli ordini confermati all'interno di queste date.");
+                            } else {
+                                await _dialogService.ShowAlert("Errore", "Non è possibile modificare la disponibilità.");
+                            }
+                        } else {
+                            await _dialogService.ShowAlert("Errore", "Non è possibile modificare la disponibilità.");
                         }
                     }
-
-                    if (choice.Equals("Modifica solo questo evento"))
+                    else if (choice.Equals("Salva per eventi futuri"))
                     {
-                        var resultEdit = await _eventDataService.EditEventsAsync(_event.Id, _event);
-                        result.Add(resultEdit);
-                    }
-                    else if (choice.Equals("Modifica tutti gli eventi futuri"))
-                    {
-                        result = await _eventDataService.EditSerieEventsAsync(_event);
+                        var resultEdit = await _eventDataService.EditSerieEventsAsync(_event);
+                        if (resultEdit != null)
+                        {
+                            if (resultEdit.IsSuccess == true)
+                            {
+                                result = resultEdit.Result;
+                            }
+                            else if (resultEdit.ErrorType == ErrorType.EventCantBeModified)
+                            {
+                                await _dialogService.ShowAlert("Errore", "Non è possibile modificare tutte le disponibilità in quanto ci sono degli ordini confermati all'interno di queste date.");
+                            }
+                            else
+                            {
+                                await _dialogService.ShowAlert("Errore", "Non è possibile modificare le disponibilità.");
+                            }
+                        } else {
+                            await _dialogService.ShowAlert("Errore", "Non è possibile modificare le disponibilità.");
+                        }
                     }
                 }
                 else
@@ -519,15 +583,42 @@ namespace NextPark.Mobile.ViewModels
                 {
                     var result = await _eventDataService.DeleteEventsAsync(_event.Id);
 
+                    if (result != null) {
+                        if (result.IsSuccess == true) {
+
+                        } else if (result.ErrorType == ErrorType.EventCantBeModified) {
+                            await _dialogService.ShowAlert("Errore", "Non è possibile eliminare la disponibilità in quanto ci sono degli ordini confermati all'interno di queste date.");
+                        } else {
+                            await _dialogService.ShowAlert("Errore", "Non è possibile eliminare la disponibilità.");
+                        }
+                    } else {
+                        await _dialogService.ShowAlert("Errore", "Non è possibile eliminare la disponibilità.");
+                    }
                 }
                 else if (choice.Equals("Elimina tutti gli eventi futuri"))
                 {
                     // TODO: verify GetHash or add DeleteSerieEventsAsync(Guid Id)
-                    var result = await _eventDataService.DeleteSerieEventsAsync(_event.RepetitionId.GetHashCode());
+                    var result = await _eventDataService.DeleteSerieEventsAsync(_event.Id);
+                    if (result != null)
+                    {
+                        if (result.IsSuccess == true)
+                        {
+
+                        }
+                        else if (result.ErrorType == ErrorType.EventCantBeModified)
+                        {
+                            await _dialogService.ShowAlert("Errore", "Non è possibile eliminare le disponibilità in quanto ci sono degli ordini confermati all'interno di queste date.");
+                        }
+                        else
+                        {
+                            await _dialogService.ShowAlert("Errore", "Non è possibile eliminare le disponibilità.");
+                        }
+                    }
+                    else
+                    {
+                        await _dialogService.ShowAlert("Errore", "Non è possibile eliminare le disponibilità.");
+                    }
                 }
-
-                // TODO: check result looking at error enumerators
-
             }
             catch (Exception e)
             {
@@ -537,10 +628,8 @@ namespace NextPark.Mobile.ViewModels
             {
                 IsRunning = false;
                 base.OnPropertyChanged("IsRunning");
-            }
-        
-            // await oderRemove
-            await NavigationService.NavigateToAsync<ParkingDataViewModel>(_profileService.LastEditingParking);
+                await NavigationService.NavigateToAsync<ParkingDataViewModel>(_profileService.LastEditingParking);
+            }        
         }
 
         // Activate/Deactivate Parking toggle switch action

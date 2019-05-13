@@ -83,7 +83,7 @@ namespace NextPark.Mobile.ViewModels
 
             // Header
             UserName = AuthSettings.User.Name;
-            UserMoney = AuthSettings.UserCoin.ToString("N0");
+            UserMoney = AuthSettings.UserCoin.ToString("N2");
             base.OnPropertyChanged("UserName");
             base.OnPropertyChanged("UserMoney");
 
@@ -111,7 +111,7 @@ namespace NextPark.Mobile.ViewModels
             // Header
             BackText = "Mappa";
             UserName = AuthSettings.User.Name;
-            UserMoney = AuthSettings.UserCoin.ToString("N0");
+            UserMoney = AuthSettings.UserCoin.ToString("N2");
             base.OnPropertyChanged("BackText");
             base.OnPropertyChanged("UserName");
             base.OnPropertyChanged("UserMoney");
@@ -210,6 +210,8 @@ namespace NextPark.Mobile.ViewModels
         // Booking button click action
         public void OnBookingMethod(object sender)
         {
+            DateTime now = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, DateTime.Now.Hour, DateTime.Now.Minute, 0);
+
             // Compute price
             double orderPrice = Time.TotalHours * _parking.PriceMin;
             if (_parking.UserId == AuthSettings.User.Id) {
@@ -224,11 +226,12 @@ namespace NextPark.Mobile.ViewModels
             }
 
             // TODO: fill book data according to add book backend method
+
             _order = new OrderModel
             {
                 ParkingId = _parking.Id,
-                StartDate = DateTime.Now,
-                EndDate = DateTime.Now + Time,
+                StartDate = now,
+                EndDate = now + Time,
                 Price = orderPrice,
                 UserId = int.Parse(AuthSettings.UserId),
                 CarPlate = AuthSettings.User.CarPlate
@@ -239,8 +242,8 @@ namespace NextPark.Mobile.ViewModels
             base.OnPropertyChanged("IsRunning");
 
             // Ask confirm
-            ConfirmStartDateTime = _order.StartDate.ToString("dd/MM/yy hh:mm");
-            ConfirmEndDateTime = _order.EndDate.ToString("dd/MM/yy hh:mm");
+            ConfirmStartDateTime = _order.StartDate.ToString("dd/MM/yy HH:mm");
+            ConfirmEndDateTime = _order.EndDate.ToString("dd/MM/yy HH:mm");
             ConfirmPrice = _order.Price.ToString("N2") + " CHF";
             ConfirmVisible = true;
 
@@ -296,17 +299,44 @@ namespace NextPark.Mobile.ViewModels
         public async void SendOrder(OrderModel order)
         {
             try
-            {            
+            {
                 var result = await _orderDataService.CreateOrderAsync(order);
 
                 // Hide activity spinner
                 IsRunning = false;
                 base.OnPropertyChanged("IsRunning");
 
-                if (result != null) {
-                    await NavigationService.NavigateToAsync<UserBookingViewModel>();
+                if (result != null)
+                {
+                    if (result.IsSuccess == true)
+                    {
+                        // Successful
+                        await NavigationService.NavigateToAsync<UserBookingViewModel>();
+                    }
+                    else if (result.ErrorType == Enums.Enums.ErrorType.NotEnoughMoney)
+                    {
+                        // Not enough credit
+                        await _dialogService.ShowAlert("Attenzione", "Credito insufficiente");
+                        await NavigationService.NavigateToAsync<MoneyViewModel>();
+                        return;
+                    }
+                    else if ((result.ErrorType == Enums.Enums.ErrorType.ParkingNotOrderable) || (result.ErrorType == Enums.Enums.ErrorType.ParkingNotVailable))
+                    {
+                        // Parking not available
+                        await _dialogService.ShowAlert("Attenzione", "Il parcheggio non è più disponibile");
+                        await NavigationService.NavigateToAsync<HomeViewModel>();
+                        return;
+                    } else {
+                        // Unexpected error
+                        await _dialogService.ShowAlert("Errore", "Impossibile eseguire l'ordine");
+                        await NavigationService.NavigateToAsync<HomeViewModel>();
+                        return;
+                    }
                 } else {
+                    // Unexpected error
                     await _dialogService.ShowAlert("Errore", "Impossibile eseguire l'ordine");
+                    await NavigationService.NavigateToAsync<HomeViewModel>();
+                    return;
                 }
             } catch (Exception e) {
                 await _dialogService.ShowAlert("Errore", e.Message);

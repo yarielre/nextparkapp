@@ -7,6 +7,7 @@ import { NEXT_PARK_URL } from "../_helpers/constants/host.settings";
 import { Event } from "../models";
 import { BaseService } from "./base.service";
 import { StorageService } from "./storage.service";
+import {ApiResponse} from '../models/api-response';
 
 @Injectable({
   providedIn: "root"
@@ -30,7 +31,7 @@ export class EventsService extends BaseService<Event> {
     });
   }
 
-  getAll(): Observable<Event[]> {
+  getAll(): Observable<ApiResponse<Event[]>> {
     return super.getAll();
   }
 

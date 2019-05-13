@@ -23,6 +23,7 @@ namespace NextPark.Mobile.ViewModels
         private readonly IOrderDataService _orderDataService;
         private readonly IPurchaseDataService _purchaseDataService;
         private readonly ILocalizationService _localizationService;
+        private readonly InAppPurchaseService _inAppPurchaseService;
 
         private bool _startButtonEnabled;
         private string _resultConsole;
@@ -31,7 +32,8 @@ namespace NextPark.Mobile.ViewModels
         public UserModel LoggedUser { get; set; }
 
         public TestViewModel(IApiService apiService, IAuthService authService, INavigationService navService,
-            IEventDataService eventDataService, IParkingDataService parkingDataService, IOrderDataService orderDataService, IPurchaseDataService purchaseDataService, ILocalizationService localizationService) : base(apiService, authService,
+            IEventDataService eventDataService, IParkingDataService parkingDataService, IOrderDataService orderDataService, 
+            IPurchaseDataService purchaseDataService, ILocalizationService localizationService, InAppPurchaseService inAppPurchaseService) : base(apiService, authService,
             navService)
         {
             _eventDataService = eventDataService;
@@ -39,9 +41,9 @@ namespace NextPark.Mobile.ViewModels
             _orderDataService = orderDataService;
             _purchaseDataService = purchaseDataService;
             _localizationService = localizationService;
+            _inAppPurchaseService = inAppPurchaseService;
 
             CleanConsoleAsync();
-
         }
 
 
@@ -71,13 +73,13 @@ namespace NextPark.Mobile.ViewModels
             StartButtonEnabled = false;
             
             await AuthServiceTest().ConfigureAwait(false);
-
             await ParkingServiceTest().ConfigureAwait(false);
             await OrderServiceTest().ConfigureAwait(false);
             await EventServiceTest().ConfigureAwait(false);
-           // PurchaseServiceTest();
+            await InAppPurchaseTest().ConfigureAwait(false);
+            //PurchaseServiceTest();
+            //LocalizationTest();
             await LogoutTest().ConfigureAwait(false);
-           // LocalizationTest();
             #region Specific Cases
             await CaseEventDayly().ConfigureAwait(false); 
             #endregion
@@ -224,7 +226,10 @@ namespace NextPark.Mobile.ViewModels
             {
                 AddLineToConsole("Creating the parking FAILED");
             }
+
+
             var endDate = DateTime.Now.AddDays(1);
+
             var eventParking = new EventModel
             {
                 StartDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day),
@@ -304,9 +309,9 @@ namespace NextPark.Mobile.ViewModels
             var newMonthlyEvent = new EventModel
             {
                 StartDate = DateTime.Now,
-                EndDate = (DateTime.Now).AddDays(3),
+                EndDate = DateTime.Now.AddMonths(3).AddHours(1),
                 ParkingId = selectedPArking.Id,
-                RepetitionEndDate = new DateTime(2019, 2, 28, 3, 0, 0),
+                RepetitionEndDate = DateTime.Now.AddMonths(3).AddHours(1),
                 RepetitionType = RepetitionType.Monthly,
                 MonthlyRepeatDay = new List<int>
                 {
@@ -417,9 +422,14 @@ namespace NextPark.Mobile.ViewModels
 
                 if (deletedSeriesParkingEvents != null)
                 {
-                    AddLineToConsole($"Deleted: {deletedSeriesParkingEvents.Count} events for the selected parking  by series");
+                    if (deletedSeriesParkingEvents.IsSuccess == true)
+                    {
+                        AddLineToConsole($"Deleted: {deletedSeriesParkingEvents.Result.Count} events for the selected parking  by series");
 
-                    AddLineToConsole("Getting parking events  by series OK");
+                        AddLineToConsole("Getting parking events  by series OK");
+                    } else {
+                        AddLineToConsole("Delete by serie error: " + deletedSeriesParkingEvents.Message);
+                    }
                 }
                 else
                 {
@@ -470,7 +480,7 @@ namespace NextPark.Mobile.ViewModels
                 return;
             }
 
-            var startDate = DateTime.Now.ToUniversalTime();
+            var startDate = DateTime.Now;
             var endDate = startDate.AddHours(3);
 
 
@@ -505,7 +515,7 @@ namespace NextPark.Mobile.ViewModels
                 return;
             }
 
-            var orderStartDate = DateTime.Now.ToUniversalTime();
+            var orderStartDate = DateTime.Now;
             var orderEndDate = orderStartDate.AddHours(1);
 
             var order = new OrderModel
@@ -572,6 +582,25 @@ namespace NextPark.Mobile.ViewModels
         }
         #endregion
 
+        #region InAppPurchase Service
+        private async Task InAppPurchaseTest()
+        {
+            AddLineToConsole("-------------------------------------------");
+            AddLineToConsole("TESTING InAppPurchase...");
+            AddLineToConsole("The purchase operation is cross platform, so it will be apply the the os where is running the app! ");
+            AddLineToConsole("Purchasing on 1 parking credit on Store test model enabled...");
+            var purchaseAppleResult = await _inAppPurchaseService.PurchaseCredit1();
+            if (purchaseAppleResult.IsSuccess)
+            {
+                AddLineToConsole("Purchasing on 1 parking credit on Store OK");
+            }
+            else
+            {
+                AddLineToConsole($"Purchasing on 1 parking credit on Store FAILED:  {purchaseAppleResult.Message}");
+            }
+        }
+        #endregion 
+
         #region Logout testing
         private async Task LogoutTest()
         {
@@ -633,18 +662,18 @@ namespace NextPark.Mobile.ViewModels
             {
                 AddLineToConsole("Creating the parking FAILED");
             }
-            var endDate = DateTime.Now.AddDays(1);
+            
             var eventParking = new EventModel
             {
-                StartDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day),
-                EndDate = new DateTime(endDate.Year, endDate.Month, endDate.Day, 23, 59, 00),
+                StartDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day,22,00,00),
+                EndDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 23, 00, 00),
                 ParkingId = postedParking.Id,
-                RepetitionEndDate = new DateTime(endDate.Year, endDate.Month, endDate.Day, 23, 59, 00),
-                RepetitionType = RepetitionType.Dayly
+                RepetitionEndDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 23, 00, 00),
+                RepetitionType = RepetitionType.None
             };
 
             // postedParking.Status = Enums.Enums.ParkingStatus.Disabled;
-            AddLineToConsole("----------Creating dayly events----------");
+            AddLineToConsole("----------Creating test case events----------");
             AddLineToConsole($"->Start date:{eventParking.StartDate:G}");
             AddLineToConsole($"->End date:{eventParking.EndDate:G}");
             var result = await _eventDataService.CreateEventAsync(eventParking);
@@ -652,11 +681,32 @@ namespace NextPark.Mobile.ViewModels
             {
                 AddLineToConsole($"Created: {result.Count} dayly events for the created parking");
                 AddLineToConsole("Creating dayly events OK");
+
+                if (result.Count > 0)
+                {
+                    AddLineToConsole("Modifying event ");
+                    result[0].EndDate = result[0].EndDate.AddMinutes(30);
+                    var updateResult = await _eventDataService.EditEventsAsync(result[0].Id, result[0]);
+                    if (updateResult == null)
+                    {
+                        AddLineToConsole("Modifying event FAILED");
+                    }
+                    else if (updateResult.IsSuccess == false)
+                    {
+                        AddLineToConsole("Modifying event FAILED: " + updateResult.Message);
+                    }
+                    else
+                    {
+                        AddLineToConsole("Modifying event OK");
+                    }
+                }
+
             }
             else
             {
-                AddLineToConsole("Creating dayly events FAILED");
+                AddLineToConsole("Creating test case events FAILED");
             }
+
             AddLineToConsole("Getting posted parking's events ");
             var events = await _eventDataService.GetAllEventsAsync();
             AddLineToConsole($"Found: {events.Count} events.");

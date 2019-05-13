@@ -19,6 +19,7 @@ namespace NextPark.Mobile.Controls
         public static readonly BindableProperty CityProperty = BindableProperty.Create(nameof(City), typeof(string), typeof(UserBookingItem), default(string), Xamarin.Forms.BindingMode.OneWay);
 
         public static readonly BindableProperty TimeProperty = BindableProperty.Create(nameof(Time), typeof(string), typeof(UserBookingItem), default(string), Xamarin.Forms.BindingMode.OneWay);
+        public static readonly BindableProperty TimeColorProperty = BindableProperty.Create(nameof(TimeColor), typeof(Color), typeof(UserBookingItem), Color.Black, Xamarin.Forms.BindingMode.OneWay);
         //public static readonly BindableProperty TimeVisibleProperty = BindableProperty.Create(nameof(TimeVisible), typeof(bool), typeof(UserBookingItem), false, Xamarin.Forms.BindingMode.OneWay);
         //public static readonly BindableProperty StartDateTimeProperty = BindableProperty.Create(nameof(StartDateTime), typeof(string), typeof(UserBookingItem), default(string), Xamarin.Forms.BindingMode.OneWay);
         //public static readonly BindableProperty EndDateTimeProperty = BindableProperty.Create(nameof(EndDateTime), typeof(string), typeof(UserBookingItem), default(string), Xamarin.Forms.BindingMode.OneWay);
@@ -80,6 +81,12 @@ namespace NextPark.Mobile.Controls
         {
             get { return (string)this.GetValue(TimeProperty); }
             set { SetValue(TimeProperty, value); }
+        }
+
+        public Color TimeColor
+        {
+            get { return (Color)this.GetValue(TimeColorProperty); }
+            set { SetValue(TimeColorProperty, value); }
         }
 
         public ICommand SwipeAction

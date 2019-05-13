@@ -84,7 +84,7 @@ namespace NextPark.Api.Controllers
             }
             catch (Exception e)
             {
-                return BadRequest(ApiResponse<ParkingModel>.GetErrorResponse(e.Message, ErrorType.Exeption));
+                return BadRequest(ApiResponse<ParkingModel>.GetErrorResponse(e.Message, ErrorType.Exception));
                 //Log: return BadRequest(string.Format("{0} Exception: {1}", "Error processing Image!", e.Message));
             }
 
@@ -98,7 +98,7 @@ namespace NextPark.Api.Controllers
             }
             catch (Exception e)
             {
-                return BadRequest(ApiResponse<ParkingModel>.GetErrorResponse(e.Message, ErrorType.Exeption));
+                return BadRequest(ApiResponse<ParkingModel>.GetErrorResponse(e.Message, ErrorType.Exception));
             }
         }
 
@@ -110,8 +110,7 @@ namespace NextPark.Api.Controllers
                 return BadRequest(ApiResponse<ParkingModel>.GetErrorResponse("Model is null",ErrorType.EntityNull));
 
             try
-            {
-                var parking = _mapper.Map<ParkingModel, Parking>(model);
+            {              
                 try
                 {
                     var imageUrl = _mediaService.SaveImage(model.ImageBinary);
@@ -120,18 +119,21 @@ namespace NextPark.Api.Controllers
                 }
                 catch (Exception e)
                 {
-                    return BadRequest(ApiResponse<ParkingModel>.GetErrorResponse(e.Message, ErrorType.Exeption));
+                    return BadRequest(ApiResponse<ParkingModel>.GetErrorResponse(e.Message, ErrorType.Exception));
                     //Log: return BadRequest(string.Format("{0} Exception: {1}", "Error processing Image!", e.Message));
                 }
 
+                var parking = _mapper.Map<ParkingModel, Parking>(model);
                 _parkingRepository.Update(parking);
+
                 await _unitOfWork.CommitAsync();
+
                 var vm = _mapper.Map<Parking, ParkingModel>(parking);
                 return Ok(ApiResponse<ParkingModel>.GetSuccessResponse(vm));
             }
             catch (Exception e)
             {
-                return BadRequest(ApiResponse<ParkingModel>.GetErrorResponse(e.Message,ErrorType.Exeption));
+                return BadRequest(ApiResponse<ParkingModel>.GetErrorResponse(e.Message,ErrorType.Exception));
             }
         }
 

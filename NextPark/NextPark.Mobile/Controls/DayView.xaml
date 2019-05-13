@@ -25,7 +25,8 @@
                         </Grid.ColumnDefinitions>
                 
                         <!-- Hours -->
-                        <StackLayout Grid.Row="0" Grid.Column="0"
+                        <StackLayout x:Name="hours"
+                                     Grid.Row="0" Grid.Column="0"
                                      Orientation="Vertical"
                                      Padding="0"
                                      Margin="0"
@@ -36,145 +37,313 @@
                                    VerticalTextAlignment="Start"
                                    TextColor="Silver"
                                    FontSize="12"
-                                   Margin="0,0,0,45"/>
+                                   Margin="0,0,0,45">
+                                <Label.Margin>
+                                    <OnPlatform x:TypeArguments="Thickness">
+                                        <On Platform="iOS" Value="0,0,0,45" />
+                                        <On Platform="Android" Value="0,-1,0,43" />
+                                    </OnPlatform>    
+                                </Label.Margin>
+                            </Label>
                             <Label Text="01:00"
                                    HorizontalTextAlignment="Start"
                                    VerticalTextAlignment="Start"
                                    TextColor="Silver"
                                    FontSize="12"
-                                   Margin="0,0,0,45"/>
+                                   Margin="0,0,0,45">
+                                <Label.Margin>
+                                    <OnPlatform x:TypeArguments="Thickness">
+                                        <On Platform="iOS" Value="0,0,0,45" />
+                                        <On Platform="Android" Value="0,0,0,44" />
+                                    </OnPlatform>    
+                                </Label.Margin>
+                            </Label>
                             <Label Text="02:00"
                                    HorizontalTextAlignment="Start"
                                    VerticalTextAlignment="Start"
                                    TextColor="Silver"
                                    FontSize="12"
-                                   Margin="0,0,0,46"/>
+                                   Margin="0,0,0,46">
+                                <Label.Margin>
+                                    <OnPlatform x:TypeArguments="Thickness">
+                                        <On Platform="iOS" Value="0,0,0,46" />
+                                        <On Platform="Android" Value="0,0,0,44" />
+                                    </OnPlatform>    
+                                </Label.Margin>
+                            </Label>
                             <Label Text="03:00"
                                    HorizontalTextAlignment="Start"
                                    VerticalTextAlignment="Start"
                                    TextColor="Silver"
                                    FontSize="12"
-                                   Margin="0,0,0,46"/>
+                                   Margin="0,0,0,46">
+                                <Label.Margin>
+                                    <OnPlatform x:TypeArguments="Thickness">
+                                        <On Platform="iOS" Value="0,0,0,46" />
+                                        <On Platform="Android" Value="0,0,0,43" />
+                                    </OnPlatform>    
+                                </Label.Margin>
+                            </Label>
                             <Label Text="04:00"
                                    HorizontalTextAlignment="Start"
                                    VerticalTextAlignment="Start"
                                    TextColor="Silver"
                                    FontSize="12"
-                                   Margin="0,0,0,46"/>
+                                   Margin="0,0,0,46">
+                                <Label.Margin>
+                                    <OnPlatform x:TypeArguments="Thickness">
+                                        <On Platform="iOS" Value="0,0,0,46" />
+                                        <On Platform="Android" Value="0,0,0,44" />
+                                    </OnPlatform>    
+                                </Label.Margin>
+                            </Label>
                             <Label Text="05:00"
                                    HorizontalTextAlignment="Start"
                                    VerticalTextAlignment="Start"
                                    TextColor="Silver"
                                    FontSize="12"
-                                   Margin="0,0,0,45"/>
+                                   Margin="0,0,0,46">
+                                <Label.Margin>
+                                    <OnPlatform x:TypeArguments="Thickness">
+                                        <On Platform="iOS" Value="0,0,0,46" />
+                                        <On Platform="Android" Value="0,0,0,44" />
+                                    </OnPlatform>    
+                                </Label.Margin>
+                            </Label>
                             <Label Text="06:00"
                                    HorizontalTextAlignment="Start"
                                    VerticalTextAlignment="Start"
                                    TextColor="Silver"
                                    FontSize="12"
-                                   Margin="0,0,0,46"/>
+                                   Margin="0,0,0,46">
+                                <Label.Margin>
+                                    <OnPlatform x:TypeArguments="Thickness">
+                                        <On Platform="iOS" Value="0,0,0,46" />
+                                        <On Platform="Android" Value="0,0,0,43" />
+                                    </OnPlatform>    
+                                </Label.Margin>
+                            </Label>
                             <Label Text="07:00"
                                    HorizontalTextAlignment="Start"
                                    VerticalTextAlignment="Start"
                                    TextColor="Silver"
                                    FontSize="12"
-                                   Margin="0,0,0,45"/>  
+                                   Margin="0,0,0,45">
+                                <Label.Margin>
+                                    <OnPlatform x:TypeArguments="Thickness">
+                                        <On Platform="iOS" Value="0,0,0,45" />
+                                        <On Platform="Android" Value="0,0,0,44" />
+                                    </OnPlatform>    
+                                </Label.Margin>
+                            </Label>
                             <Label Text="08:00"
                                    HorizontalTextAlignment="Start"
                                    VerticalTextAlignment="Start"
                                    TextColor="Silver"
                                    FontSize="12"
-                                   Margin="0,0,0,46"/>
+                                   Margin="0,0,0,46">
+                                <Label.Margin>
+                                    <OnPlatform x:TypeArguments="Thickness">
+                                        <On Platform="iOS" Value="0,0,0,46" />
+                                        <On Platform="Android" Value="0,0,0,44" />
+                                    </OnPlatform>    
+                                </Label.Margin>
+                            </Label>
                             <Label Text="09:00"
                                    HorizontalTextAlignment="Start"
                                    VerticalTextAlignment="Start"
                                    TextColor="Silver"
                                    FontSize="12"
-                                   Margin="0,0,0,45"/>
+                                   Margin="0,0,0,45">
+                                <Label.Margin>
+                                    <OnPlatform x:TypeArguments="Thickness">
+                                        <On Platform="iOS" Value="0,0,0,45" />
+                                        <On Platform="Android" Value="0,0,0,43" />
+                                    </OnPlatform>    
+                                </Label.Margin>
+                            </Label>
                             <Label Text="10:00"
                                    HorizontalTextAlignment="Start"
                                    VerticalTextAlignment="Start"
                                    TextColor="Silver"
                                    FontSize="12"
-                                   Margin="0,0,0,46"/>
+                                   Margin="0,0,0,46">
+                                <Label.Margin>
+                                    <OnPlatform x:TypeArguments="Thickness">
+                                        <On Platform="iOS" Value="0,0,0,46" />
+                                        <On Platform="Android" Value="0,0,0,44" />
+                                    </OnPlatform>    
+                                </Label.Margin>
+                            </Label>
                             <Label Text="11:00"
                                    HorizontalTextAlignment="Start"
                                    VerticalTextAlignment="Start"
                                    TextColor="Silver"
                                    FontSize="12"
-                                   Margin="0,0,0,45"/>
+                                   Margin="0,0,0,46">
+                                <Label.Margin>
+                                    <OnPlatform x:TypeArguments="Thickness">
+                                        <On Platform="iOS" Value="0,0,0,46" />
+                                        <On Platform="Android" Value="0,0,0,44" />
+                                    </OnPlatform>    
+                                </Label.Margin>
+                            </Label>
                             <Label Text="12:00"
                                    HorizontalTextAlignment="Start"
                                    VerticalTextAlignment="Start"
                                    TextColor="Silver"
                                    FontSize="12"
-                                   Margin="0,0,0,46"/>
+                                   Margin="0,0,0,46">
+                                <Label.Margin>
+                                    <OnPlatform x:TypeArguments="Thickness">
+                                        <On Platform="iOS" Value="0,0,0,46" />
+                                        <On Platform="Android" Value="0,0,0,43" />
+                                    </OnPlatform>    
+                                </Label.Margin>
+                            </Label>
                             <Label Text="13:00"
                                    HorizontalTextAlignment="Start"
                                    VerticalTextAlignment="Start"
                                    TextColor="Silver"
                                    FontSize="12"
-                                   Margin="0,0,0,45"/>
+                                   Margin="0,0,0,45">
+                                <Label.Margin>
+                                    <OnPlatform x:TypeArguments="Thickness">
+                                        <On Platform="iOS" Value="0,0,0,45" />
+                                        <On Platform="Android" Value="0,0,0,44" />
+                                    </OnPlatform>    
+                                </Label.Margin>
+                            </Label>
                             <Label Text="14:00"
                                    HorizontalTextAlignment="Start"
                                    VerticalTextAlignment="Start"
                                    TextColor="Silver"
                                    FontSize="12"
-                                   Margin="0,0,0,46"/>
+                                   Margin="0,0,0,46">
+                                <Label.Margin>
+                                    <OnPlatform x:TypeArguments="Thickness">
+                                        <On Platform="iOS" Value="0,0,0,46" />
+                                        <On Platform="Android" Value="0,0,0,44" />
+                                    </OnPlatform>    
+                                </Label.Margin>
+                            </Label>
                             <Label Text="15:00"
                                    HorizontalTextAlignment="Start"
                                    VerticalTextAlignment="Start"
                                    TextColor="Silver"
                                    FontSize="12"
-                                   Margin="0,0,0,45"/>
+                                   Margin="0,0,0,45">
+                                <Label.Margin>
+                                    <OnPlatform x:TypeArguments="Thickness">
+                                        <On Platform="iOS" Value="0,0,0,45" />
+                                        <On Platform="Android" Value="0,0,0,43" />
+                                    </OnPlatform>    
+                                </Label.Margin>
+                            </Label>
                             <Label Text="16:00"
                                    HorizontalTextAlignment="Start"
                                    VerticalTextAlignment="Start"
                                    TextColor="Silver"
                                    FontSize="12"
-                                   Margin="0,0,0,46"/>
+                                   Margin="0,0,0,46">
+                                <Label.Margin>
+                                    <OnPlatform x:TypeArguments="Thickness">
+                                        <On Platform="iOS" Value="0,0,0,46" />
+                                        <On Platform="Android" Value="0,0,0,44" />
+                                    </OnPlatform>    
+                                </Label.Margin>
+                            </Label>
                             <Label Text="17:00"
                                    HorizontalTextAlignment="Start"
                                    VerticalTextAlignment="Start"
                                    TextColor="Silver"
                                    FontSize="12"
-                                   Margin="0,0,0,45"/>
+                                   Margin="0,0,0,46">
+                                <Label.Margin>
+                                    <OnPlatform x:TypeArguments="Thickness">
+                                        <On Platform="iOS" Value="0,0,0,46" />
+                                        <On Platform="Android" Value="0,0,0,44" />
+                                    </OnPlatform>    
+                                </Label.Margin>
+                            </Label>
                             <Label Text="18:00"
                                    HorizontalTextAlignment="Start"
                                    VerticalTextAlignment="Start"
                                    TextColor="Silver"
                                    FontSize="12"
-                                   Margin="0,0,0,46"/>
+                                   Margin="0,0,0,46">
+                                <Label.Margin>
+                                    <OnPlatform x:TypeArguments="Thickness">
+                                        <On Platform="iOS" Value="0,0,0,46" />
+                                        <On Platform="Android" Value="0,0,0,44" />
+                                    </OnPlatform>    
+                                </Label.Margin>
+                            </Label>
                             <Label Text="19:00"
                                    HorizontalTextAlignment="Start"
                                    VerticalTextAlignment="Start"
                                    TextColor="Silver"
                                    FontSize="12"
-                                   Margin="0,0,0,45"/>
+                                   Margin="0,0,0,45">
+                                <Label.Margin>
+                                    <OnPlatform x:TypeArguments="Thickness">
+                                        <On Platform="iOS" Value="0,0,0,45" />
+                                        <On Platform="Android" Value="0,0,0,44" />
+                                    </OnPlatform>    
+                                </Label.Margin>
+                            </Label>
                             <Label Text="20:00"
                                    HorizontalTextAlignment="Start"
                                    VerticalTextAlignment="Start"
                                    TextColor="Silver"
                                    FontSize="12"
-                                   Margin="0,0,0,46"/>
+                                   Margin="0,0,0,46">
+                                <Label.Margin>
+                                    <OnPlatform x:TypeArguments="Thickness">
+                                        <On Platform="iOS" Value="0,0,0,46" />
+                                        <On Platform="Android" Value="0,0,0,44" />
+                                    </OnPlatform>    
+                                </Label.Margin>
+                            </Label>
                             <Label Text="21:00"
                                    HorizontalTextAlignment="Start"
                                    VerticalTextAlignment="Start"
                                    TextColor="Silver"
                                    FontSize="12"
-                                   Margin="0,0,0,45"/>
+                                   Margin="0,0,0,45">
+                                <Label.Margin>
+                                    <OnPlatform x:TypeArguments="Thickness">
+                                        <On Platform="iOS" Value="0,0,0,45" />
+                                        <On Platform="Android" Value="0,0,0,43" />
+                                    </OnPlatform>    
+                                </Label.Margin>
+                            </Label>
                             <Label Text="22:00"
                                    HorizontalTextAlignment="Start"
                                    VerticalTextAlignment="Start"
                                    TextColor="Silver"
                                    FontSize="12"
-                                   Margin="0,0,0,46"/>
+                                   Margin="0,0,0,46">
+                                <Label.Margin>
+                                    <OnPlatform x:TypeArguments="Thickness">
+                                        <On Platform="iOS" Value="0,0,0,46" />
+                                        <On Platform="Android" Value="0,0,0,44" />
+                                    </OnPlatform>    
+                                </Label.Margin>
+                            </Label>
                             <Label Text="23:00"
                                    HorizontalTextAlignment="Start"
                                    VerticalTextAlignment="Start"
                                    TextColor="Silver"
                                    FontSize="12"
-                                   Margin="0,0,0,46"/>
+                                   Margin="0,0,0,46">
+                                <Label.Margin>
+                                    <OnPlatform x:TypeArguments="Thickness">
+                                        <On Platform="iOS" Value="0,0,0,46" />
+                                        <On Platform="Android" Value="0,0,0,44" />
+                                    </OnPlatform>    
+                                </Label.Margin>
+                            </Label>
                         </StackLayout>
                     
                         <!-- Rows -->

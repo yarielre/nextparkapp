@@ -134,7 +134,7 @@ export class ParkingsComponent implements OnInit {
       this.dataSource = new ParkingDataSource(
         this.paginator,
         this.sort,
-        res
+        res.result
       );
       this.changeDetectorRefs.detectChanges();
     });

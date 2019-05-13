@@ -54,8 +54,8 @@ namespace NextPark.Mobile.ViewModels
 
         // METHODS
         public UserProfileViewModel(IDialogService dialogService,
-                                    IApiService apiService, 
-                                    IAuthService authService, 
+                                    IApiService apiService,
+                                    IAuthService authService,
                                     INavigationService navService,
                                     IParkingDataService parkingDataService,
                                     IOrderDataService orderDataService,
@@ -80,7 +80,7 @@ namespace NextPark.Mobile.ViewModels
             OnCommandClick = new Command<string>(OnCommandClickMethod);
 
             UserName = AuthSettings.User.Name;
-            UserMoney = AuthSettings.UserCoin.ToString("N0");
+            UserMoney = AuthSettings.UserCoin.ToString("N2");
 
         }
 
@@ -89,7 +89,7 @@ namespace NextPark.Mobile.ViewModels
         {
             // Header
             UserName = AuthSettings.User.Name;
-            UserMoney = AuthSettings.UserCoin.ToString("N0");
+            UserMoney = AuthSettings.UserCoin.ToString("N2");
             base.OnPropertyChanged("UserName");
             base.OnPropertyChanged("UserMoney");
 
@@ -111,9 +111,9 @@ namespace NextPark.Mobile.ViewModels
             base.OnPropertyChanged("CarPlate");
 
             // Budget
-            Balance = AuthSettings.UserCoin.ToString("N0");
+            Balance = AuthSettings.UserCoin.ToString("N2");
             base.OnPropertyChanged("Balance");
-            Profit = AuthSettings.User.Profit.ToString("N0");
+            Profit = AuthSettings.User.Profit.ToString("N2");
             base.OnPropertyChanged("Profit");
 
             // Parkings
@@ -197,7 +197,7 @@ namespace NextPark.Mobile.ViewModels
                 _totUserParkings = 0;
                 _activeUserParkings = 0;
 
-                // Search user parkings 
+                // Search user parkings
                 if (parkingList != null)
                 {
                     foreach (ParkingModel parking in parkingList)
@@ -241,13 +241,15 @@ namespace NextPark.Mobile.ViewModels
                 var orderList = await _orderDataService.GetAllOrdersAsync();
                 if (orderList != null)
                 {
-                    OrderModel nextOrder = null;
+                    if (orderList.Count > 0)
+                    {
+                        OrderModel nextOrder = null;
 
                     if (orderList.Count > 0)
-                    {                    
-                        foreach (OrderModel order in orderList) 
+                    {
+                        foreach (OrderModel order in orderList)
                         {
-                            if (order.UserId == int.Parse(AuthSettings.UserId))
+                            if ((order.UserId == int.Parse(AuthSettings.UserId)) && (order.OrderStatus == Enums.OrderStatus.Actived))
                             {
                                 if (nextOrder == null)
                                 {
@@ -260,6 +262,25 @@ namespace NextPark.Mobile.ViewModels
                                 }
                             }
                         }
+
+                        if (nextOrder != null) {
+                            if (nextOrder.StartDate < DateTime.Now)
+                            {
+                                // order already in progress
+                                NextBooking = "prenotazione in corso";
+                            }
+                            else if (nextOrder.StartDate.Date > DateTime.Now.Date) {
+                                NextBooking = nextOrder.StartDate.ToString("ddd, dd MMMMM  hh:mm");
+                            }
+                            else
+                            {
+                                NextBooking = "oggi, alle " + nextOrder.StartDate.ToShortTimeString();
+                            }
+                        } else {
+                            NextBooking = "nessuna prenotazione";
+                        }
+                        base.OnPropertyChanged("NextBooking");
+                        return true;
                     }
                     if (nextOrder != null)
                     {
@@ -276,6 +297,11 @@ namespace NextPark.Mobile.ViewModels
                     base.OnPropertyChanged("NextBooking");
                     return false;
                 }
+                // No orders found
+                NextBooking = "nessuna prenotazione";
+                base.OnPropertyChanged("NextBooking");
+                return true;
+
             } catch (Exception e)
             {
                 // TODO: manage exception

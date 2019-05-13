@@ -62,7 +62,7 @@ namespace NextPark.Mobile.ViewModels
 
             // Header
             UserName = AuthSettings.User.Name;
-            UserMoney = AuthSettings.UserCoin.ToString("N0");
+            UserMoney = AuthSettings.UserCoin.ToString("N2");
 
             // Header actions
             OnBackClick = new Command<object>(OnBackClickMethod);
@@ -87,7 +87,7 @@ namespace NextPark.Mobile.ViewModels
             // Header
             BackText = "Profilo";
             UserName = AuthSettings.User.Name;
-            UserMoney = AuthSettings.UserCoin.ToString("N0");
+            UserMoney = AuthSettings.UserCoin.ToString("N2");
             base.OnPropertyChanged("BackText");
             base.OnPropertyChanged("UserName");
             base.OnPropertyChanged("UserMoney");
@@ -143,8 +143,17 @@ namespace NextPark.Mobile.ViewModels
                             }
                             else
                             {
-                                // Booking
-                                TimeSpan remainingTime = (order.EndDate - DateTime.Now);
+                                // Default value, booking expired
+                                TimeSpan remainingTime = TimeSpan.FromMinutes(0);
+                                booking.TimeColor = Color.Red;
+
+                                // Booking started
+                                if (order.EndDate >= DateTime.Now) {
+                                    // Booking not expired
+                                    remainingTime = (order.EndDate - DateTime.Now);
+                                    booking.TimeColor = Color.Black;
+                                }
+
                                 booking.Time = string.Format("{0:%h} h {0:%m} min", remainingTime);
                             }
 

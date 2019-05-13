@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+﻿       using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NextPark.Data.Infrastructure;
@@ -92,8 +92,7 @@ namespace NextPark.Api.Controllers
         // PUT api/controller/5
         [HttpPut("{id}")]
         public async Task<ActionResult> Put(int id, [FromBody]EventModel model)
-        {
-            
+        {       
             if (model == null)
             {
                 return BadRequest(ApiResponse.GetErrorResponse("Editing null entity",ErrorType.EntityNull));
@@ -101,29 +100,55 @@ namespace NextPark.Api.Controllers
 
             try // No allow modify an event who has an order pending or active associated to the event
             {
-                var updatedEntity = _mapper.Map<EventModel, Event>(model);
+               
+                var currentEvent = _repository.Find(id);
+
+
+                if (currentEvent == null) {
+                    return BadRequest(ApiResponse.GetErrorResponse("Event not found", ErrorType.EntityNotFound));
+                }
                 
-                //Get parking associated to the event
-                var parking = await _repositoryParking.FirstOrDefaultWhereAsync(p => p.Id == updatedEntity.ParkingId).ConfigureAwait(false);
+                
+                // Get parking associated to the event
+                var parking = await _repositoryParking.FirstOrDefaultWhereAsync(p => p.Id == currentEvent.ParkingId).ConfigureAwait(false);
                 if (parking == null)
                 {
                     return BadRequest(ApiResponse.GetErrorResponse("Parking not found", ErrorType.EntityNotFound));
                 }
-                // Check if event can be modified
-                var eventCanBeModified = await EventCanBeModified(updatedEntity, parking).ConfigureAwait(false);
+
+                // Update the event instance. 
+                Event updatedEvent = currentEvent;
+                updatedEvent.StartDate = model.StartDate;
+                updatedEvent.EndDate = model.EndDate;
+
+                // Check if the event is part of a repetition
+                if (updatedEvent.RepetitionType != RepetitionType.None)
+                {
+                    // Remove repetition from this single event
+                    updatedEvent.RepetitionType = RepetitionType.None;
+                    updatedEvent.RepetitionId = Guid.NewGuid();
+                }
+
+                // TODO: Future improvement: allow repetition changes
+                // updatedEvent.RepetitionEndDate = model.RepetitionEndDate;
+
+                // Check if th event can be modified
+                var eventCanBeModified = await EventCanBeModified(currentEvent, updatedEvent, parking).ConfigureAwait(false);
                 if (!eventCanBeModified)
                 {
                     return BadRequest(ApiResponse.GetErrorResponse("Event has an active order and can't be modified", ErrorType.EventCantBeModified));
                 }
 
-                _repository.Update(updatedEntity);
+                _repository.Update(updatedEvent);
+
+
                 await _unitOfWork.CommitAsync().ConfigureAwait(false);
-                var vm = _mapper.Map<Event, EventModel>(updatedEntity);
+                var vm = _mapper.Map<Event, EventModel>(updatedEvent);
                 return Ok(ApiResponse.GetSuccessResponse(vm,"Event Updated"));
             }
             catch (Exception e)
             {
-                return BadRequest(ApiResponse.GetErrorResponse(e.Message, ErrorType.Exeption));
+                return BadRequest(ApiResponse.GetErrorResponse(e.Message, ErrorType.Exception));
             }
         }
 
@@ -142,19 +167,93 @@ namespace NextPark.Api.Controllers
                 return BadRequest(ApiResponse.GetErrorResponse("Event not found",ErrorType.EntityNotFound));
             }
 
-            var eventSerie = await _repository.FindAllWhereAsync(ev => ev.RepetitionId == entityEvent.RepetitionId).ConfigureAwait(false);
+         
+            // Get parking associated to the event
+            var parking = await _repositoryParking.FirstOrDefaultWhereAsync(p => p.Id == entityEvent.ParkingId).ConfigureAwait(false);
+            if (parking == null)
+            {
+                return BadRequest(ApiResponse.GetErrorResponse("Parking not found", ErrorType.EntityNotFound));
+            }
 
+            // Get all future events of the serie
+            var eventSerie = await _repository.FindAllWhereAsync(ev => ev.RepetitionId == entityEvent.RepetitionId &&
+                                                                 ev.StartDate >= entityEvent.StartDate).ConfigureAwait(false);
+
+            // Get event dates
+            List<DateTime> eventDates = GenerateEventSerieDates(model);
+
+            // Create the list with updated events
             var updatedSerie = new List<Event>();
 
-            foreach (var ev in eventSerie)
-            {
-                ev.StartDate = model.StartDate;
-                ev.EndDate = model.EndDate;
-                ev.RepetitionEndDate = model.RepetitionEndDate;
+            // Generate a new RepetitionId, only future events will be modified
+            Guid newRepetitionId = Guid.NewGuid();
 
-                _repository.Update(ev);
-                updatedSerie.Add(ev);
+            // Update or delete current active events
+            foreach (Event currentEvent in eventSerie)
+            {
+                int dayIndex = -1;
+                if ((eventDates != null) && (eventDates.Count > 0))
+                {
+                    dayIndex = eventDates.FindIndex(x => x.Date == currentEvent.StartDate.Date);
+                }
+
+                // Update some event fields using the previous unaltered event instance
+                Event updatedEvent = currentEvent;
+                updatedEvent.StartDate = updatedEvent.StartDate.Date + model.StartDate.TimeOfDay;
+                updatedEvent.EndDate = updatedEvent.EndDate.Date + model.EndDate.TimeOfDay;
+                updatedEvent.RepetitionType = model.RepetitionType;
+                updatedEvent.RepetitionId = newRepetitionId;
+                updatedEvent.RepetitionEndDate = model.RepetitionEndDate;
+
+                // Check if event has to be modified or deleted
+                if (dayIndex >= 0)
+                {
+                    // Check if can be modified
+                    bool eventCanBeModified = await EventCanBeModified(currentEvent, updatedEvent, parking).ConfigureAwait(false);
+                    if (!eventCanBeModified)
+                    {
+                        return BadRequest(ApiResponse.GetErrorResponse("Event has an active order and can't be modified", ErrorType.EventCantBeModified));
+                    }
+                    // Add the updated event
+                    updatedSerie.Add(updatedEvent);
+
+                    // Remove this date from eventDates
+                    eventDates.RemoveAt(dayIndex);
+                }
+                else
+                {
+                    // Check if can be deleted
+                    bool eventCanBeDeleted = await EventCanBeDeleted(currentEvent, parking).ConfigureAwait(false);
+                    if (!eventCanBeDeleted)
+                    {
+                        return BadRequest(ApiResponse.GetErrorResponse("Event has an active order and can't be modified", ErrorType.EventCantBeModified));
+                    }
+                    // Delete event
+                    _repository.Delete(currentEvent);
+                }
             }
+
+            // Update events
+            foreach (Event @event in updatedSerie)
+            {
+                _repository.Update(@event);
+            }
+
+            // Add new missing events
+            foreach (DateTime date in eventDates) {
+                Event missingEvent = new Event
+                {
+                    StartDate = date.Date + model.StartDate.TimeOfDay,
+                    EndDate = date.Date + model.EndDate.TimeOfDay,
+                    RepetitionEndDate = model.RepetitionEndDate,
+                    RepetitionId = newRepetitionId,
+                    RepetitionType = model.RepetitionType,
+                    ParkingId = model.ParkingId
+                };
+
+                updatedSerie.Add(missingEvent);
+                _repository.Add(missingEvent);
+            }                                  
 
             await _unitOfWork.CommitAsync().ConfigureAwait(false);
             
@@ -173,19 +272,22 @@ namespace NextPark.Api.Controllers
             {
                 return BadRequest(ApiResponse.GetErrorResponse("Can't delete, entity not found.",ErrorType.EntityNotFound));
             }
-            //Get parking associated to the event
+
+            // Get parking associated to the event
             var parking = await _repositoryParking.FirstOrDefaultWhereAsync(p => p.Id == entity.ParkingId).ConfigureAwait(false);
             if (parking == null)
             {
                 return BadRequest(ApiResponse.GetErrorResponse("Parking not found", ErrorType.EntityNotFound));
             }
-            var eventCanBeModified = await EventCanBeModified(entity, parking).ConfigureAwait(false);
-            if (!eventCanBeModified)
+
+            // Check if event can be deleted
+            var eventCanBeDeleted = await EventCanBeDeleted(entity, parking).ConfigureAwait(false);
+            if (!eventCanBeDeleted)
             {
                 return BadRequest(ApiResponse.GetErrorResponse("Event has an active order and can't be modified", ErrorType.EventCantBeModified));
             }
-            var vm = _mapper.Map<Event, EventModel>(entity);
 
+            var vm = _mapper.Map<Event, EventModel>(entity);
             _repository.Delete(entity);
 
             await _unitOfWork.CommitAsync().ConfigureAwait(false);
@@ -203,7 +305,23 @@ namespace NextPark.Api.Controllers
                 return BadRequest(ApiResponse.GetErrorResponse("Can't deleted, entity not found.",ErrorType.EntityNotFound));
             }
 
+            // Get parking associated to the event
+            var parking = await _repositoryParking.FirstOrDefaultWhereAsync(p => p.Id == entity.ParkingId).ConfigureAwait(false);
+            if (parking == null)
+            {
+                return BadRequest(ApiResponse.GetErrorResponse("Parking not found", ErrorType.EntityNotFound));
+            }
+
+            // Check if all events of the serie can be deleted
             var eventSerie = await _repository.FindAllWhereAsync(ev => ev.RepetitionId == entity.RepetitionId);
+
+            foreach (Event entityEvent in eventSerie) {
+                var eventCanBeModified = await EventCanBeDeleted(entityEvent, parking).ConfigureAwait(false);
+                if (!eventCanBeModified)
+                {
+                    return BadRequest(ApiResponse.GetErrorResponse("Event has an active order and can't be modified", ErrorType.EventCantBeModified));
+                }
+            }
 
             _repository.Delete(eventSerie);
 
@@ -233,8 +351,8 @@ namespace NextPark.Api.Controllers
                             StartDate = model.StartDate,
                             EndDate = model.EndDate,
                             RepetitionEndDate = model.EndDate,
-                            RepetitionId = Guid.Empty,
-                            RepetitionType = Enums.Enums.RepetitionType.None,
+                            RepetitionId = Guid.NewGuid(),
+                            RepetitionType = RepetitionType.None,
                             ParkingId = model.ParkingId
                         }
                     };
@@ -333,12 +451,69 @@ namespace NextPark.Api.Controllers
             }
             return result.OrderBy(e => e.StartDate).ToList();
         }
-        private async Task<bool> EventCanBeModified(Event eventToModify, Parking parking)
+
+        private List<DateTime> GenerateEventSerieDates(EventModel model)
         {
-            //Get orders associated to the parking, status actived and orders'date and time match the event's period of time
-            var orders = await _repositoryOrder.FindAllWhereAsync(o => o.ParkingId == parking.Id).ConfigureAwait(false);
-            // If not found orders, then event can be modified
+            List<DateTime> result = new List<DateTime>();
+
+            // Repetition type is weekly and no day of weeks exception
+            if ((model.RepetitionType == RepetitionType.Weekly) && (model.WeeklyRepeDayOfWeeks.Count == 0)) {
+                // No event date
+                return result;
+            }
+            // Repetition type is none
+            if (model.RepetitionType == RepetitionType.None)
+            {
+                // model start date only
+                result.Add(model.StartDate.Date);
+            }
+            else
+            {
+                // Create the list of event dates
+                for (var date = model.StartDate; date <= model.RepetitionEndDate; date = date.AddDays(1))
+                {
+                    var currentDayOfWeek = date.DayOfWeek;
+
+                    if ((model.RepetitionType == RepetitionType.Dayly) ||
+                        (model.WeeklyRepeDayOfWeeks.Any(dayRepeated => dayRepeated == currentDayOfWeek)))
+                    {
+                        // Add this date if repetition is daily or the week day is selected
+                        result.Add(date.Date);
+                    }
+                }
+            }
+            return result;
+        }
+
+        private async Task<bool> EventCanBeDeleted(Event eventToBeDeleted, Parking parking)
+        {
+            // Get orders associated to the parking with time match with the event
+            var orders = await _repositoryOrder.FindAllWhereAsync(o => o.ParkingId == parking.Id
+                                                                  && o.StartDate < eventToBeDeleted.EndDate
+                                                                  && o.EndDate > eventToBeDeleted.StartDate).ConfigureAwait(false);
+
+            // If not found orders, then event can be deleted
             return orders.Count == 0;
+        }
+
+        private async Task<bool> EventCanBeModified(Event actualEvent, Event updatedEvent, Parking parking)
+        {
+            // Get orders associated to the parking with time match with the event
+            var orders = await _repositoryOrder.FindAllWhereAsync(o => o.ParkingId == parking.Id
+                                                                  && o.StartDate < actualEvent.EndDate
+                                                                  && o.EndDate > actualEvent.StartDate).ConfigureAwait(false);
+
+            // Check if the change does affect an order
+            foreach (Order order in orders)
+            {
+                if (((updatedEvent.StartDate.TimeOfDay > TimeSpan.FromMinutes(0)) && (updatedEvent.StartDate > order.StartDate)) || ((updatedEvent.EndDate.TimeOfDay < TimeSpan.FromMinutes(1439)) && (updatedEvent.EndDate < order.EndDate)))
+                {
+                    return false;
+                }
+            }
+
+            // If no order is affected, then event can be modified
+            return true;
         }
     }
 }

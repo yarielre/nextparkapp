@@ -67,11 +67,11 @@ namespace NextPark.Api.Controllers
                 {
                     return Ok(ApiResponse.GetSuccessResponse("Ok","Ok"));
                 }
-                return BadRequest(ApiResponse.GetErrorResponse(result.Errors.FirstOrDefault()?.Description,ErrorType.ChngePasswordError));
+                return BadRequest(ApiResponse.GetErrorResponse(result.Errors.FirstOrDefault()?.Description,ErrorType.ChangePasswordError));
             }
             catch (Exception e)
             {
-                return BadRequest(ApiResponse.GetErrorResponse(e.Message,ErrorType.Exeption));
+                return BadRequest(ApiResponse.GetErrorResponse(e.Message,ErrorType.Exception));
             }
         }
 
@@ -96,7 +96,7 @@ namespace NextPark.Api.Controllers
             }
             catch (Exception e)
             {
-                return BadRequest(ApiResponse.GetErrorResponse(e.Message, ErrorType.Exeption));
+                return BadRequest(ApiResponse.GetErrorResponse(e.Message, ErrorType.Exception));
                 //Log: return BadRequest(string.Format("{0} Exception: {1}", "Error processing Image!", e.Message));
             }
 
@@ -124,7 +124,7 @@ namespace NextPark.Api.Controllers
             }
             catch (Exception e)
             {
-                return BadRequest(ApiResponse.GetErrorResponse(e.Message,ErrorType.Exeption));
+                return BadRequest(ApiResponse.GetErrorResponse(e.Message,ErrorType.Exception));
             }
         }
     }

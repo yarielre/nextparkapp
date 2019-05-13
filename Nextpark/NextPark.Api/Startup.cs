@@ -16,6 +16,8 @@ using NextPark.Data.Repositories;
 using NextPark.Domain.Entities;
 using NextPark.MapperTools;
 using NextPark.Services;
+using NextPark.Services.Services;
+using NextPark.Services.Services.HostedServices;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace NextPark.Api
@@ -38,12 +40,12 @@ namespace NextPark.Api
             var connectionString = Configuration.GetConnectionString("DefaultConnection");
 
             //Using MSSQL SERVER
-            //services.AddDbContext<ApplicationDbContext>(options =>
-            // options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+           // services.AddDbContext<ApplicationDbContext>(options =>
+           // options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             //Using POSTGRES SQL SERVER
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseNpgsql(connectionString));
+               options.UseNpgsql(connectionString));
 
             services.AddIdentity<ApplicationUser, ApplicationRole>()
               .AddEntityFrameworkStores<ApplicationDbContext>()
@@ -52,7 +54,7 @@ namespace NextPark.Api
             #region CORS
             services.AddCors(corsPolicy =>
             {
-                corsPolicy.AddPolicy("insideCorsPolicy", builder =>
+                corsPolicy.AddPolicy("NextParkCorsPolicy", builder =>
                 {
                     builder.AllowAnyOrigin()
                         .AllowAnyMethod()
@@ -106,11 +108,16 @@ namespace NextPark.Api
             services.AddTransient<IMediaService, MediaService>();
             services.AddTransient<IAuthService, AuthService>();
             services.AddSingleton(mapper);
+            services.AddScoped(typeof(IOrderApiService), typeof(OrderApiService));
             services.AddScoped(typeof(IEmailSender), typeof(EmailSender));
+           // services.AddScoped(typeof(IFileService), typeof(FileService));
             services.AddScoped(typeof(IPushNotificationService), typeof(PushNotificationService));
             services.AddScoped(typeof(IDbFactory), typeof(DbFactory));
             services.AddScoped(typeof(IUnitOfWork), typeof(UnitOfWork));
             services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
+
+            //Hosted Services
+            services.AddHostedService<ScheduleHostedService>();
 
             services.AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
@@ -148,13 +155,12 @@ namespace NextPark.Api
                 app.UseHsts();
             }
 
-            loggerFactory.AddConsole(Configuration.GetSection("Logging"));
-            loggerFactory.AddDebug();
-
+            loggerFactory.AddFile("Logs/nextparklog-{Date}.log");
+         
             app.UseHttpsRedirection();
 
             app.UseStaticFiles();
-            app.UseCors("insideCorsPolicy");
+            app.UseCors("NextParkCorsPolicy");
             app.UseAuthentication();
 
             app.UseMvc();
@@ -164,6 +170,7 @@ namespace NextPark.Api
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "NextPark Web  API V1");
             });
+
         }
     }
 }

@@ -151,7 +151,6 @@
     <BundleResource Include="Resources\bg_logo.png" />
     <BundleResource Include="Resources\logo.png" />
     <BundleResource Include="Resources\icon_pin_green_256.png" />
-    <BundleResource Include="Resources\icon_pin_green_256x.png" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

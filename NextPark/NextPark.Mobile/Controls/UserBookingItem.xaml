@@ -64,7 +64,8 @@
                                        FontSize="Small"
                                        FontAttributes="Bold"
                                        HorizontalTextAlignment="End"
-                                       VerticalTextAlignment="Center"/>
+                                       VerticalTextAlignment="Center"
+                                       TextColor="{TemplateBinding TimeColor}"/>
                             </StackLayout>
                             <!-- Delete box -->
                             <Frame HeightRequest="40"

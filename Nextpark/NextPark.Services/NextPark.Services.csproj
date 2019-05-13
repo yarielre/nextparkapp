@@ -10,6 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\NextPark.Data\NextPark.Data.csproj" />
     <ProjectReference Include="..\NextPark.Domain\NextPark.Domain.csproj" />
     <ProjectReference Include="..\NextPark.Models\NextPark.Models.csproj" />
   </ItemGroup>

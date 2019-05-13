@@ -8,10 +8,10 @@ namespace NextPark.Mobile.Services.Data
     {
         Task<ApiResponse<OrderModel>> CreateOrderAsync(OrderModel model);
         Task<OrderModel> DeleteOrdersAsync(int id);
-        Task<OrderModel> EditOrderAsync(int id, OrderModel order);
+        Task<ApiResponse<OrderModel>> EditOrderAsync(int id, OrderModel order);
         Task<List<OrderModel>> GetAllOrdersAsync();
         Task<OrderModel> GetOrderAsync(int orderId);
-        Task<OrderModel> RenovateOrderAsync(int id, OrderModel order);
-        Task<OrderModel> TerminateOrderAsync(int id);
+        Task<ApiResponse<OrderModel>> RenovateOrderAsync(int id, OrderModel order);
+        Task<ApiResponse<OrderModel>> TerminateOrderAsync(int id);
     }
 }

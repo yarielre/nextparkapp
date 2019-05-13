@@ -7,14 +7,11 @@
 
   <ItemGroup>
     <Compile Remove="Controllers\BaseController.cs" />
-    <Compile Remove="Migrations\20190224083737_Changes.cs" />
-    <Compile Remove="Migrations\20190224083737_Changes.Designer.cs" />
-    <Compile Remove="Migrations\20190309151923_changesPostgres.cs" />
-    <Compile Remove="Migrations\20190309151923_changesPostgres.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="wwwroot\images\" />
+    <Folder Include="wwwroot\HostedServiceFiles\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -22,9 +19,11 @@
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.1.2" />
     <PackageReference Include="Microsoft.Azure.NotificationHubs" Version="2.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Logging.EventLog" Version="2.1.1" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.6" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="2.1.1" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL.Design" Version="1.1.1" />
+    <PackageReference Include="Serilog.Extensions.Logging.File" Version="1.1.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="4.0.1" />
   </ItemGroup>
 

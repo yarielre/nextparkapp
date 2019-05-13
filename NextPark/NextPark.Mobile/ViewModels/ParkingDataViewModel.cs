@@ -134,7 +134,7 @@ namespace NextPark.Mobile.ViewModels
 
             // Header
             UserName = AuthSettings.User.Name;
-            UserMoney = AuthSettings.UserCoin.ToString("N0");
+            UserMoney = AuthSettings.UserCoin.ToString("N2");
             base.OnPropertyChanged("UserName");
             base.OnPropertyChanged("UserMoney");
 
@@ -177,7 +177,7 @@ namespace NextPark.Mobile.ViewModels
                 // Header
                 BackText = "Indietro";
                 UserName = AuthSettings.User.Name;
-                UserMoney = AuthSettings.UserCoin.ToString("N0");
+                UserMoney = AuthSettings.UserCoin.ToString("N2");
                 base.OnPropertyChanged("BackText");
                 base.OnPropertyChanged("UserName");
                 base.OnPropertyChanged("UserMoney");
@@ -206,7 +206,8 @@ namespace NextPark.Mobile.ViewModels
 
             MyDayContent.ScrollTo((int)DateTime.Now.TimeOfDay.TotalMinutes);
 
-            ChangeSelectedDay(DateTime.Now.Date);
+            //ChangeSelectedDay(DateTime.Now.Date);
+            ChangeSelectedDay(_profileService.LastEditingEventDate);
 
             return Task.FromResult(false);
         }
@@ -245,20 +246,32 @@ namespace NextPark.Mobile.ViewModels
         // Activate/Deactivate Parking toggle switch action
         public void OnSwitchToggleMethod(bool value)
         {
+            bool changed = false;
+
             if (value)
             {
                 ActiveStatusText = "Attivato";
-                _parking.ParkingModel.Status = ParkingStatus.Enabled;
+                if (_parking.ParkingModel.Status != ParkingStatus.Enabled) {
+                    _parking.ParkingModel.Status = ParkingStatus.Enabled;
+                    changed = true;
+                }
             }
             else
             {
                 ActiveStatusText = "Disattivato";
-                _parking.ParkingModel.Status = ParkingStatus.Disabled; 
+                if (_parking.ParkingModel.Status != ParkingStatus.Disabled)
+                {
+                    _parking.ParkingModel.Status = ParkingStatus.Disabled;
+                    changed = true;
+                }
             }
             base.OnPropertyChanged("ActiveStatusText");
 
             // Update parking on backend
-            UpdateParkingStatus();
+            if (changed)
+            {
+                UpdateParkingStatus();
+            }
         }
 
         private async Task<bool> UpdateParkingStatus()
@@ -317,6 +330,9 @@ namespace NextPark.Mobile.ViewModels
         // Select day
         public void ChangeSelectedDay(DateTime dateTime)
         {
+            if (dateTime == null) {
+                dateTime = DateTime.Now.Date;
+            }
             SelectedDay = dateTime;
             _pickerDateTime = dateTime;
             base.OnPropertyChanged("DatePickerDate");
@@ -411,6 +427,8 @@ namespace NextPark.Mobile.ViewModels
             base.OnPropertyChanged("Day7TextColor");
             base.OnPropertyChanged("Day7BackgroundColor");
             base.OnPropertyChanged("Day7DateTime");
+
+            _profileService.LastEditingEventDate = dateTime;
 
             if (eventsReady)
             {
@@ -513,7 +531,7 @@ namespace NextPark.Mobile.ViewModels
                     TimeSpan end = order.EndDate.TimeOfDay;
 
                     if (order.StartDate < dateTime) start = TimeSpan.FromMinutes(0);
-                    if (order.EndDate < dateTime) end = TimeSpan.FromMinutes(1439);
+                    if (order.EndDate.Date > dateTime.Date) end = TimeSpan.FromMinutes(1439);
 
                     int startPosition = (int)start.TotalMinutes;
 

@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Windows.Input;
 using NextPark.Models;
+using Xamarin.Forms;
 
 namespace NextPark.Mobile.UIModels
 {
@@ -49,6 +50,13 @@ namespace NextPark.Mobile.UIModels
             set { time = value; }
         }
 
+        private Color timeColor;
+        public Color TimeColor
+        {
+            get { return timeColor; }
+            set { timeColor = value; }
+        }
+
         private ICommand onBookingTap;
         public ICommand OnBookingTap
         {
@@ -75,6 +83,7 @@ namespace NextPark.Mobile.UIModels
 
         public UIBookingModel(OrderModel order)
         {
+            Id = order.Id;
             Price = order.Price;
             StartDate = order.StartDate;
             EndDate = order.EndDate;

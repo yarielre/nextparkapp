@@ -111,6 +111,7 @@ namespace NextPark.Mobile.ViewModels
         private readonly IDialogService _dialogService;
         private readonly IParkingDataService _parkingDataService;
         private readonly IOrderDataService _orderDataService;
+        private readonly IEventDataService _eventDataService;
         private readonly IProfileService _profileService;
 
         // PRIVATE VARIABLES
@@ -129,17 +130,19 @@ namespace NextPark.Mobile.ViewModels
                                     INavigationService navService,
                                     IParkingDataService parkingDataService,
                                     IOrderDataService orderDataService,
+                                    IEventDataService eventDataService,
                                     IProfileService profileService)
                                     : base(apiService, authService, navService)
         {
             _dialogService = dialogService;
             _parkingDataService = parkingDataService;
             _orderDataService = orderDataService;
+            _eventDataService = eventDataService;
             _profileService = profileService;
 
             // Header
             UserName = AuthSettings.User.Name;
-            UserMoney = AuthSettings.UserCoin.ToString("N0");
+            UserMoney = AuthSettings.UserCoin.ToString("N2");
 
             // Header actions
             OnBackClick = new Command<object>(OnBackClickMethod);
@@ -158,7 +161,7 @@ namespace NextPark.Mobile.ViewModels
             // Header
             BackText = "Profilo";
             UserName = AuthSettings.User.Name;
-            UserMoney = AuthSettings.UserCoin.ToString("N0");
+            UserMoney = AuthSettings.UserCoin.ToString("N2");
             base.OnPropertyChanged("BackText");
             base.OnPropertyChanged("UserName");
             base.OnPropertyChanged("UserMoney");
@@ -207,7 +210,7 @@ namespace NextPark.Mobile.ViewModels
             if (sender is int)
             {
                 ParkingItem item = ParkingList[(int)sender];
-                // TODO: pass parking item to parking data page
+                _profileService.LastEditingEventDate = DateTime.Now.Date;
                 NavigationService.NavigateToAsync<ParkingDataViewModel>(item);
                 //_dialogService.ShowAlert("Alert", "Parking data: " + item.Address);
             }
@@ -240,6 +243,40 @@ namespace NextPark.Mobile.ViewModels
                         //var ordersResult = await _orderDataService.GetAllOrdersAsync();
 
                         UIParkingModel uiParking = _profileService.GetParkingById(parking.Id);
+
+                        if (uiParking == null) {
+                            // Add parking to user parking list
+                            uiParking = new UIParkingModel(parking);
+
+                            // Get parking availabilities
+                            var eventList = await _eventDataService.GetAllEventsAsync();
+
+                            if ((eventList != null) && (eventList.Count > 0))
+                            {
+                                foreach (EventModel availability in eventList)
+                                {
+                                    if (availability.ParkingId == uiParking.Id)
+                                    {
+                                        uiParking.Events.Add(availability);
+                                    }
+                                }
+
+                                // Get all parking orders
+                                var orderList = await _orderDataService.GetAllOrdersAsync();
+
+                                if ((orderList != null) && (orderList.Count > 0))
+                                {
+                                    foreach (OrderModel order in orderList)
+                                    {
+                                        if (order.ParkingId == uiParking.Id)
+                                        {
+                                            uiParking.Orders.Add(order);
+                                        }
+                                    }
+                                }
+                            }
+                            _profileService.ParkingList.Add(uiParking);
+                        }
 
                         // Set Image
                         string imageUrl = "";

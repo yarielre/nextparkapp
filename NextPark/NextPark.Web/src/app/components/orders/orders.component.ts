@@ -64,7 +64,7 @@ export class OrdersComponent implements OnInit {
       this.dataSource = new OrderDataSource(
         this.paginator,
         this.sort,
-        res
+        res.result
       );
       this.changeDetectorRefs.detectChanges();
     });

@@ -61,7 +61,7 @@ namespace NextPark.Mobile.ViewModels
             // TODO: evaluate back text and action
             BackText = "Profilo";
             UserName = AuthSettings.User.Name;
-            UserMoney = AuthSettings.UserCoin.ToString("N0");
+            UserMoney = AuthSettings.UserCoin.ToString("N2");
             Money = AuthSettings.User.Balance.ToString("N2");
             Profit = AuthSettings.User.Profit.ToString("N2");
             DisableWithdrawal();
@@ -84,7 +84,7 @@ namespace NextPark.Mobile.ViewModels
             // TODO: evaluate back text and action
             BackText = "Profilo";
             UserName = AuthSettings.User.Name;
-            UserMoney = AuthSettings.UserCoin.ToString("N0");
+            UserMoney = AuthSettings.UserCoin.ToString("N2");
             base.OnPropertyChanged("BackText");
             base.OnPropertyChanged("UserName");
             base.OnPropertyChanged("UserMoney");
@@ -223,7 +223,7 @@ namespace NextPark.Mobile.ViewModels
                     var userResponse = await AuthService.GetUserByUserName(AuthSettings.UserName);
                     if (userResponse.IsSuccess)
                     {
-                        UserMoney = AuthSettings.UserCoin.ToString("N0");
+                        UserMoney = AuthSettings.UserCoin.ToString("N2");
                         Money = AuthSettings.User.Balance.ToString("N2");
                         Profit = AuthSettings.User.Profit.ToString("N2");
                         base.OnPropertyChanged("UserMoney");

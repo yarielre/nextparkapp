@@ -14,6 +14,7 @@ using NextPark.Models;
 using NextPark.Mobile.Services.Data;
 using NextPark.Mobile.CustomControls;
 using System.Collections.Generic;
+using NextPark.Enums.Enums;
 
 namespace NextPark.Mobile.ViewModels
 {
@@ -110,7 +111,7 @@ namespace NextPark.Mobile.ViewModels
 
             // Header
             UserName = AuthSettings.User.Name;
-            UserMoney = AuthSettings.UserCoin.ToString("N0");
+            UserMoney = AuthSettings.UserCoin.ToString("N2");
             base.OnPropertyChanged("UserName");
             base.OnPropertyChanged("UserMoney");
 
@@ -156,7 +157,7 @@ namespace NextPark.Mobile.ViewModels
             // Header
             BackText = "Indietro";
             UserName = AuthSettings.User.Name;
-            UserMoney = AuthSettings.UserCoin.ToString("N0");
+            UserMoney = AuthSettings.UserCoin.ToString("N2");
             base.OnPropertyChanged("BackText");
             base.OnPropertyChanged("UserName");
             base.OnPropertyChanged("UserMoney");
@@ -290,8 +291,8 @@ namespace NextPark.Mobile.ViewModels
                 // TODO: how many time before can user arrive?
 
                 // Modify order 
-                order.StartDate = DateTime.Now;
-                order.StartDate = order.StartDate - TimeSpan.FromSeconds(order.StartDate.Second);
+                order.StartDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, DateTime.Now.Hour, DateTime.Now.Minute, 0);
+
                 // Update price
                 TimeSpan totalTime = order.EndDate - order.StartDate;
                 order.Price = totalTime.TotalHours * order.Parking.PriceMin;
@@ -405,11 +406,11 @@ namespace NextPark.Mobile.ViewModels
                 base.OnPropertyChanged("TerminateConfirmVisible");
 
                 // Check terminate order result
-                if (result != null) {
-
+                if ((result == null) || (result.IsSuccess != true)) {
+                    await _dialogService.ShowAlert("Errore", "Ordine non terminato");
+                } else {
+                    await NavigationService.NavigateToAsync<UserBookingViewModel>();
                 }
-                await NavigationService.NavigateToAsync<UserBookingViewModel>();
-
             } catch (Exception e) {
                 await _dialogService.ShowAlert("Errore", e.Message);
             }
@@ -418,9 +419,15 @@ namespace NextPark.Mobile.ViewModels
         // Renew order button click action
         public void OnRenewMethod(object sender)
         {
+            double price = (RenewTime.TotalHours * order.Parking.PriceMin);
+            if (order.Parking.UserId == AuthSettings.User.Id)
+            {
+                price = 0.0;
+            }
+
             // Ask confirm
             ConfirmTotalTime = string.Format("{0:%h} h {0:%m} min", RenewTime);
-            ConfirmPrice = (RenewTime.TotalHours * order.Parking.PriceMin).ToString("N2") + " CHF";
+            ConfirmPrice = (price).ToString("N2") + " CHF";
             ConfirmVisible = true;
             RenewVisible = false;
 
@@ -436,10 +443,16 @@ namespace NextPark.Mobile.ViewModels
                 if (RenewTime.TotalMinutes > 0)
                 {
                     // Update order time
-                    order.EndDate.AddMinutes(RenewTime.TotalMinutes);
+                    order.EndDate = order.EndDate.AddMinutes(RenewTime.TotalMinutes);
+
                     // Update order price
                     TimeSpan totalTime = order.EndDate - order.StartDate;
                     order.Price = totalTime.TotalHours * order.Parking.PriceMin;
+                    if (order.Parking.UserId == AuthSettings.User.Id)
+                    {
+                        order.Price = 0;
+                    }
+
                     // Check user balance
                     if (AuthSettings.User.Balance < order.Price)
                     {
@@ -448,11 +461,42 @@ namespace NextPark.Mobile.ViewModels
                         await NavigationService.NavigateToAsync<MoneyViewModel>();
                         return;
                     }
+
                     // Send order update
                     var result = await _orderDataService.EditOrderAsync(order.Id, order);
+                    //var result = await _orderDataService.RenovateOrderAsync(order.Id, order);
                     if (result != null)
                     {
-
+                        if (result.IsSuccess == true)
+                        {
+                            // Successful
+                            await NavigationService.NavigateToAsync<UserBookingViewModel>();
+                        }
+                        else if (result.ErrorType == Enums.Enums.ErrorType.NotEnoughMoney)
+                        {
+                            // Not enough credit
+                            await _dialogService.ShowAlert("Attenzione", "Credito insufficiente");
+                            await NavigationService.NavigateToAsync<MoneyViewModel>();
+                            return;
+                        }
+                        else if ((result.ErrorType == Enums.Enums.ErrorType.ParkingNotOrderable) || (result.ErrorType == Enums.Enums.ErrorType.ParkingNotVailable))
+                        {
+                            // Parking not available
+                            await _dialogService.ShowAlert("Attenzione", "Il parcheggio non è più disponibile");
+                            return;
+                        }
+                        else
+                        {
+                            // Unexpected error
+                            await _dialogService.ShowAlert("Errore", "Impossibile rinnovare l'ordine");
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        // Unexpected error
+                        await _dialogService.ShowAlert("Errore", "Impossibile rinnovare l'ordine");
+                        return;
                     }
                 }
             } catch (Exception e) {

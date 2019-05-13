@@ -55,6 +55,7 @@
                                                                       Cap="{Binding Cap}"
                                                                       City="{Binding City}"
                                                                       Time="{Binding Time}"
+                                                                      TimeColor="{Binding TimeColor}"
                                                                       TapAction="{Binding OnBookingTap}"
                                                                       DelAction="{Binding OnBookingDel}">
                                             </controls:UserBookingItem>

@@ -14,28 +14,26 @@ namespace NextPark.Mobile.Services.Data
         {
             _apiService = apiService;
         }
-        public async Task<OrderModel> TerminateOrderAsync(int id)
+        public async Task<ApiResponse<OrderModel>> TerminateOrderAsync(int id)
         {
             try
             {
                 var url = $"{ApiSettings.OrdersEndPoint}/terminate";
                 var response = await _apiService.Post<int,OrderModel>(url, id).ConfigureAwait(false);
-
-                return response.IsSuccess ? response.Result : null;
+                return response;
             }
             catch (Exception ex)
             {
                 throw new Exception($"Error setting model on server: {ex.Message}");
             }
         }
-        public async Task<OrderModel> RenovateOrderAsync(int id,OrderModel order)
+        public async Task<ApiResponse<OrderModel>> RenovateOrderAsync(int id,OrderModel order)
         {
             try
             {
                 var url = $"{ApiSettings.OrdersEndPoint}/{id}/renew";
                 var response = await _apiService.Put(url, order).ConfigureAwait(false);
-
-                return response.IsSuccess ? response.Result : null;
+                return response;
             }
             catch (Exception ex)
             {
@@ -67,12 +65,11 @@ namespace NextPark.Mobile.Services.Data
             return response.IsSuccess ? response.Result : null;
         }
 
-        public async Task<OrderModel> EditOrderAsync(int id, OrderModel order)
+        public async Task<ApiResponse<OrderModel>> EditOrderAsync(int id, OrderModel order)
         {
             var url = ApiSettings.OrdersEndPoint;
             var response = await _apiService.Put(url, id, order).ConfigureAwait(false);
-
-            return response.IsSuccess ? response.Result : null;
+            return response;
         }
 
         public async Task<OrderModel> DeleteOrdersAsync(int id)
