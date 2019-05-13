@@ -241,9 +241,7 @@ namespace NextPark.Mobile.ViewModels
                 var orderList = await _orderDataService.GetAllOrdersAsync();
                 if (orderList != null)
                 {
-                    if (orderList.Count > 0)
-                    {
-                        OrderModel nextOrder = null;
+                    OrderModel nextOrder = null;
 
                     if (orderList.Count > 0)
                     {
@@ -293,14 +291,11 @@ namespace NextPark.Mobile.ViewModels
                     base.OnPropertyChanged("NextBooking");
                     return true;
                 } else {
+                    // No orders found
                     NextBooking = "nessuna prenotazione";
                     base.OnPropertyChanged("NextBooking");
-                    return false;
+                    return true;
                 }
-                // No orders found
-                NextBooking = "nessuna prenotazione";
-                base.OnPropertyChanged("NextBooking");
-                return true;
 
             } catch (Exception e)
             {
