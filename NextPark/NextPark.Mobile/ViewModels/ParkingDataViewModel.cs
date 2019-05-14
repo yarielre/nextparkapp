@@ -581,8 +581,8 @@ namespace NextPark.Mobile.ViewModels
                 // Calendar event is an order
 
                 // Order data
-                OrderStartDateTime = myCalendarEvent.Order.StartDate.ToShortTimeString();
-                OrderEndDateTime = myCalendarEvent.Order.EndDate.ToShortTimeString();
+                OrderStartDateTime = myCalendarEvent.Order.StartDate.ToString("ddd, dd MMMMM  hh:mm");
+                OrderEndDateTime = myCalendarEvent.Order.EndDate.ToString("ddd, dd MMMMM  hh:mm");
                 OrderCarPlate = myCalendarEvent.Order.CarPlate;
                 OrderDetailVisible = true;
                 base.OnPropertyChanged("OrderStartDateTime");

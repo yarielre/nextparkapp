@@ -425,7 +425,7 @@
                                            VerticalTextAlignment="Center"/>
                                 </StackLayout>
                                 <StackLayout Orientation="Horizontal" Spacing="2" HorizontalOptions="Center" Padding="10,0">
-                                    <Label Text="Dalle ore:"
+                                    <Label Text="Inizio: "
                                            FontSize="Default"                                           
                                            VerticalTextAlignment="Center"/>
                                     <Label Text="{Binding OrderStartDateTime}"
@@ -433,7 +433,7 @@
                                            VerticalTextAlignment="Center"/>
                                 </StackLayout>
                                 <StackLayout Orientation="Horizontal" Spacing="2" HorizontalOptions="Center" Padding="10,0">
-                                    <Label Text="Alle ore:"
+                                    <Label Text="Fine: "
                                            FontSize="Default"                                           
                                            VerticalTextAlignment="Center"/>
                                     <Label Text="{Binding OrderEndDateTime}"
