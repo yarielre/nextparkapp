@@ -40,7 +40,7 @@ namespace NextPark.Mobile.ViewModels
         private readonly IDialogService _dialogService;
         private readonly IProfileService _profileService;
         private readonly IPurchaseDataService _purchaseDataService;
-        private readonly InAppPurchaseService _inAppPurchaseService;
+        private readonly IInAppPurchaseService _inAppPurchaseService;
 
         // PRIVATE VARIABLES
         protected static UInt16 selectedValue;
@@ -52,7 +52,7 @@ namespace NextPark.Mobile.ViewModels
                               IAuthService authService,
                               INavigationService navService,
                               IPurchaseDataService purchaseDataService,
-                              InAppPurchaseService inAppPurchaseService)
+                              IInAppPurchaseService inAppPurchaseService)
                               : base(apiService, authService, navService)
         {
             _dialogService = dialogService;
@@ -195,23 +195,54 @@ namespace NextPark.Mobile.ViewModels
         // Buy Money button click action
         public void OnBuyClickMethod(object sender)
         {
-            InAppBuyMoney();
-            // TODO: fill data according to buy credit data model
-            // TODO: send buy credit request to backend
-            _dialogService.ShowAlert("Alert", "TODO: Payment operations for: " + selectedValue.ToString() + " CHF");
-
             // Start activity spinner
             IsRunning = true;
             base.OnPropertyChanged("IsRunning");
 
-            // Send request to backend
-            //BuyMoney();
+            var purchaseResult = InAppBuyMoney(selectedValue).Result;
+
+            if (purchaseResult.IsSuccess) {
+                // Send request to backend
+                BuyMoney();
+            } else {
+                if (purchaseResult.ErrorType == Enums.Enums.ErrorType.InAppPurchaseNotSupported) {
+                    _dialogService.ShowAlert("Errore", "L'acquisto In-App non è supportato");
+                } else if (purchaseResult.ErrorType == Enums.Enums.ErrorType.InAppPurchaseServiceConnectionError) {
+                    _dialogService.ShowAlert("Errore", "Impossibile collegarsi al servizio");
+                } else if (purchaseResult.ErrorType == Enums.Enums.ErrorType.InAppPurchaseServiceImposibleToPurchase) {
+                    _dialogService.ShowAlert("Errore", "Non è stato possibile completare l'acquisto");
+                } else if (purchaseResult.ErrorType == Enums.Enums.ErrorType.InAppPurchaseServiceSuccessPurchase) {
+                    // Send request to backend
+                    BuyMoney();
+                }
+            }
         } 
 
-        public async void InAppBuyMoney()
+        public async Task<ApiResponse> InAppBuyMoney(ushort value)
         {
-            var result = await _inAppPurchaseService.PurchaseCredit1();
+            ApiResponse result = new ApiResponse
+            {
+                IsSuccess = false,
+                ErrorType = Enums.Enums.ErrorType.InAppPurchaseServiceImposibleToPurchase,
+                Message = "Incorrect value"
+            };
+
+            switch(value) {
+                case 20:
+                    result = await  _inAppPurchaseService.PurchaseCredit20();
+                    break;
+                case 30:
+                    result = await _inAppPurchaseService.PurchaseCredit30();
+                    break;
+                case 50:
+                    result = await _inAppPurchaseService.PurchaseCredit50();
+                    break;
+                case 10:
+                    result = await _inAppPurchaseService.PurchaseCredit1();
+                    break;
+            }
             await _dialogService.ShowAlert("Alert", "TODO: Payment operations result: " + result.Message);
+            return result;
         }
 
         public async void BuyMoney()
