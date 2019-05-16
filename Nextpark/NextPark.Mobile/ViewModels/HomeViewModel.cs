@@ -76,7 +76,6 @@ namespace NextPark.Mobile.ViewModels
         private readonly IParkingDataService _parkingDataService;
         private readonly IEventDataService _eventDataService;
         private readonly IOrderDataService _orderDataService;
-        private readonly InAppPurchaseService _inAppPurchaseService;
         private readonly IProfileService _profileService;
 
         private readonly IAuthService _authService;
@@ -104,7 +103,6 @@ namespace NextPark.Mobile.ViewModels
                              IParkingDataService parkingDataService,
                              IEventDataService eventDataService,
                              IOrderDataService orderDataService,
-                             InAppPurchaseService inAppPurchaseService,
                              IProfileService profileService)
             : base(apiService, authService, navService)
         {
@@ -114,7 +112,6 @@ namespace NextPark.Mobile.ViewModels
             _eventDataService = eventDataService;
             _orderDataService = orderDataService;
             _authService = authService;
-            _inAppPurchaseService = inAppPurchaseService;
             _profileService = profileService;
 
             // Header actions
@@ -536,18 +533,6 @@ namespace NextPark.Mobile.ViewModels
                 Map.MoveToRegion(MapSpan.FromCenterAndRadius(_profileService.LastMapPosition, Distance.FromKilometers(1)));
 
             } catch (Exception e) {}
-        }
-
-        private async Task TestPaymentAsync()
-        {
-
-            var result = await _dialogService.ShowConfirmAlert("Map Tapped", "Test the payment?");
-
-            if (result)
-            {
-               // var purchaseResult = _inAppPurchaseService.PurchaseCreadit1();
-
-            }
         }
 
         public void OnReserveModeMethod()

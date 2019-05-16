@@ -8,14 +8,13 @@ using Plugin.InAppBilling.Abstractions;
 namespace NextPark.Mobile.Services
 {
 
-    public class InAppPurchaseService
+    public class InAppPurchaseService : IInAppPurchaseService
     {
-        private readonly string ProductCredit1 = "parking_credit_chf1";
-        private readonly string ProductCredit10 = "parking_credit_chf10";
-        private readonly string ProductCredit20 = "parking_credit_chf20";
-        private readonly string ProductCredit30 = "parking_credit_chf30";
-        private readonly string ProductCredit50 = "parking_credit_chf50";
         private readonly string NextParkCredit1 = "nextpark_credit_1";
+        private readonly string NextParkCredit10 = "nextpark_credit_10";
+        private readonly string NextParkCredit20 = "nextpark_credit_20";
+        private readonly string NextParkCredit30 = "nextpark_credit_30";
+        private readonly string NextParkCredit50 = "nextpark_credit_50";
 
 
         public bool InTestMode
@@ -36,7 +35,7 @@ namespace NextPark.Mobile.Services
         public InAppPurchaseService()
         {
             Billing = CrossInAppBilling.Current;
-            Billing.InTestingMode = false;
+            Billing.InTestingMode = true;
         }
 
         /// <summary>
@@ -53,7 +52,7 @@ namespace NextPark.Mobile.Services
         /// <returns>ApiResponse. If success ApiResponse result is of type InAppBillingPurchase</returns>
         public async Task<ApiResponse> PurchaseCredit10()
         {
-            return await MakePurchase(ProductCredit10);
+            return await MakePurchase(NextParkCredit10);
         }
         /// <summary>
         /// Purchases the credit 20
@@ -61,7 +60,7 @@ namespace NextPark.Mobile.Services
         /// <returns>ApiResponse. If success ApiResponse result is of type InAppBillingPurchase</returns>
         public async Task<ApiResponse> PurchaseCredit20()
         {
-            return await MakePurchase(ProductCredit20);
+            return await MakePurchase(NextParkCredit20);
         }
         /// <summary>
         /// Purchases the credit 30
@@ -69,7 +68,7 @@ namespace NextPark.Mobile.Services
         /// <returns>ApiResponse. If success ApiResponse result is of type InAppBillingPurchase</returns>
         public async Task<ApiResponse> PurchaseCredit30()
         {
-            return await MakePurchase(ProductCredit30);
+            return await MakePurchase(NextParkCredit30);
         }
         /// <summary>
         /// Purchases the credit 50
@@ -77,7 +76,7 @@ namespace NextPark.Mobile.Services
         /// <returns>ApiResponse. If success ApiResponse result is of type InAppBillingPurchase</returns>
         public async Task<ApiResponse> PurchaseCredit50()
         {
-            return await MakePurchase(ProductCredit50);
+            return await MakePurchase(NextParkCredit50);
         }
 
         private async Task<ApiResponse> MakePurchase(string productId)
@@ -103,7 +102,7 @@ namespace NextPark.Mobile.Services
                     return result;
                 }
 
-                InAppBillingPurchase purchase = await Billing.PurchaseAsync(productId, ItemType.InAppPurchase, "apppayload") ;
+                var purchase = await Billing.PurchaseAsync(productId, ItemType.InAppPurchase, "apppayload") ;
 
                 if (purchase == null)
                 {
