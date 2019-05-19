@@ -153,7 +153,7 @@ namespace NextPark.Mobile.ViewModels
 
                 _isAuthorized = true;
                 _editing = true;
-                AddBtnText = "Modifica";
+                AddBtnText = "Salva";
                 base.OnPropertyChanged("AddBtnText");
                 DelBtnVisible = true;
                 base.OnPropertyChanged("DelBtnVisible");
