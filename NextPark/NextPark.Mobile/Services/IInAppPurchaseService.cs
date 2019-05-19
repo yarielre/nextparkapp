@@ -28,9 +28,9 @@ namespace NextPark.Mobile.Services
         Task<ApiResponse> PurchaseCredit30();
 
         /// <summary>
-        /// Purchases the credit 50
+        /// Purchases the credit 60
         /// </summary>
         /// <returns>ApiResponse. If success ApiResponse result is of type InAppBillingPurchase</returns>
-        Task<ApiResponse> PurchaseCredit50();
+        Task<ApiResponse> PurchaseCredit60();
     }
 }

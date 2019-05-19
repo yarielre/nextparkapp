@@ -14,7 +14,7 @@ namespace NextPark.Mobile.Services
         private readonly string NextParkCredit10 = "nextpark_credit_10";
         private readonly string NextParkCredit20 = "nextpark_credit_20";
         private readonly string NextParkCredit30 = "nextpark_credit_30";
-        private readonly string NextParkCredit50 = "nextpark_credit_50";
+        private readonly string NextParkCredit60 = "nextpark_credit_60";
 
 
         public bool InTestMode
@@ -74,9 +74,9 @@ namespace NextPark.Mobile.Services
         /// Purchases the credit 50
         /// </summary>
         /// <returns>ApiResponse. If success ApiResponse result is of type InAppBillingPurchase</returns>
-        public async Task<ApiResponse> PurchaseCredit50()
+        public async Task<ApiResponse> PurchaseCredit60()
         {
-            return await MakePurchase(NextParkCredit50);
+            return await MakePurchase(NextParkCredit60);
         }
 
         private async Task<ApiResponse> MakePurchase(string productId)
@@ -102,7 +102,7 @@ namespace NextPark.Mobile.Services
                     return result;
                 }
 
-                var purchase = await Billing.PurchaseAsync(productId, ItemType.InAppPurchase, "apppayload") ;
+                var purchase = await Billing.PurchaseAsync(productId, ItemType.InAppPurchase, "nextpark") ;
 
                 if (purchase == null)
                 {
@@ -111,8 +111,23 @@ namespace NextPark.Mobile.Services
                     result.ErrorType = ErrorType.InAppPurchaseServiceImposibleToPurchase;
                     return result;
                 }
-                else
+                else 
                 {
+                    if (purchase.State == PurchaseState.Purchased)
+                    {   
+                        // Item pusrchaesd
+                        if (Xamarin.Forms.Device.RuntimePlatform == Xamarin.Forms.Device.Android)
+                        {
+                            // Only on Android devices try to consume the item
+                            var consumedItem = await CrossInAppBilling.Current.ConsumePurchaseAsync(purchase.ProductId, purchase.PurchaseToken);
+
+                            if (consumedItem != null)
+                            {
+                                //Consumed!!
+                            }
+                        }
+                    }
+
                     //Purchased, save this information
                     var id = purchase.Id;
                     var token = purchase.PurchaseToken;

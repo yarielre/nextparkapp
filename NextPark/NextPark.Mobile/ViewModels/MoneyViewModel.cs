@@ -24,7 +24,7 @@ namespace NextPark.Mobile.ViewModels
         public Boolean Btn10IsSelected { get; set; }    // 10 CHF button selected
         public Boolean Btn20IsSelected { get; set; }    // 20 CHF button selected
         public Boolean Btn30IsSelected { get; set; }    // 30 CHF button selected
-        public Boolean Btn50IsSelected { get; set; }    // 50 CHF button selected
+        public Boolean Btn60IsSelected { get; set; }    // 50 CHF button selected
         public ICommand OnButtonTapped { get; set; }    // Selection button tapped
 
         public bool IsRunning { get; set; }         // Activity spinner
@@ -109,11 +109,11 @@ namespace NextPark.Mobile.ViewModels
             Btn10IsSelected = true;
             Btn20IsSelected = false;
             Btn30IsSelected = false;
-            Btn50IsSelected = false;
+            Btn60IsSelected = false;
             base.OnPropertyChanged("Btn10IsSelected");
             base.OnPropertyChanged("Btn20IsSelected");
             base.OnPropertyChanged("Btn30IsSelected");
-            base.OnPropertyChanged("Btn50IsSelected");
+            base.OnPropertyChanged("Btn60IsSelected");
 
             selectedValue = 10;
 
@@ -152,7 +152,7 @@ namespace NextPark.Mobile.ViewModels
             Btn10IsSelected = false;            
             Btn20IsSelected = false;
             Btn30IsSelected = false;
-            Btn50IsSelected = false;
+            Btn60IsSelected = false;
 
             // Select the tapped selection button
             selectedValue = Convert.ToUInt16(identifier);
@@ -160,7 +160,7 @@ namespace NextPark.Mobile.ViewModels
             {
                 case 20: Btn20IsSelected = true; break; 
                 case 30: Btn30IsSelected = true; break;
-                case 50: Btn50IsSelected = true; break;
+                case 60: Btn60IsSelected = true; break;
                 case 10:
                 default: Btn10IsSelected = true; break;
             }
@@ -169,7 +169,7 @@ namespace NextPark.Mobile.ViewModels
             base.OnPropertyChanged("Btn10IsSelected");
             base.OnPropertyChanged("Btn20IsSelected");
             base.OnPropertyChanged("Btn30IsSelected");
-            base.OnPropertyChanged("Btn50IsSelected");
+            base.OnPropertyChanged("Btn60IsSelected");
         }
     
         private void DisableWithdrawal()
@@ -200,16 +200,6 @@ namespace NextPark.Mobile.ViewModels
             base.OnPropertyChanged("IsRunning");
 
             StartPayment();
-
-
-            /*
-            if (purchaseResult.IsSuccess) {
-                // Send request to backend
-                BuyMoney();
-            } else {
-
-            }
-            */
         } 
 
         public async void StartPayment()
@@ -221,6 +211,12 @@ namespace NextPark.Mobile.ViewModels
                 Message = "Incorrect value"
             };
 
+            // TODO: remove the following two lines inserted only for team reviw
+            await _dialogService.ShowAlert("Avviso", "Pagamento disabilitato per i test");
+            CompletePurchase();
+
+            // TODO: restore this code commented only for team review
+            /*
             switch(selectedValue) {
                 case 20:
                     result = await  _inAppPurchaseService.PurchaseCredit20();
@@ -228,8 +224,8 @@ namespace NextPark.Mobile.ViewModels
                 case 30:
                     result = await _inAppPurchaseService.PurchaseCredit30();
                     break;
-                case 50:
-                    result = await _inAppPurchaseService.PurchaseCredit50();
+                case 60:
+                    result = await _inAppPurchaseService.PurchaseCredit60();
                     break;
                 case 10:
                     result = await _inAppPurchaseService.PurchaseCredit1();
@@ -238,29 +234,30 @@ namespace NextPark.Mobile.ViewModels
             await _dialogService.ShowAlert("Avviso", "Payment operations result: " + result.Message);
             if (result != null) {
                 if (result.IsSuccess) {
+                    // Send request to backend
                     CompletePurchase();
                 } else {
                     // Stop activity spinner
                     IsRunning = false;
                     base.OnPropertyChanged("IsRunning");
-                    /*
-                    if (purchaseResult.ErrorType == Enums.Enums.ErrorType.InAppPurchaseNotSupported) {
-                        _dialogService.ShowAlert("Errore", "L'acquisto In-App non è supportato");
-                    } else if (purchaseResult.ErrorType == Enums.Enums.ErrorType.InAppPurchaseServiceConnectionError) {
-                        _dialogService.ShowAlert("Errore", "Impossibile collegarsi al servizio");
-                    } else if (purchaseResult.ErrorType == Enums.Enums.ErrorType.InAppPurchaseServiceImposibleToPurchase) {
-                        _dialogService.ShowAlert("Errore", "Non è stato possibile completare l'acquisto");
-                    } else if (purchaseResult.ErrorType == Enums.Enums.ErrorType.InAppPurchaseServiceSuccessPurchase) {
-                        // Send request to backend
-                        BuyMoney();
-                    }
-                    */
+
+                    //if (result.ErrorType == Enums.Enums.ErrorType.InAppPurchaseNotSupported) {
+                    //    await _dialogService.ShowAlert("Errore", "L'acquisto In-App non è supportato");
+                    //} else if (result.ErrorType == Enums.Enums.ErrorType.InAppPurchaseServiceConnectionError) {
+                    //    await _dialogService.ShowAlert("Errore", "Impossibile collegarsi al servizio");
+                    //} else if (result.ErrorType == Enums.Enums.ErrorType.InAppPurchaseServiceImposibleToPurchase) {
+                    //    await _dialogService.ShowAlert("Errore", "Non è stato possibile completare l'acquisto");
+                    //} else if (result.ErrorType == Enums.Enums.ErrorType.InAppPurchaseServiceSuccessPurchase) {
+                    //    // Send request to backend
+                    //    CompletePurchase();
+                    //}
                 }
             } else {
                 // Stop activity spinner
                 IsRunning = false;
                 base.OnPropertyChanged("IsRunning");
             }
+            */
         }
 
         public async void CompletePurchase()
