@@ -7,7 +7,7 @@
              x:Class="NextPark.Mobile.Views.ParkingDataPage">
     <ContentPage.Content>
         <ContentView>
-            <controls:DetailStaticPage x:Name="header"
+            <controls:BasePage x:Name="header"
                                 HeaderBackText="{Binding BackText}"
                                 IsHeaderBackVisible="true"
                                 HeaderBackAction="{Binding OnBackClick}"                               
@@ -15,7 +15,30 @@
                                 HeaderUserAction="{Binding OnUserClick}"
                                 HeaderMoney="{Binding UserMoney}"
                                 HeaderMoneyAction="{Binding OnMoneyClick}">
-                                
+                <RelativeLayout>    
+                <ContentView HorizontalOptions="FillAndExpand"
+                             VerticalOptions="Start"
+                             RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}">
+                    <StackLayout HorizontalOptions="FillAndExpand"
+                                 RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}">
+                        <Frame  Margin="10,2,10,10"
+                                BorderColor="{DynamicResource NextParkColor1}" 
+                                CornerRadius="9" 
+                                BackgroundColor="Transparent" 
+                                HasShadow="false"
+                                Padding="0"
+                                VerticalOptions="FillAndExpand">
+                        <Frame  x:Name="FrameContainer"
+                                Margin="1,1,1,1" 
+                                BorderColor="{DynamicResource NextParkColor1}"
+                                CornerRadius="8" 
+                                BackgroundColor="#D0FFFFFF" 
+                                HasShadow="false"
+                                RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Constant=-2}"
+                                RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Constant=-2}">
+                            
+                            
+                            <!-- Page content here -->
                 <StackLayout Orientation="Vertical" VerticalOptions="Fill" Spacing="5" Margin="0">
                     
                     <!-- Parking Informations group -->
@@ -358,10 +381,83 @@
                                 </DataTemplate>
                             </repeater:RelRepeaterView.ItemTemplate>
                         </repeater:RelRepeaterView>
-                    </controls:DayView>
-                    
+                    </controls:DayView>                    
                 </StackLayout>
-            </controls:DetailStaticPage>
+                </Frame>
+                </Frame>  
+                </StackLayout>
+                </ContentView>
+                    
+                    <ContentView x:Name="orderDetailPopup" 
+                                 BackgroundColor="#C0606060" 
+                                 Padding="10, 0" 
+                                 IsVisible="{Binding OrderDetailVisible}" 
+                                 RelativeLayout.XConstraint="0"
+                                 RelativeLayout.YConstraint="0"
+                                 RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=1}"
+                                 RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}">
+                        <StackLayout VerticalOptions="Center" HorizontalOptions="Center" Spacing="0">
+                            <Frame BorderColor="{DynamicResource NextParkColor1}"
+                                   CornerRadius="16"
+                                   HasShadow="false"
+                                   IsClippedToBounds="true"
+                                   HeightRequest="200"
+                                   WidthRequest="260"
+                                   Padding="0"
+                                   Margin="0">
+                            <StackLayout Orientation="Vertical" 
+                                         HeightRequest="200" 
+                                         WidthRequest="260" 
+                                         BackgroundColor="White" 
+                                         Spacing="5" 
+                                         Padding="10" Margin="0">
+                                <Label Text="Riservazione"
+                                       FontSize="Medium"
+                                       FontAttributes="Bold"
+                                       HorizontalOptions="Center"
+                                       Margin="0,10"/>
+                                <StackLayout Orientation="Horizontal" Spacing="2" HorizontalOptions="Center" Padding="10,0">
+                                    <Label Text="Targa:"
+                                           FontSize="Default"                                           
+                                           VerticalTextAlignment="Center"/>
+                                    <Label Text="{Binding OrderCarPlate}"
+                                           FontSize="Default"                                           
+                                           VerticalTextAlignment="Center"/>
+                                </StackLayout>
+                                <StackLayout Orientation="Horizontal" Spacing="2" HorizontalOptions="Center" Padding="10,0">
+                                    <Label Text="Inizio: "
+                                           FontSize="Default"                                           
+                                           VerticalTextAlignment="Center"/>
+                                    <Label Text="{Binding OrderStartDateTime}"
+                                           FontSize="Default"                                           
+                                           VerticalTextAlignment="Center"/>
+                                </StackLayout>
+                                <StackLayout Orientation="Horizontal" Spacing="2" HorizontalOptions="Center" Padding="10,0">
+                                    <Label Text="Fine: "
+                                           FontSize="Default"                                           
+                                           VerticalTextAlignment="Center"/>
+                                    <Label Text="{Binding OrderEndDateTime}"
+                                           FontSize="Default"                                           
+                                           VerticalTextAlignment="Center"/>
+                                </StackLayout>
+                                
+                                
+                                <!-- Close button -->
+                                <Button Text="Chiudi"
+                                        FontAttributes="Bold"
+                                        HorizontalOptions="Center"
+                                        Command="{Binding OnOrderDetailClose}"
+                                        TextColor="White"
+                                        BorderRadius="8"
+                                        BackgroundColor="{DynamicResource NextParkColor1}"
+                                        WidthRequest="191"
+                                        Margin="0,10,0,0"/>
+                            </StackLayout>
+                            </Frame>
+                        </StackLayout>
+                    </ContentView>                      
+            </RelativeLayout>
+            </controls:BasePage>
         </ContentView>
     </ContentPage.Content>                
 </ContentPage>

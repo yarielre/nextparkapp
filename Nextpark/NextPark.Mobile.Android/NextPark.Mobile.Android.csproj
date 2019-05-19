@@ -22,12 +22,15 @@
     <Description>Demo beta version 1.0.0</Description>
     <ReleaseVersion>1.0.0</ReleaseVersion>
     <SynchReleaseVersion>false</SynchReleaseVersion>
+    <AndroidLinkMode>None</AndroidLinkMode>
+    <AndroidUseSharedRuntime>false</AndroidUseSharedRuntime>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <Optimize>true</Optimize>
     <OutputPath>bin\Debug</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AndroidUseSharedRuntime>true</AndroidUseSharedRuntime>
     <AndroidLinkMode>None</AndroidLinkMode>
 <EmbedAssembliesIntoApk>true</EmbedAssembliesIntoApk>
 <AndroidSupportedAbis>armeabi-v7a;x86</AndroidSupportedAbis>
@@ -39,6 +42,7 @@
     <WarningLevel>4</WarningLevel>
     <AndroidManagedSymbols>true</AndroidManagedSymbols>
     <AndroidUseSharedRuntime>false</AndroidUseSharedRuntime>
+    <AndroidSupportedAbis>armeabi-v7a;x86</AndroidSupportedAbis>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Mono.Android" />
