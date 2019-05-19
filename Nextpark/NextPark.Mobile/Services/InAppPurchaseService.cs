@@ -35,7 +35,7 @@ namespace NextPark.Mobile.Services
         public InAppPurchaseService()
         {
             Billing = CrossInAppBilling.Current;
-            Billing.InTestingMode = true;
+            Billing.InTestingMode = false;
         }
 
         /// <summary>
@@ -138,7 +138,5 @@ namespace NextPark.Mobile.Services
 
             return result;
         }
-
-
     }
 }

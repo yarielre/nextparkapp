@@ -199,26 +199,20 @@ namespace NextPark.Mobile.ViewModels
             IsRunning = true;
             base.OnPropertyChanged("IsRunning");
 
-            var purchaseResult = InAppBuyMoney(selectedValue).Result;
+            StartPayment();
 
+
+            /*
             if (purchaseResult.IsSuccess) {
                 // Send request to backend
                 BuyMoney();
             } else {
-                if (purchaseResult.ErrorType == Enums.Enums.ErrorType.InAppPurchaseNotSupported) {
-                    _dialogService.ShowAlert("Errore", "L'acquisto In-App non è supportato");
-                } else if (purchaseResult.ErrorType == Enums.Enums.ErrorType.InAppPurchaseServiceConnectionError) {
-                    _dialogService.ShowAlert("Errore", "Impossibile collegarsi al servizio");
-                } else if (purchaseResult.ErrorType == Enums.Enums.ErrorType.InAppPurchaseServiceImposibleToPurchase) {
-                    _dialogService.ShowAlert("Errore", "Non è stato possibile completare l'acquisto");
-                } else if (purchaseResult.ErrorType == Enums.Enums.ErrorType.InAppPurchaseServiceSuccessPurchase) {
-                    // Send request to backend
-                    BuyMoney();
-                }
+
             }
+            */
         } 
 
-        public async Task<ApiResponse> InAppBuyMoney(ushort value)
+        public async void StartPayment()
         {
             ApiResponse result = new ApiResponse
             {
@@ -227,7 +221,7 @@ namespace NextPark.Mobile.ViewModels
                 Message = "Incorrect value"
             };
 
-            switch(value) {
+            switch(selectedValue) {
                 case 20:
                     result = await  _inAppPurchaseService.PurchaseCredit20();
                     break;
@@ -241,11 +235,35 @@ namespace NextPark.Mobile.ViewModels
                     result = await _inAppPurchaseService.PurchaseCredit1();
                     break;
             }
-            await _dialogService.ShowAlert("Alert", "TODO: Payment operations result: " + result.Message);
-            return result;
+            await _dialogService.ShowAlert("Avviso", "Payment operations result: " + result.Message);
+            if (result != null) {
+                if (result.IsSuccess) {
+                    CompletePurchase();
+                } else {
+                    // Stop activity spinner
+                    IsRunning = false;
+                    base.OnPropertyChanged("IsRunning");
+                    /*
+                    if (purchaseResult.ErrorType == Enums.Enums.ErrorType.InAppPurchaseNotSupported) {
+                        _dialogService.ShowAlert("Errore", "L'acquisto In-App non è supportato");
+                    } else if (purchaseResult.ErrorType == Enums.Enums.ErrorType.InAppPurchaseServiceConnectionError) {
+                        _dialogService.ShowAlert("Errore", "Impossibile collegarsi al servizio");
+                    } else if (purchaseResult.ErrorType == Enums.Enums.ErrorType.InAppPurchaseServiceImposibleToPurchase) {
+                        _dialogService.ShowAlert("Errore", "Non è stato possibile completare l'acquisto");
+                    } else if (purchaseResult.ErrorType == Enums.Enums.ErrorType.InAppPurchaseServiceSuccessPurchase) {
+                        // Send request to backend
+                        BuyMoney();
+                    }
+                    */
+                }
+            } else {
+                // Stop activity spinner
+                IsRunning = false;
+                base.OnPropertyChanged("IsRunning");
+            }
         }
 
-        public async void BuyMoney()
+        public async void CompletePurchase()
         {
             PurchaseModel purchaseModel = new PurchaseModel
             {
