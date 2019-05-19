@@ -418,26 +418,26 @@
                                        Margin="0,10"/>
                                 <StackLayout Orientation="Horizontal" Spacing="2" HorizontalOptions="Center" Padding="10,0">
                                     <Label Text="Targa:"
-                                           FontSize="Default"                                           
+                                           FontSize="Small"                                           
                                            VerticalTextAlignment="Center"/>
                                     <Label Text="{Binding OrderCarPlate}"
-                                           FontSize="Default"                                           
+                                           FontSize="Small"                                           
                                            VerticalTextAlignment="Center"/>
                                 </StackLayout>
                                 <StackLayout Orientation="Horizontal" Spacing="2" HorizontalOptions="Center" Padding="10,0">
                                     <Label Text="Inizio: "
-                                           FontSize="Default"                                           
+                                           FontSize="Small"                                           
                                            VerticalTextAlignment="Center"/>
                                     <Label Text="{Binding OrderStartDateTime}"
-                                           FontSize="Default"                                           
+                                           FontSize="Small"                                           
                                            VerticalTextAlignment="Center"/>
                                 </StackLayout>
                                 <StackLayout Orientation="Horizontal" Spacing="2" HorizontalOptions="Center" Padding="10,0">
                                     <Label Text="Fine: "
-                                           FontSize="Default"                                           
+                                           FontSize="Small"                                           
                                            VerticalTextAlignment="Center"/>
                                     <Label Text="{Binding OrderEndDateTime}"
-                                           FontSize="Default"                                           
+                                           FontSize="Small"                                           
                                            VerticalTextAlignment="Center"/>
                                 </StackLayout>
                                 
