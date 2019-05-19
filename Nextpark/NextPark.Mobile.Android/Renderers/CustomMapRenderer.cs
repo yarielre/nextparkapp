@@ -87,7 +87,7 @@ namespace NextPark.Mobile.Droid.Renderers
             marker.SetTitle(pin.Label);
             marker.SetSnippet(pin.Address);
 
-            var resourceId = Resources.GetIdentifier(customPin.Icon, "drawable", "com.wisegar.nextpark");
+            var resourceId = Resources.GetIdentifier(customPin.Icon, "drawable", Android.App.Application.Context.PackageName);
 
             float density = Context.Resources.DisplayMetrics.Density;
             int dpValue = (int)(50.0 * density); // 50px in dips
