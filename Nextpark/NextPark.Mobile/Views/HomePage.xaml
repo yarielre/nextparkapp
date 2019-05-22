@@ -208,6 +208,7 @@
                        WidthRequest="220"
                        Padding="0"
                        Margin="0"
+                       IsVisible="{Binding InfoPanelVisible}"
                        RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}"
                        RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=1, Constant=-180}">
                     <ContentView WidthRequest="280" HeightRequest="148" HorizontalOptions="Center" IsVisible="{Binding InfoPanelVisible}">
