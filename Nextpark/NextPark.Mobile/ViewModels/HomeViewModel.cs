@@ -93,6 +93,8 @@ namespace NextPark.Mobile.ViewModels
         */
         private static bool connected;
         private static bool mapReady;
+        private static bool geolocationPermitted;
+        private static bool checkingGeolocationPermission;
 
         // METHODS
         public HomeViewModel(IGeolocatorService geolocatorService,
@@ -134,6 +136,8 @@ namespace NextPark.Mobile.ViewModels
             InfoPanelVisible = false;
             connected = false;
             mapReady = false;
+            geolocationPermitted = false;
+            checkingGeolocationPermission = false;
         }
 
         public override Task InitializeAsync(object data = null)
@@ -368,9 +372,18 @@ namespace NextPark.Mobile.ViewModels
             try
             {
                 mapReady = true;
+
                 if ((_profileService.LastMapPosition == null) || (_profileService.LastMapPosition == new Position(0,0)))
                 {
                     _profileService.LastMapPosition = new Position(0, 0);
+
+                    geolocationPermitted = await _geoLocatorService.IsPermissionGaranted();
+                    if (geolocationPermitted == false)
+                    {
+                        checkingGeolocationPermission = true;
+                        Xamarin.Forms.Device.StartTimer(TimeSpan.FromSeconds(3), () => { CheckGeolocationPermission(); return false; });
+                        return;
+                    }
 
                     var geoLocation = await _geoLocatorService.GetLocation();
 
@@ -522,7 +535,15 @@ namespace NextPark.Mobile.ViewModels
         {
             try
             {
-                _profileService.LastMapPosition = new Position(0, 0);
+                geolocationPermitted = await _geoLocatorService.IsPermissionGaranted();
+                if (geolocationPermitted == false) {
+                    if (checkingGeolocationPermission == false) {
+                        checkingGeolocationPermission = true;
+                        Xamarin.Forms.Device.StartTimer(TimeSpan.FromSeconds(3), () => { CheckGeolocationPermission(); return false; });
+                    }
+                    await _dialogService.ShowAlert("Avviso", "Abilita i servizi di geolocalizzazione e autorizza NextPark ad averne accesso per localizzarti sulla mappa");
+                    return;
+                }
 
                 var geoLocation = await _geoLocatorService.GetLocation();
 
@@ -634,6 +655,31 @@ namespace NextPark.Mobile.ViewModels
                 base.OnPropertyChanged("ResEndDate");
             }
             base.OnPropertyChanged("MinResEndDate");
+        }
+
+        private async void CheckGeolocationPermission()
+        {
+            if (geolocationPermitted == false)
+            {
+                if (NavigationService.CurrentPage is Views.HomePage)
+                {                
+                    geolocationPermitted = await _geoLocatorService.IsPermissionGaranted();
+                    if (geolocationPermitted == false)
+                    {
+                        Xamarin.Forms.Device.StartTimer(TimeSpan.FromSeconds(3), () => { CheckGeolocationPermission(); return false; });
+                        return;
+                    }
+
+                    var geoLocation = await _geoLocatorService.GetLocation();
+
+                    if (geoLocation == null) return;
+
+                    _profileService.LastMapPosition = geoLocation.ToXamMapPosition();
+
+                    Map.MoveToRegion(MapSpan.FromCenterAndRadius(_profileService.LastMapPosition, Distance.FromKilometers(1)));
+                }
+            }
+            checkingGeolocationPermission = false;
         }
     }
 }
