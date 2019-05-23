@@ -16,6 +16,10 @@ namespace NextPark.Mobile.Services
 
         protected Application CurrentApplication => Application.Current;
 
+        public Page CurrentPage {
+            get { return CurrentApplication.MainPage; }
+        }
+
         public NavigationService(IAuthService authenticationService)
         {
             _authenticationService = authenticationService;
