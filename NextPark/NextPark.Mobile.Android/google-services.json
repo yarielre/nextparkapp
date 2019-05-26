@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "60339794260",
+    "firebase_url": "https://nextpark-317c1.firebaseio.com",
+    "project_id": "nextpark-317c1",
+    "storage_bucket": "nextpark-317c1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:60339794260:android:e2de8658e765c239",
+        "android_client_info": {
+          "package_name": "ch.nextpark.nextparkapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "60339794260-3n3m6p9antoq3mmkjdthch0squ2enae7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCDZSif87TwF7Mw3dgg2DR-_oW-nOIgT2c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "60339794260-3n3m6p9antoq3mmkjdthch0squ2enae7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
