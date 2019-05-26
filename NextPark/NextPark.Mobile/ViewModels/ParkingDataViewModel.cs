@@ -330,7 +330,7 @@ namespace NextPark.Mobile.ViewModels
         // Select day
         public void ChangeSelectedDay(DateTime dateTime)
         {
-            if (dateTime == null) {
+            if ((dateTime != null) || (dateTime.Equals(new DateTime(1900, 1, 1, 0, 0, 0)))) {
                 dateTime = DateTime.Now.Date;
             }
             SelectedDay = dateTime;
