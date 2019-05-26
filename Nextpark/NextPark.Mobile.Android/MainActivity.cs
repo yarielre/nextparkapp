@@ -23,7 +23,6 @@ namespace NextPark.Mobile.Droid
 
             Plugin.CurrentActivity.CrossCurrentActivity.Current.Init(this, savedInstanceState);
             global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
-            global::CarouselView.FormsPlugin.Android.CarouselViewRenderer.Init();
 
             UserDialogs.Init(this);
 
