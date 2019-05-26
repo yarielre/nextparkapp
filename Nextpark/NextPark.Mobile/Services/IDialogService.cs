@@ -7,6 +7,7 @@ namespace NextPark.Mobile.Services
     {
         Task ShowAlert(string title, string message);
         Task<bool> ShowConfirmAlert(string title, string message);
+        Task<bool> ShowConfirmAlert(string title, string message, string okText, string cancelText);
         Task ShowErrorAlert(string message);
         void ShowToast(string message);
         void ShowToast(string message, TimeSpan dismissTimer);

@@ -25,6 +25,7 @@ namespace NextPark.Mobile.Settings
             builder.RegisterType<LoggerService>().As<ILoggerService>();
             builder.RegisterType<ProfileService>().As<IProfileService>().SingleInstance();
             builder.RegisterType<InAppPurchaseService>().As<IInAppPurchaseService>().SingleInstance();
+            builder.RegisterType<PushService>().As<IPushService>().SingleInstance();
 
             //Services - Data
             builder.RegisterType<ParkingDataService>().As<IParkingDataService>();

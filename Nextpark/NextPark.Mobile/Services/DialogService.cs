@@ -21,6 +21,11 @@ namespace NextPark.Mobile.Services
             var result = await UserDialogs.Instance.ConfirmAsync(message, title, "Accettare", "Cancellare");
             return result;
         }
+        public async Task<bool> ShowConfirmAlert(string title, string message, string okText, string cancelText)
+        {
+            var result = await UserDialogs.Instance.ConfirmAsync(message, title, okText, cancelText);
+            return result;
+        }
         public Task ShowErrorAlert(string message)
         {
             return UserDialogs.Instance.AlertAsync(message, "Errore", "Accettare");
