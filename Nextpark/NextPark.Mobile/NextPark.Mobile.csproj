@@ -21,8 +21,8 @@
     <PackageReference Include="Xamarin.Forms" Version="3.4.0.1029999" />
     <PackageReference Include="Xamarin.Forms.Maps" Version="3.4.0.1029999" />
     <PackageReference Include="Xamarin.Essentials" Version="1.0.1" />
-    <PackageReference Include="CarouselView.FormsPlugin" Version="5.2.0" />
     <PackageReference Include="Plugin.InAppBilling" Version="2.1.0.187-beta" />
+    <PackageReference Include="Microsoft.AppCenter.Push" Version="2.0.0" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="CustomControls\" />
