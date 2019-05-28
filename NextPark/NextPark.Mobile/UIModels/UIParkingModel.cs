@@ -100,5 +100,46 @@ namespace NextPark.Mobile.UIModels
             // Parking not available
             return false;
         }
+
+        // Returns how much time the parking is available from parameter start
+        public TimeSpan GetAvailableTime(DateTime start)
+        {
+            DateTime tempStart = start;
+            DateTime tempEnd = start.AddMinutes(1);
+            bool available = false;
+
+            if (Status == Enums.Enums.ParkingStatus.Disabled)
+            {
+                // Parking disactivated by owner
+                return TimeSpan.FromMinutes(0);
+            }
+
+            // Sort events by StartDate
+            Events.Sort((a, b) => (a.StartDate.CompareTo(b.StartDate)));
+
+            foreach (EventModel availability in Events)
+            {
+                if ((availability.StartDate <= tempEnd) && (availability.EndDate > tempEnd))
+                {
+                    available = true;
+                    tempEnd = availability.EndDate.AddMinutes(1);
+                }
+            }
+            tempEnd = tempEnd.AddMinutes(-1);
+
+            if (available)
+            {
+                foreach (OrderModel order in Orders)
+                {
+                    if ((order.OrderStatus == Enums.OrderStatus.Actived) && (order.EndDate > start) && (order.StartDate < tempEnd))
+                    {
+                        // order present (end after availability request and start before temporary end)
+                        tempEnd = order.StartDate;
+                    }
+                }
+            }
+
+            return tempEnd - start;
+        }
     }
 }
