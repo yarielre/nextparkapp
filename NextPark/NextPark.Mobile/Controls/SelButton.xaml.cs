@@ -15,7 +15,8 @@ namespace NextPark.Mobile.Controls
         public static readonly BindableProperty BtnBackgroundColorProperty = BindableProperty.Create(nameof(BtnBackgroundColor), typeof(Color), typeof(SelButton), Color.White, Xamarin.Forms.BindingMode.OneWay);
         public static readonly BindableProperty BtnTextColorProperty = BindableProperty.Create(nameof(BtnTextColor), typeof(Color), typeof(SelButton), Color.Gray, Xamarin.Forms.BindingMode.OneWay);
         public static readonly BindableProperty IdentifierProperty = BindableProperty.Create(nameof(ID), typeof(string), typeof(SelButton), null, Xamarin.Forms.BindingMode.OneWay);
-        public static readonly BindableProperty SelectedProperty = BindableProperty.Create(nameof(Selected), typeof(Boolean), typeof(SelButton), false, Xamarin.Forms.BindingMode.TwoWay, propertyChanged:OnSelectionChanged );
+        public static readonly BindableProperty SelectedProperty = BindableProperty.Create(nameof(Selected), typeof(Boolean), typeof(SelButton), false, Xamarin.Forms.BindingMode.TwoWay, propertyChanged: OnStatusChanged);
+        public static readonly BindableProperty EnabledProperty = BindableProperty.Create(nameof(Enabled), typeof(Boolean), typeof(SelButton), false, Xamarin.Forms.BindingMode.TwoWay, propertyChanged: OnStatusChanged);
 
         //private readonly _isSelected = false;
         private string _identifier = "0";
@@ -33,13 +34,62 @@ namespace NextPark.Mobile.Controls
                     control.BtnTextColor = Color.White;
                     //control._isSelected = true;
                 }
-                else
+                else if (control.Enabled)
+                {
+                    control.BtnBackgroundColor = Color.White;
+                    control.BtnBorderColor = (Color)Application.Current.Resources["NextParkColor1"];
+                    control.BtnTextColor = (Color)Application.Current.Resources["NextParkColor1"];
+                } else
                 {
                     control.BtnBackgroundColor = Color.White;
                     control.BtnBorderColor = Color.Gray;
                     control.BtnTextColor = Color.Gray;
                     //control._isSelected = false;
                 }
+            }
+        }
+
+        private static void OnEnableChanged(BindableObject bindable, object oldValue, object newValue)
+        {
+            var control = (SelButton)bindable;
+
+            if (newValue is bool)
+            {
+                if ((bool)newValue == false)
+                {
+                    control.BtnBackgroundColor = Color.White;
+                    control.BtnBorderColor = Color.Gray;
+                    control.BtnTextColor = Color.Gray;
+                }
+                else
+                {
+                    control.BtnBackgroundColor = Color.White;
+                    control.BtnBorderColor = (Color)Application.Current.Resources["NextParkColor1"];
+                    control.BtnTextColor = (Color)Application.Current.Resources["NextParkColor1"];
+                }
+            }
+        }
+
+        private static void OnStatusChanged(BindableObject bindable, object oldValue, object newValue)
+        {
+            var control = (SelButton)bindable;
+
+            if (control.Enabled)
+            {
+                if (control.Selected)
+                {
+                    control.BtnBackgroundColor = (Color)Application.Current.Resources["NextParkColor1"];
+                    control.BtnBorderColor = (Color)Application.Current.Resources["NextParkColor1"];
+                    control.BtnTextColor = Color.White;
+                } else {
+                    control.BtnBackgroundColor = Color.White;
+                    control.BtnBorderColor = (Color)Application.Current.Resources["NextParkColor1"];
+                    control.BtnTextColor = (Color)Application.Current.Resources["NextParkColor1"];
+                }
+            } else {
+                control.BtnBackgroundColor = Color.White;
+                control.BtnBorderColor = Color.Gray;
+                control.BtnTextColor = Color.Gray;
             }
         }
 
@@ -87,26 +137,13 @@ namespace NextPark.Mobile.Controls
         public bool Selected
         {
             get { return (bool)this.GetValue(SelectedProperty); }
-            set
-            {
-                /*
-                if ((bool)value == true)
-                {
-                    this.BtnBackgroundColor = (Color)Application.Current.Resources["NextParkColor1"];
-                    this.BtnBorderColor = (Color)Application.Current.Resources["NextParkColor1"];
-                    this.BtnTextColor = Color.White;
-                    //this._isSelected = true;
-                }
-                else
-                {
-                    this.BtnBackgroundColor = Color.White;
-                    this.BtnBorderColor = Color.Gray;
-                    this.BtnTextColor = Color.Gray;
-                    //this._isSelected = false;
-                }
-                */
-                SetValue(SelectedProperty, value);
-            }
+            set { SetValue(SelectedProperty, value); }
+        }
+
+        public bool Enabled
+        {
+            get { return (bool)this.GetValue(EnabledProperty); }
+            set { SetValue(EnabledProperty, value); }
         }
 
         public string ID
