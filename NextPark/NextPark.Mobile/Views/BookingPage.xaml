@@ -92,24 +92,28 @@
                                                         SubInfo="{Binding Btn1SubInfo}"
                                                         ID="1"
                                                         Selected="{Binding Btn1IsSelected}"
+                                                        Enabled="{Binding Btn1IsEnabled}"
                                                         TapAction="{Binding OnButtonTapped}"/>
                                     <controls:SelButton x:Name="Btn1"
                                                         Info="1 h"
                                                         SubInfo="{Binding Btn2SubInfo}"
                                                         ID="2"
                                                         Selected="{Binding Btn2IsSelected}"
+                                                        Enabled="{Binding Btn2IsEnabled}"
                                                         TapAction="{Binding OnButtonTapped}"/>
                                     <controls:SelButton x:Name="Btn2"
                                                         Info="2 h"
                                                         SubInfo="{Binding Btn3SubInfo}"
                                                         ID="3"
                                                         Selected="{Binding Btn3IsSelected}"
+                                                        Enabled="{Binding Btn3IsEnabled}"
                                                         TapAction="{Binding OnButtonTapped}"/>
                                     <controls:SelButton x:Name="Btn3"
                                                         Info="3 h"
                                                         SubInfo="{Binding Btn4SubInfo}"
                                                         ID="4"
                                                         Selected="{Binding Btn4IsSelected}"
+                                                        Enabled="{Binding Btn4IsEnabled}"
                                                         TapAction="{Binding OnButtonTapped}"/>
                                 </StackLayout>  
                                 <StackLayout Orientation="Horizontal" Spacing="10" HorizontalOptions="Center" Margin="5,10,0,0">
