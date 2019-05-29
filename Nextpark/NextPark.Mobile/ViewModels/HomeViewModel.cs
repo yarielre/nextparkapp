@@ -15,6 +15,7 @@ using NextPark.Enums.Enums;
 using NextPark.Mobile.CustomControls;
 using Xamarin.Forms.PlatformConfiguration.iOSSpecific;
 using NextPark.Mobile.UIModels;
+using Plugin.Permissions.Abstractions;
 
 namespace NextPark.Mobile.ViewModels
 {
@@ -662,21 +663,25 @@ namespace NextPark.Mobile.ViewModels
             if (geolocationPermitted == false)
             {
                 if (NavigationService.CurrentPage is Views.HomePage)
-                {                
-                    geolocationPermitted = await _geoLocatorService.IsPermissionGaranted();
-                    if (geolocationPermitted == false)
+                {
+                    var status = await _geoLocatorService.GetPermissionsStatus();
+                    if (status == PermissionStatus.Granted)
                     {
-                        Xamarin.Forms.Device.StartTimer(TimeSpan.FromSeconds(3), () => { CheckGeolocationPermission(); return false; });
-                        return;
+                        geolocationPermitted = await _geoLocatorService.IsPermissionGaranted();
+                        if (geolocationPermitted == false)
+                        {
+                            Xamarin.Forms.Device.StartTimer(TimeSpan.FromSeconds(3), () => { CheckGeolocationPermission(); return false; });
+                            return;
+                        }
+
+                        var geoLocation = await _geoLocatorService.GetLocation();
+
+                        if (geoLocation == null) return;
+
+                        _profileService.LastMapPosition = geoLocation.ToXamMapPosition();
+
+                        Map.MoveToRegion(MapSpan.FromCenterAndRadius(_profileService.LastMapPosition, Distance.FromKilometers(1)));
                     }
-
-                    var geoLocation = await _geoLocatorService.GetLocation();
-
-                    if (geoLocation == null) return;
-
-                    _profileService.LastMapPosition = geoLocation.ToXamMapPosition();
-
-                    Map.MoveToRegion(MapSpan.FromCenterAndRadius(_profileService.LastMapPosition, Distance.FromKilometers(1)));
                 }
             }
             checkingGeolocationPermission = false;

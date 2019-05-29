@@ -23,6 +23,12 @@ namespace NextPark.Mobile.Services
             _permissions = CrossPermissions.Current;
         }
 
+        public async Task<PermissionStatus> GetPermissionsStatus()
+        {
+            var status = await _permissions.CheckPermissionStatusAsync(Permission.Location);
+            return status;
+        }
+
         public async Task<bool> IsPermissionGaranted() {
 
             try
