@@ -76,8 +76,6 @@ namespace NextPark.Mobile.Services
         {
             try
             {
-               
-
                 return await _geolocator.GetLastKnownLocationAsync();
             }
             catch (Exception e)
