@@ -365,7 +365,7 @@ namespace NextPark.Mobile.ViewModels
 
         private void Map_MapReady(object sender, System.EventArgs e)
         {
-            Xamarin.Forms.Device.StartTimer(TimeSpan.FromSeconds(1), () => { Map_Ready_Handler(); return false; });
+            Map_Ready_Handler();
         }
 
         private async void Map_Ready_Handler()
