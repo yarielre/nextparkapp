@@ -23,6 +23,7 @@
     <PackageReference Include="Xamarin.Essentials" Version="1.1.0" />
     <PackageReference Include="Plugin.InAppBilling" Version="2.1.0.187-beta" />
     <PackageReference Include="Microsoft.AppCenter.Push" Version="2.0.0" />
+    <PackageReference Include="Microsoft.AppCenter" Version="2.0.0" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="CustomControls\" />
