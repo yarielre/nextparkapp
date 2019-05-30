@@ -147,6 +147,7 @@ namespace NextPark.Mobile.ViewModels
             Map.Tapped += Map_Tapped;
             Map.PinTapped += Map_PinTapped;
             Map.PropertyChanged += Map_PropertyChanged;
+            Map.MapMoved += Map_MapMoved;
 
             // Set User data
             UserName = AuthSettings.User.Name;
@@ -179,6 +180,10 @@ namespace NextPark.Mobile.ViewModels
             }
         }
 
+        void Map_MapMoved(object sender, MapMovedArgs e)
+        {
+            _profileService.LastMapPosition = e.Position;
+        }
 
         public async void UpdateParkingList()
         {

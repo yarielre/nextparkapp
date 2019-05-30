@@ -15,6 +15,7 @@ using Android.Support.V4.Content;
 using Android.Graphics;
 using Android.Support.Annotation;
 using Android.Util;
+using static Android.Gms.Maps.GoogleMap;
 
 [assembly: ExportRenderer(typeof(CustomMap), typeof(CustomMapRenderer))]
 
@@ -45,6 +46,7 @@ namespace NextPark.Mobile.Droid.Renderers
                 _map.MarkerClick += OnMarkerClick;
                 ((CustomMap)Element).OnMapReady();
                 _map.UiSettings.MyLocationButtonEnabled = true;
+                _map.CameraChange += Map_CameraChange;
             }
         }
 
@@ -97,5 +99,23 @@ namespace NextPark.Mobile.Droid.Renderers
 
             return marker;
         }
+
+
+        /// <summary>  
+        /// this event notifies camerachange to viewModel by using OnMapMoved delegate  
+        private void Map_CameraChange(object sender, CameraChangeEventArgs e)
+        {
+            if (((CustomMap)this.Element) != null && _map != null)
+            {
+                var centerPosition = _map.Projection.VisibleRegion.LatLngBounds.Center;
+                var nearPosition = _map.Projection.VisibleRegion.NearRight;
+                if (centerPosition == null)
+                {
+                    centerPosition = nearPosition;
+                }
+                ((CustomMap)Element).OnMapMoved(new Position(centerPosition.Latitude, centerPosition.Longitude));
+            }
+        }
+
     }
 }

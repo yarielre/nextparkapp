@@ -12,7 +12,7 @@ namespace NextPark.Mobile.CustomControls
         public event EventHandler<MapTapEventArgs> Tapped;
         public event EventHandler<PinTapEventArgs> PinTapped;
         public event EventHandler MapReady;
-
+        public event EventHandler<MapMovedArgs> MapMoved;
         #region Constructors
 
         /// <summary>
@@ -49,6 +49,11 @@ namespace NextPark.Mobile.CustomControls
             OnPinTap(new PinTapEventArgs{ Parking = parking });
         }
 
+        public void OnMapMoved(Position coordinate) 
+        {
+            OnMapMoved(new MapMovedArgs { Position = coordinate });
+        }
+
         protected virtual void OnTap(MapTapEventArgs e)
         {
             Tapped?.Invoke(this, e);
@@ -61,11 +66,19 @@ namespace NextPark.Mobile.CustomControls
         {
             MapReady?.Invoke(this, e);
         }
+        protected virtual void OnMapMoved(MapMovedArgs e)
+        {
+            MapMoved?.Invoke(this, e);
+        }
     }
     /// <summary>
     /// Event args used with maps, when the user tap on it
     /// </summary>
     public class MapTapEventArgs : EventArgs
+    {
+        public Position Position { get; set; }
+    }
+    public class MapMovedArgs : EventArgs
     {
         public Position Position { get; set; }
     }
