@@ -27,6 +27,7 @@ namespace NextPark.Mobile.ViewModels
     public class TimeSelButton
     {
         public bool isSelected { get; set; }
+        public bool isEnabled { get; set; }
         public int minutes { get; set; }
     }
 
@@ -58,16 +59,22 @@ namespace NextPark.Mobile.ViewModels
 
         // Buttons
         public Boolean Btn1IsSelected { get; set; }     // 15 min button selected
+        public Boolean Btn1IsEnabled { get; set; }      // 15 min button enabled
         public string Btn1SubInfo { get; set; }         // 15 min button price
-        public Boolean Btn2IsSelected { get; set; }     // 45 min button selected
-        public string Btn2SubInfo { get; set; }         // 45 min button price
+        public Boolean Btn2IsSelected { get; set; }     // 30 min button selected
+        public Boolean Btn2IsEnabled { get; set; }      // 30 min button enabled
+        public string Btn2SubInfo { get; set; }         // 30 min button price
         public Boolean Btn3IsSelected { get; set; }     // 1.0 h button selected
+        public Boolean Btn3IsEnabled { get; set; }      // 1.0 h button enabled
         public string Btn3SubInfo { get; set; }         // 1.0 h button price
         public Boolean Btn4IsSelected { get; set; }     // 2.0 h button selected
+        public Boolean Btn4IsEnabled { get; set; }      // 2.0 h button enabled
         public string Btn4SubInfo { get; set; }         // 2.0 h button price
         public Boolean Btn5IsSelected { get; set; }     // 3.0 h button selected
+        public Boolean Btn5IsEnabled { get; set; }      // 3.0 h button enabled
         public string Btn5SubInfo { get; set; }         // 3.0 h button price
         public Boolean Btn6IsSelected { get; set; }     // 4.0 h button selected
+        public Boolean Btn6IsEnabled { get; set; }      // 4.0 h button enabled
         public string Btn6SubInfo { get; set; }         // 4.0 h button price
         public ICommand OnButtonTapped { get; set; }    // Selection button tapped
 
@@ -87,12 +94,14 @@ namespace NextPark.Mobile.ViewModels
         // PRIVATE VARIABLES
         private List<TimeSelButton> _timeSelButtons = new List<TimeSelButton>();
         private UIBookingModel order;
+        private UIParkingModel _parking;
 
         // SERVICES
         private readonly IGeolocatorService _geoLocatorService;
         private readonly IDialogService _dialogService;
         private readonly IOrderDataService _orderDataService;
         private readonly IParkingDataService _parkingDataService;
+        private readonly IProfileService _profileService;
 
         // METHODS
         public BookingMapViewModel(IGeolocatorService geolocatorService, 
@@ -101,13 +110,15 @@ namespace NextPark.Mobile.ViewModels
                                    IAuthService authService, 
                                    INavigationService navService,
                                    IParkingDataService parkingDataService,
-                                   IOrderDataService orderDataService)
+                                   IOrderDataService orderDataService,
+                                   IProfileService profileService)
                                    : base(apiService, authService, navService)
         {
             _geoLocatorService = geolocatorService;
             _dialogService = dialogService;
             _parkingDataService = parkingDataService;
             _orderDataService = orderDataService;
+            _profileService = profileService;
 
             // Header
             UserName = AuthSettings.User.Name;
@@ -195,6 +206,9 @@ namespace NextPark.Mobile.ViewModels
                     base.OnPropertyChanged("DeleteText");
                 }
                 */
+                // Get parking
+                _parking = _profileService.GetParkingById(order.ParkingId);
+
                 // Terminate
                 DeleteText = "Termina";
                 base.OnPropertyChanged("DeleteText");
@@ -313,6 +327,16 @@ namespace NextPark.Mobile.ViewModels
             }
             else
             {
+                if (_parking != null)
+                {
+                    TimeSpan availableTime = _parking.GetAvailableTime(order.EndDate);
+                    if (availableTime < TimeSpan.FromMinutes(15))
+                    {
+                        _dialogService.ShowAlert("Attenzione", "Il parcheggio non è più disponibile");
+                        return;
+                    }
+                }
+
                 // Renew order
                 RenewTime = TimeSpan.FromMinutes(0);
                 RenewTotalTimeText = string.Format("{0:%h} h {0:%m} min", RenewTime);
@@ -523,27 +547,64 @@ namespace NextPark.Mobile.ViewModels
             // Get the tapped selection button
             btnIndex = Convert.ToUInt16(identifier);
             if (btnIndex > 0) btnIndex--;
-            if (_timeSelButtons[btnIndex].isSelected) {
-                // If already selected, deselect it and remove it from total
-                _timeSelButtons[btnIndex].isSelected = false;
-                if (RenewTime >= TimeSpan.FromMinutes(_timeSelButtons[btnIndex].minutes)) {
-                    RenewTime -= TimeSpan.FromMinutes(_timeSelButtons[btnIndex].minutes);
+
+            if (_timeSelButtons[btnIndex].isEnabled)
+            {
+                if (_timeSelButtons[btnIndex].isSelected)
+                {
+                    // If already selected, deselect it and remove it from total
+                    _timeSelButtons[btnIndex].isSelected = false;
+                    if (RenewTime >= TimeSpan.FromMinutes(_timeSelButtons[btnIndex].minutes))
+                    {
+                        RenewTime = RenewTime - TimeSpan.FromMinutes(_timeSelButtons[btnIndex].minutes);
+                    }
                 }
-            } else {
-                // Select the button and add its time to total
-                _timeSelButtons[btnIndex].isSelected = true;
-                RenewTime += TimeSpan.FromMinutes(_timeSelButtons[btnIndex].minutes);
+                else
+                {
+                    // Select the button and add its time to total
+                    _timeSelButtons[btnIndex].isSelected = true;
+                    RenewTime = RenewTime + TimeSpan.FromMinutes(_timeSelButtons[btnIndex].minutes);
+                }
+
+                // Update renew time
+                RenewTotalTimeText = string.Format("{0:%h} h {0:%m} min", RenewTime);
+                base.OnPropertyChanged("RenewTotalTimeText");
+
+                UpdateButtonStatus();
             }
-
-            // Update renew time
-            RenewTotalTimeText = string.Format("{0:%h} h {0:%m} min", RenewTime);
-            base.OnPropertyChanged("RenewTotalTimeText");
-
-            UpdateButtonStatus();
         }
 
         public void UpdateButtonStatus()
         {
+            bool disableButtons = false;
+            TimeSpan availableTime = TimeSpan.FromMinutes(0);
+
+            if (_parking != null)
+            {
+                disableButtons = true;
+                availableTime = _parking.GetAvailableTime(order.EndDate+RenewTime);
+            }
+
+            // Enable all buttons as default
+            for (int i = 0; i < 6; i++) {
+                _timeSelButtons[i].isEnabled = true;
+            }
+
+            // Disable unavailable time buttons
+            if (disableButtons) {
+                // Available time in known
+                for (int i = 5; i >= 0; i--) {
+                    if (!_timeSelButtons[i].isSelected)
+                    {
+                        if (availableTime > TimeSpan.FromMinutes(_timeSelButtons[i].minutes))
+                        {
+                            break;
+                        }
+                        _timeSelButtons[i].isEnabled = false;
+                    }
+                }            
+            }
+
             // Update Buttons
             Btn1IsSelected = _timeSelButtons[0].isSelected;
             Btn2IsSelected = _timeSelButtons[1].isSelected;
@@ -557,8 +618,19 @@ namespace NextPark.Mobile.ViewModels
             base.OnPropertyChanged("Btn4IsSelected");
             base.OnPropertyChanged("Btn5IsSelected");
             base.OnPropertyChanged("Btn6IsSelected");
-            base.OnPropertyChanged("Btn7IsSelected");
-            base.OnPropertyChanged("Btn8IsSelected");
+
+            Btn1IsEnabled = _timeSelButtons[0].isEnabled;
+            Btn2IsEnabled = _timeSelButtons[1].isEnabled;
+            Btn3IsEnabled = _timeSelButtons[2].isEnabled;
+            Btn4IsEnabled = _timeSelButtons[3].isEnabled;
+            Btn5IsEnabled = _timeSelButtons[4].isEnabled;
+            Btn6IsEnabled = _timeSelButtons[5].isEnabled;
+            base.OnPropertyChanged("Btn1IsEnabled");
+            base.OnPropertyChanged("Btn2IsEnabled");
+            base.OnPropertyChanged("Btn3IsEnabled");
+            base.OnPropertyChanged("Btn4IsEnabled");
+            base.OnPropertyChanged("Btn5IsEnabled");
+            base.OnPropertyChanged("Btn6IsEnabled");
         }
 
         public void OnConfirmMethod()
