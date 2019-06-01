@@ -40,21 +40,25 @@ namespace NextPark.Mobile.ViewModels
         public Boolean Btn1IsEnabled { get; set; }      // 0.5h button enabled
         public string Btn1SubInfo { get; set; }         // 0.5h button price
         public Boolean Btn2IsSelected { get; set; }     // 1.0h button selected
-        public Boolean Btn2IsEnabled { get; set; }      // 0.5h button enabled
+        public Boolean Btn2IsEnabled { get; set; }      // 1.0h button enabled
         public string Btn2SubInfo { get; set; }         // 1.0h button price
         public Boolean Btn3IsSelected { get; set; }     // 2.0h button selected
-        public Boolean Btn3IsEnabled { get; set; }      // 0.5h button enabled
+        public Boolean Btn3IsEnabled { get; set; }      // 2.0h button enabled
         public string Btn3SubInfo { get; set; }         // 2.0h button price
         public Boolean Btn4IsSelected { get; set; }     // 3.0h button selected
-        public Boolean Btn4IsEnabled { get; set; }      // 0.5h button enabled
+        public Boolean Btn4IsEnabled { get; set; }      // 3.0h button enabled
         public string Btn4SubInfo { get; set; }         // 3.0h button price
         public Boolean Btn5IsSelected { get; set; }     // 4.0h button selected
+        public Boolean Btn5IsEnabled { get; set; }      // 4.0h button enabled
         public string Btn5SubInfo { get; set; }         // 4.0h button price
         public Boolean Btn6IsSelected { get; set; }     // 5.0h button selected
+        public Boolean Btn6IsEnabled { get; set; }      // 5.0h button enabled
         public string Btn6SubInfo { get; set; }         // 5.0h button price
         public Boolean Btn7IsSelected { get; set; }     // 6.0h button selected
+        public Boolean Btn7IsEnabled { get; set; }      // 6.0h button enabled
         public string Btn7SubInfo { get; set; }         // 6.0h button price
         public Boolean Btn8IsSelected { get; set; }     // 8.0h button selected
+        public Boolean Btn8IsEnabled { get; set; }      // 8.0h button enabled
         public string Btn8SubInfo { get; set; }         // 8.0h button price
         public ICommand OnButtonTapped { get; set; }    // Selection button tapped
 
@@ -173,16 +177,25 @@ namespace NextPark.Mobile.ViewModels
             Btn2IsEnabled = true;
             Btn3IsEnabled = true;
             Btn4IsEnabled = true;
-            for (int i = 4; i > 0; i--) {
+            Btn5IsEnabled = true;
+            Btn6IsEnabled = true;
+            Btn7IsEnabled = true;
+            Btn8IsEnabled = true;
+
+            for (int i = 8; i > 0; i--) {
                 if (availableTime > GetButtonTime(i)) {
                     break;
                 }
                 switch (i)
                 {
-                    case 4: Btn4IsEnabled = false; break;
-                    case 3: Btn3IsEnabled = false; break;
-                    case 2: Btn2IsEnabled = false; break;
                     case 1: Btn1IsEnabled = false; break;
+                    case 2: Btn2IsEnabled = false; break;
+                    case 3: Btn3IsEnabled = false; break;
+                    case 4: Btn4IsEnabled = false; break;
+                    case 5: Btn5IsEnabled = false; break;                    
+                    case 6: Btn6IsEnabled = false; break;
+                    case 7: Btn7IsEnabled = false; break;
+                    case 8: Btn8IsEnabled = false; break;
                 }
             }
 
@@ -214,6 +227,10 @@ namespace NextPark.Mobile.ViewModels
             base.OnPropertyChanged("Btn2IsEnabled");
             base.OnPropertyChanged("Btn3IsEnabled");
             base.OnPropertyChanged("Btn4IsEnabled");
+            base.OnPropertyChanged("Btn5IsEnabled");
+            base.OnPropertyChanged("Btn6IsEnabled");
+            base.OnPropertyChanged("Btn7IsEnabled");
+            base.OnPropertyChanged("Btn8IsEnabled");
 
             return Task.FromResult(false);
         }
@@ -339,14 +356,14 @@ namespace NextPark.Mobile.ViewModels
         {
             switch (button)
             {
+                case 1: return TimeSpan.FromMinutes(30);
                 case 2: return TimeSpan.FromHours(1.0);
                 case 3: return TimeSpan.FromHours(2.0);
                 case 4: return TimeSpan.FromHours(3.0);
                 case 5: return TimeSpan.FromHours(4.0);
                 case 6: return TimeSpan.FromHours(5.0);
                 case 7: return TimeSpan.FromHours(6.0);
-                case 8: return TimeSpan.FromHours(8.0);
-                case 1: return TimeSpan.FromMinutes(30);
+                case 8: return TimeSpan.FromHours(8.0);                
                 default: return TimeSpan.FromMinutes(0.0);
             }
         }
@@ -355,14 +372,14 @@ namespace NextPark.Mobile.ViewModels
         {
             switch (button)
             {
+                case 1: return Btn1IsEnabled;
                 case 2: return Btn2IsEnabled;
                 case 3: return Btn3IsEnabled;
                 case 4: return Btn4IsEnabled;
-                //case 5: return Btn5IsEnabled;
-                //case 6: return Btn6IsEnabled;
-                //case 7: return Btn7IsEnabled;
-                //case 8: return Btn8IsEnabled;
-                case 1: return Btn1IsEnabled;
+                case 5: return Btn5IsEnabled;
+                case 6: return Btn6IsEnabled;
+                case 7: return Btn7IsEnabled;
+                case 8: return Btn8IsEnabled;                
                 default: return false;
             }
         }

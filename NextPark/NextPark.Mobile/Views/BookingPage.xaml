@@ -122,26 +122,35 @@
                                                         SubInfo="{Binding Btn5SubInfo}"
                                                         ID="5"
                                                         Selected="{Binding Btn5IsSelected}"
+                                                        Enabled="{Binding Btn5IsEnabled}"
                                                         TapAction="{Binding OnButtonTapped}"/>
                                     <controls:SelButton x:Name="Btn5"
                                                         Info="5 h"
                                                         SubInfo="{Binding Btn6SubInfo}"
                                                         ID="6"
                                                         Selected="{Binding Btn6IsSelected}"
+                                                        Enabled="{Binding Btn6IsEnabled}"
                                                         TapAction="{Binding OnButtonTapped}"/>
                                     <controls:SelButton x:Name="Btn6"
                                                         Info="6 h"
                                                         SubInfo="{Binding Btn7SubInfo}"
                                                         ID="7"
                                                         Selected="{Binding Btn7IsSelected}"
+                                                        Enabled="{Binding Btn7IsEnabled}"
                                                         TapAction="{Binding OnButtonTapped}"/>
                                     <controls:SelButton x:Name="Btn8"
                                                         Info="8 h"
                                                         SubInfo="{Binding Btn8SubInfo}"
                                                         ID="8"
                                                         Selected="{Binding Btn8IsSelected}"
+                                                        Enabled="{Binding Btn8IsEnabled}"
                                                         TapAction="{Binding OnButtonTapped}"/>
                                 </StackLayout> 
+                                <Label Text="Tempo totale di occupazione:"
+                                       FontSize="Small"
+                                       HorizontalOptions="Center"
+                                       HorizontalTextAlignment="Center"
+                                       Margin="0,5,0,0"/>
                                 <TimePicker x:Name="_timePicker"
                                             Time="{Binding Time}"
                                             Format="HH:mm"
@@ -156,7 +165,7 @@
                                     VerticalOptions="Center">
                                 </ActivityIndicator>
                                 <!-- Buy button -->
-                                <Button Text="Prenota"
+                                <Button Text="Occupa"
                                         FontAttributes="Bold"
                                         VerticalOptions="CenterAndExpand"
                                         HorizontalOptions="Center"
