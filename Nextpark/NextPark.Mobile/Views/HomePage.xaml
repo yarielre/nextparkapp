@@ -268,7 +268,7 @@
                                                 HorizontalTextAlignment="Start"/>                                                      
                                     </StackLayout>
                                 </Grid>
-                                <Button Text="Prenota"
+                                <Button Text="{Binding BookingBtnText}"
                                         FontAttributes="Bold"
                                         FontSize="Default"
                                         VerticalOptions="Center"
