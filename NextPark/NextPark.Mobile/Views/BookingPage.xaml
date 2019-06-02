@@ -29,14 +29,14 @@
                                 VerticalOptions="FillAndExpand">
                         
                             <Image Source="{Binding Picture}" 
-                                   HeightRequest="170"
+                                   HeightRequest="150"
                                    Aspect="{Binding PictureAspect}"/>
 
                         </Frame>  
                     </StackLayout>
                         <StackLayout HorizontalOptions="FillAndExpand"
                                      RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}"
-                                     RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent,Property=Height,Factor=0,Constant=160}"
+                                     RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent,Property=Height,Factor=0,Constant=140}"
                                      >
                             <Frame  Margin="10,0,10,2"
                                     BorderColor="{DynamicResource NextParkColor1}" 
@@ -67,7 +67,7 @@
                                         <Label Text="{Binding SubInfo}"
                                                HorizontalTextAlignment="Start"
                                                FontAttributes="None"
-                                               FontSize="Medium"/>
+                                               FontSize="Small"/>
                                     </StackLayout>
                                     
                                     <!-- Parking price and availability -->
@@ -81,12 +81,12 @@
                                         <Label Text="{Binding FullAvailability}"
                                                HorizontalTextAlignment="End"
                                                FontAttributes="None"
-                                               FontSize="Medium"/> 
+                                               FontSize="Small"/> 
                                     </StackLayout>
                                 </Grid>
                                 
                                 <!-- Time selector buttons-->
-                                <StackLayout Orientation="Horizontal" Spacing="10" HorizontalOptions="Center" Margin="5,10,0,0">
+                                <StackLayout Orientation="Horizontal" Spacing="6" HorizontalOptions="Center" Margin="2,6,0,0">
                                     <controls:SelButton x:Name="Btn05"
                                                         Info="0.5 h"
                                                         SubInfo="{Binding Btn1SubInfo}"
@@ -116,7 +116,7 @@
                                                         Enabled="{Binding Btn4IsEnabled}"
                                                         TapAction="{Binding OnButtonTapped}"/>
                                 </StackLayout>  
-                                <StackLayout Orientation="Horizontal" Spacing="10" HorizontalOptions="Center" Margin="5,10,0,0">
+                                <StackLayout Orientation="Horizontal" Spacing="6" HorizontalOptions="Center" Margin="2,2,0,0">
                                     <controls:SelButton x:Name="Btn4"
                                                         Info="4 h"
                                                         SubInfo="{Binding Btn5SubInfo}"
