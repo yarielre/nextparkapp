@@ -16,6 +16,7 @@ namespace NextPark.Mobile.Services
     public class ProfileService : IProfileService
     {
         private readonly IApiService _apiService;
+        private readonly IAuthService _authService; 
 
         public Position LastMapPosition { get; set; }
         public ParkingItem LastEditingParking { get; set; }
@@ -28,9 +29,10 @@ namespace NextPark.Mobile.Services
         public List<UIParkingModel> UserParkingList { get; set; }
         public List<OrderModel> UserOrderList { get; set; }
 
-        public ProfileService(IApiService apiService)
+        public ProfileService(IApiService apiService, IAuthService authService)
         {
             _apiService = apiService;
+            _authService = authService;
             ParkingList = new List<UIParkingModel>();
             UserParkingList = new List<UIParkingModel>();
             UserOrderList = new List<OrderModel>();
@@ -160,6 +162,26 @@ namespace NextPark.Mobile.Services
                 }
             }
             return null;
+        }
+
+        public async Task<bool> RefreshUserData()
+        {
+            if ((AuthSettings.UserId != null) && (AuthSettings.UserName != null))
+            {
+                try
+                {
+                    var userResponse = await _authService.GetUserByUserName(AuthSettings.UserName);
+
+                    // Check user data response
+                    if (userResponse.IsSuccess == true)
+                    {
+                        return true;
+                    }
+                    return false;
+                }
+                catch (Exception e) { return false; }
+            }
+            return false;
         }
     }
 }

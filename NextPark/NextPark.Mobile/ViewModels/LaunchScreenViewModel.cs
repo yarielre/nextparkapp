@@ -13,6 +13,7 @@ namespace NextPark.Mobile.ViewModels
         public bool IsRunning { get; set; }         // Activity spinner
 
         // SERVICES
+        private readonly IProfileService _profileService;
         private readonly IDialogService _dialogService;
         private readonly IParkingDataService _parkingDataService;
         private readonly IPushService _pushService;
@@ -21,6 +22,7 @@ namespace NextPark.Mobile.ViewModels
         public LaunchScreenViewModel(IDialogService dialogService,
                                      IApiService apiService,
                                      IAuthService authService,
+                                     IProfileService profileService,
                                      IParkingDataService parkingDataService,
                                      INavigationService navService,
                                      IPushService pushService)
@@ -29,6 +31,7 @@ namespace NextPark.Mobile.ViewModels
             _dialogService = dialogService;
             _parkingDataService = parkingDataService;
             _pushService = pushService;
+            _profileService = profileService;
 
             IsRunning = false;
         }
@@ -48,7 +51,7 @@ namespace NextPark.Mobile.ViewModels
         public async void GetParkingList()
         {
             // Check autologin
-            await AutoLogin();
+            await _profileService.RefreshUserData();
 
             // Stop activity spinner
             IsRunning = false;
@@ -73,6 +76,7 @@ namespace NextPark.Mobile.ViewModels
             _pushService.Start();
         }
 
+        /*
         public async Task<bool> AutoLogin()
         {
             if ((AuthSettings.UserId != null) && (AuthSettings.UserName != null))
@@ -92,5 +96,6 @@ namespace NextPark.Mobile.ViewModels
             }
             return false;
         }
+        */
     }
 }

@@ -67,6 +67,9 @@ namespace NextPark.Mobile.Services
                 {
                     PushSettings.NewNotification = false;
 
+                    // Refresh user data, balance could be updated
+                    await _profileService.RefreshUserData();
+
                     if (PushSettings.ExpiredOrder)
                     {
                         // Search Order
