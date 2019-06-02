@@ -223,15 +223,21 @@ namespace NextPark.Mobile.ViewModels
                 base.OnPropertyChanged("ParkingsStatus");
                 base.OnPropertyChanged("ParkingsAvailability");
 
-                UpdateUserBookingsData();
+                UpdateOtherUserData();
             } catch (Exception e) {
                 return;
             }
         }
 
-        public async void UpdateUserBookingsData()
+        public async void UpdateOtherUserData()
         {
             await GetBookings();
+
+            // Refresh user data, balance could be updated
+            await _profileService.RefreshUserData();
+            // Update user money if necessary
+            UserMoney = AuthSettings.UserCoin.ToString("N2");
+            base.OnPropertyChanged("UserMoney");
         }
 
         // Get User Bookings

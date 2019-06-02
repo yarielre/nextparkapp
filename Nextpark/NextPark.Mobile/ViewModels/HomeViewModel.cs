@@ -284,6 +284,15 @@ namespace NextPark.Mobile.ViewModels
 
                 RefreshMapPins();
 
+                if (AuthService.IsUserAuthenticated())
+                {
+                    // Refresh user data, balance could be updated
+                    await _profileService.RefreshUserData();
+                    // Update user money if necessary
+                    UserMoney = AuthSettings.UserCoin.ToString("N2");
+                    base.OnPropertyChanged("UserMoney");
+                }
+
             }
             catch (Exception e) {
                 _dialogService.ShowToast(e.Message, TimeSpan.FromSeconds(10));

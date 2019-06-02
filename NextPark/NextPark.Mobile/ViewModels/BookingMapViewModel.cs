@@ -429,6 +429,9 @@ namespace NextPark.Mobile.ViewModels
                 base.OnPropertyChanged("TerminateIsRunning");
                 base.OnPropertyChanged("TerminateConfirmVisible");
 
+                // Refresh user data, balance should be updated
+                await _profileService.RefreshUserData();
+
                 // Check terminate order result
                 if ((result == null) || (result.IsSuccess != true)) {
                     await _dialogService.ShowAlert("Errore", "Ordine non terminato");

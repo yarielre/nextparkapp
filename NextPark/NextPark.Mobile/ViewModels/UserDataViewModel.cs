@@ -61,11 +61,12 @@ namespace NextPark.Mobile.ViewModels
         public UserDataViewModel(IDialogService dialogService,
                                  IApiService apiService,
                                  IAuthService authService,
-                                 INavigationService navService)
+                                 INavigationService navService,
+                                 IProfileService profileService)
                                  : base(apiService, authService, navService)
         {
             _dialogService = dialogService;
-            _profileService = new ProfileService(apiService);
+            _profileService = profileService;
 
             // Header actions
             OnBackClick = new Command<object>(OnBackClickMethod);

@@ -51,12 +51,13 @@ namespace NextPark.Mobile.ViewModels
                               IApiService apiService,
                               IAuthService authService,
                               INavigationService navService,
+                              IProfileService profileService,
                               IPurchaseDataService purchaseDataService,
                               IInAppPurchaseService inAppPurchaseService)
                               : base(apiService, authService, navService)
         {
             _dialogService = dialogService;
-            _profileService = new ProfileService(apiService);
+            _profileService = profileService;
             _purchaseDataService = purchaseDataService;
             _inAppPurchaseService = inAppPurchaseService;
 
@@ -117,7 +118,18 @@ namespace NextPark.Mobile.ViewModels
 
             selectedValue = 10;
 
+            UpdateUserData();
+
             return Task.FromResult(false);
+        }
+
+        public async void UpdateUserData()
+        {
+            // Refresh user data, balance could be updated
+            await _profileService.RefreshUserData();
+            // Update user money if necessary
+            UserMoney = AuthSettings.UserCoin.ToString("N2");
+            base.OnPropertyChanged("UserMoney");
         }
 
         public override bool BackButtonPressed()
