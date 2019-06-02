@@ -34,12 +34,9 @@
                             </StackLayout>
                             <Label Text="{Binding Email}"
                                    FontSize="Small"/>
-                            <StackLayout Orientation="Horizontal" Spacing="2" HorizontalOptions="Start" VerticalOptions="Center">
-                                <Label Text="{Binding Address}"
+                            <Label Text="{Binding Address}"
                                        FontSize="Small"/>
-                                <Label Text=","
-                                       FontSize="Small"
-                                       Margin="-2,0,0,0"/>
+                            <StackLayout Orientation="Horizontal" Spacing="2" HorizontalOptions="Start" VerticalOptions="Center">                                                                
                                 <Label Text="{Binding NPA}"
                                        FontSize="Small"/>
                                 <Label Text="{Binding City}"
