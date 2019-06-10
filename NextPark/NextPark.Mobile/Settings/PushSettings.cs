@@ -26,9 +26,6 @@ namespace NextPark.Mobile.Settings
 
         public static void OnPushNotificationReceived(object sender, PushNotificationReceivedEventArgs e)
         {
-            NewNotification = true;
-            NotificationArgs = e;
-
             // If there is custom data associated with the notification,
             // print the entries
             if (e.CustomData != null)
@@ -39,7 +36,17 @@ namespace NextPark.Mobile.Settings
                         ExpiredOrder = true;
                         ExpiredOrderId = int.Parse(e.CustomData[key]);
                     }
+                    else if ((key == "Title") && (e.Title == null)) {
+                        e.Title = e.CustomData[key];
+                    }
+                    else if ((key == "Message") && (e.Message == null)) {
+                        e.Message = e.CustomData[key];
+                    }
                 }
+            }
+            if ((e.Message != null) || (e.Title != null)) {
+                NewNotification = true;
+                NotificationArgs = e;
             }
         }
     }
