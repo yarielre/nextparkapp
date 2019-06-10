@@ -414,7 +414,7 @@ namespace NextPark.Mobile.ViewModels
         {
             // Check Data
             if (((RepetitionIndex != 0) || (StartDate == EndDate)) && (StartTime > EndTime)) {
-                await _dialogService.ShowAlert("Errore", "L'orario di fine deve essere maggiore a quello di inizio");
+                await _dialogService.ShowAlert("Errore", "L'orario di inizio deve precedere quello di fine");
                 IsRunning = false;
                 base.OnPropertyChanged("IsRunning");
                 return;

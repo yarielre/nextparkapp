@@ -191,7 +191,7 @@ namespace NextPark.Mobile.ViewModels
             // Check Data
             if ((StartDate + StartTime) > (EndDate + EndTime))
             {
-                _dialogService.ShowAlert("Errore", "Data e ora di fine devono essere sucessive a quelle di inizio");
+                _dialogService.ShowAlert("Errore", "Data e ora di inizio devono precedere quelle di fine");
                 return;
             }
 
