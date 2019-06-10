@@ -6,7 +6,7 @@
              x:Class="NextPark.Mobile.Views.UserProfilePage">
     <ContentPage.Content>
         <ContentView>
-            <controls:BasePage x:Name="header"
+            <controls:BaseScrollPage x:Name="header"
                                HeaderBackText="Indietro"
                                IsHeaderBackVisible="true"
                                HeaderBackAction="{Binding OnBackClick}"                               
@@ -14,8 +14,8 @@
                                HeaderUserAction="{Binding OnUserClick}"
                                HeaderMoney="{Binding UserMoney}"
                                HeaderMoneyAction="{Binding OnMoneyClick}">
-                               
-                <StackLayout HorizontalOptions="FillAndExpand" Padding="10,0,10,0" Spacing="0">
+                
+                <StackLayout HorizontalOptions="FillAndExpand" Padding="10,0,10,0" Spacing="0" Margin="0,1,0,0">                    
                     <controls:UserProfileItem Title="Dati utente"
                                               BackgroundColor="White"
                                               BorderColor="{DynamicResource NextParkColor1}"
@@ -34,14 +34,17 @@
                             </StackLayout>
                             <Label Text="{Binding Email}"
                                    FontSize="Small"/>
-                            <Label Text="{Binding Address}"
-                                       FontSize="Small"/>
-                            <StackLayout Orientation="Horizontal" Spacing="2" HorizontalOptions="Start" VerticalOptions="Center">                                                                
-                                <Label Text="{Binding NPA}"
-                                       FontSize="Small"/>
-                                <Label Text="{Binding City}"
-                                       FontSize="Small"/>
-                            </StackLayout>
+                            <!-- <FlexLayout Direction="Row" AlignItems="Start" Wrap="Wrap"> -->
+                                <Label Text="{Binding Address}"
+                                           FontSize="Small"
+                                       Margin="0,0,2,0"/>
+                                <StackLayout Orientation="Horizontal" Spacing="2" HorizontalOptions="Start" VerticalOptions="Center">                                                                
+                                    <Label Text="{Binding NPA}"
+                                           FontSize="Small"/>
+                                    <Label Text="{Binding City}"
+                                           FontSize="Small"/>
+                                </StackLayout>
+                            <!--</FlexLayout>-->
                             <StackLayout Orientation="Horizontal" Spacing="2" HorizontalOptions="Start" VerticalOptions="Center">
                                 <Label Text="Targa: "
                                        FontSize="Small"/>
@@ -57,34 +60,43 @@
                                               ClickAction="{Binding OnBudgetAction}"
                                               x:Name="liUserBudget">
                         <StackLayout Spacing="1" HorizontalOptions="StartAndExpand">
-                            <StackLayout Orientation="Horizontal" Spacing="2" HorizontalOptions="Start">
+                            <FlexLayout Direction="Row" AlignItems="Start" Wrap="Wrap">
                                 <Label Text="Saldo attuale:"
                                        FontSize="Small"
                                        FontAttributes="None"
-                                       VerticalTextAlignment="Center"/>
-                                <Label Text="{Binding Balance}"
-                                       FontSize="Small"
-                                       FontAttributes="Bold"
-                                       VerticalTextAlignment="Center"/>
-                                <Label Text="CHF"
-                                       FontSize="Small"
-                                       FontAttributes="Bold"
-                                       VerticalTextAlignment="Center"/>
-                            </StackLayout>
-                            <StackLayout Orientation="Horizontal" Spacing="2" HorizontalOptions="Start">
+                                       VerticalTextAlignment="Center"
+                                       LineBreakMode="NoWrap"
+                                       Margin="0,0,2,0"/>
+                                <StackLayout Orientation="Horizontal" Spacing="2" HorizontalOptions="Start">
+                                    <Label Text="{Binding Balance}"
+                                           FontSize="Small"
+                                           FontAttributes="Bold"
+                                           VerticalTextAlignment="Center"
+                                           LineBreakMode="NoWrap"/>
+                                    <Label Text="CHF"
+                                           FontSize="Small"
+                                           FontAttributes="Bold"
+                                           VerticalTextAlignment="Center"
+                                           LineBreakMode="NoWrap"/>
+                                 </StackLayout>
+                            </FlexLayout>
+                            <FlexLayout Direction="Row" AlignItems="Start" Wrap="Wrap">                            
                                 <Label Text="Guadagno:"
                                        FontSize="Small"
                                        FontAttributes="None"
-                                       VerticalTextAlignment="Center"/>
-                                <Label Text="{Binding Profit}"
-                                       FontSize="Small"
-                                       FontAttributes="Bold"
-                                       VerticalTextAlignment="Center"/>
-                                <Label Text="CHF"
-                                       FontSize="Small"
-                                       FontAttributes="Bold"
-                                       VerticalTextAlignment="Center"/>
-                            </StackLayout>
+                                       VerticalTextAlignment="Center"
+                                       Margin="0,0,2,0"/>
+                                <StackLayout Orientation="Horizontal" Spacing="2" HorizontalOptions="Start">
+                                    <Label Text="{Binding Profit}"
+                                           FontSize="Small"
+                                           FontAttributes="Bold"
+                                           VerticalTextAlignment="Center"/>
+                                    <Label Text="CHF"
+                                           FontSize="Small"
+                                           FontAttributes="Bold"
+                                           VerticalTextAlignment="Center"/>
+                                </StackLayout>
+                            </FlexLayout>
                         </StackLayout>
                     </controls:UserProfileItem>
                     <controls:UserProfileItem Title="I miei parcheggi"
@@ -150,8 +162,9 @@
                                    FontAttributes="None" />
                         </StackLayout>
                     </controls:UserProfileItem>
-                </StackLayout>                
-            </controls:BasePage>
+               
+                </StackLayout>                               
+            </controls:BaseScrollPage>
         </ContentView>
     </ContentPage.Content>
 </ContentPage>

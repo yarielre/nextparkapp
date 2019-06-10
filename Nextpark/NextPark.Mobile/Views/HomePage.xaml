@@ -135,21 +135,22 @@
                                        Margin="0"
                                        FontSize="Small"
                                        HeightRequest="40"/>
-                            <ContentView BackgroundColor="White"
+                            <ContentView BackgroundColor="White"                                         
                                          Opacity="0.9" 
                                          Margin="1"
                                          Padding="1"
                                          IsVisible="{Binding ReserveDatesVisible}" 
                                          HorizontalOptions="CenterAndExpand">
+                                <StackLayout Spacing="0" Margin="0" Padding="0" HorizontalOptions="FillAndExpand">
+                                <BoxView BackgroundColor="Silver" Margin="0,-2,0,0" HeightRequest="1" HorizontalOptions="FillAndExpand"/>                                    
                                 <Grid HorizontalOptions="FillAndExpand">
-                                    <Grid.RowDefinitions>
+                                    <Grid.RowDefinitions>                                       
                                        <RowDefinition Height="*"/>
                                     </Grid.RowDefinitions>
                                     <Grid.ColumnDefinitions>
                                        <ColumnDefinition Width="*" />
                                        <ColumnDefinition Width="*" />
                                     </Grid.ColumnDefinitions>
-                                
                                     <StackLayout Orientation="Vertical" HorizontalOptions="Center" Spacing="2" Grid.Row="0" Grid.Column="0">
                                         <Label Text="Arriva il" FontSize="Micro" TextColor="Gray" HorizontalTextAlignment="Center" Margin="0,2"/>
                                         <Label Text="{Binding ResStartText}" TextColor="Gray" FontSize="Small" HorizontalTextAlignment="Center" Margin="0,0,0,2"/>
@@ -159,6 +160,7 @@
                                         <Label Text="{Binding ResEndText}" TextColor="Gray" FontSize="Small" HorizontalTextAlignment="Center" Margin="0,0,0,2"/>
                                     </StackLayout>
                                 </Grid>
+                                </StackLayout>
                                 <ContentView.GestureRecognizers>
                                     <TapGestureRecognizer Command="{Binding OnReserveDatesTap}"/>                            
                                 </ContentView.GestureRecognizers>

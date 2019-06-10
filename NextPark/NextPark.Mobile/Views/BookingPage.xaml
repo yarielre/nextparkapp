@@ -155,14 +155,15 @@
                                             Time="{Binding Time}"
                                             Format="HH:mm"
                                             HorizontalOptions="Center"
-                                            Margin="0,5,0,0">
+                                            Margin="0,2,0,0">
                                     <TimePicker.Format>HH:mm</TimePicker.Format>
                                 </TimePicker>
                                 <!-- Activity indicator, active when buying -->
                                 <ActivityIndicator
                                     x:Name="activityContent"
                                     IsRunning="{Binding IsRunning, Mode=TwoWay}"                    
-                                    VerticalOptions="Center">
+                                    VerticalOptions="Center"
+                                    Margin="0">
                                 </ActivityIndicator>
                                 <!-- Buy button -->
                                 <Button Text="Occupa"

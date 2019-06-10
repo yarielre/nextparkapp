@@ -67,7 +67,7 @@
                                         <Label Text="{Binding SubInfo}"
                                                HorizontalTextAlignment="Start"
                                                FontAttributes="None"
-                                               FontSize="Medium"/>
+                                               FontSize="Small"/>
                                     </StackLayout>
                                     
                                     <!-- Parking price and availability -->
@@ -81,7 +81,7 @@
                                         <Label Text="{Binding FullAvailability}"
                                                HorizontalTextAlignment="End"
                                                FontAttributes="None"
-                                               FontSize="Medium"/> 
+                                               FontSize="Small"/> 
                                     </StackLayout>
                                 </Grid>
                                 <Label Text="Riservazione"
@@ -107,7 +107,7 @@
                                                 Grid.Row="0" Grid.Column="1"
                                                 Date="{Binding StartDate}"
                                                 MinimumDate="{Binding MinStartDate}">
-                                        <DatePicker.Format>dd/MM/yyyy</DatePicker.Format>
+                                        <DatePicker.Format>dd/MM/yy</DatePicker.Format>
                                     </DatePicker>
                                     <TimePicker FontSize="Small"
                                                 HorizontalOptions="Fill"
@@ -123,12 +123,14 @@
                                                 Grid.Row="1" Grid.Column="1"
                                                 Date="{Binding EndDate}"
                                                 MinimumDate="{Binding MinEndDate}">
-                                        <DatePicker.Format>dd/MM/yyyy</DatePicker.Format>
+                                        <DatePicker.Format>dd/MM/yy</DatePicker.Format>
                                     </DatePicker>
                                     <TimePicker FontSize="Small"
                                                 HorizontalOptions="Fill"
                                                 Grid.Row="1" Grid.Column="2"
-                                                Time="{Binding EndTime}"/>
+                                                Time="{Binding EndTime}">
+                                        <TimePicker.Format>HH:mm</TimePicker.Format>
+                                    </TimePicker>
                                     
                                 </Grid>
                                 <!-- Activity indicator, active when buying -->

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ContentView xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:NextPark.Mobile.Controls"
+             xmlns:ios="clr-namespace:Xamarin.Forms.PlatformConfiguration.iOSSpecific;assembly=Xamarin.Forms.Core" 
+             ios:Page.UseSafeArea="true"
+             x:Class="NextPark.Mobile.Controls.BaseScrollPage" BackgroundColor="White">
+    <ContentView.Padding>
+        <OnPlatform x:TypeArguments="Thickness">
+            <!-- <On Platform="iOS" Value="0,20,0,0" / -->
+            <On Platform="Android, WinPhone, Windows" Value="0,5,0,0" />
+        </OnPlatform>
+    </ContentView.Padding>
+    <ContentView.ControlTemplate>
+        <ControlTemplate>
+            <!-- Page definition -->             
+            <Grid Margin="0,0,0,0" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" BackgroundColor="White">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="44"/>
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                
+                <!-- Header -->
+                <controls:Header BackText="{TemplateBinding HeaderBackText}"
+                                 BackAction="{TemplateBinding HeaderBackAction}"
+                                 BackVisible="{TemplateBinding IsHeaderBackVisible}"
+                                 UserText="{TemplateBinding HeaderUserText}"
+                                 UserAction="{TemplateBinding HeaderUserAction}"                                 
+                                 Money="{TemplateBinding HeaderMoney}"
+                                 MoneyAction="{TemplateBinding HeaderMoneyAction}"/>
+                
+                <!-- Page content -->
+                <RelativeLayout Grid.Row="1" Grid.Column="0" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+        
+                    <!-- NextPark background image -->
+                    <StackLayout
+                            RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width}"
+                            RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height}">
+                
+                                <Frame IsClippedToBounds="true"
+                                       HasShadow="false"
+                                       Padding="0"
+                                       Margin="0"
+                                       BorderColor="Transparent"
+                                       BackgroundColor="Transparent"
+                                       VerticalOptions="EndAndExpand"
+                                       RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width}"
+                                       RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=0.5}">
+                                <Image  Aspect="AspectFill"
+                                        Source="image_bg_nextpark.png" 
+                                        />
+                                </Frame>
+                    </StackLayout>  
+        
+                    <!-- Logo image -->
+                    <!-- Removed -->        
+        
+                    <!-- Page Content -->
+                    <!-- Page Container Frame -->
+                    <ScrollView HorizontalOptions="FillAndExpand"
+                                VerticalOptions="Start"
+                                Orientation="Vertical"
+                                RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=1}"
+                                RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}">
+                        <StackLayout HorizontalOptions="FillAndExpand"
+                                     RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}">
+                        
+                            <ContentPresenter></ContentPresenter>
+                            
+                        </StackLayout>
+                    </ScrollView>
+                </RelativeLayout>
+            </Grid>
+        </ControlTemplate>
+    </ContentView.ControlTemplate>
+</ContentView>
+
+    
+

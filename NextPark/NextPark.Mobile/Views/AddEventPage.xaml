@@ -42,7 +42,7 @@
                                     Grid.Row="0" Grid.Column="1"
                                     Date="{Binding StartDate}"
                                     MinimumDate="{Binding MinStartDate}">
-                            <DatePicker.Format>dd/MM/yyyy</DatePicker.Format>
+                            <DatePicker.Format>dd/MM/yy</DatePicker.Format>
                         </DatePicker>
                         <TimePicker FontSize="Small"
                                     HorizontalOptions="End"
@@ -59,7 +59,7 @@
                                     Grid.Row="1" Grid.Column="1"
                                     Date="{Binding EndDate}"
                                     MinimumDate="{Binding MinEndDate}">
-                            <DatePicker.Format>dd/MM/yyyy</DatePicker.Format>
+                            <DatePicker.Format>dd/MM/yy</DatePicker.Format>
                         </DatePicker>
                         <TimePicker FontSize="Small"
                                     HorizontalOptions="End"
@@ -99,7 +99,7 @@
                                     MinimumDate="{Binding RepetitionMinEndDate}"
                                     MaximumDate="{Binding RepetitionMaxEndDate}"
                                     IsEnabled="{Binding RepetitionEndEnable}">
-                            <DatePicker.Format>dd/MM/yyyy</DatePicker.Format>
+                            <DatePicker.Format>dd/MM/yy</DatePicker.Format>
                         </DatePicker>
                     </Grid>
                     

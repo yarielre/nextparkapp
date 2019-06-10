@@ -27,6 +27,7 @@ namespace NextPark.Mobile.ViewModels
 
         public string Picture { get; set; }             // Parking image
         public string Address { get; set; }             // Parking address text
+        public string Cap { get; set; }                 // Parking CAP text
         public string City { get; set; }                // Parking city text
         public string ActiveStatusText { get; set; }    // Parking active status text
         public bool ActiveSwitchToggled                 // Parking active status value
@@ -186,6 +187,8 @@ namespace NextPark.Mobile.ViewModels
                 base.OnPropertyChanged("Picture");
                 Address = _parking.Address;
                 base.OnPropertyChanged("Address");
+                Cap = _parking.Cap.ToString();
+                base.OnPropertyChanged("Cap");
                 City = _parking.City;
                 base.OnPropertyChanged("City");
 
@@ -330,7 +333,7 @@ namespace NextPark.Mobile.ViewModels
         // Select day
         public void ChangeSelectedDay(DateTime dateTime)
         {
-            if ((dateTime != null) || (dateTime.Equals(new DateTime(1900, 1, 1, 0, 0, 0)))) {
+            if ((dateTime == null) || (dateTime.Equals(new DateTime(1900, 1, 1, 0, 0, 0)))) {
                 dateTime = DateTime.Now.Date;
             }
             SelectedDay = dateTime;
