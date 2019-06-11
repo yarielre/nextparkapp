@@ -322,6 +322,10 @@ namespace NextPark.Mobile.ViewModels
 
         private void Map_PinTapped(object sender, CustomControls.PinTapEventArgs e)
         {
+            if (Xamarin.Forms.Device.RuntimePlatform == Xamarin.Forms.Device.Android) {
+                Map.MoveToRegion(MapSpan.FromCenterAndRadius(new Position(e.Parking.Latitude, e.Parking.Longitude), Distance.FromKilometers(1)));
+            }
+
             UIParkingModel parking = _profileService.GetParkingById(e.Parking.Id);
             if (parking != null) {
                 // Parking found
