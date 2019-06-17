@@ -137,7 +137,7 @@
                                               BorderColor="{DynamicResource NextParkColor1}"
                                               Icon="icon_service_256.png"
                                               LinkEnable="false"
-                                              ClickAction="">
+                                              >
                         <StackLayout Spacing="1" HorizontalOptions="StartAndExpand">
                             <Label FontAttributes="None">
                                 <Label.FormattedText>
