@@ -37,16 +37,20 @@ namespace NextPark.Mobile.Droid.Renderers
         {
         }
 
-        protected override void OnMapReady(GoogleMap googleMap)
+        protected override void OnMapReady(GoogleMap map)
         {
-            _map = googleMap;
+            base.OnMapReady(map);
+
+            _map = map;
             if (_map != null)
             {
                 _map.MapClick += googleMap_MapClick;
                 _map.MarkerClick += OnMarkerClick;
                 ((CustomMap)Element).OnMapReady();
-                _map.UiSettings.MyLocationButtonEnabled = true;
                 _map.CameraChange += Map_CameraChange;
+                _map.UiSettings.ZoomControlsEnabled = false;
+                _map.UiSettings.MyLocationButtonEnabled = false;
+                _map.MyLocationEnabled = true;
             }
         }
 
