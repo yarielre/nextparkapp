@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace NextPark.Services.Services.Interfaces
+namespace NextPark.Services
 {
     public interface IMediaService
     {

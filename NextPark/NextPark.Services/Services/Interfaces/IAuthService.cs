@@ -1,7 +1,7 @@
 ﻿using NextPark.Domain.Entities;
 using NextPark.Models;
 
-namespace NextPark.Services.Services.Interfaces
+namespace NextPark.Services
 {
     public interface IAuthService
     {
