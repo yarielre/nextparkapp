@@ -1,20 +1,15 @@
-﻿using System;
-using Android.Content;
+﻿using Android.Content;
 using Android.Gms.Maps;
-using System.Linq;
 using Android.Gms.Maps.Model;
+using Android.Graphics;
+using NextPark.Mobile.CustomControls;
+using NextPark.Mobile.Droid.Renderers;
+using System;
+using System.Linq;
 using Xamarin.Forms;
 using Xamarin.Forms.Maps;
 using Xamarin.Forms.Maps.Android;
 using Xamarin.Forms.Platform.Android;
-using NextPark.Mobile.CustomControls;
-using NextPark.Mobile.Droid.Renderers;
-using NextPark.Models;
-using Android.Graphics.Drawables;
-using Android.Support.V4.Content;
-using Android.Graphics;
-using Android.Support.Annotation;
-using Android.Util;
 using static Android.Gms.Maps.GoogleMap;
 
 [assembly: ExportRenderer(typeof(CustomMap), typeof(CustomMapRenderer))]
@@ -39,7 +34,15 @@ namespace NextPark.Mobile.Droid.Renderers
 
         protected override void OnMapReady(GoogleMap map)
         {
-            base.OnMapReady(map);
+            try
+            {
+                //Handle permission exception while asking the first time
+                base.OnMapReady(map);
+            }
+            catch (Exception)
+            {
+                return;
+            }
 
             _map = map;
             if (_map != null)
@@ -59,7 +62,10 @@ namespace NextPark.Mobile.Droid.Renderers
             var pos = new Position(e.Marker.Position.Latitude, e.Marker.Position.Longitude);
             var pin = _formsMap.Pins.First(p => p.Position == pos);
             var customPin = pin as CustomPin;
-            if (customPin != null) ((CustomMap) Element).OnPinTap(customPin.Parking);
+            if (customPin != null)
+            {
+                ((CustomMap)Element).OnPinTap(customPin.Parking);
+            }
         }
 
         protected override void OnElementChanged(ElementChangedEventArgs<Map> e)
@@ -74,16 +80,16 @@ namespace NextPark.Mobile.Droid.Renderers
 
             if (e.NewElement != null)
             {
-                _formsMap = (CustomMap) e.NewElement;
+                _formsMap = (CustomMap)e.NewElement;
                 Control.GetMapAsync(this);
             }
         }
 
-       
+
 
         private void googleMap_MapClick(object sender, GoogleMap.MapClickEventArgs e)
         {
-            ((CustomMap) Element).OnTap(new Position(e.Point.Latitude, e.Point.Longitude));
+            ((CustomMap)Element).OnTap(new Position(e.Point.Latitude, e.Point.Longitude));
         }
         protected override MarkerOptions CreateMarker(Pin pin)
         {
