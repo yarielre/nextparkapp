@@ -1,5 +1,6 @@
 ﻿using System;
 using NextPark.Models;
+using Xamarin.Forms;
 using Xamarin.Forms.Maps;
 
 namespace NextPark.Mobile.CustomControls
@@ -13,6 +14,21 @@ namespace NextPark.Mobile.CustomControls
         public event EventHandler<PinTapEventArgs> PinTapped;
         public event EventHandler MapReady;
         public event EventHandler<MapMovedArgs> MapMoved;
+        
+        public static readonly BindableProperty ShowUserEnableProperty = BindableProperty.Create(
+            propertyName: "ShowUserEnable",
+            returnType: typeof(bool),
+            declaringType: typeof(CustomMap),
+            defaultValue: false,
+            defaultBindingMode: BindingMode.TwoWay
+            );
+
+        public bool ShowUserEnable
+        {
+            get { return (bool)GetValue(ShowUserEnableProperty); }
+            set { SetValue(ShowUserEnableProperty, value); }
+        }
+
         #region Constructors
 
         /// <summary>

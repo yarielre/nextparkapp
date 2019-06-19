@@ -41,12 +41,13 @@ namespace NextPark.Mobile.Services
 
                     if (showRequest)
                     {
+                    }
                         var requestPermissions = await _permissions.RequestPermissionsAsync(Permission.Location);
                         //Best practice to always check that the key exists
 
                         if (requestPermissions.ContainsKey(Permission.Location))
                             status = requestPermissions[Permission.Location];
-                    }
+                    
                 }
 
                 if (status == PermissionStatus.Granted)

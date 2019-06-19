@@ -143,7 +143,7 @@ namespace NextPark.Mobile.ViewModels
         }
 
         public override Task InitializeAsync(object data = null)
-        {
+        {            
             Map.MapReady += Map_MapReady;
             Map.Tapped += Map_Tapped;
             Map.PinTapped += Map_PinTapped;
@@ -417,9 +417,8 @@ namespace NextPark.Mobile.ViewModels
                     }
                     _profileService.LastMapPosition = geoLocation.ToXamMapPosition();
                 }
-
-                Map.MoveToRegion(MapSpan.FromCenterAndRadius(_profileService.LastMapPosition, Distance.FromKilometers(1)));
-
+                Map.ShowUserEnable = true;
+                Map.MoveToRegion(MapSpan.FromCenterAndRadius(_profileService.LastMapPosition, Distance.FromKilometers(1)));                
             }
             catch (Exception e) {}
         }
@@ -579,8 +578,8 @@ namespace NextPark.Mobile.ViewModels
 
                 _profileService.LastMapPosition = geoLocation.ToXamMapPosition();
 
-                Map.MoveToRegion(MapSpan.FromCenterAndRadius(_profileService.LastMapPosition, Distance.FromKilometers(1)));
-
+                Map.ShowUserEnable = true;
+                Map.MoveToRegion(MapSpan.FromCenterAndRadius(_profileService.LastMapPosition, Distance.FromKilometers(1)));                
             } catch (Exception e) {}
         }
 
@@ -706,11 +705,12 @@ namespace NextPark.Mobile.ViewModels
 
                         _profileService.LastMapPosition = geoLocation.ToXamMapPosition();
 
-                        Map.MoveToRegion(MapSpan.FromCenterAndRadius(_profileService.LastMapPosition, Distance.FromKilometers(1)));
+                        Map.ShowUserEnable = true;
+                        Map.MoveToRegion(MapSpan.FromCenterAndRadius(_profileService.LastMapPosition, Distance.FromKilometers(1)));                        
                     }
                     catch (Exception e) { return; }
                 }
-            }
+            }            
             checkingGeolocationPermission = false;
         }
     }

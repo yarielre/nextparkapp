@@ -16,6 +16,7 @@ using Android.Graphics;
 using Android.Support.Annotation;
 using Android.Util;
 using static Android.Gms.Maps.GoogleMap;
+using System.ComponentModel;
 
 [assembly: ExportRenderer(typeof(CustomMap), typeof(CustomMapRenderer))]
 
@@ -28,6 +29,7 @@ namespace NextPark.Mobile.Droid.Renderers
     public class CustomMapRenderer : MapRenderer, IOnMapReadyCallback
     {
         private CustomMap _formsMap;
+        private bool _mapReady = false;
 
         // We use a native google map for Android
         private GoogleMap _map;
@@ -38,21 +40,21 @@ namespace NextPark.Mobile.Droid.Renderers
         }
 
         protected override void OnMapReady(GoogleMap map)
-        {
-            base.OnMapReady(map);
+        {            
+            if (_mapReady == true) return;
 
             _map = map;
             if (_map != null)
             {
+                _mapReady = true;
                 _map.MapClick += googleMap_MapClick;
                 _map.MarkerClick += OnMarkerClick;
                 ((CustomMap)Element).OnMapReady();
                 _map.CameraChange += Map_CameraChange;
                 _map.UiSettings.ZoomControlsEnabled = false;
-                _map.UiSettings.MyLocationButtonEnabled = false;
-                _map.MyLocationEnabled = true;
+                _map.UiSettings.MyLocationButtonEnabled = false;                
             }
-        }
+        }        
 
         private void OnMarkerClick(object sender, GoogleMap.MarkerClickEventArgs e)
         {
@@ -79,12 +81,32 @@ namespace NextPark.Mobile.Droid.Renderers
             }
         }
 
-       
+        protected override void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            base.OnElementPropertyChanged(sender, e);
+
+            if (e.PropertyName == CustomMap.ShowUserEnableProperty.PropertyName) { 
+                UpdateShowUserEnable();
+            }
+        }
+
+        private void UpdateShowUserEnable()
+        {
+            if (_formsMap.ShowUserEnable == true)
+            {
+                _map.MyLocationEnabled = true;
+            } else
+            {
+                _map.MyLocationEnabled = false;
+            }
+        }
+
 
         private void googleMap_MapClick(object sender, GoogleMap.MapClickEventArgs e)
         {
             ((CustomMap) Element).OnTap(new Position(e.Point.Latitude, e.Point.Longitude));
         }
+
         protected override MarkerOptions CreateMarker(Pin pin)
         {
             var marker = new MarkerOptions();
