@@ -111,8 +111,9 @@ namespace NextPark.Mobile.ViewModels
             AddLineToConsole("-------------------------------------------");
             AddLineToConsole("TESTING LOGIN...");
 
+
             //Demo Login OK
-            var loginResponse = await AuthService.Login("info@nextpark.ch", "NextPark.1");
+            var loginResponse = await AuthService.Login(new LoginModel { UserName = "info@nextpark.ch", Password = "NextPark.1" });
 
             if (loginResponse.IsSuccess)
             {

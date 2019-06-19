@@ -25,19 +25,14 @@ namespace NextPark.Mobile.Services
             AuthSettings.User = new UserModel { Name = "Accedi" };
         }
 
-        public async Task<TokenResponse> Login(string username, string password)
+        public async Task<TokenResponse> Login(LoginModel model)
         {
             var isConneted = await _apiService.CheckConnection();
             if (!isConneted.IsSuccess) return new TokenResponse { IsSuccess = isConneted.IsSuccess };
 
             try
             {
-                var model = new LoginModel
-                {
-                    UserName = username,
-                    Password = password
-                };
-
+              
                 var json = JsonConvert.SerializeObject(model);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
@@ -216,7 +211,7 @@ namespace NextPark.Mobile.Services
             }
         }
 
-        bool IAuthService.IsUserAuthenticated()
+        public bool IsUserAuthenticated()
         {
             return Authenticated;
         }

@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Microsoft.AppCenter;
+using NextPark.Enums.Enums;
 using NextPark.Mobile.Services;
+using NextPark.Models;
 using Xamarin.Forms;
+using Device = Xamarin.Forms.Device;
 
 namespace NextPark.Mobile.ViewModels
 {
@@ -110,10 +114,22 @@ namespace NextPark.Mobile.ViewModels
 
         public async void LoginMethod()
         {
+            
             try
             {
+                // Getting device information for push notification
+                var deviceId = await AppCenter.GetInstallIdAsync().ConfigureAwait(false);
+                var platform = Device.RuntimePlatform;
+                var loginModel = new LoginModel
+                {
+                    UserName = UserName,
+                    Password = Password,
+                    DeviceId = deviceId.ToString(),
+                    Platform = platform == Device.Android ? DevicePlatform.Android : DevicePlatform.Ios
+                };
+
                 // Send login request to backend
-                var loginResponse = await AuthService.Login(LoginName, Password);
+                var loginResponse = await AuthService.Login(loginModel);
 
                 // Check login result
                 if (loginResponse.IsSuccess == true)
