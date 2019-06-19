@@ -49,14 +49,17 @@
     <WarningLevel>4</WarningLevel>
     <AndroidManagedSymbols>true</AndroidManagedSymbols>
     <AndroidSupportedAbis>armeabi-v7a;arm64-v8a;x86;x86_64</AndroidSupportedAbis>
-<JavaMaximumHeapSize>2G</JavaMaximumHeapSize>
+<JavaMaximumHeapSize>1G</JavaMaximumHeapSize>
 <AndroidUseSharedRuntime>false</AndroidUseSharedRuntime>
 <AndroidKeyStore>True</AndroidKeyStore>
 <AndroidSigningKeyStore>/Users/JarJar/Programmazione/projects/nextparkapp_new/NextPark/NextPark.Mobile.Android/np-release-key.keystore</AndroidSigningKeyStore>
 <AndroidSigningStorePass>2612aS0580</AndroidSigningStorePass>
 <AndroidSigningKeyAlias>np-release-key</AndroidSigningKeyAlias>
 <AndroidSigningKeyPass>2612aS0580</AndroidSigningKeyPass>
+<EmbedAssembliesIntoApk>true</EmbedAssembliesIntoApk>
+<AndroidLinkTool>proguard</AndroidLinkTool>
 <AndroidLinkMode>Full</AndroidLinkMode>
+<AndroidDexTool>dx</AndroidDexTool>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Mono.Android" />
