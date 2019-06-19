@@ -1,15 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using NextPark.Domain.Entities;
 using NextPark.Models.Models.PushNotification;
 
-namespace NextPark.Services.Services.Interfaces
+namespace NextPark.Services
 {
     public interface IPushNotificationService
     {
-        Task<PushResponse> NotifyAsync(ApplicationUser user, string name, string title, string body, IDictionary<string, string> payload = null);
-        Task NotifyAllAsync(string name, string title, string body);
+        Task<PushResponse> Notify(ApplicationUser user, string name, string title, string body, IDictionary<string, string> payload = null);
+        Task NotifyAll(string name, string title, string body);
     }
 }
-

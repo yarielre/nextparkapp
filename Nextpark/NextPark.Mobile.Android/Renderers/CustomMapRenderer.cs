@@ -1,20 +1,15 @@
-﻿using System;
-using Android.Content;
+﻿using Android.Content;
 using Android.Gms.Maps;
-using System.Linq;
 using Android.Gms.Maps.Model;
+using Android.Graphics;
+using NextPark.Mobile.CustomControls;
+using NextPark.Mobile.Droid.Renderers;
+using System;
+using System.Linq;
 using Xamarin.Forms;
 using Xamarin.Forms.Maps;
 using Xamarin.Forms.Maps.Android;
 using Xamarin.Forms.Platform.Android;
-using NextPark.Mobile.CustomControls;
-using NextPark.Mobile.Droid.Renderers;
-using NextPark.Models;
-using Android.Graphics.Drawables;
-using Android.Support.V4.Content;
-using Android.Graphics;
-using Android.Support.Annotation;
-using Android.Util;
 using static Android.Gms.Maps.GoogleMap;
 using System.ComponentModel;
 
@@ -40,7 +35,7 @@ namespace NextPark.Mobile.Droid.Renderers
         }
 
         protected override void OnMapReady(GoogleMap map)
-        {            
+        {
             if (_mapReady == true) return;
 
             _map = map;
@@ -52,16 +47,19 @@ namespace NextPark.Mobile.Droid.Renderers
                 ((CustomMap)Element).OnMapReady();
                 _map.CameraChange += Map_CameraChange;
                 _map.UiSettings.ZoomControlsEnabled = false;
-                _map.UiSettings.MyLocationButtonEnabled = false;                
+                _map.UiSettings.MyLocationButtonEnabled = false;
             }
-        }        
+        }
 
         private void OnMarkerClick(object sender, GoogleMap.MarkerClickEventArgs e)
         {
             var pos = new Position(e.Marker.Position.Latitude, e.Marker.Position.Longitude);
             var pin = _formsMap.Pins.First(p => p.Position == pos);
             var customPin = pin as CustomPin;
-            if (customPin != null) ((CustomMap) Element).OnPinTap(customPin.Parking);
+            if (customPin != null)
+            {
+                ((CustomMap)Element).OnPinTap(customPin.Parking);
+            }
         }
 
         protected override void OnElementChanged(ElementChangedEventArgs<Map> e)
@@ -76,7 +74,7 @@ namespace NextPark.Mobile.Droid.Renderers
 
             if (e.NewElement != null)
             {
-                _formsMap = (CustomMap) e.NewElement;
+                _formsMap = (CustomMap)e.NewElement;
                 Control.GetMapAsync(this);
             }
         }
@@ -85,7 +83,7 @@ namespace NextPark.Mobile.Droid.Renderers
         {
             base.OnElementPropertyChanged(sender, e);
 
-            if (e.PropertyName == CustomMap.ShowUserEnableProperty.PropertyName) { 
+            if (e.PropertyName == CustomMap.ShowUserEnableProperty.PropertyName) {
                 UpdateShowUserEnable();
             }
         }
@@ -104,7 +102,7 @@ namespace NextPark.Mobile.Droid.Renderers
 
         private void googleMap_MapClick(object sender, GoogleMap.MapClickEventArgs e)
         {
-            ((CustomMap) Element).OnTap(new Position(e.Point.Latitude, e.Point.Longitude));
+            ((CustomMap)Element).OnTap(new Position(e.Point.Latitude, e.Point.Longitude));
         }
 
         protected override MarkerOptions CreateMarker(Pin pin)
@@ -127,8 +125,8 @@ namespace NextPark.Mobile.Droid.Renderers
         }
 
 
-        /// <summary>  
-        /// this event notifies camerachange to viewModel by using OnMapMoved delegate  
+        /// <summary>
+        /// this event notifies camerachange to viewModel by using OnMapMoved delegate
         private void Map_CameraChange(object sender, CameraChangeEventArgs e)
         {
             if (((CustomMap)this.Element) != null && _map != null)
