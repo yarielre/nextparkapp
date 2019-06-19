@@ -57,7 +57,6 @@
 <AndroidSigningKeyAlias>np-release-key</AndroidSigningKeyAlias>
 <AndroidSigningKeyPass>2612aS0580</AndroidSigningKeyPass>
 <EmbedAssembliesIntoApk>true</EmbedAssembliesIntoApk>
-<AndroidLinkTool>proguard</AndroidLinkTool>
 <AndroidLinkMode>Full</AndroidLinkMode>
 <AndroidDexTool>dx</AndroidDexTool>
   </PropertyGroup>
