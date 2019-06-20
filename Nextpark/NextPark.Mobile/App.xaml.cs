@@ -43,8 +43,9 @@ namespace NextPark.Mobile
             }
 
             // Start AppCenter
-            //AppCenter.Start("bb5bafb8-28fb-459f-b36c-647cdbd705ff", typeof(Push));
-            AppCenter.Start("android=dfc399a3-85b9-4d02-9bb6-3c253980fb71;" +
+            // Android: AppCenter.Start("cb623cc2-d661-42df-8827-17095b944984", typeof(Push));
+            // iOS: AppCenter.Start("bb5bafb8-28fb-459f-b36c-647cdbd705ff", typeof(Push));
+            AppCenter.Start("android=cb623cc2-d661-42df-8827-17095b944984;" +
                             "ios=bb5bafb8-28fb-459f-b36c-647cdbd705ff",
                             typeof(Push));
         }

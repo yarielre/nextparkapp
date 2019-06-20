@@ -16,10 +16,10 @@ namespace NextPark.Services
     {
         public const string Url = "https://api.appcenter.ms/v0.1/apps/";
         public const string ApiKeyName = "X-API-Token";
-        public const string ApiKey = "";// "093b0709a3398b6f9560434dc638c18f13e37f3c"; //"{Your App Center API Token}";
-        public const string Organization = "";// "wisegar"; //"{Your organization name}";
-        public const string Android = "";// "WorkInPairs"; //"{Your Android App Name}";
-        public const string IOS = "";// "WorkInPairs-iOS"; //"{Your iOS App Name}";
+        public const string ApiKey = "36a408dfa1bffc2dc56033a03c72f749e054b930"; //"{Your App Center API Token}";
+        public const string Organization = "NextPark"; //"{Your organization name}";
+        public const string Android = "NextParkAndroid"; //"{Your Android App Name}";
+        public const string IOS = "NextPark"; //"{Your iOS App Name}";
         public const string DeviceTarget = "devices_target";
         public class Apis { public const string Notification = "push/notifications"; }
 
