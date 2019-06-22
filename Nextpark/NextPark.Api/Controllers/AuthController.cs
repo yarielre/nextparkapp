@@ -35,7 +35,7 @@ namespace NextPark.Api.Controllers
             SignInManager<ApplicationUser> signInManager, IConfiguration configuration,
             IMapper mapper, IEmailSender emailSender, IRepository<ApplicationUser> useRepository,
             IUnitOfWork unitOfWork, IPushNotificationService pushNotificationService,
-            IAuthService authService)
+            IAuthService authService, IRepository<Device> deviceRepository)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -46,6 +46,7 @@ namespace NextPark.Api.Controllers
             _unitOfWork = unitOfWork;
             _pushNotificationService = pushNotificationService;
             _authService = authService;
+            _deviceRepository = deviceRepository;
         }
 
         [HttpPost("login")]
