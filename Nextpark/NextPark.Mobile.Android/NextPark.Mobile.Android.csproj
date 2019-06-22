@@ -40,6 +40,7 @@
 <AndroidSigningStorePass>2612aS0580</AndroidSigningStorePass>
 <AndroidSigningKeyAlias>np-release-key</AndroidSigningKeyAlias>
 <AndroidSigningKeyPass>2612aS0580</AndroidSigningKeyPass>
+<LangVersion>latest</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType></DebugType>
@@ -57,8 +58,9 @@
 <AndroidSigningKeyAlias>np-release-key</AndroidSigningKeyAlias>
 <AndroidSigningKeyPass>2612aS0580</AndroidSigningKeyPass>
 <EmbedAssembliesIntoApk>true</EmbedAssembliesIntoApk>
-<AndroidLinkMode>Full</AndroidLinkMode>
+<AndroidLinkMode>SdkOnly</AndroidLinkMode>
 <AndroidDexTool>dx</AndroidDexTool>
+<LangVersion>latest</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Mono.Android" />
@@ -169,6 +171,7 @@
     <AndroidResource Include="Resources\drawable\logo.png" />
     <AndroidResource Include="Resources\drawable\splashscreen.xml" />
     <AndroidResource Include="Resources\drawable\xamarin_logo.png" />
+    <AndroidResource Include="Resources\drawable\icon_wrench_256.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\drawable-hdpi\" />
