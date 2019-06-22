@@ -124,8 +124,8 @@ namespace NextPark.Mobile.ViewModels
                 {
                     UserName = LoginName,
                     Password = Password,
-                    //DeviceId = deviceId.ToString(),
-                    //Platform = platform == Device.Android ? DevicePlatform.Android : DevicePlatform.Ios
+                    DeviceId = deviceId.ToString(),
+                    Platform = platform == Device.Android ? DevicePlatform.Android : DevicePlatform.Ios
                 };
 
                 // Send login request to backend
