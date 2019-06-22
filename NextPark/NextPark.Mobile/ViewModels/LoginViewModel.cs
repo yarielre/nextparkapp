@@ -122,7 +122,7 @@ namespace NextPark.Mobile.ViewModels
                 var platform = Device.RuntimePlatform;
                 var loginModel = new LoginModel
                 {
-                    UserName = UserName,
+                    UserName = LoginName,
                     Password = Password,
                     DeviceId = deviceId.ToString(),
                     Platform = platform == Device.Android ? DevicePlatform.Android : DevicePlatform.Ios
