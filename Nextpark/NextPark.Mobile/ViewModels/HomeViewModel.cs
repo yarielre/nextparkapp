@@ -166,7 +166,8 @@ namespace NextPark.Mobile.ViewModels
                 Map_Ready_Handler();
             }
             */
-            UpdateParkingList();
+            Xamarin.Forms.Device.StartTimer(TimeSpan.FromMilliseconds(50), () => { UpdateParkingList(); return false; });
+            //UpdateParkingList();
 
             return Task.FromResult(false);
         }
@@ -392,14 +393,20 @@ namespace NextPark.Mobile.ViewModels
 
         private async void Map_Ready_Handler()
         {
+            // Xamarin.Forms bug on Android, Map_Ready is called twice
+            if (mapReady) return;
+
+            mapReady = true;
+
+            // Wait that the map is drawn before move to a position
+            Xamarin.Forms.Device.StartTimer(TimeSpan.FromMilliseconds(50), () => { MoveToLastPosition(); return false; });
+        }
+
+        public async void MoveToLastPosition()
+        {
             try
             {
-                // Xamarin.Forms bug on Android, Map_Ready is called twice
-                if (mapReady) return;
-
-                mapReady = true;
-
-                if ((_profileService.LastMapPosition == null) || (_profileService.LastMapPosition == new Position(0,0)))
+                if ((_profileService.LastMapPosition == null) || (_profileService.LastMapPosition == new Position(0, 0)))
                 {
                     _profileService.LastMapPosition = new Position(0, 0);
 
@@ -418,9 +425,9 @@ namespace NextPark.Mobile.ViewModels
                     _profileService.LastMapPosition = geoLocation.ToXamMapPosition();
                 }
                 Map.ShowUserEnable = true;
-                Map.MoveToRegion(MapSpan.FromCenterAndRadius(_profileService.LastMapPosition, Distance.FromKilometers(1)));                
+                Map.MoveToRegion(MapSpan.FromCenterAndRadius(_profileService.LastMapPosition, Distance.FromKilometers(1)));
             }
-            catch (Exception e) {}
+            catch (Exception){ }
         }
 
         private void CreatePin(Position position, UIParkingModel parking)
@@ -580,7 +587,7 @@ namespace NextPark.Mobile.ViewModels
 
                 Map.ShowUserEnable = true;
                 Map.MoveToRegion(MapSpan.FromCenterAndRadius(_profileService.LastMapPosition, Distance.FromKilometers(1)));                
-            } catch (Exception e) {}
+            } catch (Exception) { }                             
         }
 
         public void OnReserveModeMethod()
@@ -708,7 +715,7 @@ namespace NextPark.Mobile.ViewModels
                         Map.ShowUserEnable = true;
                         Map.MoveToRegion(MapSpan.FromCenterAndRadius(_profileService.LastMapPosition, Distance.FromKilometers(1)));                        
                     }
-                    catch (Exception e) { return; }
+                    catch (Exception) { return; }
                 }
             }            
             checkingGeolocationPermission = false;
