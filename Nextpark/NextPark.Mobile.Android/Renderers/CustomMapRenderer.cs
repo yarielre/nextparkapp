@@ -32,6 +32,7 @@ namespace NextPark.Mobile.Droid.Renderers
 
         public CustomMapRenderer(Context context) : base(context)
         {
+            _mapReady = false;
         }
 
         protected override void OnMapReady(GoogleMap map)
