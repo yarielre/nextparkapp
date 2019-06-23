@@ -5,10 +5,9 @@ using Microsoft.Extensions.Logging;
 using NextPark.Data.Infrastructure;
 using NextPark.Data.Repositories;
 using NextPark.Domain.Entities;
-using NextPark.Enums;
 using NextPark.Enums.Enums;
 using System;
-using System.IO;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -19,7 +18,7 @@ namespace NextPark.Services.Services.HostedServices
         private readonly IServiceScopeFactory _serviceScopeFactory;
         private readonly ILogger<ScheduleHostedService> _logger;
         private Timer _timer;
-        private  int _scheduleTimer;
+        private int _scheduleTimer;
 
 
         public ScheduleHostedService(ILogger<ScheduleHostedService> logger,
@@ -39,8 +38,9 @@ namespace NextPark.Services.Services.HostedServices
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
+
             _logger.LogInformation("Timed Background Service is starting.");
-            _timer = new Timer(ScheduleTerminateOrderTask, null, TimeSpan.Zero, TimeSpan.FromSeconds(_scheduleTimer));
+            _timer = new Timer(SchedulerConsumerTask, null, TimeSpan.Zero, TimeSpan.FromSeconds(_scheduleTimer));
             return Task.CompletedTask;
         }
 
@@ -51,74 +51,115 @@ namespace NextPark.Services.Services.HostedServices
             return Task.CompletedTask;
         }
 
-        public async void ScheduleTerminateOrderTask(object state)
+        public async void SchedulerConsumerTask(object state)
         {
-
             using (var scope = _serviceScopeFactory.CreateScope())
             {
                 var scheduleRepository = scope.ServiceProvider.GetRequiredService<IRepository<Schedule>>();
-                var orderSchedules = await scheduleRepository.FindAllWhereAsync(sch => sch.ScheduleType == ScheduleType.Order);
-                foreach (var schedule in orderSchedules)
+                var unitOfWotk = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
+
+                try
                 {
-                    if  (DateTime.Now <= schedule.TimeOfExecution)
+                    var notifySchedules = await scheduleRepository.FindAllWhereAsync(sch => sch.ScheduleType == ScheduleType.Notify);
+
+                    var notificationsSent = await ProcessNotify(scope, notifySchedules);
+
+                    if (notificationsSent.Count > 0)
                     {
-                        continue;
+                        foreach (var schedule in notificationsSent)
+                        {
+                            scheduleRepository.Delete(schedule);
+                        }
+                        await unitOfWotk.CommitAsync().ConfigureAwait(false);
                     }
-                    //Service to handle terminate order logic
-                    var orderApiService = scope.ServiceProvider.GetRequiredService<IOrderApiService>();
-                    var terminateOrderApiResponse = await orderApiService.TerminateOrder(schedule.ScheduleId);
-                    if (terminateOrderApiResponse.IsSuccess)
-                    {
-                        _logger.LogInformation($"Hosted Service Msg {DateTime.Now}: Order with Id:{schedule.ScheduleId} was finished because end time was reached.");
-                    }
-                    else
-                    {
-                        _logger.LogInformation($"Hosted Service Error: {DateTime.Now}: {terminateOrderApiResponse.Message} {Environment.NewLine}" +
-                                               $" Error Type:{Enum.GetName(typeof(ErrorType), terminateOrderApiResponse.ErrorType)} ");
-                    }
+
                 }
+                catch (Exception e)
+                {
+
+                    _logger.LogInformation($"Hosted Service Msg {DateTime.Now}: Notify schedule exception:{e.Message}");
+
+                }
+
+                try
+                {
+                    var orderSchedules = await scheduleRepository.FindAllWhereAsync(sch => sch.ScheduleType == ScheduleType.Order);
+                    await ProcessOrders(scope, orderSchedules);
+                }
+                catch (Exception e)
+                {
+
+                    _logger.LogInformation($"Hosted Service Msg {DateTime.Now}: Order Terminate schedule exception:{e.Message}");
+
+                }
+
+
             }
         }
-
-        private async void CheckOutActiveOrders(object state)
+        private async Task<List<Schedule>> ProcessNotify(IServiceScope scope, System.Collections.Generic.List<Schedule> notifySchedules)
         {
-            using (var scope = _serviceScopeFactory.CreateScope())
+            var notificationSent = new List<Schedule>();
+
+            foreach (var schedule in notifySchedules)
             {
-                //Service in charge to create, get and delete order's file 
-                var fileService = scope.ServiceProvider.GetRequiredService<IFileService>();
-                var files = fileService.GetHostedFiles();
-                foreach (var file in files)
+                if (DateTime.Now <= schedule.TimeOfExecution)
                 {
-                    var extension = file.Extension;
-                    var cutx = file.Name.Split('_');
-                    var ticks = cutx[0]; //time ticks
-
-                    var dateTime = new DateTime(long.Parse(ticks));
-
-                    if (DateTime.Now <= dateTime)
-                    {
-                        continue;
-                    }
-                        //Service to handle terminate order logic
-                        var orderApiService = scope.ServiceProvider.GetRequiredService<IOrderApiService>();
-
-                        var id = int.Parse(cutx[1].Replace(extension, "")); //order id
-                        var terminateOrderApiResponse = await orderApiService.TerminateOrder(id);
-                        if (terminateOrderApiResponse.IsSuccess)
-                        {
-                            _logger.LogInformation($"Hosted Service Msg {DateTime.Now}: Order with Id:{id} was finished because end time was reached.");
-                            //Clean file
-                            file.Delete();
-                        }
-                        else
-                        {
-                            _logger.LogInformation($"Hosted Service Error: {DateTime.Now}: {terminateOrderApiResponse.Message} {Environment.NewLine}" +
-                                                   $" Error Type:{Enum.GetName(typeof(ErrorType), terminateOrderApiResponse.ErrorType)} ");
-                        }
-                    }
+                    _logger.LogInformation($"Hosted Service Msg {DateTime.Now}: Notify schedule:{schedule.ScheduleId} not yet fired. Will be fired at: {schedule.TimeOfExecution}");
+                    continue;
                 }
+
+
+                var usersRepository = scope.ServiceProvider.GetRequiredService<IRepository<ApplicationUser>>();
+                var deviceRepository = scope.ServiceProvider.GetRequiredService<IRepository<Device>>();
+                var pushService = scope.ServiceProvider.GetRequiredService<IPushNotificationService>();
+
+                var currentUser = await usersRepository.SingleOrDefaultWhereAsync(user => user.Id == schedule.ScheduleId);
+
+                if (currentUser == null)
+                {
+                    _logger.LogInformation($"Hosted Service Msg {DateTime.Now}: Used with Id:{schedule.ScheduleId} not found");
+                    continue;
+                }
+
+                var userDevices = await deviceRepository.FindAllWhereAsync(device => device.UserId == currentUser.Id);
+                if (userDevices == null || userDevices.Count == 0)
+                {
+                    _logger.LogInformation($"Hosted Service Msg {DateTime.Now}: Used with Id:{schedule.ScheduleId} has any registered device!");
+                    continue;
+                }
+
+                currentUser.Devices = userDevices;
+
+                //TODO: Send notifications Here
+                pushService.Notify(currentUser, "Scheduled Notify Test", "Scheduled Notify Test", "Scheduled Notify Scheduled at login only for Testing!");
+
+                notificationSent.Add(schedule);
             }
 
-           
+            return notificationSent;
+        }
+        private async Task ProcessOrders(IServiceScope scope, System.Collections.Generic.List<Schedule> orderSchedules)
+        {
+            foreach (var schedule in orderSchedules)
+            {
+                if (DateTime.Now <= schedule.TimeOfExecution)
+                {
+                    _logger.LogInformation($"Hosted Service Msg {DateTime.Now}: Order terminate schedule:{schedule.ScheduleId} not yet fired. Will be fired at: {schedule.TimeOfExecution}");
+                    continue;
+                }
+                //Service to handle terminate order logic
+                var orderApiService = scope.ServiceProvider.GetRequiredService<IOrderApiService>();
+                var terminateOrderApiResponse = await orderApiService.TerminateOrder(schedule.ScheduleId);
+                if (terminateOrderApiResponse.IsSuccess)
+                {
+                    _logger.LogInformation($"Hosted Service Msg {DateTime.Now}: Order with Id:{schedule.ScheduleId} was finished because end time was reached.");
+                }
+                else
+                {
+                    _logger.LogInformation($"Hosted Service Error: {DateTime.Now}: {terminateOrderApiResponse.Message} {Environment.NewLine}" +
+                                           $" Error Type:{Enum.GetName(typeof(ErrorType), terminateOrderApiResponse.ErrorType)} ");
+                }
+            }
         }
     }
+}

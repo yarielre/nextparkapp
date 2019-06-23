@@ -6,6 +6,7 @@ namespace NextPark.Enums.Enums
 {
   public enum ScheduleType
     {
-        Order
+        Order,
+        Notify
     }
 }

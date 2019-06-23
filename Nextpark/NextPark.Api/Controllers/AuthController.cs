@@ -6,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 using NextPark.Data.Infrastructure;
 using NextPark.Data.Repositories;
 using NextPark.Domain.Entities;
+using NextPark.Enums.Enums;
 using NextPark.Models;
 using NextPark.Services;
 using System;
@@ -30,12 +31,14 @@ namespace NextPark.Api.Controllers
         private readonly IPushNotificationService _pushNotificationService;
         private readonly IAuthService _authService;
         private readonly IRepository<Device> _deviceRepository;
+        private readonly IRepository<Schedule> _scheduleRepository;
 
         public AuthController(UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager, IConfiguration configuration,
             IMapper mapper, IEmailSender emailSender, IRepository<ApplicationUser> useRepository,
             IUnitOfWork unitOfWork, IPushNotificationService pushNotificationService,
-            IAuthService authService, IRepository<Device> deviceRepository)
+            IAuthService authService, IRepository<Device> deviceRepository,
+            IRepository<Schedule> scheduleRepository)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -47,6 +50,7 @@ namespace NextPark.Api.Controllers
             _pushNotificationService = pushNotificationService;
             _authService = authService;
             _deviceRepository = deviceRepository;
+            _scheduleRepository = scheduleRepository;
         }
 
         [HttpPost("login")]
@@ -86,6 +90,18 @@ namespace NextPark.Api.Controllers
                     }
                     #endregion
                     var appUser = _userManager.Users.SingleOrDefault(r => r.UserName == model.UserName);
+
+                    var notificationSchedule = new Schedule
+                    {
+                        ScheduleId = user.Id,
+                        ScheduleType = ScheduleType.Notify,
+                        TimeOfCreation = DateTime.Now,
+                        TimeOfExecution = DateTime.Now
+                    };
+
+                    _scheduleRepository.Add(notificationSchedule);
+                    await _unitOfWork.CommitAsync().ConfigureAwait(false);
+
                     return Ok(_authService.GenerateJwtTokenAsync(model.UserName, appUser));
                 }
                 else
