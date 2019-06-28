@@ -20,9 +20,7 @@ namespace NextPark.Mobile.Views
             if (BindingContext == null) return;
             if (BindingContext is HomeViewModel bvm)
             {
-                MyMap.IsShowingUser = true;
-                MyMap.MapType = Xamarin.Forms.Maps.MapType.Street;
-                bvm.Map = MyMap;
+                bvm.MyMapContainer = MapContainer;
             }
         }
     }

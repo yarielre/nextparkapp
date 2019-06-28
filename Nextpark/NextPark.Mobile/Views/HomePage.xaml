@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms" 
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
              xmlns:customMap="clr-namespace:NextPark.Mobile.CustomControls;assembly=NextPark.Mobile"
@@ -16,17 +16,14 @@
             <RelativeLayout>
                
                 <!-- Map -->
-                <StackLayout VerticalOptions="FillAndExpand"
+                <StackLayout x:Name="MapContainer"
+                             VerticalOptions="FillAndExpand"
                              HorizontalOptions="FillAndExpand"
                              Padding="0"
                              Margin="0"
                              RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}"
                              RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=1}">
-                    <!-- Custom Map -->
-                    <customMap:CustomMap x:Name="MyMap"
-                                         IsShowingUser="true"
-                                         MapType="Street"
-                    />
+                   
                 </StackLayout>
                 
                 <!-- Book now or future reservation choice -->

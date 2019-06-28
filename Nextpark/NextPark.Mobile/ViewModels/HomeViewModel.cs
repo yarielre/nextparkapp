@@ -72,6 +72,8 @@ namespace NextPark.Mobile.ViewModels
         public TimeSpan ResEndTime { get; set; }
         public DateTime MinResEndDate { get; set; }
 
+        public StackLayout MyMapContainer { get; set; }
+
         // SERVICES
         private readonly IGeolocatorService _geoLocatorService;
         private readonly IDialogService _dialogService;
@@ -123,7 +125,7 @@ namespace NextPark.Mobile.ViewModels
             OnMoneyClick = new Command<object>(OnMoneyClickMethod);
             OnBookingTapped = new Command<object>(OnBookingTappedMethod);
 
-            // Map action
+            // Map actions
             OnSearch = new Command<object>(OnSearchMethod);
             OnCurrentPosition = new Command(OnCurrentPositionMethod);
 
@@ -143,7 +145,20 @@ namespace NextPark.Mobile.ViewModels
         }
 
         public override Task InitializeAsync(object data = null)
-        {            
+        {
+            // Map initialization
+            if (_profileService.LastMapPosition != new Position(0, 0))
+            {
+                Map = new CustomMap(MapSpan.FromCenterAndRadius(new Position(_profileService.LastMapPosition.Latitude, _profileService.LastMapPosition.Longitude), Distance.FromKilometers(1)));
+            }
+            else
+            {
+                Map = new CustomMap();
+            }
+            Map.IsShowingUser = true;
+            Map.MapType = MapType.Street;
+            MyMapContainer.Children.Add(Map);
+
             Map.MapReady += Map_MapReady;
             Map.Tapped += Map_Tapped;
             Map.PinTapped += Map_PinTapped;
@@ -161,13 +176,8 @@ namespace NextPark.Mobile.ViewModels
             InfoPanelVisible = false;
             base.OnPropertyChanged("InfoPanelVisible");
 
-            /*
-            if (Xamarin.Forms.Device.RuntimePlatform == Xamarin.Forms.Device.iOS) {
-                Map_Ready_Handler();
-            }
-            */
             Xamarin.Forms.Device.StartTimer(TimeSpan.FromMilliseconds(50), () => { UpdateParkingList(); return false; });
-            //UpdateParkingList();
+            //UpdateParkingList();            
 
             return Task.FromResult(false);
         }
@@ -398,36 +408,17 @@ namespace NextPark.Mobile.ViewModels
 
             mapReady = true;
 
-            // Wait that the map is drawn before move to a position
-            Xamarin.Forms.Device.StartTimer(TimeSpan.FromMilliseconds(50), () => { MoveToLastPosition(); return false; });
-        }
-
-        public async void MoveToLastPosition()
-        {
-            try
+            if (_profileService.LastMapPosition == new Position(0, 0))
             {
-                if ((_profileService.LastMapPosition == null) || (_profileService.LastMapPosition == new Position(0, 0)))
+                MoveToCurrentPosition();
+            } else
+            {
+                geolocationPermitted = await _geoLocatorService.IsPermissionGaranted();
+                if (geolocationPermitted)
                 {
-                    _profileService.LastMapPosition = new Position(0, 0);
-
-                    var geoLocation = await _geoLocatorService.GetLocation();
-
-                    if (geoLocation == null)
-                    {
-                        geolocationPermitted = false;
-                        if (checkingGeolocationPermission == false)
-                        {
-                            checkingGeolocationPermission = true;
-                            Xamarin.Forms.Device.StartTimer(TimeSpan.FromSeconds(3), () => { CheckGeolocationPermission(); return false; });
-                        }
-                        return;
-                    }
-                    _profileService.LastMapPosition = geoLocation.ToXamMapPosition();
+                    Map.ShowUserEnable = true;
                 }
-                Map.ShowUserEnable = true;
-                Map.MoveToRegion(MapSpan.FromCenterAndRadius(_profileService.LastMapPosition, Distance.FromKilometers(1)));
             }
-            catch (Exception){ }
         }
 
         private void CreatePin(Position position, UIParkingModel parking)
