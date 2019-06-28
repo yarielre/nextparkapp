@@ -4,6 +4,7 @@ using NextPark.Mobile.Settings;
 using NextPark.Mobile.Services;
 using NextPark.Mobile.Services.Data;
 using Xamarin.Forms;
+using NextPark.Mobile.Extensions;
 
 namespace NextPark.Mobile.ViewModels
 {
@@ -17,6 +18,7 @@ namespace NextPark.Mobile.ViewModels
         private readonly IDialogService _dialogService;
         private readonly IParkingDataService _parkingDataService;
         private readonly IPushService _pushService;
+        private readonly IGeolocatorService _geoLocatorService;
 
         // METHODS
         public LaunchScreenViewModel(IDialogService dialogService,
@@ -25,13 +27,15 @@ namespace NextPark.Mobile.ViewModels
                                      IProfileService profileService,
                                      IParkingDataService parkingDataService,
                                      INavigationService navService,
-                                     IPushService pushService)
+                                     IPushService pushService,
+                                     IGeolocatorService geolocatorService)
         : base(apiService, authService, navService)
         {
             _dialogService = dialogService;
             _parkingDataService = parkingDataService;
             _pushService = pushService;
             _profileService = profileService;
+            _geoLocatorService = geolocatorService;
 
             IsRunning = false;
         }
@@ -53,6 +57,8 @@ namespace NextPark.Mobile.ViewModels
             // Check autologin
             await _profileService.RefreshUserData();
 
+            await GetCurrentLocation();
+
             // Stop activity spinner
             IsRunning = false;
             base.OnPropertyChanged("IsRunning");
@@ -69,33 +75,25 @@ namespace NextPark.Mobile.ViewModels
             {
                 await NavigationService.NavigateToAsync<HomeViewModel>();
             }
-            */
+            */            
 
             await NavigationService.NavigateToAsync<HomeViewModel>();
 
             _pushService.Start();
         }
 
-        /*
-        public async Task<bool> AutoLogin()
+        public async Task GetCurrentLocation()
         {
-            if ((AuthSettings.UserId != null) && (AuthSettings.UserName != null))
+            try
             {
-                try
-                {
-                    var userResponse = await AuthService.GetUserByUserName(AuthSettings.UserName);
+                var geoLocation = await _geoLocatorService.GetLocation();
 
-                    // Check user data response
-                    if (userResponse.IsSuccess == true)
-                    {
-                        return true;
-                    }
-                    return false;
+                if (geoLocation != null)
+                {
+                    _profileService.LastMapPosition = geoLocation.ToXamMapPosition();
                 }
-                catch (Exception e) { return false; }
             }
-            return false;
+            catch (Exception) { }
         }
-        */
     }
 }
