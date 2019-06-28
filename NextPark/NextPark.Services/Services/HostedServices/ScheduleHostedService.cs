@@ -131,7 +131,7 @@ namespace NextPark.Services.Services.HostedServices
                 currentUser.Devices = userDevices;
 
                 //TODO: Send notifications Here
-                pushService.Notify(currentUser, "Scheduled Notify Test", "Scheduled Notify Test", "Scheduled Notify Scheduled at login only for Testing!");
+                pushService.Notify(currentUser, $"Scheduled  Order closure", "Order closed", $"Your last order will been closed automatically in 10 min!");
 
                 notificationSent.Add(schedule);
             }
@@ -149,9 +149,29 @@ namespace NextPark.Services.Services.HostedServices
                 }
                 //Service to handle terminate order logic
                 var orderApiService = scope.ServiceProvider.GetRequiredService<IOrderApiService>();
+                
                 var terminateOrderApiResponse = await orderApiService.TerminateOrder(schedule.ScheduleId);
                 if (terminateOrderApiResponse.IsSuccess)
                 {
+                    //TODO: Send notifications Here
+                    var orderRepository = scope.ServiceProvider.GetRequiredService<IRepository<Order>>();
+                    var usersRepository = scope.ServiceProvider.GetRequiredService<IRepository<ApplicationUser>>();
+                    var deviceRepository = scope.ServiceProvider.GetRequiredService<IRepository<Device>>();
+                    var pushService = scope.ServiceProvider.GetRequiredService<IPushNotificationService>();
+
+                    var currentOrder = await orderRepository.SingleOrDefaultWhereAsync(order => order.Id == schedule.ScheduleId);
+
+                    var currentUser = await usersRepository.SingleOrDefaultWhereAsync(user => user.Id == currentOrder.UserId);
+
+                    var userDevices = await deviceRepository.FindAllWhereAsync(device => device.UserId == currentUser.Id);
+                    if (userDevices != null &&  userDevices.Count > 0)
+                    {
+
+                        currentUser.Devices = userDevices;
+                        pushService.Notify(currentUser, $"Scheduled  Order closure", "Order closed", $"Your order {currentOrder.Id} has been closed automatically!");
+
+                    }
+                    
                     _logger.LogInformation($"Hosted Service Msg {DateTime.Now}: Order with Id:{schedule.ScheduleId} was finished because end time was reached.");
                 }
                 else

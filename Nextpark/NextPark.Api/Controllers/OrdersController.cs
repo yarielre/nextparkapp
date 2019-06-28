@@ -230,6 +230,17 @@ namespace NextPark.Api.Controllers
                     TimeOfExecution = entityOrder.EndDate
                 };
                 _scheduleRepository.Add(orderSchedule);
+                var notificationSchedule = new Schedule
+                {
+                    ScheduleId = user.Id,
+                    ScheduleType = ScheduleType.Notify,
+                    TimeOfCreation = DateTime.UtcNow,
+                    TimeOfExecution = new DateTime(entityOrder.EndDate.Year, entityOrder.EndDate.Month,
+                   entityOrder.EndDate.Day, entityOrder.EndDate.Hour, (entityOrder.EndDate.Minute - 10),
+                   entityOrder.EndDate.Second)
+                };
+                _scheduleRepository.Add(notificationSchedule);
+             
                 await _unitOfWork.CommitAsync().ConfigureAwait(false);
 
                 var vm = _mapper.Map<Order, OrderModel>(entityOrder);
