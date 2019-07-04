@@ -230,16 +230,22 @@ namespace NextPark.Api.Controllers
                     TimeOfExecution = entityOrder.EndDate
                 };
                 _scheduleRepository.Add(orderSchedule);
-                var notificationSchedule = new Schedule
+                if ((entityOrder.EndDate - entityOrder.StartDate) > TimeSpan.FromMinutes(10))
                 {
-                    ScheduleId = user.Id,
-                    ScheduleType = ScheduleType.Notify,
-                    TimeOfCreation = DateTime.UtcNow,
-                    TimeOfExecution = new DateTime(entityOrder.EndDate.Year, entityOrder.EndDate.Month,
-                   entityOrder.EndDate.Day, entityOrder.EndDate.Hour, (entityOrder.EndDate.Minute - 10),
-                   entityOrder.EndDate.Second)
-                };
-                _scheduleRepository.Add(notificationSchedule);
+                    var notificationSchedule = new Schedule
+                    {
+                        ScheduleId = user.Id,
+                        ScheduleType = ScheduleType.Notify,
+                        TimeOfCreation = DateTime.UtcNow,
+                        TimeOfExecution = entityOrder.EndDate.AddMinutes(-10.0)
+                        /*
+                        TimeOfExecution = new DateTime(entityOrder.EndDate.Year, entityOrder.EndDate.Month,
+                       entityOrder.EndDate.Day, entityOrder.EndDate.Hour, (entityOrder.EndDate.Minute - 10),
+                       entityOrder.EndDate.Second)
+                       */
+                    };
+                    _scheduleRepository.Add(notificationSchedule);
+                }
              
                 await _unitOfWork.CommitAsync().ConfigureAwait(false);
 
