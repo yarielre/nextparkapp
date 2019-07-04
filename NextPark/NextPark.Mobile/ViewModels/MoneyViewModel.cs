@@ -242,10 +242,10 @@ namespace NextPark.Mobile.ViewModels
                     result = await _inAppPurchaseService.PurchaseCredit60();
                     break;
                 case 10:
-                    result = await _inAppPurchaseService.PurchaseCredit1();
+                    result = await _inAppPurchaseService.PurchaseCredit10();
                     break;
             }
-            await _dialogService.ShowAlert("Avviso", "Payment operations result: " + result.Message);
+            
             if (result != null) {
                 if (result.IsSuccess) {
                     // Send request to backend
