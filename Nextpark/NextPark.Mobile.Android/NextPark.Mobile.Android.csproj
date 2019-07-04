@@ -172,6 +172,11 @@
     <AndroidResource Include="Resources\drawable\splashscreen.xml" />
     <AndroidResource Include="Resources\drawable\xamarin_logo.png" />
     <AndroidResource Include="Resources\drawable\icon_wrench_256.png" />
+    <AndroidResource Include="Resources\mipmap-hdpi\ic_notification.png" />
+    <AndroidResource Include="Resources\mipmap-mdpi\ic_notification.png" />
+    <AndroidResource Include="Resources\mipmap-xhdpi\ic_notification.png" />
+    <AndroidResource Include="Resources\mipmap-xxhdpi\ic_notification.png" />
+    <AndroidResource Include="Resources\mipmap-xxxhdpi\ic_notification.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\drawable-hdpi\" />
