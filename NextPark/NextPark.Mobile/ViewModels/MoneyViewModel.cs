@@ -223,9 +223,11 @@ namespace NextPark.Mobile.ViewModels
                 Message = "Incorrect value"
             };
 
+            
             // TODO: remove the following two lines inserted only for team reviw
             await _dialogService.ShowAlert("Avviso", "Pagamento disabilitato per i test");
             CompletePurchase();
+            
 
             // TODO: restore this code commented only for team review
             /*
