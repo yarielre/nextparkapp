@@ -165,9 +165,6 @@ namespace NextPark.Mobile.ViewModels
                 base.OnPropertyChanged("Btn6SubInfo");
                 base.OnPropertyChanged("Btn7SubInfo");
                 base.OnPropertyChanged("Btn8SubInfo");
-
-                Time = TimeSpan.FromHours(1.0);
-                base.OnPropertyChanged("Time");
             }
 
             TimeSpan availableTime = _parking.GetAvailableTime(DateTime.Now);
@@ -210,9 +207,16 @@ namespace NextPark.Mobile.ViewModels
             Btn8IsSelected = false;
 
             if (availableTime > TimeSpan.FromHours(1)) {
+                // Parking available for at least 1h, set as start selection
                 Btn2IsSelected = true;
+                Time = TimeSpan.FromHours(1.0);                
             } else if (availableTime > TimeSpan.FromMinutes(30)) {
+                // Parking available for at least 30 minutes, set as start selection
                 Btn1IsSelected = true;
+                Time = TimeSpan.FromMinutes(30.0);
+            } else {
+                // Try to set maximum available time
+                Time = availableTime;
             }
             base.OnPropertyChanged("Btn1IsSelected");
             base.OnPropertyChanged("Btn2IsSelected");
@@ -231,6 +235,8 @@ namespace NextPark.Mobile.ViewModels
             base.OnPropertyChanged("Btn6IsEnabled");
             base.OnPropertyChanged("Btn7IsEnabled");
             base.OnPropertyChanged("Btn8IsEnabled");
+
+            base.OnPropertyChanged("Time");
 
             return Task.FromResult(false);
         }
