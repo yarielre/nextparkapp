@@ -14,23 +14,33 @@ namespace NextPark.Services
 {
     public class PushNotificationService : IPushNotificationService
     {
-        public const string Url = "https://api.appcenter.ms/v0.1/apps/";
-        public const string ApiKeyName = "X-API-Token";
-        public const string ApiKey = "36a408dfa1bffc2dc56033a03c72f749e054b930"; //"{Your App Center API Token}";
-        public const string Organization = "NextPark"; //"{Your organization name}";
-        public const string Android = "NextParkAndroid"; //"{Your Android App Name}";
-        public const string IOS = "NextPark"; //"{Your iOS App Name}";
-        public const string DeviceTarget = "devices_target";
+        //public const string Url = "https://api.appcenter.ms/v0.1/apps/";
+        //public const string ApiKeyName = "X-API-Token";
+        //public const string ApiKey = "36a408dfa1bffc2dc56033a03c72f749e054b930"; //"{Your App Center API Token}";
+        //public const string Organization = "NextPark"; //"{Your organization name}";
+        //public const string Android = "NextParkAndroid"; //"{Your Android App Name}";
+        //public const string IOS = "NextPark"; //"{Your iOS App Name}";
+        //public const string DeviceTarget = "devices_target";
+
+        public string Url { get; }
+        public string ApiKeyName { get; }
+        public string ApiKey { get; }
+        public string Organization { get; }
+        public string Android { get; }
+        public string IOS { get; }
+        public string DeviceTarget { get; }
+
         public class Apis { public const string Notification = "push/notifications"; }
-
-        public PushNotificationService()
-        {
-
-        }
 
         public PushNotificationService(IConfiguration configuration)
         {
-            //TODO: Init readonly properties from config file.
+            Url = configuration.GetSection("AppCenter:Url").Value;
+            ApiKeyName = configuration.GetSection("AppCenter:ApiKeyName").Value;
+            ApiKey = configuration.GetSection("AppCenter:ApiKey").Value;
+            Organization = configuration.GetSection("AppCenter:Organization").Value;
+            Android = configuration.GetSection("AppCenter:Android").Value;
+            IOS = configuration.GetSection("AppCenter:IOS").Value;
+            DeviceTarget = configuration.GetSection("AppCenter:DeviceTarget").Value;
 
         }
 
