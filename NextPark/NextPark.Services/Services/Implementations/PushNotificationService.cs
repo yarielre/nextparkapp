@@ -30,19 +30,50 @@ namespace NextPark.Services
         public string IOS { get; }
         public string DeviceTarget { get; }
 
+        private readonly IConfiguration _configuration;
+
         public class Apis { public const string Notification = "push/notifications"; }
 
         public PushNotificationService(IConfiguration configuration)
         {
-            Url = configuration.GetSection("AppCenter:Url").Value;
-            ApiKeyName = configuration.GetSection("AppCenter:ApiKeyName").Value;
-            ApiKey = configuration.GetSection("AppCenter:ApiKey").Value;
-            Organization = configuration.GetSection("AppCenter:Organization").Value;
-            Android = configuration.GetSection("AppCenter:Android").Value;
-            IOS = configuration.GetSection("AppCenter:IOS").Value;
-            DeviceTarget = configuration.GetSection("AppCenter:DeviceTarget").Value;
+            Url = configuration.GetSection("AppCenter:Url").Value ?? string.Empty;
 
+            ApiKeyName = configuration.GetSection("AppCenter:ApiKeyName").Value ?? string.Empty;
+
+            ApiKey = configuration.GetSection("AppCenter:ApiKey").Value ?? string.Empty;
+
+            Organization = configuration.GetSection("AppCenter:Organization").Value ?? string.Empty;
+
+            Android = configuration.GetSection("AppCenter:Android").Value ?? string.Empty;
+
+            IOS = configuration.GetSection("AppCenter:IOS").Value ?? string.Empty;
+
+            DeviceTarget = configuration.GetSection("AppCenter:DeviceTarget").Value ?? string.Empty;
+
+            _configuration = configuration;
         }
+
+        public async Task<PushResponse> NotifyParkingOrderExpirationBeforeDeadline(ApplicationUser user) {
+
+            var notificationName = _configuration.GetSection("Push:ParkingOrderExpirationBeforeDeadline:Title").Value != null ?
+                 $"{_configuration.GetSection("Push:ParkingOrderExpirationBeforeDeadline:Title").Value}-{DateTime.Now.Ticks}" : string.Empty;
+
+            var notificationTitle = _configuration.GetSection("Push:ParkingOrderExpirationBeforeDeadline:Title").Value ?? string.Empty;
+            var notificationMessage = _configuration.GetSection("Push:ParkingOrderExpirationBeforeDeadline:Body").Value ?? string.Empty;
+
+            return await Notify(user, notificationName, notificationTitle, notificationMessage);
+        }
+        public async Task<PushResponse> NotifyParkingOrderExpiration(ApplicationUser user)
+        {
+
+            return await Notify(user, "Name", "Title", "Body");
+        }
+        public async Task<PushResponse> NotifyParkingOwnerThatHasAnHost(ApplicationUser user)
+        {
+
+            return await Notify(user, "Name", "Title", "Body");
+        }
+
 
         public async Task NotifyAll(string name, string title, string body)
         {
@@ -78,9 +109,15 @@ namespace NextPark.Services
             var resultIOS = JsonConvert.DeserializeObject(resultJsonIOS);
         }
 
-
         public async Task<PushResponse> Notify(ApplicationUser user, string name, string title, string body, IDictionary<string, string> payload = null)
         {
+
+            if (user == null 
+                || name == null || name == string.Empty
+                || title == null || title == string.Empty
+                || body == null || body == string.Empty)
+                return new PushResponse { AndroidResponse = null, IOSResponse = null };
+            
             var client = new HttpClient();
             client.DefaultRequestHeaders.Add(ApiKeyName, ApiKey);
 
