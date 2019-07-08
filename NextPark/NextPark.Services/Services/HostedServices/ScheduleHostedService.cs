@@ -130,8 +130,7 @@ namespace NextPark.Services.Services.HostedServices
 
                 currentUser.Devices = userDevices;
 
-                //TODO: Send notifications Here
-                pushService.Notify(currentUser, $"Scheduled  Order closure", "Order closed", $"Your last order will been closed automatically in 10 min!");
+                pushService.NotifyParkingOrderExpirationBeforeDeadline(currentUser);
 
                 notificationSent.Add(schedule);
             }
