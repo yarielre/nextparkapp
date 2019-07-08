@@ -114,6 +114,26 @@ namespace NextPark.Api.Controllers
                 updatedOrder.Price = model.Price;
 
                 _orderRepository.Update(updatedOrder);
+
+                #region Update the new scheduler notification task
+                var orderScheduled = await _scheduleRepository.FirstOrDefaultWhereAsync(sch => sch.ScheduleType == ScheduleType.Order && sch.ScheduleId == updatedOrder.Id);
+                if (orderScheduled == null)
+                {
+                    orderScheduled = new Schedule
+                    {
+                        ScheduleId = updatedOrder.Id,
+                        ScheduleType = ScheduleType.Order,
+                        TimeOfCreation = DateTime.Now,
+                        TimeOfExecution = updatedOrder.EndDate.AddMinutes(-10.0)
+                    };
+                    _scheduleRepository.Add(orderScheduled);
+                }
+                else {
+                    orderScheduled.TimeOfExecution = updatedOrder.EndDate.AddMinutes(-10.0);
+                    _scheduleRepository.Update(orderScheduled);
+                }
+                #endregion
+
                 await _unitOfWork.CommitAsync().ConfigureAwait(false);
 
                 OrderModel vm = _mapper.Map<Order, OrderModel>(updatedOrder);
@@ -230,6 +250,7 @@ namespace NextPark.Api.Controllers
                     TimeOfExecution = entityOrder.EndDate
                 };
                 _scheduleRepository.Add(orderSchedule);
+
                 if ((entityOrder.EndDate - entityOrder.StartDate) > TimeSpan.FromMinutes(10))
                 {
                     var notificationSchedule = new Schedule
@@ -238,11 +259,6 @@ namespace NextPark.Api.Controllers
                         ScheduleType = ScheduleType.Notify,
                         TimeOfCreation = DateTime.UtcNow,
                         TimeOfExecution = entityOrder.EndDate.AddMinutes(-10.0)
-                        /*
-                        TimeOfExecution = new DateTime(entityOrder.EndDate.Year, entityOrder.EndDate.Month,
-                       entityOrder.EndDate.Day, entityOrder.EndDate.Hour, (entityOrder.EndDate.Minute - 10),
-                       entityOrder.EndDate.Second)
-                       */
                     };
                     _scheduleRepository.Add(notificationSchedule);
                 }
