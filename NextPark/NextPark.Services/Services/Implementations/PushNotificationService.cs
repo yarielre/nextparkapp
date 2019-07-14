@@ -66,7 +66,13 @@ namespace NextPark.Services
         public async Task<PushResponse> NotifyParkingOrderExpiration(ApplicationUser user)
         {
 
-            return await Notify(user, "Name", "Title", "Body");
+            var notificationName = _configuration.GetSection("Push:ParkingOrderExpiration:Title").Value != null ?
+                 $"{_configuration.GetSection("Push:ParkingOrderExpiration:Title").Value}-{DateTime.Now.Ticks}" : string.Empty;
+
+            var notificationTitle = _configuration.GetSection("Push:ParkingOrderExpiration:Title").Value ?? string.Empty;
+            var notificationMessage = _configuration.GetSection("Push:ParkingOrderExpiration:Body").Value ?? string.Empty;
+
+            return await Notify(user, notificationName, notificationTitle, notificationMessage);
         }
         public async Task<PushResponse> NotifyParkingOwnerThatHasAnHost(ApplicationUser user)
         {

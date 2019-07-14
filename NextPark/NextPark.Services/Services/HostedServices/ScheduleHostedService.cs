@@ -167,7 +167,7 @@ namespace NextPark.Services.Services.HostedServices
                     {
 
                         currentUser.Devices = userDevices;
-                        pushService.Notify(currentUser, $"Scheduled  Order closure", "Order closed", $"Your order {currentOrder.Id} has been closed automatically!");
+                        pushService.NotifyParkingOrderExpiration(currentUser);
 
                     }
                     
