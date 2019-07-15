@@ -76,8 +76,13 @@ namespace NextPark.Services
         }
         public async Task<PushResponse> NotifyParkingOwnerThatHasAnHost(ApplicationUser user)
         {
+              var notificationName = _configuration.GetSection("Push:ParkingOwnerThatHasAnHost:Title").Value != null ?
+                 $"{_configuration.GetSection("Push:ParkingOwnerThatHasAnHost:Title").Value}-{DateTime.Now.Ticks}" : string.Empty;
 
-            return await Notify(user, "Name", "Title", "Body");
+            var notificationTitle = _configuration.GetSection("Push:ParkingOwnerThatHasAnHost:Title").Value ?? string.Empty;
+            var notificationMessage = _configuration.GetSection("Push:ParkingOwnerThatHasAnHost:Body").Value ?? string.Empty;
+
+            return await Notify(user, notificationName, notificationTitle, notificationMessage);
         }
 
 
