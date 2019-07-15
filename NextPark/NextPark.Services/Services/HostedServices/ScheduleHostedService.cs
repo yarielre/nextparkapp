@@ -108,12 +108,14 @@ namespace NextPark.Services.Services.HostedServices
                     continue;
                 }
 
-
+                //TODO: Ottimizzare registrare il necessario solo nella scheduler table
+                var orderRepository = scope.ServiceProvider.GetRequiredService<IRepository<Order>>();
                 var usersRepository = scope.ServiceProvider.GetRequiredService<IRepository<ApplicationUser>>();
                 var deviceRepository = scope.ServiceProvider.GetRequiredService<IRepository<Device>>();
                 var pushService = scope.ServiceProvider.GetRequiredService<IPushNotificationService>();
 
-                var currentUser = await usersRepository.SingleOrDefaultWhereAsync(user => user.Id == schedule.ScheduleId);
+                var currentOrder = await orderRepository.SingleOrDefaultWhereAsync(order => order.Id == schedule.ScheduleId);
+                var currentUser = await usersRepository.SingleOrDefaultWhereAsync(user => user.Id == currentOrder.UserId);
 
                 if (currentUser == null)
                 {
@@ -130,7 +132,7 @@ namespace NextPark.Services.Services.HostedServices
 
                 currentUser.Devices = userDevices;
 
-                pushService.NotifyParkingOrderExpirationBeforeDeadline(currentUser);
+                pushService.NotifyParkingOrderExpirationBeforeDeadline(currentUser, currentOrder);
 
                 notificationSent.Add(schedule);
             }
@@ -152,7 +154,7 @@ namespace NextPark.Services.Services.HostedServices
                 var terminateOrderApiResponse = await orderApiService.TerminateOrder(schedule.ScheduleId);
                 if (terminateOrderApiResponse.IsSuccess)
                 {
-                    //TODO: Send notifications Here
+                    //TODO: Ottimizzare registrare il necessario solo nella scheduler table
                     var orderRepository = scope.ServiceProvider.GetRequiredService<IRepository<Order>>();
                     var usersRepository = scope.ServiceProvider.GetRequiredService<IRepository<ApplicationUser>>();
                     var deviceRepository = scope.ServiceProvider.GetRequiredService<IRepository<Device>>();

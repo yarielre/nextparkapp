@@ -2,6 +2,7 @@
 using Acr.UserDialogs;
 using Microsoft.AppCenter;
 using Microsoft.AppCenter.Push;
+using NextPark.Models;
 using NextPark.Mobile.Services;
 
 namespace NextPark.Mobile.Settings
@@ -32,14 +33,14 @@ namespace NextPark.Mobile.Settings
             {
                 foreach (var key in e.CustomData.Keys)
                 {
-                    if (key == "order_id") {
+                    if (key == PushCustomKeys.OrderId) {
                         ExpiredOrder = true;
                         ExpiredOrderId = int.Parse(e.CustomData[key]);
                     }
-                    else if ((key == "Title") && (e.Title == null)) {
+                    else if ((key == PushCustomKeys.Title) && (e.Title == null)) {
                         e.Title = e.CustomData[key];
                     }
-                    else if ((key == "Message") && (e.Message == null)) {
+                    else if ((key == PushCustomKeys.Message) && (e.Message == null)) {
                         e.Message = e.CustomData[key];
                     }
                 }

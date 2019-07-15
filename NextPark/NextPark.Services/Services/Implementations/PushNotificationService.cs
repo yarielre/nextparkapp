@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using NextPark.Domain.Entities;
 using NextPark.Enums.Enums;
+using NextPark.Models;
 using NextPark.Models.Models.PushNotification;
 using System;
 using System.Collections.Generic;
@@ -53,7 +54,7 @@ namespace NextPark.Services
             _configuration = configuration;
         }
 
-        public async Task<PushResponse> NotifyParkingOrderExpirationBeforeDeadline(ApplicationUser user) {
+        public async Task<PushResponse> NotifyParkingOrderExpirationBeforeDeadline(ApplicationUser user, Order order) {
 
             var notificationName = _configuration.GetSection("Push:ParkingOrderExpirationBeforeDeadline:Title").Value != null ?
                  $"{_configuration.GetSection("Push:ParkingOrderExpirationBeforeDeadline:Title").Value}-{DateTime.Now.Ticks}" : string.Empty;
@@ -61,7 +62,12 @@ namespace NextPark.Services
             var notificationTitle = _configuration.GetSection("Push:ParkingOrderExpirationBeforeDeadline:Title").Value ?? string.Empty;
             var notificationMessage = _configuration.GetSection("Push:ParkingOrderExpirationBeforeDeadline:Body").Value ?? string.Empty;
 
-            return await Notify(user, notificationName, notificationTitle, notificationMessage);
+            var customData = new Dictionary<string, string>
+            {
+                { PushCustomKeys.OrderId, order.Id.ToString() }
+            };
+
+            return await Notify(user, notificationName, notificationTitle, notificationMessage, customData);
         }
         public async Task<PushResponse> NotifyParkingOrderExpiration(ApplicationUser user)
         {
@@ -120,7 +126,7 @@ namespace NextPark.Services
             var resultIOS = JsonConvert.DeserializeObject(resultJsonIOS);
         }
 
-        public async Task<PushResponse> Notify(ApplicationUser user, string name, string title, string body, IDictionary<string, string> payload = null)
+        public async Task<PushResponse> Notify(ApplicationUser user, string name, string title, string body, IDictionary<string, string> customData = null)
         {
 
             if (user == null 
@@ -139,7 +145,7 @@ namespace NextPark.Services
                     Name = name,
                     Title = title,
                     Body = body,
-                    Payload = payload ?? new Dictionary<string, string>()
+                    Payload = customData ?? new Dictionary<string, string>()
                 },
                 Target = new Target
                 {

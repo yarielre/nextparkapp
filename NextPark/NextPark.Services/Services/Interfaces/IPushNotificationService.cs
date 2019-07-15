@@ -15,10 +15,10 @@ namespace NextPark.Services
         string Organization { get; }
         string Url { get; }
 
-        Task<PushResponse> Notify(ApplicationUser user, string name, string title, string body, IDictionary<string, string> payload = null);
+        Task<PushResponse> Notify(ApplicationUser user, string name, string title, string body, IDictionary<string, string> customData = null);
         Task NotifyAll(string name, string title, string body);
         Task<PushResponse> NotifyParkingOrderExpiration(ApplicationUser user);
-        Task<PushResponse> NotifyParkingOrderExpirationBeforeDeadline(ApplicationUser user);
+        Task<PushResponse> NotifyParkingOrderExpirationBeforeDeadline(ApplicationUser user, Order order);
         Task<PushResponse> NotifyParkingOwnerThatHasAnHost(ApplicationUser user);
     }
 }
