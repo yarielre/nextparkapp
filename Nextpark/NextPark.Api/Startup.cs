@@ -46,9 +46,14 @@ namespace NextPark.Api
             //Using POSTGRES SQL SERVER
             services.AddDbContext<ApplicationDbContext>(options =>
                options.UseNpgsql(connectionString));
-
-            services.AddIdentity<ApplicationUser, ApplicationRole>()
-              .AddEntityFrameworkStores<ApplicationDbContext>()
+            
+            services.AddIdentity<ApplicationUser, ApplicationRole>(options => {
+                options.Password.RequireDigit = bool.Parse(Configuration["Password:RequireDigit"]);
+                options.Password.RequiredLength = int.Parse(Configuration["Password:RequiredLength"]);
+                options.Password.RequireNonAlphanumeric = bool.Parse(Configuration["Password:RequireNonAlphanumeric"]);
+                options.Password.RequireUppercase = bool.Parse(Configuration["Password:RequireUppercase"]);
+                options.Password.RequireLowercase = bool.Parse(Configuration["Password:RequireLowercase"]);
+            }).AddEntityFrameworkStores<ApplicationDbContext>()
               .AddDefaultTokenProviders();
 
             #region CORS
