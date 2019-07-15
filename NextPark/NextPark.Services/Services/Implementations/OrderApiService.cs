@@ -141,6 +141,56 @@ namespace NextPark.Services.Services
             }
         }
 
+        public async Task UpdateOrderScheduler(Order updatedOrder) {
+           
+            #region Update the new scheduler notification task
+            var orderNotificationScheduled = await _scheduleRepository.FirstOrDefaultWhereAsync(sch => sch.ScheduleType == ScheduleType.Notify && sch.ScheduleId == updatedOrder.Id);
+
+            if (orderNotificationScheduled == null)
+            {
+                //YR: Non dovrebbero comunque esserci dei rinnovi di meno di 10min
+                if ((updatedOrder.EndDate - updatedOrder.StartDate) > TimeSpan.FromMinutes(10))
+                {
+                    var notificationSchedule = new Schedule
+                    {
+                        ScheduleId = updatedOrder.Id,
+                        ScheduleType = ScheduleType.Notify,
+                        TimeOfCreation = DateTime.UtcNow,
+                        TimeOfExecution = updatedOrder.EndDate.AddMinutes(-10.0)
+                    };
+                    _scheduleRepository.Add(notificationSchedule);
+                }
+            }
+            else
+            {
+                orderNotificationScheduled.TimeOfExecution = updatedOrder.EndDate.AddMinutes(-10.0);
+                _scheduleRepository.Update(orderNotificationScheduled);
+            }
+            #endregion
+
+            #region Update the new scheduler termination task
+            var orderTerminationScheduled = await _scheduleRepository.FirstOrDefaultWhereAsync(sch => sch.ScheduleType == ScheduleType.Order && sch.ScheduleId == updatedOrder.Id);
+
+            if (orderTerminationScheduled == null)
+            {
+                orderTerminationScheduled = new Schedule
+                {
+                    ScheduleId = updatedOrder.Id,
+                    ScheduleType = ScheduleType.Order,
+                    TimeOfCreation = DateTime.Now,
+                    TimeOfExecution = updatedOrder.EndDate
+                };
+                _scheduleRepository.Add(orderTerminationScheduled);
+            }
+            else
+            {
+                orderTerminationScheduled.TimeOfExecution = updatedOrder.EndDate;
+                _scheduleRepository.Update(orderNotificationScheduled);
+            }
+            #endregion
+            await _unitOfWork.CommitAsync().ConfigureAwait(false);
+        }
+
         private static double CalCulateTax(double price, double taxPorcent)
         {
             return (price * taxPorcent) / 100;

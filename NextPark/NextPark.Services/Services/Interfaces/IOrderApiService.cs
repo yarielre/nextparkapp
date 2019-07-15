@@ -1,13 +1,12 @@
-﻿using NextPark.Models;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using NextPark.Domain.Entities;
+using NextPark.Models;
 
 namespace NextPark.Services.Services
 {
     public interface IOrderApiService
     {
         Task<ApiResponse> TerminateOrder(int orderId);
+        Task UpdateOrderScheduler(Order updatedOrder);
     }
 }
