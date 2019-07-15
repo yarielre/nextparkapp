@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NextPark.Data.Infrastructure;
@@ -13,6 +8,11 @@ using NextPark.Enums;
 using NextPark.Enums.Enums;
 using NextPark.Models;
 using NextPark.Services.Services;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace NextPark.Api.Controllers
 {
@@ -69,12 +69,16 @@ namespace NextPark.Api.Controllers
                     new CancellationToken(), p => p.Events).ConfigureAwait(false);
 
                 if (parking == null)
+                {
                     return BadRequest(ApiResponse.GetErrorResponse("Parking not found", ErrorType.EntityNotFound));
+                }
 
                 bool isAvailable = IsParkingAvailable(parking, model);
 
                 if (!isAvailable)
+                {
                     return BadRequest(ApiResponse.GetErrorResponse("Parking is not available", ErrorType.ParkingNotVailable));
+                }
 
                 // Get all overlapped orders except this
                 List<Order> overlappedOrders = await _orderRepository.FindAllWhereAsync(o => o.ParkingId == model.ParkingId &&
@@ -83,12 +87,14 @@ namespace NextPark.Api.Controllers
                                                                                 o.StartDate < model.EndDate);
 
                 if (overlappedOrders.Count > 0)
+                {
                     return BadRequest(ApiResponse.GetErrorResponse("Parking is not orderable", ErrorType.ParkingNotOrderable));
+                }
 
                 ApplicationUser user = await _userRepository.FirstOrDefaultWhereAsync(u => u.Id == model.UserId).ConfigureAwait(false);
                 if (user == null)
                 {
-                    return BadRequest(ApiResponse.GetErrorResponse("User not found",ErrorType.EntityNotFound));
+                    return BadRequest(ApiResponse.GetErrorResponse("User not found", ErrorType.EntityNotFound));
                 }
 
                 double userAmountToPay = model.Price;
@@ -105,7 +111,9 @@ namespace NextPark.Api.Controllers
 
                 // Check if the user has enough money to pay all his active orders
                 if (user.Balance < userAmountToPay)
+                {
                     return BadRequest(ApiResponse.GetErrorResponse("Not enough money", ErrorType.NotEnoughMoney));
+                }
 
                 // Update the order instance
                 Order updatedOrder = currentOrder;
@@ -128,7 +136,8 @@ namespace NextPark.Api.Controllers
                     };
                     _scheduleRepository.Add(orderScheduled);
                 }
-                else {
+                else
+                {
                     orderScheduled.TimeOfExecution = updatedOrder.EndDate.AddMinutes(-10.0);
                     _scheduleRepository.Update(orderScheduled);
                 }
@@ -156,14 +165,16 @@ namespace NextPark.Api.Controllers
                     return BadRequest(ApiResponse.GetErrorResponse(terminateOrderApiResponse.Message, terminateOrderApiResponse.ErrorType));
                 }
                 if (terminateOrderApiResponse.Result == null || !(terminateOrderApiResponse.Result is Order order))
+                {
                     return Ok("result null");
+                }
 
                 var vm = _mapper.Map<Order, OrderModel>(order);
                 return Ok(ApiResponse.GetSuccessResponse(vm));
             }
             catch (Exception e)
             {
-                return BadRequest(ApiResponse.GetErrorResponse($"Server error: {e.Message}",ErrorType.Exception));
+                return BadRequest(ApiResponse.GetErrorResponse($"Server error: {e.Message}", ErrorType.Exception));
             }
         }
 
@@ -182,7 +193,10 @@ namespace NextPark.Api.Controllers
         {
             var entity = _orderRepository.Find(id);
             if (entity == null)
-                return BadRequest(ApiResponse.GetErrorResponse("Entity not found",ErrorType.EntityNotFound));
+            {
+                return BadRequest(ApiResponse.GetErrorResponse("Entity not found", ErrorType.EntityNotFound));
+            }
+
             var vm = _mapper.Map<Order, OrderModel>(entity);
             return Ok(ApiResponse.GetSuccessResponse(vm));
         }
@@ -197,18 +211,21 @@ namespace NextPark.Api.Controllers
             }
 
             try
-            {            
+            {
                 var parking = await _parkingRepository.FirstOrDefaultWhereAsync(p => p.Id == orderModel.ParkingId,
                     new CancellationToken(), p => p.Events).ConfigureAwait(false);
 
                 if (parking == null)
+                {
                     return BadRequest(ApiResponse.GetErrorResponse("Parking not found", ErrorType.EntityNotFound));
+                }
 
                 var isAvailable = IsParkingAvailable(parking, orderModel);
 
                 if (!isAvailable)
+                {
                     return BadRequest(ApiResponse.GetErrorResponse("Parking is not available", ErrorType.ParkingNotVailable));
-
+                }
 
                 var overlappedOrders = await _orderRepository.FindAllWhereAsync(o => o.ParkingId == orderModel.ParkingId &&
                                                                                 o.OrderStatus == OrderStatus.Actived &&
@@ -216,14 +233,16 @@ namespace NextPark.Api.Controllers
                                                                                 o.StartDate < orderModel.EndDate);
 
                 if (overlappedOrders.Count > 0)
+                {
                     return BadRequest(ApiResponse.GetErrorResponse("Parking is not bookable", ErrorType.ParkingNotOrderable));
+                }
 
                 var user = _userRepository.Find(orderModel.UserId);
 
                 double userAmountToPay = orderModel.Price;
 
                 // Get all user's active orders  
-                
+
                 var userActiveOrders = await _orderRepository.FindAllWhereAsync(o => o.UserId == user.Id &&
                                                                                 o.OrderStatus == OrderStatus.Actived);
                 foreach (Order order in userActiveOrders)
@@ -234,7 +253,9 @@ namespace NextPark.Api.Controllers
 
                 // Check if the user has enough money to pay all his active orders
                 if (user.Balance < userAmountToPay)
+                {
                     return BadRequest(ApiResponse.GetErrorResponse("Not enough money", ErrorType.NotEnoughMoney));
+                }
 
                 var entityOrder = _mapper.Map<OrderModel, Order>(orderModel);
                 _orderRepository.Add(entityOrder);
@@ -262,7 +283,7 @@ namespace NextPark.Api.Controllers
                     };
                     _scheduleRepository.Add(notificationSchedule);
                 }
-             
+
                 await _unitOfWork.CommitAsync().ConfigureAwait(false);
 
                 var vm = _mapper.Map<Order, OrderModel>(entityOrder);
@@ -270,7 +291,7 @@ namespace NextPark.Api.Controllers
             }
             catch (Exception e)
             {
-                return BadRequest(ApiResponse.GetErrorResponse(e.Message,ErrorType.Exception));
+                return BadRequest(ApiResponse.GetErrorResponse(e.Message, ErrorType.Exception));
             }
         }
 
@@ -286,7 +307,8 @@ namespace NextPark.Api.Controllers
             try
             {
                 Order currentOrder = _orderRepository.Find(model.Id);
-                if (currentOrder == null) {
+                if (currentOrder == null)
+                {
                     return BadRequest(ApiResponse.GetErrorResponse("Order not found", ErrorType.EntityNotFound));
                 }
 
@@ -294,12 +316,16 @@ namespace NextPark.Api.Controllers
                     new CancellationToken(), p => p.Events).ConfigureAwait(false);
 
                 if (parking == null)
+                {
                     return BadRequest(ApiResponse.GetErrorResponse("Parking not found", ErrorType.EntityNotFound));
+                }
 
                 bool isAvailable = IsParkingAvailable(parking, model);
 
                 if (!isAvailable)
+                {
                     return BadRequest(ApiResponse.GetErrorResponse("Parking is not available", ErrorType.ParkingNotVailable));
+                }
 
                 // Get all overlapped orders except this
                 List<Order> overlappedOrders = await _orderRepository.FindAllWhereAsync(o => o.ParkingId == model.ParkingId &&
@@ -309,7 +335,9 @@ namespace NextPark.Api.Controllers
                                                                                         o.StartDate < model.EndDate);
 
                 if (overlappedOrders.Count > 0)
+                {
                     return BadRequest(ApiResponse.GetErrorResponse("Parking is not bookable", ErrorType.ParkingNotOrderable));
+                }
 
                 ApplicationUser user = _userRepository.Find(model.UserId);
 
@@ -327,7 +355,9 @@ namespace NextPark.Api.Controllers
 
                 // Check if the user has enough money to pay all his active orders
                 if (user.Balance < userAmountToPay)
+                {
                     return BadRequest(ApiResponse.GetErrorResponse("Not enough money", ErrorType.NotEnoughMoney));
+                }
 
                 // Update some order fields using the previous unaltered order instance
                 Order updatedOrder = currentOrder;
@@ -336,6 +366,26 @@ namespace NextPark.Api.Controllers
                 updatedOrder.Price = model.Price;
 
                 _orderRepository.Update(updatedOrder);
+
+                #region Update the new scheduler notification task
+                var orderScheduled = await _scheduleRepository.FirstOrDefaultWhereAsync(sch => sch.ScheduleType == ScheduleType.Order && sch.ScheduleId == updatedOrder.Id);
+                if (orderScheduled == null)
+                {
+                    orderScheduled = new Schedule
+                    {
+                        ScheduleId = updatedOrder.Id,
+                        ScheduleType = ScheduleType.Order,
+                        TimeOfCreation = DateTime.Now,
+                        TimeOfExecution = updatedOrder.EndDate.AddMinutes(-10.0)
+                    };
+                    _scheduleRepository.Add(orderScheduled);
+                }
+                else
+                {
+                    orderScheduled.TimeOfExecution = updatedOrder.EndDate.AddMinutes(-10.0);
+                    _scheduleRepository.Update(orderScheduled);
+                }
+                #endregion
 
                 await _unitOfWork.CommitAsync().ConfigureAwait(false);
 
@@ -354,9 +404,20 @@ namespace NextPark.Api.Controllers
         {
             var entity = _orderRepository.Find(id);
             if (entity == null)
-                return BadRequest(ApiResponse.GetErrorResponse("Can't deleted, entity not found.",ErrorType.EntityNotFound));
+            {
+                return BadRequest(ApiResponse.GetErrorResponse("Can't deleted, entity not found.", ErrorType.EntityNotFound));
+            }
+
             var vm = _mapper.Map<Order, OrderModel>(entity);
             _orderRepository.Delete(entity);
+
+            #region Update the new scheduler notification task
+            var orderScheduled = await _scheduleRepository.FirstOrDefaultWhereAsync(sch => sch.ScheduleType == ScheduleType.Order && sch.ScheduleId == entity.Id);
+            if (orderScheduled != null)
+            {
+                _scheduleRepository.Delete(orderScheduled);
+            }
+            #endregion
 
             await _unitOfWork.CommitAsync().ConfigureAwait(false);
             return Ok(ApiResponse.GetSuccessResponse(vm));
@@ -365,9 +426,20 @@ namespace NextPark.Api.Controllers
         private bool IsParkingAvailable(Parking parking, OrderModel order)
         {
             //If parking have events, is enable and the date of the last event is bigger than order end date
-            if (parking.Events == null) return false;
-            if (parking.Events.Count == 0) return false;
-            if (parking.Status != ParkingStatus.Enabled) return false;
+            if (parking.Events == null)
+            {
+                return false;
+            }
+
+            if (parking.Events.Count == 0)
+            {
+                return false;
+            }
+
+            if (parking.Status != ParkingStatus.Enabled)
+            {
+                return false;
+            }
 
             // Sort events by start date
             parking.Events.Sort((a, b) => (a.StartDate.CompareTo(b.StartDate)));
@@ -377,7 +449,8 @@ namespace NextPark.Api.Controllers
 
             // Check availability
             DateTime tempStart = order.StartDate;
-            foreach (Event entityEvent in futureEvents) {
+            foreach (Event entityEvent in futureEvents)
+            {
                 if ((entityEvent.StartDate <= tempStart) && (entityEvent.EndDate > tempStart))
                 {
                     if (entityEvent.EndDate >= order.EndDate)
