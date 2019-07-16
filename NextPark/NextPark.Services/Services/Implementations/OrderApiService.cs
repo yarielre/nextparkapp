@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-using NextPark.Data.Infrastructure;
+﻿using NextPark.Data.Infrastructure;
 using NextPark.Data.Repositories;
 using NextPark.Domain.Entities;
 using NextPark.Enums;
 using NextPark.Enums.Enums;
 using NextPark.Models;
+using System;
+using System.Threading.Tasks;
 
 namespace NextPark.Services.Services
 {
@@ -51,7 +49,9 @@ namespace NextPark.Services.Services
                 var order = _orderRepository.Find(orderId);
 
                 if (order == null)
+                {
                     return ApiResponse.GetErrorResponse("Order not found.", ErrorType.EntityNotFound);
+                }
 
                 if (order.OrderStatus == OrderStatus.Finished)
                 {
@@ -127,7 +127,7 @@ namespace NextPark.Services.Services
 
                 //Delete the schedule order
                 var scheduleOrder = await _scheduleRepository.FirstOrDefaultWhereAsync(sch => sch.ScheduleType == ScheduleType.Order && sch.ScheduleId == orderId);
-                if (scheduleOrder!=null)
+                if (scheduleOrder != null)
                 {
                     _scheduleRepository.Delete(scheduleOrder);
                 }
@@ -141,54 +141,74 @@ namespace NextPark.Services.Services
             }
         }
 
-        public async Task UpdateOrderScheduler(Order updatedOrder) {
-           
-            #region Update the new scheduler notification task
-            var orderNotificationScheduled = await _scheduleRepository.FirstOrDefaultWhereAsync(sch => sch.ScheduleType == ScheduleType.Notify && sch.ScheduleId == updatedOrder.Id);
+        public async Task UpdateOrderScheduler(Order updatedOrder)
+        {
 
-            if (orderNotificationScheduled == null)
+            #region Update the new scheduler notification task
+            try
             {
-                //YR: Non dovrebbero comunque esserci dei rinnovi di meno di 10min
-                if ((updatedOrder.EndDate - updatedOrder.StartDate) > TimeSpan.FromMinutes(10))
+                var orderNotificationScheduled = await _scheduleRepository.FirstOrDefaultWhereAsync(sch => sch.ScheduleType == ScheduleType.Notify && sch.ScheduleId == updatedOrder.Id);
+
+                if (orderNotificationScheduled == null)
                 {
-                    var notificationSchedule = new Schedule
+                    //YR: Non dovrebbero comunque esserci dei rinnovi di meno di 10min
+                    if ((updatedOrder.EndDate - updatedOrder.StartDate) > TimeSpan.FromMinutes(10))
                     {
-                        ScheduleId = updatedOrder.Id,
-                        ScheduleType = ScheduleType.Notify,
-                        TimeOfCreation = DateTime.UtcNow,
-                        TimeOfExecution = updatedOrder.EndDate.AddMinutes(-10.0)
-                    };
-                    _scheduleRepository.Add(notificationSchedule);
+                        orderNotificationScheduled = new Schedule
+                        {
+                            ScheduleId = updatedOrder.Id,
+                            ScheduleType = ScheduleType.Notify,
+                            TimeOfCreation = DateTime.UtcNow,
+                            TimeOfExecution = updatedOrder.EndDate.AddMinutes(-10.0)
+                        };
+                        _scheduleRepository.Add(orderNotificationScheduled);
+                    }
                 }
+                else
+                {
+                    orderNotificationScheduled.TimeOfExecution = updatedOrder.EndDate.AddMinutes(-10.0);
+                    _scheduleRepository.Update(orderNotificationScheduled);
+                }
+                await _unitOfWork.CommitAsync().ConfigureAwait(false);
+
             }
-            else
+            catch (Exception e)
             {
-                orderNotificationScheduled.TimeOfExecution = updatedOrder.EndDate.AddMinutes(-10.0);
-                _scheduleRepository.Update(orderNotificationScheduled);
+                //TODO: Add logger info
             }
             #endregion
+
 
             #region Update the new scheduler termination task
-            var orderTerminationScheduled = await _scheduleRepository.FirstOrDefaultWhereAsync(sch => sch.ScheduleType == ScheduleType.Order && sch.ScheduleId == updatedOrder.Id);
+            try
+            {
+                var orderTerminationScheduled = await _scheduleRepository.FirstOrDefaultWhereAsync(sch => sch.ScheduleType == ScheduleType.Order && sch.ScheduleId == updatedOrder.Id);
 
-            if (orderTerminationScheduled == null)
-            {
-                orderTerminationScheduled = new Schedule
+                if (orderTerminationScheduled == null)
                 {
-                    ScheduleId = updatedOrder.Id,
-                    ScheduleType = ScheduleType.Order,
-                    TimeOfCreation = DateTime.Now,
-                    TimeOfExecution = updatedOrder.EndDate
-                };
-                _scheduleRepository.Add(orderTerminationScheduled);
+                    orderTerminationScheduled = new Schedule
+                    {
+                        ScheduleId = updatedOrder.Id,
+                        ScheduleType = ScheduleType.Order,
+                        TimeOfCreation = DateTime.Now,
+                        TimeOfExecution = updatedOrder.EndDate
+                    };
+                    _scheduleRepository.Add(orderTerminationScheduled);
+                }
+                else
+                {
+                    orderTerminationScheduled.TimeOfExecution = updatedOrder.EndDate;
+                    _scheduleRepository.Update(orderTerminationScheduled);
+                }
+
+                await _unitOfWork.CommitAsync().ConfigureAwait(false);
             }
-            else
+            catch (Exception e)
             {
-                orderTerminationScheduled.TimeOfExecution = updatedOrder.EndDate;
-                _scheduleRepository.Update(orderNotificationScheduled);
+                //TODO: Add logger info
             }
             #endregion
-            await _unitOfWork.CommitAsync().ConfigureAwait(false);
+
         }
 
         private static double CalCulateTax(double price, double taxPorcent)
@@ -196,5 +216,5 @@ namespace NextPark.Services.Services
             return (price * taxPorcent) / 100;
         }
     }
-    
+
 }
