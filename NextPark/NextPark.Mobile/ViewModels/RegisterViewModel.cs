@@ -6,6 +6,7 @@ using Xamarin.Forms;
 using Plugin.Media;
 using Plugin.Media.Abstractions;
 using NextPark.Models;
+using System.Text.RegularExpressions;
 
 namespace NextPark.Mobile.ViewModels
 {
@@ -131,15 +132,14 @@ namespace NextPark.Mobile.ViewModels
                 error = true;
             }
             // Password
-            if (!error && (string.IsNullOrEmpty(this.Password)))
+            if (!error && ((string.IsNullOrEmpty(this.Password)) || (!Regex.IsMatch(this.Password, @"(?=^.{6,}$)(?=.*\d)(?=.*[a-z])(?=.*[A-Z])"))))
             {
-                // TODO: add other checks
-                // No password inserted
-                await _dialogService.ShowAlert("Errore Password", "La password deve essere lunga almeno n caratteri");
+                // No valid password inserted
+                await _dialogService.ShowAlert("Errore Password", "La password deve rispettare i seguenti parametri:\n - minimo 6 caratteri\n - una lettera maiuscola\n - una lettera minuscola\n - un numero");
                 error = true;
             }
             // Password confirm
-            if (!error && ((this.PasswordConfirm == null) || (false == this.Password.Equals(this.PasswordConfirm))))
+            if (!error && ((string.IsNullOrEmpty(this.PasswordConfirm)) || (false == this.Password.Equals(this.PasswordConfirm))))
             {
                 await _dialogService.ShowAlert("Le password sono differenti", "Il campo password e conferma password devono essere identici.");
                 error = true;
