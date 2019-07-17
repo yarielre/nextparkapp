@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <ContentView xmlns="http://xamarin.com/schemas/2014/forms" 
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
              x:Class="NextPark.Mobile.Controls.UserBookingItem"
@@ -15,7 +15,7 @@
                             BackgroundColor="White" 
                             HasShadow="false"
                             Padding="5"
-                            MinimumHeightRequest="40"
+                            HeightRequest="40"
                             CornerRadius="0"
                             IsClippedToBounds="true"
                             HorizontalOptions="FillAndExpand">
@@ -30,8 +30,8 @@
                                 <RowDefinition Height="40" />
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="3*" />
+                                <ColumnDefinition Width="2*" />
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
 
@@ -44,7 +44,8 @@
                                 <Label Text="{TemplateBinding Address}"
                                        FontSize="Small"
                                        FontAttributes="Bold"
-                                       HorizontalTextAlignment="Start"/>
+                                       HorizontalTextAlignment="Start"
+                                       LineBreakMode="TailTruncation"/>
                                 <StackLayout Orientation="Horizontal" Spacing="2" HorizontalOptions="Start">
                                     <Label  Text="{TemplateBinding Cap}"
                                             FontSize="Small"
@@ -68,7 +69,7 @@
                                        TextColor="{TemplateBinding TimeColor}"/>
                             </StackLayout>
                             <!-- Delete box -->
-                            <Frame HeightRequest="40"
+                            <Frame MinimumHeightRequest="40"
                                    WidthRequest="60"
                                    BackgroundColor="Red"
                                    HasShadow="false"
