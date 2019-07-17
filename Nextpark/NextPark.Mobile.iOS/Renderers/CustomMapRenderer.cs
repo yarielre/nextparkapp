@@ -68,6 +68,7 @@ namespace Inside.Xamarin.iOS.Renderers
                     nativeMap.CalloutAccessoryControlTapped -= OnCalloutAccessoryControlTapped;
                     nativeMap.DidSelectAnnotationView -= OnDidSelectAnnotationView;
                     nativeMap.DidDeselectAnnotationView -= OnDidDeselectAnnotationView;
+                    nativeMap.ShowsCompass = false;
                 }
             }
 
@@ -82,7 +83,7 @@ namespace Inside.Xamarin.iOS.Renderers
                     nativeMap.CalloutAccessoryControlTapped += OnCalloutAccessoryControlTapped;
                     nativeMap.DidSelectAnnotationView += OnDidSelectAnnotationView;
                     nativeMap.DidDeselectAnnotationView += OnDidDeselectAnnotationView;
-
+                    nativeMap.ShowsCompass = false;
 
                     ((CustomMap)Element).OnMapReady();
                 }

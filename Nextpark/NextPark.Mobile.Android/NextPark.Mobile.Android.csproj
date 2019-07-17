@@ -187,7 +187,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NextPark.Mobile\NextPark.Mobile.csproj">
-      <Project>{B40A7A99-3883-461B-B2C3-096CF67DEC90}</Project>
+      <Project>{299569F9-29FF-48DB-8375-14E37B779755}</Project>
       <Name>NextPark.Mobile</Name>
     </ProjectReference>
     <ProjectReference Include="..\NextPark.Models\NextPark.Models.csproj">

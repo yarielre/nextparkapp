@@ -49,6 +49,7 @@ namespace NextPark.Mobile.Droid.Renderers
                 _map.CameraChange += Map_CameraChange;
                 _map.UiSettings.ZoomControlsEnabled = false;
                 _map.UiSettings.MyLocationButtonEnabled = false;
+                _map.UiSettings.CompassEnabled = false;
             }
         }
 
