@@ -58,6 +58,11 @@ namespace NextPark.Mobile.ViewModels
             return true; // Propagate BackButtonPressed
         }
 
+        public virtual async Task<bool> RefreshDataAsync()
+        {
+            return await Task.FromResult(false); // Refresh page data
+        }
+
         protected virtual void CurrentPageOnAppearing(object sender, System.EventArgs eventArgs) { }
 
         protected virtual void CurrentPageOnDisappearing(object sender, System.EventArgs eventArgs) { }

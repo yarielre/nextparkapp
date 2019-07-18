@@ -131,6 +131,23 @@ namespace NextPark.Mobile.ViewModels
             return Task.FromResult(false);
         }
 
+        public override async Task<bool> RefreshDataAsync()
+        {                            
+            // Parkings
+            ParkingsStatus = "Caricamento...";
+            ParkingsAvailability = "";
+            base.OnPropertyChanged("ParkingsStatus");
+            base.OnPropertyChanged("ParkingsAvailability");
+
+            // Bookings
+            NextBooking = "Caricamento...";
+            base.OnPropertyChanged("NextBooking");
+
+            await GetUserParkings();
+
+            return await base.RefreshDataAsync();
+        }
+
         public override bool BackButtonPressed()
         {
             OnBackClickMethod(null);
@@ -181,7 +198,14 @@ namespace NextPark.Mobile.ViewModels
         // Updated UserParkings
         public async void UpdateUserParkingData()
         {
-            await GetUserParkings();
+            if (_profileService.Updating)
+            {
+                Xamarin.Forms.Device.StartTimer(TimeSpan.FromSeconds(1), () => { UpdateUserParkingData(); return false; });
+            }
+            else
+            {
+                await GetUserParkings();
+            }
         }
 
         private async Task GetUserParkings()
@@ -196,6 +220,7 @@ namespace NextPark.Mobile.ViewModels
                 // Reset counters
                 _totUserParkings = 0;
                 _activeUserParkings = 0;
+                _availableUserParkings = 0;
 
                 // Search user parkings
                 if (parkingList != null)

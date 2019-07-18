@@ -5,6 +5,7 @@ using NextPark.Mobile.Views;
 using NextPark.Mobile.Settings;
 using Microsoft.AppCenter;
 using Microsoft.AppCenter.Push;
+using NextPark.Mobile.ViewModels;
 
 [assembly: XamlCompilation(XamlCompilationOptions.Compile)]
 namespace NextPark.Mobile
@@ -60,6 +61,27 @@ namespace NextPark.Mobile
         {
             // Handle when your app resumes
             IsInForeground = true;
+
+            if (Application.Current.MainPage is UserBookingPage)
+            {
+                MessagingCenter.Send<UserBookingPage>((NextPark.Mobile.Views.UserBookingPage)Application.Current.MainPage, "RefreshData");
+            }
+            else if (Application.Current.MainPage is UserParkingPage)
+            {
+                MessagingCenter.Send<UserParkingPage>((NextPark.Mobile.Views.UserParkingPage)Application.Current.MainPage, "RefreshData");
+            }
+            else if (Application.Current.MainPage is UserProfilePage)
+            {
+                MessagingCenter.Send<UserProfilePage>((NextPark.Mobile.Views.UserProfilePage)Application.Current.MainPage, "RefreshData");
+            }
+            else if (Application.Current.MainPage is MoneyPage)
+            {
+                MessagingCenter.Send<MoneyPage>((NextPark.Mobile.Views.MoneyPage)Application.Current.MainPage, "RefreshData");
+            }
+            else if (Application.Current.MainPage is HomePage)
+            {
+                MessagingCenter.Send<HomePage>((NextPark.Mobile.Views.HomePage)Application.Current.MainPage, "RefreshData");
+            }
         }
     }
 }

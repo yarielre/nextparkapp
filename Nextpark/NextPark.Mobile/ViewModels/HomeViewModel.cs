@@ -142,6 +142,8 @@ namespace NextPark.Mobile.ViewModels
             mapReady = false;
             geolocationPermitted = false;
             checkingGeolocationPermission = false;
+
+            _profileService.Updating = false;
         }
 
         public override Task InitializeAsync(object data = null)
@@ -176,10 +178,13 @@ namespace NextPark.Mobile.ViewModels
             InfoPanelVisible = false;
             base.OnPropertyChanged("InfoPanelVisible");
 
-            Xamarin.Forms.Device.StartTimer(TimeSpan.FromMilliseconds(50), () => { UpdateParkingList(); return false; });
-            //UpdateParkingList();            
-
             return Task.FromResult(false);
+        }
+
+        public override async Task<bool> RefreshDataAsync()
+        {            
+            await GetParkingList();
+            return await base.RefreshDataAsync();
         }
 
         void Map_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -197,29 +202,43 @@ namespace NextPark.Mobile.ViewModels
             _profileService.LastMapPosition = e.Position;
         }
 
-        public async void UpdateParkingList()
+        public async void UpdateParkingListAsync()
         {
+           await GetParkingList();
+        }
+
+        public async Task<bool> GetParkingList()
+        {
+            if (_profileService.Updating)
+            {
+                return await Task.FromResult(false);
+            }
+
             // Check connection
-            var result = await ApiService.CheckConnection();
+            var result = ApiService.CheckConnection();
             if (result.IsSuccess == false) {
                 _dialogService.ShowToast("Connessione ad internet assente", TimeSpan.FromSeconds(10));
-                Xamarin.Forms.Device.StartTimer(TimeSpan.FromSeconds(9), () => { UpdateParkingList(); return false; });
-                return;
+                Xamarin.Forms.Device.StartTimer(TimeSpan.FromSeconds(9), () => { UpdateParkingListAsync(); return false; });                
+                return await Task.FromResult(false);
             }
 
             connected = true;
+            _profileService.Updating = true;
 
             // Check user login
-            if ((!AuthService.IsUserAuthenticated()) && (!string.IsNullOrEmpty(AuthSettings.UserId)) && (!string.IsNullOrEmpty(AuthSettings.User.UserName))) {
+            if ((!AuthService.IsUserAuthenticated()) && (!string.IsNullOrEmpty(AuthSettings.UserId)) && (!string.IsNullOrEmpty(AuthSettings.UserName))) {
                 // Update User Data
-                try {
-                    var userResult = await _authService.GetUserByUserName(AuthSettings.User.UserName);
-                    if (userResult.IsSuccess == false) {
+                try
+                {
+                    var userResult = await _authService.GetUserByUserName(AuthSettings.UserName);
+                    if (userResult.IsSuccess == false)
+                    {
                         _dialogService.ShowToast("Manutenzione in corso", TimeSpan.FromSeconds(10));
-                        Xamarin.Forms.Device.StartTimer(TimeSpan.FromSeconds(9), () => { UpdateParkingList(); return false; });
-                        return;
+                        Xamarin.Forms.Device.StartTimer(TimeSpan.FromSeconds(9), () => { UpdateParkingListAsync(); return false; });                        
+                        return await Task.FromResult(false);
                     }
-                    if (AuthService.IsUserAuthenticated()) {
+                    if (AuthService.IsUserAuthenticated())
+                    {
                         // Update user data
                         UserName = AuthSettings.User.Name;
                         UserImage = "icon_no_user_256.png";
@@ -227,18 +246,28 @@ namespace NextPark.Mobile.ViewModels
                         base.OnPropertyChanged("UserName");
                         base.OnPropertyChanged("UserImage");
                         base.OnPropertyChanged("UserMoney");
-                    }
-                } catch (Exception e) {
+                    }                    
+                }
+                catch (Exception e)
+                {
                     _dialogService.ShowToast(e.Message, TimeSpan.FromSeconds(10));
-                    Xamarin.Forms.Device.StartTimer(TimeSpan.FromSeconds(9), () => { UpdateParkingList(); return false; });
+                    Xamarin.Forms.Device.StartTimer(TimeSpan.FromSeconds(9), () => { UpdateParkingListAsync(); return false; });
+                    _profileService.Updating = false;
+                    return await Task.FromResult(false);
+                }
+                finally
+                {
+                    _profileService.Updating = false;
                 }
             }
+
+            _profileService.Updating = true;
 
             // Get Parking list
             try
             {
                 var parkingsResult = await _parkingDataService.GetAllParkingsAsync();
-                if ((parkingsResult == null) || (parkingsResult.Count == 0)) return;
+                if ((parkingsResult == null) || (parkingsResult.Count == 0)) return await Task.FromResult(false);
 
                 /* FUTURE IMPLEMENTATION
                 Parkings.Clear();
@@ -302,12 +331,16 @@ namespace NextPark.Mobile.ViewModels
                     // Update user money if necessary
                     UserMoney = AuthSettings.UserCoin.ToString("N2");
                     base.OnPropertyChanged("UserMoney");
-                }
-
+                }                
+                return await Task.FromResult(false);
             }
             catch (Exception e) {
                 _dialogService.ShowToast(e.Message, TimeSpan.FromSeconds(10));
-                Xamarin.Forms.Device.StartTimer(TimeSpan.FromSeconds(9), () => { UpdateParkingList(); return false; });
+                Xamarin.Forms.Device.StartTimer(TimeSpan.FromSeconds(9), () => { UpdateParkingListAsync(); return false; });
+                return await Task.FromResult(false);
+            } finally
+            {
+                _profileService.Updating = false;
             }
         }
 
@@ -419,6 +452,7 @@ namespace NextPark.Mobile.ViewModels
                     Map.ShowUserEnable = true;
                 }
             }
+            await GetParkingList();            
         }
 
         private void CreatePin(Position position, UIParkingModel parking)

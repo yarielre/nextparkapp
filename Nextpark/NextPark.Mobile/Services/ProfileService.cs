@@ -24,6 +24,7 @@ namespace NextPark.Mobile.Services
         public bool UserReserveMode { get; set; }
         public DateTime UserStartDate { get; set; }
         public DateTime UserEndDate { get; set; }
+        public bool Updating { get; set; }
 
         public List<UIParkingModel> ParkingList { get; set; }
         public List<UIParkingModel> UserParkingList { get; set; }
@@ -41,7 +42,7 @@ namespace NextPark.Mobile.Services
 
         public async Task<bool> ChangePassword(ChangePasswordModel model)
         {
-            var isConneted = await _apiService.CheckConnection().ConfigureAwait(false);
+            var isConneted = _apiService.CheckConnection();
             if (!isConneted.IsSuccess)
             {
                 throw new Exception("Internet correction error.");
@@ -66,7 +67,7 @@ namespace NextPark.Mobile.Services
 
         public async Task<UserModel> EditProfile(EditProfileModel model)
         {
-            var isConneted = await _apiService.CheckConnection().ConfigureAwait(false);
+            var isConneted = _apiService.CheckConnection();
             if (!isConneted.IsSuccess)
             {
                 throw new Exception("Internet correction error.");
@@ -92,7 +93,7 @@ namespace NextPark.Mobile.Services
 
         public async Task<EditProfileModel> UpdateUserData(EditProfileModel model)
         {
-            var isConneted = await _apiService.CheckConnection();
+            var isConneted = _apiService.CheckConnection();
             if (!isConneted.IsSuccess) throw new Exception("Internet correction error.");
 
             var json = JsonConvert.SerializeObject(model);
@@ -113,7 +114,7 @@ namespace NextPark.Mobile.Services
 
         public async Task<UpdateUserCoinModel> UpdateUserCoins(UpdateUserCoinModel model)
         {
-            var isConneted = await _apiService.CheckConnection();
+            var isConneted = _apiService.CheckConnection();
             if (!isConneted.IsSuccess) throw new Exception("Connessione ad internet assente");
 
             var json = JsonConvert.SerializeObject(model);

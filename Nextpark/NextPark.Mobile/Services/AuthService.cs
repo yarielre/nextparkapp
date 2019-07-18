@@ -27,7 +27,7 @@ namespace NextPark.Mobile.Services
 
         public async Task<TokenResponse> Login(LoginModel model)
         {
-            var isConneted = await _apiService.CheckConnection();
+            var isConneted = _apiService.CheckConnection();
             if (!isConneted.IsSuccess) return new TokenResponse { IsSuccess = isConneted.IsSuccess };
 
             try
@@ -70,7 +70,7 @@ namespace NextPark.Mobile.Services
 
         public async Task<TokenResponse> Logout()
         {
-            var isConneted = await _apiService.CheckConnection();
+            var isConneted = _apiService.CheckConnection();
             if (!isConneted.IsSuccess) return new TokenResponse { IsSuccess = isConneted.IsSuccess };
 
             try
@@ -121,7 +121,7 @@ namespace NextPark.Mobile.Services
 
         public async Task<TokenResponse> Register(RegisterModel model)
         {
-            var isConneted = await _apiService.CheckConnection();
+            var isConneted = _apiService.CheckConnection();
             if (!isConneted.IsSuccess) return new TokenResponse { IsSuccess = isConneted.IsSuccess };
 
 
@@ -161,7 +161,7 @@ namespace NextPark.Mobile.Services
         }
         public async Task<ApiResponse> GetUserByUserName(string userName)
         {
-            var isConneted = await _apiService.CheckConnection();
+            var isConneted = _apiService.CheckConnection();
             if (!isConneted.IsSuccess)
             {
                 return new ApiResponse

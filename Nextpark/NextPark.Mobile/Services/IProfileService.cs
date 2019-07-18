@@ -16,6 +16,7 @@ namespace NextPark.Mobile.Services
         bool UserReserveMode { get; set; }
         DateTime UserStartDate { get; set; }
         DateTime UserEndDate { get; set; }
+        bool Updating { get; set; }
 
         List<UIParkingModel> ParkingList { get; set; }
         List<UIParkingModel> UserParkingList { get; set; }

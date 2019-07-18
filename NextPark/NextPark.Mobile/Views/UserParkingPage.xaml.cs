@@ -26,5 +26,19 @@ namespace NextPark.Mobile.Views
         { 
             ParkingListView.SelectedItem = null;
         }
+
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+            MessagingCenter.Subscribe<UserParkingPage>(this, "RefreshData", (sender) => {
+                var result = ((BaseViewModel)BindingContext).RefreshDataAsync();
+            });
+        }
+
+        protected override void OnDisappearing()
+        {
+            base.OnDisappearing();
+            MessagingCenter.Unsubscribe<UserParkingPage>(this, "RefreshData");
+        }
     }
 }

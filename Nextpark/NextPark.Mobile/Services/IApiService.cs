@@ -21,7 +21,7 @@ namespace NextPark.Mobile.Services
         Task<ApiResponse<TVm>> Delete<TVm>(string url);                         
         Task<ApiResponse<TVm>> Delete<TVm>(string endpoint, int id);
 
-        Task<ApiResponse> CheckConnection();
+        ApiResponse CheckConnection();
         HttpClient GetHttpClient();
     }
 }

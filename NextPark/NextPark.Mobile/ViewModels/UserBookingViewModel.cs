@@ -98,6 +98,12 @@ namespace NextPark.Mobile.ViewModels
             return Task.FromResult(false);
         }
 
+        public override async Task<bool> RefreshDataAsync()
+        {            
+            await GetUserBookings();
+            return await base.RefreshDataAsync();
+        }
+
         public async void UpdateUserBookings()
         {
             await GetUserBookings();
@@ -111,6 +117,7 @@ namespace NextPark.Mobile.ViewModels
 
                 int count = 0;
                 BookingList.Clear();
+                BookingList = new ObservableCollection<UIBookingModel>();
 
                 // Create Comparison instance and use it.
                 Comparison<OrderModel> comparison = new Comparison<OrderModel>(CompareOrders);

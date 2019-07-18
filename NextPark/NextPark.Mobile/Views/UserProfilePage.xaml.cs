@@ -15,5 +15,19 @@ namespace NextPark.Mobile.Views
 
             if (BindingContext == null) return;
         }
+
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+            MessagingCenter.Subscribe<UserProfilePage>(this, "RefreshData", (sender) => {
+                var result = ((BaseViewModel)BindingContext).RefreshDataAsync();
+            });
+        }
+
+        protected override void OnDisappearing()
+        {
+            base.OnDisappearing();
+            MessagingCenter.Unsubscribe<UserProfilePage>(this, "RefreshData");
+        }
     }
 }

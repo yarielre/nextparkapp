@@ -123,6 +123,12 @@ namespace NextPark.Mobile.ViewModels
             return Task.FromResult(false);
         }
 
+        public override Task<bool> RefreshDataAsync()
+        {
+            UpdateUserData();
+            return base.RefreshDataAsync();
+        }
+
         public async void UpdateUserData()
         {
             // Refresh user data, balance could be updated

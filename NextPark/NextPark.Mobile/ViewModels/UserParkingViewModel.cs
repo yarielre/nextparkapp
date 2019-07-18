@@ -172,6 +172,12 @@ namespace NextPark.Mobile.ViewModels
             return Task.FromResult(false);
         }
 
+        public override async Task<bool> RefreshDataAsync()
+        {
+            await GetUserParkings();
+            return await base.RefreshDataAsync();
+        }
+
         public override bool BackButtonPressed()
         {
             OnBackClickMethod(null);
@@ -227,6 +233,7 @@ namespace NextPark.Mobile.ViewModels
             var parkingList = await _parkingDataService.GetAllParkingsAsync();
 
             ParkingList.Clear();
+            ParkingList = new ObservableCollection<ParkingItem>();
 
             // Search user parkings 
             // TODO: use a filter on Parkings

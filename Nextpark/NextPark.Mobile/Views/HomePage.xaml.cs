@@ -23,5 +23,19 @@ namespace NextPark.Mobile.Views
                 bvm.MyMapContainer = MapContainer;
             }
         }
+
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+            MessagingCenter.Subscribe<HomePage>(this, "RefreshData", (sender) => {
+                var result = ((BaseViewModel)BindingContext).RefreshDataAsync();
+            });
+        }
+
+        protected override void OnDisappearing()
+        {
+            base.OnDisappearing();
+            MessagingCenter.Unsubscribe<HomePage>(this, "RefreshData");
+        }
     }
 }

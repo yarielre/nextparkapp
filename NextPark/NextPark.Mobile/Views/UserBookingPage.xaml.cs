@@ -41,5 +41,19 @@ namespace NextPark.Mobile.Views
                 bookingList.SelectedItem = null;
             }
         }
+
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+            MessagingCenter.Subscribe<UserBookingPage>(this, "RefreshData", (sender) => {
+                var result = ((BaseViewModel)BindingContext).RefreshDataAsync();
+            });
+        }
+
+        protected override void OnDisappearing()
+        {
+            base.OnDisappearing();
+            MessagingCenter.Unsubscribe<UserBookingPage>(this, "RefreshData");
+        }
     }
 }

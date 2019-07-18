@@ -9,26 +9,41 @@ using Newtonsoft.Json;
 using NextPark.Enums.Enums;
 using NextPark.Mobile.Settings;
 using NextPark.Models;
-using Plugin.Connectivity;
-using Plugin.Connectivity.Abstractions;
+using Xamarin.Essentials;
 
 namespace NextPark.Mobile.Services
 {
     public class ApiService : IApiService
     {
 
-        private readonly string TokenType = "Bearer";
-        private readonly IConnectivity _crossConnectivity;
+        private readonly string TokenType = "Bearer";        
 
         public string AuthToken { get; set; }
 
         public ApiService()
-        {
-            _crossConnectivity = CrossConnectivity.Current;
+        {            
         }
 
-        public async Task<ApiResponse> CheckConnection()
+        public ApiResponse CheckConnection()
         {
+            var current = Connectivity.NetworkAccess;
+
+            if (current == Xamarin.Essentials.NetworkAccess.Internet)
+            {
+                // Connection to internet is available
+                return new ApiResponse
+                {
+                    IsSuccess = true,
+                    Message = "Ok"
+                };
+            }
+            return new ApiResponse
+            {
+                IsSuccess = false,
+                Message = "Check you internet connection.",
+                ErrorType = ErrorType.InternetConnectionError
+            };
+            /*
             if (_crossConnectivity == null)
             {
 
@@ -67,12 +82,12 @@ namespace NextPark.Mobile.Services
                 IsSuccess = true,
                 Message = "Ok"
             };
-
+            */
         }
 
         public async Task<ApiResponse<TVm>> Get<TVm>(string endpoint, int id)
         {
-            var isConneted = await CheckConnection().ConfigureAwait(false);
+            var isConneted = CheckConnection();
             if (!isConneted.IsSuccess)
             {
                 return new ApiResponse<TVm>
@@ -121,7 +136,7 @@ namespace NextPark.Mobile.Services
         public async Task<ApiResponse<TVm>> Get<TVm> (string endpoint)
         {
 
-            var isConneted = await CheckConnection().ConfigureAwait(false);
+            var isConneted = CheckConnection();
             if (!isConneted.IsSuccess)
             {
                 return new ApiResponse<TVm>
@@ -171,7 +186,7 @@ namespace NextPark.Mobile.Services
 
         public async Task<ApiResponse<TVm>> Post<TVm>(string endpoint, TVm tvm)
         {
-            var isConneted = await CheckConnection().ConfigureAwait(false);
+            var isConneted = CheckConnection();
             if (!isConneted.IsSuccess)
             {
                 return new ApiResponse<TVm>
@@ -237,7 +252,7 @@ namespace NextPark.Mobile.Services
 
         public async Task<ApiResponse<TVm>> Post<TParam, TVm>(string endpoint, TParam tvm)
         {
-            var isConneted = await CheckConnection().ConfigureAwait(false);
+            var isConneted = CheckConnection();
             if (!isConneted.IsSuccess)
             {
                 return new ApiResponse<TVm>
@@ -298,7 +313,7 @@ namespace NextPark.Mobile.Services
 
         public async Task<ApiResponse<TVm>> Put<TVm>(string endpoint, int id, TVm tvm)
         {
-            var isConneted = await CheckConnection().ConfigureAwait(false);
+            var isConneted = CheckConnection();
             if (!isConneted.IsSuccess)
             {
                 return new ApiResponse<TVm>
@@ -363,7 +378,7 @@ namespace NextPark.Mobile.Services
 
         public async Task<ApiResponse<TVm>> Put<TVm>(string url, TVm tvm)
         {
-            var isConneted = await CheckConnection().ConfigureAwait(false);
+            var isConneted = CheckConnection();
             if (!isConneted.IsSuccess)
             {
                 return new ApiResponse<TVm>
@@ -424,7 +439,7 @@ namespace NextPark.Mobile.Services
 
         public async Task<ApiResponse<TVm>> Put<TParam,TVm>(string url, TParam tParam)
         {
-            var isConneted = await CheckConnection().ConfigureAwait(false);
+            var isConneted = CheckConnection();
             if (!isConneted.IsSuccess)
             {
                 return new ApiResponse<TVm>
@@ -461,7 +476,7 @@ namespace NextPark.Mobile.Services
 
         public async Task<ApiResponse<TVm>> Delete<TVm>(string url)
         {
-            var isConneted = await CheckConnection().ConfigureAwait(false);
+            var isConneted = CheckConnection();
             if (!isConneted.IsSuccess)
             {
                 return new ApiResponse<TVm>
@@ -517,7 +532,7 @@ namespace NextPark.Mobile.Services
         }
         public async Task<ApiResponse<TVm>> Delete<TVm>(string endpoint, int id)
         {
-            var isConneted = await CheckConnection().ConfigureAwait(false);
+            var isConneted = CheckConnection();
             if (!isConneted.IsSuccess)
             {
                 return new ApiResponse<TVm>
