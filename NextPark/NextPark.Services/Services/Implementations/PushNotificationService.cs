@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using NextPark.Domain.Entities;
-using NextPark.Enums.Enums;
 using NextPark.Models;
 using NextPark.Models.Models.PushNotification;
 using System;
@@ -54,7 +53,8 @@ namespace NextPark.Services
             _configuration = configuration;
         }
 
-        public async Task<PushResponse> NotifyParkingOrderExpirationBeforeDeadline(ApplicationUser user, Order order) {
+        public async Task<PushResponse> NotifyParkingOrderExpirationBeforeDeadline(ApplicationUser user, Order order)
+        {
 
             var notificationName = _configuration.GetSection("Push:ParkingOrderExpirationBeforeDeadline:Title").Value != null ?
                  $"{_configuration.GetSection("Push:ParkingOrderExpirationBeforeDeadline:Title").Value}-{DateTime.Now.Ticks}" : string.Empty;
@@ -64,7 +64,9 @@ namespace NextPark.Services
 
             var customData = new Dictionary<string, string>
             {
-                { PushCustomKeys.OrderId, order.Id.ToString() }
+                { PushCustomKeys.OrderId, order.Id.ToString() },
+                { PushCustomKeys.Title, notificationTitle},
+                { PushCustomKeys.Message, notificationMessage }
             };
 
             return await Notify(user, notificationName, notificationTitle, notificationMessage, customData);
@@ -82,8 +84,8 @@ namespace NextPark.Services
         }
         public async Task<PushResponse> NotifyParkingOwnerThatHasAnHost(ApplicationUser user)
         {
-              var notificationName = _configuration.GetSection("Push:ParkingOwnerThatHasAnHost:Title").Value != null ?
-                 $"{_configuration.GetSection("Push:ParkingOwnerThatHasAnHost:Title").Value}-{DateTime.Now.Ticks}" : string.Empty;
+            var notificationName = _configuration.GetSection("Push:ParkingOwnerThatHasAnHost:Title").Value != null ?
+               $"{_configuration.GetSection("Push:ParkingOwnerThatHasAnHost:Title").Value}-{DateTime.Now.Ticks}" : string.Empty;
 
             var notificationTitle = _configuration.GetSection("Push:ParkingOwnerThatHasAnHost:Title").Value ?? string.Empty;
             var notificationMessage = _configuration.GetSection("Push:ParkingOwnerThatHasAnHost:Body").Value ?? string.Empty;
@@ -129,12 +131,14 @@ namespace NextPark.Services
         public async Task<PushResponse> Notify(ApplicationUser user, string name, string title, string body, IDictionary<string, string> customData = null)
         {
 
-            if (user == null 
+            if (user == null
                 || name == null || name == string.Empty
                 || title == null || title == string.Empty
                 || body == null || body == string.Empty)
+            {
                 return new PushResponse { AndroidResponse = null, IOSResponse = null };
-            
+            }
+
             var client = new HttpClient();
             client.DefaultRequestHeaders.Add(ApiKeyName, ApiKey);
 
@@ -161,8 +165,10 @@ namespace NextPark.Services
             var pushResponse = new PushResponse();
 
             //For now send try sending to all platforms
-            if (user.Devices == null || user.Devices.Count() == 0) return pushResponse;
-
+            if (user.Devices == null || user.Devices.Count() == 0)
+            {
+                return pushResponse;
+            }
 
             push.Target.Devices = user.Devices.Select(d => d.DeviceIdentifier);
 
