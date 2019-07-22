@@ -61,6 +61,7 @@
 <AndroidLinkMode>SdkOnly</AndroidLinkMode>
 <AndroidDexTool>dx</AndroidDexTool>
 <LangVersion>latest</LangVersion>
+<AndroidCreatePackagePerAbi>true</AndroidCreatePackagePerAbi>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Mono.Android" />

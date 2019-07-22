@@ -482,23 +482,17 @@ namespace NextPark.Mobile.ViewModels
         // Take User Image
         private async void TakeParkingPhoto()
         {
-
+            
             if (!CrossMedia.Current.IsCameraAvailable || !CrossMedia.Current.IsTakePhotoSupported)
             {
                 await Application.Current.MainPage.DisplayAlert(
                     "Errore Fotocamera",
                     "Fotocamera non disponibile o non supportata.",
-                    "OK");
+                    "OK");                
 
-                // TODO: remove the following line, DEMO ONLY!
-                mediaFile = await CrossMedia.Current.PickPhotoAsync();
-                if (mediaFile == null)
-                    return;
-                ParkingImage = ImageSource.FromStream(() => { return mediaFile.GetStream(); });
+                _isAuthorized = false;
 
-                _isAuthorized = await GetCurrentLocation();
-
-                return;
+                return;        
             }
             mediaFile = await CrossMedia.Current.TakePhotoAsync(new StoreCameraMediaOptions
             {
@@ -506,7 +500,6 @@ namespace NextPark.Mobile.ViewModels
                 Name = "parking_photo.jpg",
                 PhotoSize = PhotoSize.Small
             });
-
 
             if (mediaFile == null)
                 return;
