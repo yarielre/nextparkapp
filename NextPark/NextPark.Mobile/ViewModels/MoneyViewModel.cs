@@ -233,10 +233,12 @@ namespace NextPark.Mobile.ViewModels
             // TODO: remove the following two lines inserted only for team reviw
             await _dialogService.ShowAlert("Avviso", "Pagamento disabilitato per i test");
             CompletePurchase();
-            
+            // Stop activity spinner
+            IsRunning = false;
+            base.OnPropertyChanged("IsRunning");
+            return;
 
-            // TODO: restore this code commented only for team review
-            /*
+            // Comment this code to disable payments
             switch(selectedValue) {
                 case 20:
                     result = await  _inAppPurchaseService.PurchaseCredit20();
@@ -276,8 +278,7 @@ namespace NextPark.Mobile.ViewModels
                 // Stop activity spinner
                 IsRunning = false;
                 base.OnPropertyChanged("IsRunning");
-            }
-            */
+            }            
         }
 
         public async void CompletePurchase()
