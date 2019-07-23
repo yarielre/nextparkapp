@@ -161,7 +161,8 @@ namespace NextPark.Mobile.ViewModels
                 }
             } catch (Exception ex) {
                 // TODO: manage exception, remove follwoing debug message!
-                await _dialogService.ShowAlert("Errore", ex.Message);
+                //await _dialogService.ShowAlert("Errore", ex.Message);
+                await _dialogService.ShowAlert("Attenzione", "Accesso fallito");
             }
         }
 
