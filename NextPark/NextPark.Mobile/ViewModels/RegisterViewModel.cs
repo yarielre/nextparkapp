@@ -3,10 +3,10 @@ using System.Windows.Input;
 using NextPark.Mobile.Services;
 using System.Threading.Tasks;
 using Xamarin.Forms;
-using Plugin.Media;
-using Plugin.Media.Abstractions;
 using NextPark.Models;
 using System.Text.RegularExpressions;
+using Microsoft.AppCenter;
+using NextPark.Enums.Enums;
 
 namespace NextPark.Mobile.ViewModels
 {
@@ -128,14 +128,14 @@ namespace NextPark.Mobile.ViewModels
             // E-mail
             if (!error && (string.IsNullOrEmpty(this.Email)|| !this.Email.Contains("@")))
             {
-                await _dialogService.ShowAlert("Errore e-mail", "Inserire un indirizzo e-mail valido");
+                await _dialogService.ShowAlert("Avviso", "Inserire un indirizzo e-mail valido");
                 error = true;
             }
             // Password
             if (!error && ((string.IsNullOrEmpty(this.Password)) || (!Regex.IsMatch(this.Password, @"(?=^.{6,}$)(?=.*\d)(?=.*[a-z])(?=.*[A-Z])"))))
             {
                 // No valid password inserted
-                await _dialogService.ShowAlert("Errore Password", "La password deve rispettare i seguenti parametri:\n - minimo 6 caratteri\n - una lettera maiuscola\n - una lettera minuscola\n - un numero");
+                await _dialogService.ShowAlert("Avviso", "La password deve rispettare i seguenti parametri:\n - minimo 6 caratteri\n - una lettera maiuscola\n - una lettera minuscola\n - un numero");
                 error = true;
             }
             // Password confirm
@@ -147,31 +147,31 @@ namespace NextPark.Mobile.ViewModels
             // Name
             if (!error && (string.IsNullOrEmpty(this.Name)))
             {
-                await _dialogService.ShowAlert("Errore Nome utente", "Il campo Nome è obbligatorio");
+                await _dialogService.ShowAlert("Avviso", "Il campo Nome è obbligatorio");
                 error = true;
             }
             // Lastname
             if (!error && (string.IsNullOrEmpty(this.Lastname)))
             {
-                await _dialogService.ShowAlert("Errore Nome utente", "Il campo Cognome è obbligatorio");
+                await _dialogService.ShowAlert("Avviso", "Il campo Cognome è obbligatorio");
                 error = true;
             }
             // Phone
             if (!error && (string.IsNullOrEmpty(this.Phone)))
             {
-                await _dialogService.ShowAlert("Errore Targa", "Inserire una targa valida");
+                await _dialogService.ShowAlert("Avviso", "Inserire un numero di telefono valido");
                 error = true;
             }
             // Address
             if (!error && (string.IsNullOrEmpty(this.Address) || string.IsNullOrEmpty(this.NPA) || string.IsNullOrEmpty(this.City)))
             {
-                await _dialogService.ShowAlert("Errore Targa", "Inserire un'indirizzo valido");
+                await _dialogService.ShowAlert("Avviso", "Inserire un'indirizzo valido");
                 error = true;
             }
             // Plate
             if (!error && ((this.CarPlate == null) || (this.CarPlate.Length == 0)))
             {
-                await _dialogService.ShowAlert("Errore Targa", "Inserire una targa valida");
+                await _dialogService.ShowAlert("Avviso", "Inserire una targa valida");
                 error = true;
             }
 
@@ -198,7 +198,7 @@ namespace NextPark.Mobile.ViewModels
 
             try
             { 
-                var demoUser = new RegisterModel
+                var registerUser = new RegisterModel
                 {
                     Address = Address,
                     Cap = int.Parse(NPA),
@@ -210,25 +210,46 @@ namespace NextPark.Mobile.ViewModels
                     Phone = Phone,
                     Password = Password,
                     State = "CH",
-                    UserName = Email
+                    UserName = Email,
                 };
 
-                var registerResponse = await AuthService.Register(demoUser);
+                var registerResponse = await AuthService.Register(registerUser);
 
                 IsRunning = false;
                 base.OnPropertyChanged("IsRunning");
                 if ((registerResponse != null) && (registerResponse.IsSuccess)) {
 
-                    var userResult = await AuthService.GetUserByUserName(registerResponse.UserName);
-                    if (userResult.IsSuccess == false)
+                    // Getting device information for push notification
+                    var deviceId = await AppCenter.GetInstallIdAsync().ConfigureAwait(false);
+                    var platform = Xamarin.Forms.Device.RuntimePlatform;
+                    var loginModel = new LoginModel
+                    {
+                        UserName = Email,
+                        Password = Password,
+                        DeviceId = deviceId.ToString(),
+                        Platform = platform == Xamarin.Forms.Device.Android ? DevicePlatform.Android : DevicePlatform.Ios
+                    };
+
+                    // Send login request to backend
+                    var loginResponse = await AuthService.Login(loginModel);
+
+                    // Check login result
+                    if (loginResponse.IsSuccess == true)
+                    {
+                        var userResult = await AuthService.GetUserByUserName(loginModel.UserName);
+                        if (userResult.IsSuccess == false)
+                        {
+                            await _dialogService.ShowAlert("Errore", "Accesso fallito");                            
+                        }                        
+                    } else
                     {
                         await _dialogService.ShowAlert("Errore", "Accesso fallito");
-                        return;
                     }
-
+                    // Registration ok, go to home page
                     await NavigationService.NavigateToAsync<HomeViewModel>();
+
                 } else {
-                    await _dialogService.ShowAlert("Alert", "Registrazione non riuscita");
+                    await _dialogService.ShowAlert("Avviso", "Registrazione non riuscita");
                 }
             } catch(Exception ex) {}
         }
