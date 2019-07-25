@@ -15,7 +15,7 @@ namespace NextPark.Mobile.ViewModels
 {
     public class AddParkingViewModel : BaseViewModel
     {
-        private const double PRICE_MIN = 1.50;
+        private const double PRICE_MIN = 1.00;
         private const double PRICE_MAX = 10.00;
 
         // PROPERTIES
@@ -304,24 +304,24 @@ namespace NextPark.Mobile.ViewModels
             // Address
             if (!error && string.IsNullOrEmpty(Address))
             {
-                _dialogService.ShowAlert("Errore Indirizzo", "Inserire una via valida");
+                _dialogService.ShowAlert("Avviso", "Inserire una via valida");
                 error = true;
             }
             // Cap
             if (!error && string.IsNullOrEmpty(Cap))
             {
-                _dialogService.ShowAlert("Errore Indirizzo", "Inserire un codice postale valido");
+                _dialogService.ShowAlert("Avviso", "Inserire un codice postale valido");
                 error = true;
             }
             // City
             if (!error && string.IsNullOrEmpty(City))
             {
-                _dialogService.ShowAlert("Errore Indirizzo", "Inserire un comune valido");
+                _dialogService.ShowAlert("Avviso", "Inserire un comune valido");
                 error = true;
             }
             // Position
             if (!error && !_isAuthorized) {
-                _dialogService.ShowAlert("Attenzione", "Non è stata rilevata una posizione valida. Cancellare l'indirizzo e scattare una foto al parcheggio.");
+                _dialogService.ShowAlert("Avviso", "Non è stata rilevata una posizione valida. Cancellare l'indirizzo e scattare una foto al parcheggio.");
                 error = true;
             }
 
@@ -365,8 +365,7 @@ namespace NextPark.Mobile.ViewModels
                     PriceMin = PriceMin,
                     PriceMax = PriceMax,
                     State = "CH",
-                    Status = Enums.Enums.ParkingStatus.Enabled,
-                    //ImageBinary = memoryStream.ToArray()
+                    Status = Enums.Enums.ParkingStatus.Enabled                     
                 };
 
                 // Image converter
