@@ -229,7 +229,7 @@ namespace NextPark.Mobile.ViewModels
                 Message = "Incorrect value"
             };
 
-            
+            /*
             // TODO: remove the following two lines inserted only for team reviw
             await _dialogService.ShowAlert("Avviso", "Pagamento disabilitato per i test");
             CompletePurchase();
@@ -237,7 +237,8 @@ namespace NextPark.Mobile.ViewModels
             IsRunning = false;
             base.OnPropertyChanged("IsRunning");
             return;
-
+            */
+            
             // Comment this code to disable payments
             switch(selectedValue) {
                 case 20:
@@ -278,7 +279,7 @@ namespace NextPark.Mobile.ViewModels
                 // Stop activity spinner
                 IsRunning = false;
                 base.OnPropertyChanged("IsRunning");
-            }            
+            }
         }
 
         public async void CompletePurchase()
