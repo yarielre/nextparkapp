@@ -31,11 +31,26 @@ namespace NextPark.Mobile.ViewModels
         public DateTime StartDate {
             get { return _startDate; }
             set { _startDate = value; OnStartDateChanged(); } 
-        }         
-        public TimeSpan StartTime { get; set; }         // Reservation start time
+        }
+        private TimeSpan _startTime { get; set; }        // Reservation start time
+        public TimeSpan StartTime
+        {
+            get { return _startTime; }
+            set { _startTime = value; OnReservationTimeChanged(); }
+        }
         public DateTime MinStartDate { get; set; }      // Reservation minimum start date
-        public DateTime EndDate { get; set; }           // Reservation end date
-        public TimeSpan EndTime { get; set; }           // Reservation end time
+        private DateTime _endDate { get; set; }           // Reservation end date
+        public DateTime EndDate
+        {
+            get { return _endDate; }
+            set { _endDate = value; OnReservationTimeChanged(); }
+        }
+        private TimeSpan _endTime { get; set; }           // Reservation end time
+        public TimeSpan EndTime
+        {
+            get { return _endTime; }
+            set { _endTime = value; OnReservationTimeChanged(); }
+        }
         public DateTime MinEndDate { get; set; }        // Reservation minimum end date
 
         public bool IsRunning { get; set; }         // Activity spinner
@@ -297,6 +312,22 @@ namespace NextPark.Mobile.ViewModels
                 base.OnPropertyChanged("EndDate");
             }
             base.OnPropertyChanged("MinEndDate");
+        }
+
+        private void OnReservationTimeChanged()
+        {
+            if (_parking != null)
+            {
+                // Remove seconds from times
+                TimeSpan startTime = StartTime.Subtract(TimeSpan.FromSeconds(StartTime.Seconds));
+                TimeSpan endTime = EndTime.Subtract(TimeSpan.FromSeconds(EndTime.Seconds));
+
+                // Update avaiability
+                bool isFree = _parking.isFree(StartDate + startTime, EndDate + endTime);
+                FullAvailability = (isFree) ? "Disponibile" : "Occupato";
+
+                base.OnPropertyChanged("FullAvailability");
+            }
         }
 
         public void OnConfirmMethod()
