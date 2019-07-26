@@ -31,6 +31,9 @@ namespace NextPark.Mobile.ViewModels
         public string City { get; set; }            // City/Country
         public string CarPlate { get; set; }        // Car Plate
 
+        // Terms and condition
+        public ICommand OnCommandClick { get; set; }
+
         /* Future implementation
         private ImageSource _userImage;             // user image
         public ImageSource UserImage
@@ -65,6 +68,7 @@ namespace NextPark.Mobile.ViewModels
             OnUserClick = new Command<object>(OnUserClickMethod);
             OnMoneyClick = new Command<object>(OnMoneyClickMethod);
             OnRegisterClick = new Command<object>(OnRegisterClickMethod);
+            OnCommandClick = new Command<string>(OnCommandClickMethod);
 
             // Future implementation
             //OnUserImageTap = new Command<object>(OnUserImageTapMethod);
@@ -182,13 +186,9 @@ namespace NextPark.Mobile.ViewModels
         {
             //Demo Login OK
             //var loginResponse = await AuthService.Login("demo@nextpark.ch", "Wisegar.1");
-
-
-            // TODO: define user data
-
             // Register data check
             bool error = await RegisterDataCheck();
-            if (error) 
+            if (error)
             {
                 // Stop activity spinner
                 IsRunning = false;
@@ -196,62 +196,97 @@ namespace NextPark.Mobile.ViewModels
                 return;
             }
 
-            try
-            { 
-                var registerUser = new RegisterModel
+            // Show Terms and Conditions message
+            var result = await _dialogService.ShowConfirmAlert("Condizioni generali", "Ho letto ed accetto le condizioni generali disponibili al seguente indirizzo:\nhttps://www.nextpark.ch/gc", "Accettare", "Annullare");
+            if (result)
+            {
+                try
                 {
-                    Address = Address,
-                    Cap = int.Parse(NPA),
-                    City = City,
-                    CarPlate = CarPlate,
-                    Email = Email,
-                    Lastname = Lastname,
-                    Name = Name,
-                    Phone = Phone,
-                    Password = Password,
-                    State = "CH",
-                    UserName = Email,
-                };
-
-                var registerResponse = await AuthService.Register(registerUser);
-
-                IsRunning = false;
-                base.OnPropertyChanged("IsRunning");
-                if ((registerResponse != null) && (registerResponse.IsSuccess)) {
-
-                    // Getting device information for push notification
-                    var deviceId = await AppCenter.GetInstallIdAsync().ConfigureAwait(false);
-                    var platform = Xamarin.Forms.Device.RuntimePlatform;
-                    var loginModel = new LoginModel
+                    var registerUser = new RegisterModel
                     {
-                        UserName = Email,
+                        Address = Address,
+                        Cap = int.Parse(NPA),
+                        City = City,
+                        CarPlate = CarPlate,
+                        Email = Email,
+                        Lastname = Lastname,
+                        Name = Name,
+                        Phone = Phone,
                         Password = Password,
-                        DeviceId = deviceId.ToString(),
-                        Platform = platform == Xamarin.Forms.Device.Android ? DevicePlatform.Android : DevicePlatform.Ios
+                        State = "CH",
+                        UserName = Email,
                     };
 
-                    // Send login request to backend
-                    var loginResponse = await AuthService.Login(loginModel);
-
-                    // Check login result
-                    if (loginResponse.IsSuccess == true)
+                    var registerResponse = await AuthService.Register(registerUser);
+                    
+                    if ((registerResponse != null) && (registerResponse.IsSuccess))
                     {
-                        var userResult = await AuthService.GetUserByUserName(loginModel.UserName);
-                        if (userResult.IsSuccess == false)
+
+                        // Getting device information for push notification
+                        var deviceId = await AppCenter.GetInstallIdAsync().ConfigureAwait(false);
+                        var platform = Xamarin.Forms.Device.RuntimePlatform;
+                        var loginModel = new LoginModel
                         {
-                            await _dialogService.ShowAlert("Errore", "Accesso fallito");                            
-                        }                        
-                    } else
-                    {
-                        await _dialogService.ShowAlert("Errore", "Accesso fallito");
-                    }
-                    // Registration ok, go to home page
-                    await NavigationService.NavigateToAsync<HomeViewModel>();
+                            UserName = Email,
+                            Password = Password,
+                            DeviceId = deviceId.ToString(),
+                            Platform = platform == Xamarin.Forms.Device.Android ? DevicePlatform.Android : DevicePlatform.Ios
+                        };
 
-                } else {
-                    await _dialogService.ShowAlert("Avviso", "Registrazione non riuscita");
+                        // Send login request to backend
+                        var loginResponse = await AuthService.Login(loginModel);
+
+                        // Check login result
+                        if (loginResponse.IsSuccess == true)
+                        {
+                            var userResult = await AuthService.GetUserByUserName(loginModel.UserName);
+                            if (userResult.IsSuccess == false)
+                            {
+                                await _dialogService.ShowAlert("Errore", "Accesso fallito");
+                            }
+                        }
+                        else
+                        {
+                            await _dialogService.ShowAlert("Errore", "Accesso fallito");
+                        }
+
+                        // Stop activity spinner
+                        IsRunning = false;
+                        base.OnPropertyChanged("IsRunning");
+
+                        // Registration ok, go to home page
+                        await NavigationService.NavigateToAsync<HomeViewModel>();
+
+                    }
+                    else
+                    {
+                        // Stop activity spinner
+                        IsRunning = false;
+                        base.OnPropertyChanged("IsRunning");
+                        await _dialogService.ShowAlert("Avviso", "Registrazione non riuscita");
+                    }
                 }
-            } catch(Exception ex) {}
+                catch (Exception ex) {
+                    // Stop activity spinner
+                    IsRunning = false;
+                    base.OnPropertyChanged("IsRunning");
+                }
+
+            } else
+            {
+                // Stop activity spinner
+                IsRunning = false;
+                base.OnPropertyChanged("IsRunning");
+                return;
+            }
+        }
+
+        public void OnCommandClickMethod(string url)
+        {
+            if (!string.IsNullOrEmpty(url))
+            {
+                Xamarin.Forms.Device.OpenUri(new System.Uri(url));
+            }
         }
 
         /* Future implementation

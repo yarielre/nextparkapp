@@ -43,7 +43,26 @@
                         <Entry Grid.Row="0" Grid.Column="1" Placeholder="Comune" Text="{Binding City}" FontSize="Small"/>
                     </Grid>
                     <Entry Margin="0,0,0,5" Placeholder="Targa" Text="{Binding CarPlate}" FontSize="Small"/>
-
+                    <StackLayout Margin="0,5" Spacing="1" Orientation="Horizontal" HorizontalOptions="CenterAndExpand">
+                        <Label Text="Leggi le "
+                                   FontSize="Small"
+                                   FontAttributes="None" />
+                        <Label FontAttributes="None">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="Condizioni generali"
+                                          TextColor="Blue"
+                                          TextDecorations="Underline"
+                                          FontSize="Small">
+                                        <Span.GestureRecognizers>
+                                            <TapGestureRecognizer Command="{Binding OnCommandClick}"
+                                                                  CommandParameter="https://www.nextpark.ch/gc" />
+                                        </Span.GestureRecognizers>
+                                    </Span>
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>                            
+                    </StackLayout>
                     <ActivityIndicator
                         x:Name="activityContent"
                         IsRunning="{Binding IsRunning, Mode=TwoWay}"                    
