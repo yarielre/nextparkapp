@@ -37,8 +37,6 @@
 	<key>CFBundleLocalizations</key>
 	<array>
 		<string>it</string>
-		<string>fr</string>
-		<string>de</string>
 	</array>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
@@ -56,17 +54,20 @@
 		</dict>
 	</array>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string>Can we use your location at all times?</string>
+	<string>La tua posizione viene rilevata allo scopo di mostrarti i parcheggi più vicini a te. 
+La posizione viene inoltre utilizzata durante l’inserimento di un nuovo parcheggio per la localizzazione dello stesso nel momento in cui viene scattata la foto.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Can we use your location when your app is being used?</string>
+	<string>La tua posizione viene rilevata allo scopo di mostrarti i parcheggi più vicini a te. 
+La posizione viene inoltre utilizzata durante l’inserimento di un nuovo parcheggio per la localizzazione dello stesso nel momento in cui viene scattata la foto.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>Can we use your location at all times?</string>
+	<string>La tua posizione viene rilevata allo scopo di mostrarti i parcheggi più vicini a te. 
+La posizione viene inoltre utilizzata durante l’inserimento di un nuovo parcheggio per la localizzazione dello stesso nel momento in cui viene scattata la foto.</string>
 	<key>NSCameraUsageDescription</key>
-	<string>NextPark will access to your camera to take pictures</string>
+	<string>La fotocamera viene utilizzata per permetterti di caricare la foto del tuo parcheggio. </string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>NexPark will access to your gallery to pick pictures</string>
+	<string>La raccolta foto viene utilizzata per permetterti di scegliere la foto del tuo parcheggio.</string>
 	<key>NSCalendarsUsageDescription</key>
-	<string>NextPark will access to your calendar</string>
+	<string>I calendari vengono utilizzati per inserire le prenotazioni dei parcheggi.</string>
 	<key>MKDirectionsApplicationSupportedModes</key>
 	<array>
 		<string>MKDirectionsModeCar</string>
