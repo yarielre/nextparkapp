@@ -28,12 +28,12 @@ namespace NextPark.Mobile.ViewModels
         public Aspect PictureAspect { get; set; }       // Parking picture aspect
         public string FullPrice { get; set; }           // Parking price full text (2 CHF/h)
         public string FullAvailability { get; set; }    // Parking availability full text (08:00-10:00)
-        public TimeSpan Time { get; set; }                // Booking time text
+        public TimeSpan Time { get; set; }              // Booking time text
 
-        public bool IsRunning { get; set; }         // Activity spinner
+        public bool IsRunning { get; set; }             // Activity spinner
 
-        public ICommand TimeChanged { get; set; }   // Time Picker property changed
-        public ICommand BookAction { get; set; }   // Time Picker property changed
+        public ICommand TimeChanged { get; set; }       // Time Picker property changed
+        public ICommand BookAction { get; set; }        // Time Picker property changed
 
         // Buttons
         public Boolean Btn1IsSelected { get; set; }     // 0.5h button selected

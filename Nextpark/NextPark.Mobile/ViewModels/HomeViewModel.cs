@@ -74,6 +74,11 @@ namespace NextPark.Mobile.ViewModels
 
         public StackLayout MyMapContainer { get; set; }
 
+        public bool ParkingPicturePopupVisible { get; set; }
+        public ICommand OnParkingPictureTap { get; set; }
+        public ICommand OnParkingPictureClose { get; set; }
+        public string ParkingPicture { get; set; }
+
         // SERVICES
         private readonly IGeolocatorService _geoLocatorService;
         private readonly IDialogService _dialogService;
@@ -144,10 +149,15 @@ namespace NextPark.Mobile.ViewModels
             checkingGeolocationPermission = false;
 
             _profileService.Updating = false;
+
+            // Zoomed parking picture popup
+            ParkingPicturePopupVisible = false;
+            OnParkingPictureTap = new Command<object>(OnParkingPictureTapMethod);
+            OnParkingPictureClose = new Command(OnParkingPictureCloseMethod);
         }
 
         public override Task InitializeAsync(object data = null)
-        {
+        {            
             // Map initialization
             if (_profileService.LastMapPosition != new Position(0, 0))
             {
@@ -744,6 +754,28 @@ namespace NextPark.Mobile.ViewModels
                 }
             }            
             checkingGeolocationPermission = false;
+        }
+
+        
+        public void OnParkingPictureTapMethod(object id)
+        {
+            if (InfoPanelVisible == true)
+            {
+                UIParkingModel parking = _profileService.GetParkingById((int)id);
+            
+                if ((parking != null) && (!String.IsNullOrEmpty(parking.ImageUrl))) {
+                    ParkingPicturePopupVisible = true;
+                    ParkingPicture = ApiSettings.BaseUrl + parking.ImageUrl;
+                    base.OnPropertyChanged("ParkingPicture");
+                    base.OnPropertyChanged("ParkingPicturePopupVisible");
+                }
+            }
+        }
+
+        public void OnParkingPictureCloseMethod()
+        {
+            ParkingPicturePopupVisible = false;
+            base.OnPropertyChanged("ParkingPicturePopupVisible");
         }
     }
 }

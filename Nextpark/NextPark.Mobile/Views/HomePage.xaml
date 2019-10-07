@@ -246,7 +246,14 @@
                                         <Image Source="{Binding Picture}"
                                                Aspect="AspectFill"
                                                HeightRequest="80"
-                                               WidthRequest="80"/>
+                                               WidthRequest="80">
+                                            <Image.GestureRecognizers>
+                                                <TapGestureRecognizer Command="{Binding OnParkingPictureTap}" CommandParameter="{Binding UID}"/>                            
+                                            </Image.GestureRecognizers>  
+                                        </Image>
+                                        <Frame.GestureRecognizers>
+                                            <TapGestureRecognizer Command="{Binding OnParkingPictureTap}"/>                            
+                                        </Frame.GestureRecognizers>
                                     </Frame>
                                     <StackLayout Margin="5,0,0,0" Spacing="1" Grid.Row="0" Grid.Column="1">
                                         <Label  Text="{Binding StatusText}" 
@@ -393,6 +400,72 @@
                             </StackLayout>
                             </Frame>
                         </StackLayout>
+                    </ContentView>
+
+                    <ContentView x:Name="popupParkingPicture" 
+                             BackgroundColor="#C0606060" 
+                             Padding="0" 
+                             IsVisible="{Binding ParkingPicturePopupVisible}" 
+                             RelativeLayout.XConstraint="0"
+                             RelativeLayout.YConstraint="30"
+                             RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=1, Constant=-30}"
+                             RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}">
+                        <ContentView.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding OnParkingPictureClose}"/>                                    
+                        </ContentView.GestureRecognizers>
+                    
+                        <RelativeLayout VerticalOptions="Center" HorizontalOptions="FillAndExpand" Padding="0" Margin="0" >
+                            <Frame BorderColor="{DynamicResource NextParkColor1}"
+                                   BackgroundColor="Black"
+                                   CornerRadius="16"
+                                   HasShadow="false"
+                                   IsClippedToBounds="true"
+                                   RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1, Constant=-20}"
+                                   RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=X, Constant=10}"
+                                   Padding="0"
+                                   Margin="0"
+                                   HorizontalOptions="Center">
+                            
+                                <RelativeLayout HorizontalOptions="Center" VerticalOptions="Center" Padding="0" Margin="0" >
+                                    <Image Source="{Binding ParkingPicture}"
+                                           Aspect="AspectFill"
+                                           RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}"
+                                           VerticalOptions="CenterAndExpand">                                    
+                                        <Image.GestureRecognizers>
+                                            <TapGestureRecognizer/>  
+                                        </Image.GestureRecognizers>
+                                    </Image>
+                                    <Frame RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1, Constant=-42}"
+                                           RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Y, Factor=1, Constant=10}"
+                                           CornerRadius="16"
+                                           HeightRequest="32"
+                                           WidthRequest="32"
+                                           Margin="0"
+                                           Padding="0"
+                                           BackgroundColor="White"
+                                           BorderColor="{DynamicResource NextParkColor1}"
+                                           IsClippedToBounds="true"
+                                           HasShadow="false">
+                                        <Frame.GestureRecognizers>
+                                            <TapGestureRecognizer Command="{Binding OnParkingPictureClose}"/>                            
+                                        </Frame.GestureRecognizers>
+                                        <Frame HeightRequest="20"
+                                               WidthRequest="20"
+                                               IsClippedToBounds="true"
+                                               HasShadow="false"
+                                               Margin="0"
+                                               Padding="0"
+                                               VerticalOptions="Center"
+                                               HorizontalOptions="Center">
+                                            <Image Aspect="AspectFill"
+                                                   HeightRequest="20"
+                                                   WidthRequest="20"                                                   
+                                                   Source="icon_close_64.png"/>
+                                        </Frame>
+                                    </Frame>
+                            </RelativeLayout>
+                            </Frame>
+                        </RelativeLayout>
                     </ContentView>
                 
             </RelativeLayout>

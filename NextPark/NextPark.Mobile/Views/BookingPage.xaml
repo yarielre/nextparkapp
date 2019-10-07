@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms" 
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:controls="clr-namespace:NextPark.Mobile.Controls"
@@ -15,28 +15,37 @@
                            HeaderMoney="{Binding UserMoney}"
                            HeaderMoneyAction="{Binding OnMoneyClick}">
             
-                <RelativeLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+                <RelativeLayout x:Name="relLayout" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
             
-                    <StackLayout HorizontalOptions="FillAndExpand"
+                    <StackLayout x:Name="StackPicture"
+                        HorizontalOptions="FillAndExpand"
                                  RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}">
                         <Frame  Margin="2,2,2,2"
                                 BorderColor="{DynamicResource NextParkColor1}" 
                                 CornerRadius="9" 
-                                BackgroundColor="Transparent" 
+                                BackgroundColor="White" 
                                 HasShadow="false"
                                 Padding="0"
                                 IsClippedToBounds="true"
                                 VerticalOptions="FillAndExpand">
                         
-                            <Image Source="{Binding Picture}" 
-                                   HeightRequest="150"
-                                   Aspect="{Binding PictureAspect}"/>
+                            <Image x:Name="parkingPicture"
+                                    Source="{Binding Picture}" 
+                                    HeightRequest="150"
+                                    Aspect="{Binding PictureAspect}">
+                                <Image.GestureRecognizers>
+                                    <SwipeGestureRecognizer Direction="Down" Swiped="OnPictureSwipeDown"/>                                    
+                                    <SwipeGestureRecognizer Direction="Up" Swiped="OnPictureSwipeUp"/>
+                                    <TapGestureRecognizer Tapped="OnPictureTapped"/>
+                                </Image.GestureRecognizers>
+                            </Image>
 
                         </Frame>  
                     </StackLayout>
-                        <StackLayout HorizontalOptions="FillAndExpand"
+                        <StackLayout x:Name="StackInfo"
+                                     HorizontalOptions="FillAndExpand"
                                      RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}"
-                                     RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent,Property=Height,Factor=0,Constant=140}"
+                                     RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToView, ElementName=StackPicture, Property=Height, Constant=-10}"
                                      >
                             <Frame  Margin="10,0,10,2"
                                     BorderColor="{DynamicResource NextParkColor1}" 
@@ -46,6 +55,10 @@
                                     Padding="2"
                                     IsClippedToBounds="true"
                                     VerticalOptions="FillAndExpand">
+                                <Frame.GestureRecognizers>
+                                    <SwipeGestureRecognizer Direction="Down" Swiped="OnPictureSwipeDown"/>
+                                    <SwipeGestureRecognizer Direction="Up" Swiped="OnPictureSwipeUp"/>
+                                </Frame.GestureRecognizers>
                                 <StackLayout Orientation="Vertical" Margin="6">
                                 <Grid>
                                     <Grid.RowDefinitions>
