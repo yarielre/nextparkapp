@@ -72,6 +72,7 @@ namespace NextPark.Mobile.ViewModels
 
         // PRIVATE VARIABLES
         private bool _isAuthorized;
+        private bool _isPicturePresent;
         private bool _addressUpdated;
         private bool _editing;
         private MediaFile mediaFile;
@@ -140,10 +141,12 @@ namespace NextPark.Mobile.ViewModels
                 if (string.IsNullOrEmpty(parking.ImageUrl))
                 {
                     ParkingImage = "icon_no_photo.png";
+                    _isPicturePresent = false;
                 }
                 else
                 {
                     ParkingImage = ApiSettings.BaseUrl + parking.ImageUrl;
+                    _isPicturePresent = true;
                 }
 
                 base.OnPropertyChanged("Title");
@@ -151,7 +154,7 @@ namespace NextPark.Mobile.ViewModels
                 base.OnPropertyChanged("Cap");
                 base.OnPropertyChanged("City");
 
-                _isAuthorized = true;
+                _isAuthorized = true;                
                 _editing = true;
                 AddBtnText = "Salva";
                 base.OnPropertyChanged("AddBtnText");
@@ -162,6 +165,7 @@ namespace NextPark.Mobile.ViewModels
                 Title = "Nuovo Parcheggio";
                 base.OnPropertyChanged("Title");
                 ParkingImage = "icon_add_photo_256.png";
+                _isPicturePresent = false;
                 _isAuthorized = false;
                 _editing = false;
                 AddBtnText = "Aggiungi";
@@ -294,7 +298,7 @@ namespace NextPark.Mobile.ViewModels
         // Parking image tap action
         public void OnParkingImageTapMethod(object args)
         {
-            TakeParkingPhoto();
+            AddParkingPicture();
         }
 
         private bool AddParkingDataCheck()
@@ -319,6 +323,14 @@ namespace NextPark.Mobile.ViewModels
                 _dialogService.ShowAlert("Avviso", "Inserire un comune valido");
                 error = true;
             }
+
+            // Picture
+            if (!error && !_isPicturePresent)
+            {
+                _dialogService.ShowAlert("Avviso", "Inserire una foto del parcheggio");
+                error = true;
+            }
+
             // Position
             if (!error && !_isAuthorized) {
                 _dialogService.ShowAlert("Avviso", "Non è stata rilevata una posizione valida. Cancellare l'indirizzo e scattare una foto al parcheggio.");
@@ -478,10 +490,30 @@ namespace NextPark.Mobile.ViewModels
             }
         }
 
-        // Take User Image
+        private async void AddParkingPicture()
+        {
+            await CrossMedia.Current.Initialize();
+
+            var source = await Application.Current.MainPage.DisplayActionSheet(
+                "Scegli la fonte per aggiungere la foto.",
+                "Annulla",
+                null,
+                "Galleria",
+                "Fotocamera");
+            if (source == null)
+            {
+                return;
+            }
+            if (source == "Fotocamera")
+                TakeParkingPhoto();
+            if (source == "Galleria")
+                PickParkingPhoto();
+        }
+
+        // Take Parking Image
         private async void TakeParkingPhoto()
         {
-            
+            await CrossMedia.Current.Initialize();
             if (!CrossMedia.Current.IsCameraAvailable || !CrossMedia.Current.IsTakePhotoSupported)
             {
                 await Application.Current.MainPage.DisplayAlert(
@@ -504,7 +536,36 @@ namespace NextPark.Mobile.ViewModels
                 return;
             ParkingImage = ImageSource.FromStream(() => { return mediaFile.GetStream(); });
 
+            _isPicturePresent = true;
             _isAuthorized = await GetCurrentLocation();
+        }
+
+        public async void PickParkingPhoto()
+        {
+            await CrossMedia.Current.Initialize();
+            if (!CrossMedia.Current.IsPickPhotoSupported)
+            {
+                await Application.Current.MainPage.DisplayAlert(
+                    "Errore Galleria",
+                    "Nessuna foto disponibile",
+                    "OK");
+                return;
+            }
+            try
+            {
+                mediaFile = await CrossMedia.Current.PickPhotoAsync();
+                if (mediaFile == null)
+                    return;
+                ParkingImage = ImageSource.FromStream(() => { return mediaFile.GetStream(); });
+
+                _isPicturePresent = true;
+                _isAuthorized = false;
+                //_isAuthorized = true;
+            }
+            catch (Exception ex)
+            {
+                //TODO: manage exception here...
+            }
         }
 
         public async Task<bool> GetCurrentLocation()
