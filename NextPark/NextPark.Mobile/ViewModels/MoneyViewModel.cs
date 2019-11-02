@@ -217,7 +217,9 @@ namespace NextPark.Mobile.ViewModels
             IsRunning = true;
             base.OnPropertyChanged("IsRunning");
 
-            StartPayment();
+            NavigationService.NavigateToAsync<PaymentViewModel>(selectedValue);
+
+            //StartPayment();
         } 
 
         public async void StartPayment()

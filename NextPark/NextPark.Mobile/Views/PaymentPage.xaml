@@ -1,0 +1,94 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:NextPark.Mobile.Controls"
+             xmlns:fastEntry="clr-namespace:XamarinFastEntrySample.FastEntry;assembly=XamarinFastEntry.Behaviors"
+             BindingContext="{Binding Payment, Source={StaticResource Locator}}"             
+             x:Class="NextPark.Mobile.Views.PaymentPage">    
+    <ContentPage.Content>
+        <ContentView>
+            <controls:DetailPage x:Name="header"
+                                HeaderBackText="{Binding BackText}"
+                                IsHeaderBackVisible="true"
+                                HeaderBackAction="{Binding OnBackClick}"                               
+                                HeaderUserText="{Binding UserName}"
+                                HeaderUserAction="{Binding OnUserClick}"
+                                HeaderMoney="{Binding UserMoney}"
+                                HeaderMoneyAction="{Binding OnMoneyClick}">
+                <StackLayout x:Name="UserDataContent"
+                             Spacing="5"
+                             Orientation="Vertical" 
+                             VerticalOptions="FillAndExpand">
+                    <Label Text="Pagamento" 
+                           FontSize="Large" 
+                           FontAttributes="Bold" 
+                           TextColor="#333333"
+                           Margin="0,0,0,0"/>                        
+                    <StackLayout Orientation="Horizontal" Margin="0" HorizontalOptions="Center" VerticalOptions="Center" Grid.Row="0" Grid.Column="1">                            
+                        <Image Source="icon_credit_card_256.png"
+                               HeightRequest="100"
+                               Aspect="AspectFill"
+                               VerticalOptions="Center"
+                               HorizontalOptions="Start"
+                               Margin="0,0,20,0"/> 
+                        <Label Text="Acquisto:" 
+                               FontSize="Medium" 
+                               FontAttributes="None" 
+                               TextColor="#333333"
+                               Margin="0"
+                               VerticalOptions="Center"/>
+                        <Label Text="10 CHF" 
+                               FontSize="Medium" 
+                               FontAttributes="Bold" 
+                               TextColor="#333333"
+                               Margin="0,0,0,0"
+                               VerticalOptions="Center"/>
+                    </StackLayout>                    
+                    <Label  Text="Dati della carta di credito:" 
+                                FontSize="Small" 
+                                FontAttributes="None" 
+                                TextColor="#333333"
+                                Margin="0,0,0,0"/>
+                    <Entry Placeholder="Numero della carta di credito" Text="{Binding CreditCardNumber}" Keyboard="Numeric" FontSize="Small">
+                        <Entry.Behaviors>
+                            <fastEntry:XamarinFastEntryBehaviour Mask="#### #### #### ####" MaxLength="19"/>
+                        </Entry.Behaviors>
+                    </Entry>
+                    <Entry Placeholder="Nome del titolare della carta" Text="{Binding CreditCardHolder}" Keyboard="Text" FontSize="Small"/>                    
+                    <StackLayout Orientation="Horizontal">                                               
+                        <Entry Placeholder="MM/AA"
+                               Text="{Binding CardExpirationDate}"
+                               Keyboard="Numeric"                              
+                               FontSize="Small">
+                            <Entry.Behaviors>
+                                <fastEntry:XamarinFastEntryBehaviour Mask="##/##" MaxLength="5" />
+                            </Entry.Behaviors>
+                        </Entry>
+                        <Entry Placeholder="CVV" Text="{Binding CVV}" Keyboard="Numeric" FontSize="Small">
+                            <Entry.Behaviors>
+                                <fastEntry:XamarinFastEntryBehaviour Mask="###" MaxLength="3" />
+                            </Entry.Behaviors>
+                        </Entry>
+                    </StackLayout>
+                    <ActivityIndicator
+                        x:Name="activityContent"
+                        IsRunning="{Binding IsRunning, Mode=TwoWay}"                    
+                        VerticalOptions="Center">
+                    </ActivityIndicator>
+                    <Button Text="Esegui"
+                            FontAttributes="Bold"
+                            VerticalOptions="CenterAndExpand"
+                            HorizontalOptions="Center"
+                            Command="{Binding OnExecuteClick}"
+                            TextColor="White"
+                            BorderRadius="8"
+                            BackgroundColor="{DynamicResource NextParkColor1}"
+                            WidthRequest="191"
+                            Margin="0,5,0,5"/>                            
+                </StackLayout>
+            </controls:DetailPage>
+        </ContentView>
+    </ContentPage.Content>
+</ContentPage>
+
+
