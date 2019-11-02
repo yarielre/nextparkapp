@@ -243,9 +243,16 @@ namespace NextPark.Mobile.ViewModels
                     var userResult = await _authService.GetUserByUserName(AuthSettings.UserName);
                     if (userResult.IsSuccess == false)
                     {
-                        _dialogService.ShowToast("Manutenzione in corso", TimeSpan.FromSeconds(10));
-                        Xamarin.Forms.Device.StartTimer(TimeSpan.FromSeconds(9), () => { UpdateParkingListAsync(); return false; });                        
-                        return await Task.FromResult(false);
+                        if (userResult.Message.Equals("Unauthorized"))
+                        {
+                            var logoutResult = await AuthService.Logout();
+                        }
+                        else
+                        {
+                            _dialogService.ShowToast("Manutenzione in corso", TimeSpan.FromSeconds(10));
+                            Xamarin.Forms.Device.StartTimer(TimeSpan.FromSeconds(9), () => { UpdateParkingListAsync(); return false; });
+                            return await Task.FromResult(false);
+                        }
                     }
                     if (AuthService.IsUserAuthenticated())
                     {
