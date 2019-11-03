@@ -143,6 +143,7 @@ namespace NextPark.Mobile.Services
             _mappings.Add(typeof(LoginViewModel), typeof(LoginPage));
             _mappings.Add(typeof(MoneyViewModel), typeof(MoneyPage));
             _mappings.Add(typeof(ParkingDataViewModel), typeof(ParkingDataPage));
+            _mappings.Add(typeof(PasswordViewModel), typeof(PasswordPage));
             _mappings.Add(typeof(PaymentViewModel), typeof(PaymentPage));
             _mappings.Add(typeof(RegisterViewModel), typeof(RegisterPage));
             _mappings.Add(typeof(ReservationViewModel), typeof(ReservationPage));

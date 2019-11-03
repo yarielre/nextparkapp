@@ -24,6 +24,7 @@ namespace NextPark.Mobile.Services
 
         Task<UpdateUserCoinModel> UpdateUserCoins(UpdateUserCoinModel model);
         Task<EditProfileModel> UpdateUserData(EditProfileModel model);
+        Task<bool> ChangePassword(ChangePasswordModel model);
         Task<bool> RefreshUserData();
 
         UIParkingModel GetParkingById(int searchId);

@@ -65,7 +65,7 @@ namespace NextPark.Api.Controllers
 
                 if (result.Succeeded)
                 {
-                    return Ok(ApiResponse.GetSuccessResponse("Ok","Ok"));
+                    return Ok(ApiResponse.GetSuccessResponse(true, "Ok"));
                 }
                 return BadRequest(ApiResponse.GetErrorResponse(result.Errors.FirstOrDefault()?.Description,ErrorType.ChangePasswordError));
             }

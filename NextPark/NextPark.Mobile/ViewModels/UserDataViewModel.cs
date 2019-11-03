@@ -47,8 +47,9 @@ namespace NextPark.Mobile.ViewModels
         */
 
         public bool IsRunning { get; set; }         // Activity spinner
-        public ICommand OnSaveClick { get; set; }   // Save button click action
-        public ICommand OnLogoutClick { get; set; } // Logout button click
+        public ICommand OnSaveClick { get; set; }           // Save button click action
+        public ICommand OnChangePasswordClick { get; set; } // Change password click action
+        public ICommand OnLogoutClick { get; set; }         // Logout button click
 
         // PRIVATE VARIABLES
         private EditProfileModel editModel { get; set; }
@@ -74,6 +75,7 @@ namespace NextPark.Mobile.ViewModels
             OnMoneyClick = new Command<object>(OnMoneyClickMethod);
 
             OnSaveClick = new Command<object>(OnSaveClickMethod);
+            OnChangePasswordClick = new Command<object>(OnChangePasswordClickMethod);
             OnLogoutClick = new Command<object>(OnLogoutClickMethod);
 
             UserName = AuthSettings.User.Name;
@@ -313,5 +315,11 @@ namespace NextPark.Mobile.ViewModels
             }
         }
 
+        // Change password button click action
+        public void OnChangePasswordClickMethod(object sender)
+        {
+            NavigationService.NavigateToAsync<PasswordViewModel>();
+        }
+        
     }
 }

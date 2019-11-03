@@ -45,6 +45,7 @@ namespace NextPark.Mobile.Settings
             builder.RegisterType<LoginViewModel>();
             builder.RegisterType<MoneyViewModel>();
             builder.RegisterType<ParkingDataViewModel>();
+            builder.RegisterType<PasswordViewModel>();
             builder.RegisterType<PaymentViewModel>();
             builder.RegisterType<RegisterViewModel>();
             builder.RegisterType<ReservationViewModel>();
