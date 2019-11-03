@@ -26,7 +26,8 @@ namespace NextPark.Mobile.ViewModels
         public bool IsRunning { get; set; }         // Activity spinner
 
         public ICommand OnLoginClick { get; set; }      // Login action
-        public ICommand OnRegisterClick { get; set; }   // Register action
+        public ICommand OnRegisterClick { get; set; }   // Register action      
+        public ICommand OnRecoveryPasswordClick { get; set; } // Recovery password
 
         // SERVICES
         private readonly IDialogService _dialogService;
@@ -46,6 +47,7 @@ namespace NextPark.Mobile.ViewModels
             OnMoneyClick = new Command<object>(OnMoneyClickMethod);
             OnLoginClick = new Command<object>(OnLoginClickMethod);
             OnRegisterClick = new Command<object>(OnRegisterClickMethod);
+            OnRecoveryPasswordClick = new Command<string>(OnRecoveryPasswordClickMethod);
         }
 
         // Initialization
@@ -166,5 +168,12 @@ namespace NextPark.Mobile.ViewModels
             }
         }
 
+        public void OnRecoveryPasswordClickMethod(string url)
+        {
+            if (!string.IsNullOrEmpty(url))
+            {
+                Xamarin.Forms.Device.OpenUri(new System.Uri(url));
+            }
+        }
     }
 }
