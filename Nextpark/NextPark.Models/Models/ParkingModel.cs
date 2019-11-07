@@ -12,6 +12,7 @@ namespace NextPark.Models
         public int Cap { get; set; }
         public string City { get; set; }
         public string State { get; set; }
+        public string Notes { get; set; }
 
         public string CarPlate { get; set; }
 
@@ -38,6 +39,7 @@ namespace NextPark.Models
                 Cap = model.Cap,
                 CarPlate = model.CarPlate,
                 City = model.City,
+                Notes = model.Notes,
                 ImageUrl = model.ImageUrl,
                 Latitude = model.Latitude,
                 Longitude = model.Longitude,
@@ -59,6 +61,7 @@ namespace NextPark.Models
                 Cap = entity.Cap,
                 CarPlate = entity.CarPlate,
                 City = entity.City,
+                Notes = entity.Notes,
                 ImageUrl = entity.ImageUrl,
                 Latitude = entity.Latitude,
                 Longitude = entity.Longitude,

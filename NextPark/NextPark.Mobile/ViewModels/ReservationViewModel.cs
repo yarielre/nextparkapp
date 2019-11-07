@@ -23,6 +23,8 @@ namespace NextPark.Mobile.ViewModels
 
         public string Info { get; set; }                // Parking info text
         public string SubInfo { get; set; }             // Parking subInfo text
+        public string Notes { get; set; }               // Parking notes text
+        public bool IsNotesVisible { get; set; }        // Parking notes visibility
         public string Picture { get; set; }             // Parking picture source text
         public Aspect PictureAspect { get; set; }       // Parking picture aspect
         public string FullPrice { get; set; }           // Parking price full text (2 CHF/h)
@@ -122,10 +124,24 @@ namespace NextPark.Mobile.ViewModels
             base.OnPropertyChanged("UserMoney");
 
             if (data is UIBookingModel booking)
-            {
+            {                                
                 _parking = _profileService.GetParkingById(booking.ParkingId);
+
+                // DEBUG notes
+                //_parking.Notes = "Parcheggio numero 15";
+
                 Info = _parking.Address;
                 SubInfo = _parking.Cap.ToString() + " " + _parking.City;
+                if (string.IsNullOrEmpty(_parking.Notes))
+                {
+                    Notes = "";
+                    IsNotesVisible = false;
+                }
+                else
+                {
+                    Notes = _parking.Notes;
+                    IsNotesVisible = true;
+                }
                 if (string.IsNullOrEmpty(_parking.ImageUrl))
                 {
                     Picture = "icon_no_photo.png";
@@ -139,6 +155,8 @@ namespace NextPark.Mobile.ViewModels
                 FullPrice = _parking.PriceMin.ToString("N2") + " CHF/h";
                 base.OnPropertyChanged("Info");
                 base.OnPropertyChanged("SubInfo");
+                base.OnPropertyChanged("Notes");
+                base.OnPropertyChanged("IsNotesVisible");
                 base.OnPropertyChanged("Picture");
                 base.OnPropertyChanged("PictureAspect");
                 base.OnPropertyChanged("FullPrice");

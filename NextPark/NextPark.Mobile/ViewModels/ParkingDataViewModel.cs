@@ -29,6 +29,9 @@ namespace NextPark.Mobile.ViewModels
         public string Address { get; set; }             // Parking address text
         public string Cap { get; set; }                 // Parking CAP text
         public string City { get; set; }                // Parking city text
+        public string Revenue { get; set; }             // Parking revenue text
+        public string Notes { get; set; }               // Parking notes text
+        public bool IsNotesVisible { get; set; }        // Parking notes visibility
         public string ActiveStatusText { get; set; }    // Parking active status text
         public bool ActiveSwitchToggled                 // Parking active status value
         {
@@ -175,6 +178,9 @@ namespace NextPark.Mobile.ViewModels
                 _parking = (ParkingItem)data;
                 _profileService.LastEditingParking = _parking;
 
+                // DEBUG notes
+                //_parking.ParkingModel.Notes = "Suonare il campanello";
+
                 // Header
                 BackText = "Indietro";
                 UserName = AuthSettings.User.Name;
@@ -191,6 +197,22 @@ namespace NextPark.Mobile.ViewModels
                 base.OnPropertyChanged("Cap");
                 City = _parking.City;
                 base.OnPropertyChanged("City");
+                // Revenue
+                double revenue = _parking.ParkingModel.PriceMin * 0.81;
+                Revenue = "Guadagno: CHF " + revenue.ToString("N2") + " / h";
+                base.OnPropertyChanged("Revenue");
+                // Notes
+                if (string.IsNullOrEmpty(_parking.ParkingModel.Notes))
+                {
+                    Notes = "";
+                    IsNotesVisible = false;
+                } else
+                {
+                    Notes = _parking.ParkingModel.Notes;
+                    IsNotesVisible = true;
+                }
+                base.OnPropertyChanged("Notes");
+                base.OnPropertyChanged("IsNotesVisible");
 
                 // Status
                 if (_parking.ParkingModel.Status == ParkingStatus.Enabled)

@@ -33,7 +33,7 @@ namespace NextPark.Mobile.ViewModels
         private readonly IDialogService _dialogService;
 
         // PRIVATE VARIABLES
-        private UInt16 _amount;
+        private int _amount;
         private int expMonth;
         private int expYear;
 
@@ -58,7 +58,7 @@ namespace NextPark.Mobile.ViewModels
         {
             if ((data != null) && (data is UInt16))
             {
-                _amount = (UInt16)data;
+                _amount = (UInt16)(data) * 100;
 
             }
             // Header
@@ -183,6 +183,7 @@ namespace NextPark.Mobile.ViewModels
 
                 var service = new TokenService();
 
+                //StripeConfiguration.ApiKey = "pk_test_uh3rNLYEtplli9X2LAR4w1Ql00xTckxLrs";
                 StripeConfiguration.ApiKey = "sk_test_Lp7wZ65RQFyrvXjbHd2LBAeC00MxHQlYZO";
 
                 Token stripeToken = service.Create(options);
@@ -198,6 +199,7 @@ namespace NextPark.Mobile.ViewModels
                 var service1 = new ChargeService();
 
                 Charge charge = service1.Create(options2);
+
             }
             catch (Exception ex)
             {

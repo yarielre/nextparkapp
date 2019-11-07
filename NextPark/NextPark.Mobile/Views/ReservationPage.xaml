@@ -97,6 +97,17 @@
                                                FontSize="Small"/> 
                                     </StackLayout>
                                 </Grid>
+                                <!-- Parking Notes-->
+                                <StackLayout Orientation="Horizontal" HorizontalOptions="StartAndExpand" Margin="0,2,0,0" Spacing="5" IsVisible="{Binding IsNotesVisible}">
+                                    <Image Source="icon_info_gray_48.png"
+                                           HeightRequest="18"
+                                           VerticalOptions="Center"/>
+                                    <Label Text="{Binding Notes}"
+                                           FontSize="Small"
+                                           FontAttributes="None"
+                                           VerticalOptions="Center"
+                                           LineBreakMode="TailTruncation"/>
+                                </StackLayout>
                                 <Label Text="Riservazione"
                                        FontSize="Large"
                                        FontAttributes="Bold"

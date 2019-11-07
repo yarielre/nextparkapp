@@ -12,6 +12,7 @@ namespace NextPark.Domain.Entities
         public int Cap { get; set; }
         public string City { get; set; }
         public string State { get; set; }
+        public string Notes { get; set; }
 
         public string CarPlate { get; set; }
 

@@ -159,6 +159,7 @@
     <BundleResource Include="Resources\icon_pin_green_256.png" />
     <BundleResource Include="Resources\icon_close_64.png" />
     <BundleResource Include="Resources\icon_credit_card_256.png" />
+    <BundleResource Include="Resources\icon_info_gray_48.png" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

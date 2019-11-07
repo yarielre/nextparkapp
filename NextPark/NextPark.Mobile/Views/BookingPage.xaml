@@ -97,7 +97,19 @@
                                                FontSize="Small"/> 
                                     </StackLayout>
                                 </Grid>
-                                
+
+                                <!-- Parking Notes-->
+                                <StackLayout Orientation="Horizontal" HorizontalOptions="StartAndExpand" Margin="0,2,0,0" Spacing="5" IsVisible="{Binding IsNotesVisible}">
+                                    <Image Source="icon_info_gray_48.png"
+                                           HeightRequest="18"
+                                           VerticalOptions="Center"/>
+                                    <Label Text="{Binding Notes}"
+                                           FontSize="Small"
+                                           FontAttributes="None"
+                                           VerticalOptions="Center"
+                                           LineBreakMode="TailTruncation"/>
+                                </StackLayout>
+
                                 <!-- Time selector buttons-->
                                 <StackLayout Orientation="Horizontal" Spacing="6" HorizontalOptions="Center" Margin="2,6,0,0">
                                     <controls:SelButton x:Name="Btn05"
@@ -166,7 +178,6 @@
                                        Margin="0,5,0,0"/>
                                 <TimePicker x:Name="_timePicker"
                                             Time="{Binding Time}"
-                                            Format="HH:mm"
                                             HorizontalOptions="Center"
                                             Margin="0,2,0,0">
                                     <TimePicker.Format>HH:mm</TimePicker.Format>
