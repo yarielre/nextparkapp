@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace NextPark.Mobile.Droid
 {
-    [Activity(Theme = "@style/MainTheme.Splash", MainLauncher = true, NoHistory = true)]
+    [Activity(Theme = "@style/MainTheme.Splash", Icon = "@mipmap/icon_sq", RoundIcon = "@mipmap/icon", MainLauncher = true, NoHistory = true)]
     public class SplashActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
     {
         static readonly string TAG = "X:" + typeof(SplashActivity).Name;
