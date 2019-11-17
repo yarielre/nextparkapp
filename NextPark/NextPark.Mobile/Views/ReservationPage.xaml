@@ -23,7 +23,7 @@
                         <Frame  Margin="2,2,2,2"
                                 BorderColor="{DynamicResource NextParkColor1}" 
                                 CornerRadius="9" 
-                                BackgroundColor="Transparent" 
+                                BackgroundColor="White" 
                                 HasShadow="false"
                                 Padding="0"
                                 IsClippedToBounds="true"
