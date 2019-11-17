@@ -45,6 +45,8 @@ namespace NextPark.Mobile.ViewModels
         public ICommand OnSearch { get; set; }
         public string SearchText { get; set; }
         public ICommand OnCurrentPosition { get; set; }
+        public string MapTypeIcon { get; set; }
+        public ICommand OnChangeMapType { get; set; }
 
         // Book or Reserve Mode
         public Color BookModeBackColor { get; set; }
@@ -133,6 +135,7 @@ namespace NextPark.Mobile.ViewModels
             // Map actions
             OnSearch = new Command<object>(OnSearchMethod);
             OnCurrentPosition = new Command(OnCurrentPositionMethod);
+            OnChangeMapType = new Command(OnChangeMapTypeMethod);
 
             // Book now or Reserve choice
             OnBookMode = new Command(OnBookModeMethod);
@@ -147,7 +150,7 @@ namespace NextPark.Mobile.ViewModels
             mapReady = false;
             geolocationPermitted = false;
             checkingGeolocationPermission = false;
-
+            
             _profileService.Updating = false;
 
             // Zoomed parking picture popup
@@ -168,7 +171,14 @@ namespace NextPark.Mobile.ViewModels
                 Map = new CustomMap();
             }
             Map.IsShowingUser = true;
-            Map.MapType = MapType.Street;
+            // Set map type
+            if ((_profileService.LastMapType != MapType.Satellite) && (_profileService.LastMapType != MapType.Street))
+            {
+                // Set street type as default value
+                _profileService.LastMapType = MapType.Street;
+            }
+            SetMapType();
+            //Map.MapType = MapType.Street;
             MyMapContainer.Children.Add(Map);
 
             Map.MapReady += Map_MapReady;
@@ -186,7 +196,7 @@ namespace NextPark.Mobile.ViewModels
             base.OnPropertyChanged("UserMoney");
 
             InfoPanelVisible = false;
-            base.OnPropertyChanged("InfoPanelVisible");
+            base.OnPropertyChanged("InfoPanelVisible");            
 
             return Task.FromResult(false);
         }
@@ -458,6 +468,7 @@ namespace NextPark.Mobile.ViewModels
 
             mapReady = true;
 
+            // Set map position
             if (_profileService.LastMapPosition == new Position(0, 0))
             {
                 MoveToCurrentPosition();
@@ -469,6 +480,8 @@ namespace NextPark.Mobile.ViewModels
                     Map.ShowUserEnable = true;
                 }
             }
+
+            // Get parking list
             await GetParkingList();            
         }
 
@@ -630,6 +643,33 @@ namespace NextPark.Mobile.ViewModels
                 Map.ShowUserEnable = true;
                 Map.MoveToRegion(MapSpan.FromCenterAndRadius(_profileService.LastMapPosition, Distance.FromKilometers(1)));                
             } catch (Exception) { }                             
+        }
+
+        public void OnChangeMapTypeMethod()
+        {
+            if (_profileService.LastMapType == MapType.Street)
+            {
+                _profileService.LastMapType = MapType.Satellite;
+            } else
+            {
+                _profileService.LastMapType = MapType.Street;
+            }
+            SetMapType();
+        }
+
+        public async void SetMapType()
+        {
+            if (_profileService.LastMapType == MapType.Satellite)
+            {
+                Map.MapType = MapType.Satellite;
+                MapTypeIcon = "icon_street_64.png";
+                base.OnPropertyChanged("MapTypeIcon");
+            } else
+            {
+                Map.MapType = MapType.Street;
+                MapTypeIcon = "icon_satellite_64.png";
+                base.OnPropertyChanged("MapTypeIcon");
+            }            
         }
 
         public void OnReserveModeMethod()

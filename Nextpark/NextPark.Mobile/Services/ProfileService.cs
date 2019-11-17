@@ -19,6 +19,7 @@ namespace NextPark.Mobile.Services
         private readonly IAuthService _authService; 
 
         public Position LastMapPosition { get; set; }
+        public MapType LastMapType { get; set; }
         public ParkingItem LastEditingParking { get; set; }
         public DateTime LastEditingEventDate { get; set; }
         public bool UserReserveMode { get; set; }

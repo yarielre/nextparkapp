@@ -11,6 +11,7 @@ namespace NextPark.Mobile.Services
     public interface IProfileService
     {
         Position LastMapPosition { get; set; }
+        MapType LastMapType { get; set; }
         ParkingItem LastEditingParking { get; set; }
         DateTime LastEditingEventDate { get; set; }
         bool UserReserveMode { get; set; }

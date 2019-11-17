@@ -169,10 +169,10 @@
                 
                 <!-- Current Position -->
                 <StackLayout Margin="0" Padding="0"
-                           RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=1, Constant=-50}"
+                           RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=1, Constant=-90}"
                            RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1, Constant=-50}"
                            HorizontalOptions="End">
-                                 
+
                     <Frame BackgroundColor="White"
                            BorderColor="{DynamicResource NextParkColor1}"
                            Opacity="0.9"
@@ -180,18 +180,39 @@
                            HasShadow="false"
                            Margin="0,0,10,0"
                            Padding="0"
-                           HeightRequest="40"
+                           HeightRequest="80"
                            WidthRequest="40"
                            CornerRadius="8"
                            HorizontalOptions="End">
-                        <Image  Source="icon_location_64.png"
-                                BackgroundColor="White"
-                                Opacity="0.8"
-                                HorizontalOptions="Center"
-                                VerticalOptions="Center"
-                                Margin="0"
-                                HeightRequest="30"
-                                WidthRequest="30"/>
+                        <StackLayout Margin="0" Padding="0" Spacing="0">
+                            <ContentView Margin="0" Padding="0" HeightRequest="40">
+                                <Image  Source="{Binding MapTypeIcon}"
+                                        BackgroundColor="White"
+                                        Opacity="0.8"
+                                        HorizontalOptions="Center"
+                                        VerticalOptions="Center"
+                                        Margin="0"
+                                        HeightRequest="30"
+                                        WidthRequest="30"/>
+                                <ContentView.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding OnChangeMapType}"/>                            
+                                </ContentView.GestureRecognizers>
+                            </ContentView>
+                            <BoxView BackgroundColor="Silver" Margin="0,-2,0,0" HeightRequest="1" HorizontalOptions="FillAndExpand"/>
+                            <ContentView Margin="0" Padding="0" HeightRequest="40">
+                                <Image  Source="icon_location_64.png"
+                                    BackgroundColor="White"
+                                    Opacity="0.8"
+                                    HorizontalOptions="Center"
+                                    VerticalOptions="Center"
+                                    Margin="0"
+                                    HeightRequest="30"
+                                    WidthRequest="30"/>
+                                <ContentView.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding OnCurrentPosition}"/>                            
+                                </ContentView.GestureRecognizers>
+                            </ContentView>
+                        </StackLayout>
                         <Frame.GestureRecognizers>
                             <TapGestureRecognizer Command="{Binding OnCurrentPosition}"/>                            
                         </Frame.GestureRecognizers>
