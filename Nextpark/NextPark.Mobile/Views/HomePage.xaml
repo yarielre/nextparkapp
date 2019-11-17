@@ -172,7 +172,7 @@
                            RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=1, Constant=-90}"
                            RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1, Constant=-50}"
                            HorizontalOptions="End">
-
+                                 
                     <Frame BackgroundColor="White"
                            BorderColor="{DynamicResource NextParkColor1}"
                            Opacity="0.9"
@@ -220,26 +220,20 @@
                 </StackLayout>
                 
                 <!-- Parking Items Region -->
-                <Frame BorderColor="Transparent"
-                       BackgroundColor="Transparent"
-                       IsClippedToBounds="true"
-                       HasShadow="false"
-                       HeightRequest="140"
-                       WidthRequest="220"
-                       Padding="0"
-                       Margin="0"
-                       IsVisible="{Binding InfoPanelVisible}"
-                       RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}"
-                       RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=1, Constant=-180}">
-                    <ContentView WidthRequest="280" HeightRequest="148" HorizontalOptions="Center" IsVisible="{Binding InfoPanelVisible}">
+                    <ContentView WidthRequest="280"
+                                 HeightRequest="140"
+                                 HorizontalOptions="Center"
+                                 RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.5, Constant=-140}"
+                                 RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=1, Constant=-180}"
+                                 IsVisible="{Binding InfoPanelVisible}">
                         <Frame BorderColor="{DynamicResource NextParkColor1}"
                                BackgroundColor="White"
                                CornerRadius="14"
                                IsClippedToBounds="true"
                                HasShadow="false"
-                               HeightRequest="145"
+                               HeightRequest="140"
                                WidthRequest="205"
-                               MinimumHeightRequest="148"
+                               MinimumHeightRequest="140"
                                MinimumWidthRequest="200"
                                Padding="10"
                                Margin="10,0,10,0"
@@ -314,7 +308,6 @@
                             </StackLayout>
                         </Frame>
                     </ContentView>
-                </Frame>
              
                 <ContentView x:Name="popupReserveDetail" 
                              BackgroundColor="#C0606060" 
