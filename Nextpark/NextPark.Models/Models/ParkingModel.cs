@@ -12,7 +12,7 @@ namespace NextPark.Models
         public int Cap { get; set; }
         public string City { get; set; }
         public string State { get; set; }
-        public string Notes { get; set; }
+        public string Notes { get; set; }        
 
         public string CarPlate { get; set; }
 
@@ -23,6 +23,7 @@ namespace NextPark.Models
 
         public double PriceMin { get; set; }
         public double PriceMax { get; set; }
+        public double Revenue { get; set; }
 
         public ParkingStatus Status { get; set; }
     }
