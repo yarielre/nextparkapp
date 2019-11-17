@@ -423,6 +423,7 @@
                         </StackLayout>
                     </ContentView>
 
+                    <!-- Parking picture pop-up -->
                     <ContentView x:Name="popupParkingPicture" 
                              BackgroundColor="#C0606060" 
                              Padding="0" 
@@ -437,7 +438,7 @@
                     
                         <RelativeLayout VerticalOptions="Center" HorizontalOptions="FillAndExpand" Padding="0" Margin="0" >
                             <Frame BorderColor="{DynamicResource NextParkColor1}"
-                                   BackgroundColor="Black"
+                                   BackgroundColor="White"
                                    CornerRadius="16"
                                    HasShadow="false"
                                    IsClippedToBounds="true"
