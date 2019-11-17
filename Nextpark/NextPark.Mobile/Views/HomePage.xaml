@@ -206,8 +206,8 @@
                                     HorizontalOptions="Center"
                                     VerticalOptions="Center"
                                     Margin="0"
-                                    HeightRequest="30"
-                                    WidthRequest="30"/>
+                                    HeightRequest="26"
+                                    WidthRequest="26"/>
                                 <ContentView.GestureRecognizers>
                                     <TapGestureRecognizer Command="{Binding OnCurrentPosition}"/>                            
                                 </ContentView.GestureRecognizers>
