@@ -1,0 +1,1 @@
+## Used to store temporal Hosted Service Support files
